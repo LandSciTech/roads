@@ -182,4 +182,50 @@ simpleCost<-function(roads,newLandings,water){
   return(cost)
 }
 
+#' @export
+adjustBrickNames<-function(x,ctag="X",cType="this"){
+  #x=myTransitionGroup;ctag=tag
+  cNames = names(x);cNames=gsub(ctag,"",cNames,fixed=T)
+
+  outTag = "t"
+
+  nNames =suppressWarnings(as.integer(cNames))
+
+  if (is.element(NA,nNames)){
+    if(length(nNames)==1){
+
+      #if given a single unnamed map, assume it is static over time.
+      warning(paste0("Name cannot be interpreted as an integer so assuming ",cType," doesn't change over time."))
+      names(x) = "static"
+    }else{
+
+      #assume this is an ordered time-series and rename
+      warning(paste0("Names cannot be interpreted as integers, so assuming ",cType," is an ordered time-series starting at time 1."))
+      names(x) = paste0(outTag,seq(1,length(cNames)))
+    }
+    return(x)
+  }
+
+  outOrder = data.frame(outName = nNames,outID=seq(1:length(nNames)))
+  outOrder = outOrder[order(outOrder$outName),]
+  names(x)=paste0(outTag,nNames)
+
+  if(identical(outOrder$outName,nNames)){
+    return(x)
+  }
+
+  if(class(x)=="list"){
+    return(x[outOrder$outName])
+
+  }
+  if(class(x)=="RasterStack"){
+    x = raster::brick(x)
+  }
+  if(class(x)=="RasterBrick"){
+    return(subset(x,outOrder$outID))
+  }
+
+  stop("Class of x not recognized. Expecting a list or RasterBrick")
+}
+
 
