@@ -4,6 +4,9 @@ library(raster)
 
 #############
 # Paths and parameters
+# Example model database is available as supplementary material to
+# http://doi.org/10.5061/dryad.0rb1b https://www.sciencedirect.com/science/article/pii/S0378112717306412
+# Note that the dryad database does not include model outputs - in order to run this example it is necessary to first run a simulation.
 roadPath = "C:/Users/hughesjo/Documents/InitialWork/RPackage/v1Misc/Roads/troutLakeRoadRaster.tif"
 libPath = "C:/Users/hughesjo/Documents/InitialWork/RPackage/v1Misc/Libraries/Trout Lake Forest"
 scnId = 12746
