@@ -39,7 +39,7 @@ roadCLUS.getGraph<- function(sim){
   weight<-c(t(ras.matrix)) #transpose then vectorize which matches the same order as adj
   weight<-data.table(weight) # convert to a data.table - faster for large objects than data.frame
   #weight<-data.table(getValues(sim$costSurface)) #Try
-  weight$id<-as.integer(row.names(weight)) # get the id for ther verticies which is used to merge with the edge list from adj
+  weight[, id := seq_len(.N)] # get the id for ther verticies which is used to merge with the edge list from adj
 
   #------get the adjacency using SpaDES function adj
   edges<-SpaDES.tools::adj(returnDT= TRUE, numCol = ncol(ras.matrix), numCell=ncol(ras.matrix)*nrow(ras.matrix), directions =8, cells = 1:as.integer(ncol(ras.matrix)*nrow(ras.matrix)))
@@ -55,7 +55,7 @@ roadCLUS.getGraph<- function(sim){
 
   #------get the edges list
   edges.weight<-edges.w2[complete.cases(edges.w2), c(1:2, 5)] #get rid of NAs caused by barriers. Drop the w1 and w2 costs.
-  edges.weight$id<-1:nrow(edges.weight) #set the ids of the edge list. Faster than using as.integer(row.names())
+  edges.weight[, id := seq_len(.N)] #set the ids of the edge list. Faster than using as.integer(row.names())
 
   #------make the graph
   sim$g<-graph.edgelist(as.matrix(edges.weight)[,1:2], dir = FALSE) #create the graph using to and from columns. Requires a matrix input
@@ -67,52 +67,12 @@ roadCLUS.getGraph<- function(sim){
   return(invisible(sim))
 }
 
-roadCLUS.buildSnapRoads <- function(sim){
-  rdptsXY<-data.frame(sim$roads.close.XY) #convert to a data.frame
-  rdptsXY$id<-as.numeric(row.names(rdptsXY))
-  landings<-data.frame(sim$landings)
-  landings$id<-as.numeric(row.names(landings))
-  coodMatrix<-rbind(rdptsXY,subset(landings,select=names(rdptsXY)))
-  coodMatrix$attr_data<-100
-
-  #remove anything that is a point, rather than a line
-  checkPts = as.data.frame(table(unique(coodMatrix)$id))
-  #subset(checkPts,Freq==1)
-  checkPts = subset(checkPts,Freq>1)
-  coodMatrix=merge(coodMatrix,data.frame(id=checkPts$Var1))
-  mt<-coodMatrix %>% st_as_sf(coords=c("x","y"))%>% group_by(id) %>% summarize(m=mean(attr_data)) %>% st_cast("LINESTRING")
-  test<-fasterize::fasterize(st_buffer(mt,50),sim$roads, field = "m")
-  sim$roads<-raster::merge(test, sim$roads)
-  rm(rdptsXY, landings, mt, coodMatrix, test)
-  gc()
-  return(invisible(sim))
-}
-
 roadCLUS.lcpList<- function(sim){
   ##Get a list of paths from which there is a to and from point
   paths.matrix<-cbind(cellFromXY(sim$costSurface,sim$landings ), cellFromXY(sim$costSurface,sim$roads.close.XY ))
   sim$paths.list<-split(paths.matrix, 1:nrow(paths.matrix))
   rm(paths.matrix)
   gc()
-  return(invisible(sim))
-}
-
-roadCLUS.shortestPaths<- function(sim){
-  #print('shortestPaths')
-  #------finds the least cost paths between a list of two points
-  if(!length(sim$paths.list)==0){
-    #print(sim$paths.list)
-    paths<-unlist(lapply(sim$paths.list, function(x) get.shortest.paths(sim$g, x[1], x[2], out = "both"))) #create a list of shortest paths
-    sim$paths.v<-unique(rbind(data.table(paths[grepl("vpath",names(paths))] ), sim$paths.v))#save the verticies for mapping
-    paths.e<-paths[grepl("epath",names(paths))]
-    edge_attr(sim$g, index= E(sim$g)[E(sim$g) %in% paths.e], name= 'weight')<-0.00001 #changes the cost(weight) associated with the edge that became a path (or road)
-
-    #reset landings and roads close to them
-    sim$landings<-NULL
-    sim$roads.close.XY<-NULL
-    rm(paths.e)
-    gc()
-  }
   return(invisible(sim))
 }
 
@@ -139,12 +99,52 @@ roadCLUS.mstList<- function(sim){
   return(invisible(sim))
 }
 
+roadCLUS.shortestPaths<- function(sim){
+  #print('shortestPaths')
+  #------finds the least cost paths between a list of two points
+  if(!length(sim$paths.list)==0){
+    #print(sim$paths.list)
+    paths<-unlist(lapply(sim$paths.list, function(x) get.shortest.paths(sim$g, x[1], x[2], out = "both"))) #create a list of shortest paths
+    sim$paths.v<-unique(rbind(data.table(paths[grepl("vpath",names(paths))] ), sim$paths.v))#save the verticies for mapping
+    paths.e<-paths[grepl("epath",names(paths))]
+    edge_attr(sim$g, index= E(sim$g)[E(sim$g) %in% paths.e], name= 'weight')<-0.00001 #changes the cost(weight) associated with the edge that became a path (or road)
+
+    #reset landings and roads close to them
+    sim$landings<-NULL
+    sim$roads.close.XY<-NULL
+    rm(paths.e)
+    gc()
+  }
+  return(invisible(sim))
+}
+
 roadCLUS.getClosestRoad <- function(sim){
   roads.pts <- rasterToPoints(sim$roads, fun=function(x){x > 0})
   closest.roads.pts <- apply(gDistance(SpatialPoints(roads.pts),SpatialPoints(sim$landings), byid=TRUE), 1, which.min)
   sim$roads.close.XY <- as.matrix(roads.pts[closest.roads.pts, 1:2,drop=F]) #this function returns a matrix of x, y coordinates corresponding to the closest road
   #The drop =F is needed for a single landing - during the subset of a matrix it will become a column vector because as it converts a vector to a matrix, r will assume you have one column
   rm(roads.pts, closest.roads.pts)
+  gc()
+  return(invisible(sim))
+}
+
+roadCLUS.buildSnapRoads <- function(sim){
+  rdptsXY<-data.frame(sim$roads.close.XY) #convert to a data.frame
+  rdptsXY$id<-as.numeric(row.names(rdptsXY))
+  landings<-data.frame(sim$landings)
+  landings$id<-as.numeric(row.names(landings))
+  coodMatrix<-rbind(rdptsXY,subset(landings,select=names(rdptsXY)))
+  coodMatrix$attr_data<-100
+
+  #remove anything that is a point, rather than a line
+  checkPts = as.data.frame(table(unique(coodMatrix)$id))
+  checkPts = subset(checkPts,Freq>1)
+  coodMatrix=merge(coodMatrix,data.frame(id=checkPts$Var1))
+
+  mt<-coodMatrix %>% st_as_sf(coords=c("x","y"))%>% group_by(id) %>% summarize(m=mean(attr_data)) %>% st_cast("LINESTRING")
+  test<-fasterize::fasterize(st_buffer(mt,50),sim$roads, field = "m")
+  sim$roads<-raster::merge(test, sim$roads)
+  rm(rdptsXY, landings, mt, coodMatrix, test)
   gc()
   return(invisible(sim))
 }
