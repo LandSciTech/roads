@@ -84,6 +84,14 @@ setMethod('projectRoads', signature(landings="SpatialPolygons"), function(landin
   return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
 })
 
+#' @return  sim list.
+#' @rdname projectRoads
+#' @export
+setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
+  landings = raster::brick(raster::subset(raster::rasterize(landings,cost),1))
+  return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
+})
+
 #' @return  RasterBrick. Road network over time.
 #' @rdname projectRoads
 #' @export
@@ -95,7 +103,7 @@ setMethod('projectRoads', signature(landings="RasterStack"), function(landings,c
 #' @rdname projectRoads
 #' @export
 setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
-  #
+  #sim=NULL
   checkAllign = raster::compareRaster(cost,roads)
   if(!checkAllign){
     stop("Problem with initialRoads. All rasters must have the same same extent, number of rows and columns,
@@ -108,10 +116,11 @@ setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,c
          projection, resolution, and origin.")
   }
   
-  newBlocks[newBlocks>0] = 1
+  landings[landings>0] = 1
 
-  doYrs = names(newBlocks)
+  doYrs = names(landings)
 
+  plot(landings)
   cRoadsRaster = raster::brick(initialRoads)
   ym="t0"; names(cRoadsRaster)=ym
 
@@ -121,10 +130,10 @@ setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,c
     print(paste("building roads year",cm))
     
     if(length(sim)==0){    
-      sim = projectRoads(newBlocks[[cm]],cost,cRoadsRaster[[ym]],roadMethod=roadMethod,plotRoads=plotRoads)
+      sim = projectRoads(landings[[cm]],cost,cRoadsRaster[[ym]],roadMethod=roadMethod,plotRoads=plotRoads)
     }else{
       #TO DO: how to preferentially route roads through cutblocks after the first iteration?
-      sim = projectRoads(newBlocks[[cm]],plotRoads=plotRoads,sim=sim)
+      sim = projectRoads(landings[[cm]],plotRoads=plotRoads,sim=sim)
     }
     cRoadsRaster[[cm]] = sim$roads>0 #ignoring values for now.
   }

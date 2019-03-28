@@ -23,25 +23,19 @@ segments(0,5,5,5, lwd =2)
 text(sC, labels=sC$ID, pos=2)
 lines(c(0,5),c(4.5,4.5), lwd =2)
 
-plot(ras)
-#TO DO: get cost, roads,landings layers to input
-plot(ras)
 cost=ras
 sC$ID = as.numeric(sC$ID)
-landings=rasterize(sC, cost,field="ID")
-initialRoads = ras==0
-plot(initialRoads)
+landings=sC
+roads = ras==0
+plot(roads)
 
 devtools::install_github("LandSciTech/roads")
 library(roads)
 roadMethod="snap"
-#DO TO: support landings as SpatialPointsDataFrame
-outRoads = projectRoads(landings=landings,cost=cost,roads=initialRoads,roadMethod=roadMethod,plotRoads=T)
-str(outRoads$roads)
-names(outRoads)
+outRoads = projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=T)
 
 pdf("roadNetworkGrowthSnap.pdf")
-plot(outRoads$roads,col="black")
+plot(outRoads,col="black")
 dev.off()
 
 #TASKS

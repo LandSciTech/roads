@@ -6,6 +6,7 @@
 \alias{projectRoads,matrix-method}
 \alias{projectRoads,RasterLayer-method}
 \alias{projectRoads,SpatialPolygons-method}
+\alias{projectRoads,SpatialPoints-method}
 \alias{projectRoads,RasterStack-method}
 \alias{projectRoads,RasterBrick-method}
 \title{Project road network.}
@@ -16,17 +17,20 @@ projectRoads(landings, cost = NULL, roads = NULL, roadMethod = "mst",
 \S4method{projectRoads}{matrix}(landings, cost = NULL, roads = NULL,
   roadMethod = "mst", plotRoads = T, sim = list())
 
-\S4method{projectRoads}{RasterLayer}(landings, cost = NULL,
-  roads = NULL, roadMethod = "mst", plotRoads = T, sim = list())
+\S4method{projectRoads}{RasterLayer}(landings, cost = NULL, roads = NULL,
+  roadMethod = "mst", plotRoads = T, sim = list())
 
 \S4method{projectRoads}{SpatialPolygons}(landings, cost = NULL,
   roads = NULL, roadMethod = "mst", plotRoads = T, sim = list())
 
-\S4method{projectRoads}{RasterStack}(landings, cost = NULL,
-  roads = NULL, roadMethod = "mst", plotRoads = T, sim = list())
+\S4method{projectRoads}{SpatialPoints}(landings, cost = NULL, roads = NULL,
+  roadMethod = "mst", plotRoads = T, sim = list())
 
-\S4method{projectRoads}{RasterBrick}(landings, cost = NULL,
-  roads = NULL, roadMethod = "mst", plotRoads = T, sim = list())
+\S4method{projectRoads}{RasterStack}(landings, cost = NULL, roads = NULL,
+  roadMethod = "mst", plotRoads = T, sim = list())
+
+\S4method{projectRoads}{RasterBrick}(landings, cost = NULL, roads = NULL,
+  roadMethod = "mst", plotRoads = T, sim = list())
 }
 \arguments{
 \item{landings}{RasterLayer, SpatialPolygons*, SpatialPointsDataFrame*, matrix, or RasterStack. Features to be connected to the road network. matrix should contain x,y,v columns, as returned by rasterToPoints etc. If RasterStack assume an ordered time-series.}
@@ -42,6 +46,8 @@ projectRoads(landings, cost = NULL, roads = NULL, roadMethod = "mst",
 \item{sim}{Sim list. Returned from a previous iteration of projectRoads. cost, roads, and roadMethod are ignored if a sim list is provided.}
 }
 \value{
+sim list.
+
 sim list.
 
 sim list.
