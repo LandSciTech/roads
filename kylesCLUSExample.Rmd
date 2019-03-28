@@ -63,7 +63,7 @@ ras[]<-runif(as.integer(x.size*x.size), 1,20)
 ras[1:5]<-0
 plot(ras)
 title('Cost Surface')
-startCells <- xyFromCell(ras, as.integer(sample(11:ncell(ras), 4)), spatial=FALSE)
+startCells <- xyFromCell(ras, as.integer(c(11,13,22,25)), spatial=FALSE)
 sC<-SpatialPoints(startCells)
 sC$ID<-paste(1:4, sep = "")
 plot(sC, col ='red', add=TRUE)

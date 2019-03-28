@@ -17,7 +17,8 @@ setGeneric('projectRoads',function(landings,cost=NULL,roads=NULL,roadMethod="mst
 #' @rdname projectRoads
 #' @export
 setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
-  #x=newLandingCentroids;roadMethod="mst";cost=cCost;roads=cRoadsRaster[[ym]];sim=list()
+  #x=newLandingCentroids;roadMethod="mst";cost=cCost;roads=cRoadsRaster[[ym]];
+  #sim=list();roadMethod="lcp"
   recognizedRoadMethods = c("mst","lcp","snap")
   
   if (length(sim)>0){ #ignore cost, roads, roadMethod
@@ -61,9 +62,9 @@ setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,r
     )
     if(plotRoads){
       sim <- roadCLUS.analysis(sim)
+
     }
   }
-  
   return(sim)
 })
 
@@ -88,7 +89,7 @@ setMethod('projectRoads', signature(landings="SpatialPolygons"), function(landin
 #' @rdname projectRoads
 #' @export
 setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
-  landings = raster::brick(raster::subset(raster::rasterize(landings,cost),1))
+  landings = raster::subset(raster::rasterize(landings,cost),1)
   return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
 })
 
@@ -103,10 +104,10 @@ setMethod('projectRoads', signature(landings="RasterStack"), function(landings,c
 #' @rdname projectRoads
 #' @export
 setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
-  #sim=NULL
+  #sim=NULL;landings = raster::brick(raster::subset(raster::rasterize(landings,cost),1))
   checkAllign = raster::compareRaster(cost,roads)
   if(!checkAllign){
-    stop("Problem with initialRoads. All rasters must have the same same extent, number of rows and columns,
+    stop("Problem with roads. All rasters must have the same same extent, number of rows and columns,
          projection, resolution, and origin.")
   }
   
@@ -120,13 +121,13 @@ setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,c
 
   doYrs = names(landings)
 
-  plot(landings)
-  cRoadsRaster = raster::brick(initialRoads)
+  cRoadsRaster = raster::brick(roads)
   ym="t0"; names(cRoadsRaster)=ym
 
   sim=list()
   #NOTE: looping over years here to speed calculations. The graph is g is only constructed once.
   for (cm in doYrs){
+    #cm=doYrs[1];plotRoads=T
     print(paste("building roads year",cm))
     
     if(length(sim)==0){    

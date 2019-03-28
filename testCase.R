@@ -15,27 +15,38 @@ ras[]<-runif(as.integer(x.size*x.size), 1,20)
 ras[1:5]<-0
 plot(ras)
 title('Cost Surface')
-startCells <- xyFromCell(ras, as.integer(sample(11:ncell(ras), 4)), spatial=FALSE)
+startCells <- xyFromCell(ras, as.integer(c(11,13,22,25)), spatial=FALSE)
 sC<-SpatialPoints(startCells)
 sC$ID<-paste(1:4, sep = "")
 plot(sC, col ='red', add=TRUE)
 segments(0,5,5,5, lwd =2)
 text(sC, labels=sC$ID, pos=2)
 lines(c(0,5),c(4.5,4.5), lwd =2)
+sC$ID = as.numeric(sC$ID)
 
 cost=ras
-sC$ID = as.numeric(sC$ID)
 landings=sC
 roads = ras==0
-plot(roads)
 
-devtools::install_github("LandSciTech/roads")
-library(roads)
-roadMethod="snap"
+#devtools::install_github("LandSciTech/roads")
+#library(roads)
+roadMethod="mst"
 outRoads = projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=T)
+pdf("roadNetworkGrowthMST.pdf")
+plot(outRoads$roads>0)#
+dev.off()
 
+roadMethod="lcp"
+outRoads = projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=T)
+pdf("roadNetworkGrowthLCP.pdf")
+plot(outRoads$roads>0)#
+dev.off()
+
+roadMethod="snap"
+#NOTE:something is wrong with snap. On TO DO list for Josie
+outRoads = projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=T)
 pdf("roadNetworkGrowthSnap.pdf")
-plot(outRoads,col="black")
+plot(outRoads$roads>0)#
 dev.off()
 
 #TASKS
