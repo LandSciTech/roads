@@ -1,9 +1,10 @@
 ---
-title       : "A demo of road simulation in CLUS"
-author      : "Kyle Lochhead & Tyler Muhly"
-date        : "October 1, 2018"
-output: 
-  html_document: 
+title: "A demo of road simulation in CLUS"
+author: "Kyle Lochhead & Tyler Muhly"
+date: "October 1, 2018"
+output:
+  pdf_document: default
+  html_document:
     keep_md: yes
 ---
 
