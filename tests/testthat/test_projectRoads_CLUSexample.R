@@ -1,11 +1,5 @@
 context("simple example test case - compare to results from kylesCLUSExample.Rmd")
-library(igraph)
-library(SpaDES)
 library(raster)
-library(data.table)
-library(rgeos)
-library(sf)
-library(dplyr)
 library(roads)
 library(testthat)
 ###########################################
