@@ -42,22 +42,22 @@ pR.mst.roads.plotF  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0
 pR.mst.roads.plotT  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="mst",  plotRoads=T, sim=list())$roads
 ###############################################
 # perform tests
-testthat:::test_that("Projected roads results match for the 'snap' method, when plotRoads argument is FALSE",{
+testthat:::test_that("Projected roads results match CLUS example results for the 'snap' method, when plotRoads argument is FALSE",{
   testthat:::expect_true(raster:::all.equal(CLUS.snap.roads,pR.snap.roads.plotF,showwarning=FALSE))
 })
-testthat:::test_that("Projected roads results match for the 'snap' method, when plotRoads argument is TRUE",{
+testthat:::test_that("Projected roads results match CLUS example results for the 'snap' method, when plotRoads argument is TRUE",{
   testthat:::expect_true(raster:::all.equal(CLUS.snap.roads,pR.snap.roads.plotT,showwarning=FALSE))
 })
-testthat:::test_that("Projected roads results match for the 'lcp' method, when plotRoads argument is FALSE",{
+testthat:::test_that("Projected roads results match CLUS example results for the 'lcp' method, when plotRoads argument is FALSE",{
   testthat:::expect_true(raster:::all.equal(CLUS.lcp.roads,pR.lcp.roads.plotF,showwarning=FALSE))
 })
-testthat:::test_that("Projected roads results match for the 'lcp' method, when plotRoads argument is TRUE",{
+testthat:::test_that("Projected roads results match CLUS example results for the 'lcp' method, when plotRoads argument is TRUE",{
   testthat:::expect_true(raster:::all.equal(CLUS.lcp.roads,pR.lcp.roads.plotT,showwarning=FALSE))
 })
-testthat:::test_that("Projected roads results match for the 'mst' method, when plotRoads argument is FALSE",{
+testthat:::test_that("Projected roads results match CLUS example results for the 'mst' method, when plotRoads argument is FALSE",{
   testthat:::expect_true(raster:::all.equal(CLUS.mst.roads,pR.mst.roads.plotF,showwarning=FALSE))
 })
-testthat:::test_that("Projected roads results match for the 'mst' method, when plotRoads argument is TRUE",{
+testthat:::test_that("Projected roads results match CLUS example results for the 'mst' method, when plotRoads argument is TRUE",{
   testthat:::expect_true(raster:::all.equal(CLUS.mst.roads,pR.mst.roads.plotT,showwarning=FALSE))
 })
 ###############################################
