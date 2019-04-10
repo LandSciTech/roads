@@ -67,7 +67,7 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
     }
   }
   # if landings is NULL, prepare it as was set up in the CLUS example
-  # if landings is not a "SpatialPoints", prepare a comparable "SpatialPoints" object to run throught the CLUS example  
+  # if landings is not a "SpatialPoints" object, prepare a comparable "SpatialPoints" object to run throught the CLUS example  
   if(is.null(landings)){
     sC.list<-list(SpatialPoints(xyFromCell(cost, as.integer(c(11,13,22,25)), spatial=FALSE)))
     landings <- sC.list[[1]]
@@ -167,11 +167,7 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
       }
       pR.roads.mst.ras <- pR.res.mst$roads==0
       pR.roads.mst.ras[is.na(pR.roads.mst.ras)] <- 0
-      if(any((CLUS.roads.mst.ras-pR.roads.mst.ras)[]!=0)){
-        out.list[[i]]$mst <- FALSE
-      }else{
-        out.list[[i]]$mst <- TRUE
-      }
+      out.list[[i]]$mst <- raster::all.equal(CLUS.roads.mst.ras,pR.roads.mst.ras,showwarning=FALSE)
       rm(mst.v,paths.matrix,mst.adj,mst.g,mst.paths,paths.list,paths,paths.v,paths.e)
     } ## END OF mst CHECK
     if(lcp){
@@ -196,11 +192,7 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
       }
       pR.roads.lcp.ras <- pR.res.lcp$roads==0
       pR.roads.lcp.ras[is.na(pR.roads.lcp.ras)] <- 0
-      if(any((CLUS.roads.lcp.ras-pR.roads.lcp.ras)[]!=0)){
-        out.list[[i]]$lcp <- FALSE
-      }else{
-        out.list[[i]]$lcp <- TRUE
-      }
+      out.list[[i]]$lcp <- raster::all.equal(CLUS.roads.lcp.ras,pR.roads.lcp.ras,showwarning=FALSE)
     } ## END OF lcp CHECK
     if(snap){
       #### FROM CLUS example (some slight changes made in order to not conflict with other objects used in this comparison):
@@ -232,11 +224,7 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
       }
       pR.roads.snap.ras <- pR.res.snap$roads==0
       pR.roads.snap.ras[is.na(pR.roads.snap.ras)] <- 0
-      if(any((CLUS.roads.snap.ras-pR.roads.snap.ras)[]!=0)){
-        out.list[[i]]$snap <- FALSE
-      }else{
-        out.list[[i]]$snap <- TRUE
-      }
+      out.list[[i]]$snap <- raster::all.equal(CLUS.roads.snap.ras,pR.roads.snap.ras,showwarning=FALSE)
     }## END OF snap CHECK
   } ## END OF CYCLING THROUGH LANDINGS/START CELLS LIST
   if(roadMethod=="snap"){
@@ -281,22 +269,22 @@ roads = ras==0
 library(roads)
 roadMethod="mst"
 outRoads = projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=T)
-pdf("roadNetworkGrowthMST.pdf")
+#pdf("roadNetworkGrowthMST.pdf")
 plot(outRoads$roads>0)#
-dev.off()
+#dev.off()
 
 roadMethod="lcp"
 outRoads = projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=T)
-pdf("roadNetworkGrowthLCP.pdf")
+#pdf("roadNetworkGrowthLCP.pdf")
 plot(outRoads$roads>0)#
-dev.off()
+#dev.off()
 
 roadMethod="snap"
 #NOTE:something is wrong with snap. On TO DO list for Josie
 outRoads = projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=T)
-pdf("roadNetworkGrowthSnap.pdf")
+#pdf("roadNetworkGrowthSnap.pdf")
 plot(outRoads$roads>0)#
-dev.off()
+#dev.off()
 
 #TASKS
 # Get Scott to help setup git/github/local copy of repository. Workflow is [pull, do stuff, commit, push] each time you work on the project.
