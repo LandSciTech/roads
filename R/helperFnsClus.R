@@ -40,6 +40,7 @@ roadCLUS.getGraph<- function(sim){
   sim$paths.v<-NULL
   #------prepare the cost surface raster
   ras.matrix<-raster::as.matrix(sim$costSurface)#get the cost surface as a matrix using the raster package
+
   weight<-c(t(ras.matrix)) #transpose then vectorize which matches the same order as adj
   weight<-data.table(weight) # convert to a data.table - faster for large objects than data.frame
   #weight<-data.table(getValues(sim$costSurface)) #Try

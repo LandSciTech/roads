@@ -19,7 +19,7 @@ ras[1:5]   <- 0   # cells 1 to 5 (first/top row) are existing roads, so set the 
 startCells <- raster:::xyFromCell(ras, as.integer(c(11,13,22,25)), spatial=FALSE) # define start cells/landings as cells 11,13,22,25
 sC         <- sp:::SpatialPoints(startCells)  # coerce startCells/landings to SpatialPoints, sC
 ##############################################
-# hard code expected results from CLUS example 
+# hard code expected results from CLUS example
 CLUS.snap.roads <- raster:::raster(raster:::extent(0, 5, 0, 5),res=1,vals=0)
 CLUS.snap.roads[c(1:25)[-c(9,14,16,18,19,21,23,24)]] <- 1    # expected results from 'snap' method
 CLUS.lcp.roads <- raster:::raster(raster::extent(0, 5, 0, 5),res=1,vals=0)
@@ -34,6 +34,11 @@ pR.lcp.roads.plotF  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0
 pR.lcp.roads.plotT  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="lcp",  plotRoads=T, sim=list())$roads
 pR.mst.roads.plotF  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="mst",  plotRoads=F, sim=list())$roads
 pR.mst.roads.plotT  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="mst",  plotRoads=T, sim=list())$roads
+
+slotNames(pR.lcp.roads.plotT)
+plot(pR.lcp.roads.plotT)
+
+
 ###############################################
 # perform tests
 testthat:::test_that("Projected roads results match CLUS example results for the 'snap' method, when plotRoads argument is FALSE",{

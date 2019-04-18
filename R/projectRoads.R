@@ -1,11 +1,12 @@
 #' Project road network.
 #'
 #' @details
+#' some details...
 #'
 #' @param landings RasterLayer, SpatialPolygons*, SpatialPointsDataFrame*, matrix, or RasterStack. Features to be connected to the road network. matrix should contain x,y,v columns, as returned by rasterToPoints etc. If RasterStack assume an ordered time-series.
 #' @param cost RasterLayer. Cost surface.
-#' @param roads RasterLayer. Existing road network.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-#' @param roadMethod Character. Options are "mst", "lcp", "snap". 
+#' @param roads RasterLayer. Existing road network.
+#' @param roadMethod Character. Options are "mst", "lcp", "snap".
 #' @param plotRoads Boolean. Set FALSE to save time if output road rasters are not required. Default TRUE
 #' @param sim Sim list. Returned from a previous iteration of projectRoads. cost, roads, and roadMethod are ignored if a sim list is provided.
 #' @examples
@@ -20,29 +21,29 @@ setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,r
   #x=newLandingCentroids;roadMethod="mst";cost=cCost;roads=cRoadsRaster[[ym]];
   #sim=list();roadMethod="lcp"
   recognizedRoadMethods = c("mst","lcp","snap")
-  
+
   if (length(sim)>0){ #ignore cost, roads, roadMethod
     expectBits = c("roads","costSurface","roadMethod")
     missingNames = setdiff(expectBits,names(sim))
     if(length(missingNames)>0){
       stop("sim list missing expected elements: ",paste(missingNames, collapse=","))
-    }  
-  }else{  
+    }
+  }else{
     if(!is.element(roadMethod,recognizedRoadMethods)){
       stop("Invalid road method ",roadMethod,". Options are:",paste(recognizedRoadMethods,collapse=','))
     }
-    #set up sim list  
+    #set up sim list
     roads=roads>0
     sim$roads=roads
     sim$costSurface=cost
     sim$roadMethod = roadMethod
   }
 
-  sim$landings=landings 
+  sim$landings=landings
   if(!is.element("g",names(sim))){
     sim <- roadCLUS.getGraph(sim)
-  }   
-  
+  }
+
   if(!is.null(sim$landings)){
     switch(sim$roadMethod,
            snap= {
@@ -52,7 +53,7 @@ setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,r
            lcp ={
              sim <- roadCLUS.getClosestRoad(sim)
              sim <- roadCLUS.lcpList(sim)
-             sim <- roadCLUS.shortestPaths(sim)# includes update graph 
+             sim <- roadCLUS.shortestPaths(sim)# includes update graph
            },
            mst ={
              sim <- roadCLUS.getClosestRoad(sim)
@@ -89,7 +90,10 @@ setMethod('projectRoads', signature(landings="SpatialPolygons"), function(landin
 #' @rdname projectRoads
 #' @export
 setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
-  landings = raster::subset(raster::rasterize(landings,cost),1)
+    #landings=sC
+    #landings = raster::subset(raster::rasterize(landings,cost),1)
+
+temp=rasterToPoints(cost)
   return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
 })
 
@@ -98,7 +102,7 @@ setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings
 #' @export
 setMethod('projectRoads', signature(landings="RasterStack"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
   return(projectRoads(raster::brick(landings),cost,roads,roadMethod,plotRoads,sim))
-})  
+})
 
 #' @return  RasterBrick. Road network over time.
 #' @rdname projectRoads
@@ -110,13 +114,13 @@ setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,c
     stop("Problem with roads. All rasters must have the same same extent, number of rows and columns,
          projection, resolution, and origin.")
   }
-  
+
   checkAllign = raster::compareRaster(cost,landings)
   if(!checkAllign){
     stop("Problem with landings. All rasters must have the same same extent, number of rows and columns,
          projection, resolution, and origin.")
   }
-  
+
   landings[landings>0] = 1
 
   doYrs = names(landings)
@@ -129,8 +133,8 @@ setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,c
   for (cm in doYrs){
     #cm=doYrs[1];plotRoads=T
     print(paste("building roads year",cm))
-    
-    if(length(sim)==0){    
+
+    if(length(sim)==0){
       sim = projectRoads(landings[[cm]],cost,cRoadsRaster[[ym]],roadMethod=roadMethod,plotRoads=plotRoads)
     }else{
       #TO DO: how to preferentially route roads through cutblocks after the first iteration?

@@ -48,7 +48,7 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
   # if cost is NULL, prepare it as was set up in the CLUS example
   if(is.null(cost)){
     ## FROM CLUS example:
-    #Empty raster0 
+    #Empty raster0
     x.size = 5
     y.size = 5
     ras = raster(extent(0, x.size, 0, y.size),res =1, vals =1)
@@ -67,7 +67,7 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
     }
   }
   # if landings is NULL, prepare it as was set up in the CLUS example
-  # if landings is not a "SpatialPoints" object, prepare a comparable "SpatialPoints" object to run throught the CLUS example  
+  # if landings is not a "SpatialPoints" object, prepare a comparable "SpatialPoints" object to run throught the CLUS example
   if(is.null(landings)){
     sC.list<-list(SpatialPoints(xyFromCell(cost, as.integer(c(11,13,22,25)), spatial=FALSE)))
     landings <- sC.list[[1]]
@@ -88,7 +88,7 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
     stop("landings expected to be NULL or one of the following classes:\n    ",
          "'matrix','RasterLayer','SpatialPolygons','SpatialPoints','RasterStack','RasterBrick'")
   }
-  # prepare logical objects (mst,lcp,snap) rerpresenting which road sim methods are to be compared agains the CLUS example 
+  # prepare logical objects (mst,lcp,snap) rerpresenting which road sim methods are to be compared agains the CLUS example
   mst<-F;lcp<-F;snap<-F
   if (roadMethod=="all"){mst<-T;lcp<-T;snap<-T
   }else if(roadMethod=="mst"){mst<-T}else if(roadMethod=="lcp"){lcp<-T}else if(roadMethod=="snap"){snap<-T
@@ -99,16 +99,16 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
   for (i in 1:length(sC.list)){
     out.list[[i]]<-list(mst=NA,lcp=NA,snap=NA)
     sC <- sC.list[[i]]
-    ##### FROM CLUS example: 
+    ##### FROM CLUS example:
     # convert the raster pixels that are roads (i.e., cost = 0) to points
-    roads.pts <- rasterToPoints(ras, fun=function(x){x == 0})  
+    roads.pts <- rasterToPoints(ras, fun=function(x){x == 0})
     # get the distance between the two geometries (road points and targets) and select the minimum
     closest.roads.pts <- apply(rgeos::gDistance(SpatialPoints(roads.pts),SpatialPoints(sC), byid=TRUE), 1, which.min)
     # convert to a matrix
-    roads.close.XY <- as.matrix(roads.pts[closest.roads.pts, 1:2,drop=F]) 
+    roads.close.XY <- as.matrix(roads.pts[closest.roads.pts, 1:2,drop=F])
     #####
     if (mst | lcp){
-      #### FROM CLUS example: 
+      #### FROM CLUS example:
       #convert the cost surface raster to a matrix
       ras.matrix<-raster::as.matrix(ras)
       weight<-c(t(ras.matrix)) # transpose then vectorize. This follows how raster layer objects are read
@@ -119,7 +119,7 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
       #---------------
       #get the adjaceny
       edges<-adj(returnDT= TRUE, numCol = 5, numCell=25, directions =8, cells = 1:25)
-      #merge and average between the to and from 
+      #merge and average between the to and from
       test<-merge(x=edges, y=weight, by.x= "from", by.y ="id")
       setnames(test, c("from", "to", "w1"))
       test2<-setDT(merge(x=test, y=weight, by.x= "to", by.y ="id"))
@@ -134,15 +134,15 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
     }
     if(mst){
       #### FROM CLUS example:
-      # Minimum Spanning Tree (MST) with Least Cost Paths (LCP) Approach 
+      # Minimum Spanning Tree (MST) with Least Cost Paths (LCP) Approach
       mst.v <- as.vector(rbind(cellFromXY(ras,sC ), cellFromXY(ras, roads.close.XY )))
       paths.matrix<-as.matrix(mst.v)
       paths.matrix<- paths.matrix[!duplicated(paths.matrix[,1]),]
       mst.adj <- distances(g, paths.matrix, paths.matrix) # get an adjaceny matrix given then cell numbers
       # set the verticies names as the cell numbers in the costSurface
-      rownames(mst.adj)<-paths.matrix 
+      rownames(mst.adj)<-paths.matrix
       # set the verticies names as the cell numbers in the costSurface
-      colnames(mst.adj)<-paths.matrix 
+      colnames(mst.adj)<-paths.matrix
       mst.g <- graph_from_adjacency_matrix(mst.adj, weighted=TRUE) # create a graph
       mst.paths <- mst(mst.g, weighted=TRUE) # get the the minimum spanning tree
       paths.matrix<-noquote(get.edgelist(mst.paths, names=TRUE)) #get the paths needed for solving the LCP
@@ -199,16 +199,16 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
       rdptsXY<-data.frame(roads.close.XY) #convert to a data.frame
       rdptsXY$id<-as.numeric(row.names(rdptsXY))
       sC_CLUS <- sC
-      sC_CLUS$ID <- 1:length(sC_CLUS) 
+      sC_CLUS$ID <- 1:length(sC_CLUS)
       landingsCLUS<-data.frame(sC_CLUS)
       landingsCLUS<-landingsCLUS[,2:3]
       landingsCLUS$id<-as.numeric(row.names(landingsCLUS))
       coordMatrix<-rbind(rdptsXY,landingsCLUS)
       coordMatrix$attr_data<-100
-      mt<-coordMatrix %>% 
-        st_as_sf(coords=c("x","y"))%>% 
-        group_by(id) %>% 
-        summarize(m=mean(attr_data)) %>% 
+      mt<-coordMatrix %>%
+        st_as_sf(coords=c("x","y"))%>%
+        group_by(id) %>%
+        summarize(m=mean(attr_data)) %>%
         st_cast("LINESTRING")
       # added for conversion of lines (mt) to roads raster
       mt_cells <- do.call(rbind,extract(ras,mt,cellnumber=TRUE))
@@ -243,7 +243,7 @@ compareRoadSimResults <- function(landings=NULL,cost=NULL,roads=NULL,roadMethod=
 }
 
 
-#Empty raster0 
+#Empty raster0
 x.size = 5
 y.size = 5
 ras = raster(extent(0, x.size, 0, y.size),res =1, vals =1)
@@ -261,6 +261,7 @@ text(sC, labels=sC$ID, pos=2)
 lines(c(0,5),c(4.5,4.5), lwd =2)
 sC$ID = as.numeric(sC$ID)
 
+str(sC)
 cost=ras
 landings=sC
 roads = ras==0
