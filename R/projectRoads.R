@@ -92,9 +92,10 @@ setMethod('projectRoads', signature(landings="SpatialPolygons"), function(landin
 setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
     #landings=sC
     #landings = raster::subset(raster::rasterize(landings,cost),1)
-
-temp=rasterToPoints(cost)
-  return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
+    cco = landings@coords
+    cco=cbind(cco,landings@data$ID)
+    dimnames(cco)[[2]][3]="layer"
+    return(projectRoads(landings=cco,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
 })
 
 #' @return  RasterBrick. Road network over time.

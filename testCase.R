@@ -269,6 +269,7 @@ roads = ras==0
 #devtools::install_github("LandSciTech/roads")
 library(roads)
 roadMethod="mst"
+class(landings)
 outRoads = projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=T)
 #pdf("roadNetworkGrowthMST.pdf")
 plot(outRoads$roads>0)#
