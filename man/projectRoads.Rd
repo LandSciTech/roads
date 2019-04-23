@@ -62,7 +62,7 @@ RasterBrick. Road network over time.
 Project road network.
 }
 \details{
-
+some details...
 }
 \examples{
 # TODO: examples
