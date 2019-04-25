@@ -29,26 +29,12 @@ CLUS.mst.roads <- raster:::raster(raster:::extent(0, 5, 0, 5),res=1,vals=0)
 CLUS.mst.roads[c(1:25)[-c(6:9,15,17,18,20,21,23,24)]] <- 1   # expected results from 'mst' method
 ###############################################
 # generate the results from roads::projectRoads, each with both options (TRUE/FALSE) for plotRoads
-<<<<<<< HEAD
 pR.snap.roads <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="snap", plotRoads=T, sim=list())$roads
 pR.snap.roads[pR.snap.roads>0] <- 1
 pR.lcp.roads  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="lcp",  plotRoads=T, sim=list())$roads
 pR.lcp.roads[pR.lcp.roads>0]   <- 1
 pR.mst.roads  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="mst",  plotRoads=T, sim=list())$roads
 pR.mst.roads[pR.mst.roads>0]   <- 1
-=======
-pR.snap.roads.plotF <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="snap", plotRoads=F, sim=list())$roads
-pR.snap.roads.plotT <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="snap", plotRoads=T, sim=list())$roads
-pR.lcp.roads.plotF  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="lcp",  plotRoads=F, sim=list())$roads
-pR.lcp.roads.plotT  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="lcp",  plotRoads=T, sim=list())$roads
-pR.mst.roads.plotF  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="mst",  plotRoads=F, sim=list())$roads
-pR.mst.roads.plotT  <- roads:::projectRoads(landings=sC, cost=ras, roads=(ras==0),roadMethod="mst",  plotRoads=T, sim=list())$roads
-
-slotNames(pR.lcp.roads.plotT)
-plot(pR.lcp.roads.plotT)
-
-
->>>>>>> 7c9803dec34617dde5799088b083cc4394bd2a42
 ###############################################
 # perform tests
 testthat:::test_that("Projected roads results match CLUS example results for the 'snap' method",{
