@@ -1,4 +1,5 @@
 context("simple example test case - compare to results from kylesCLUSExample.Rmd")
+library(sp)
 library(raster)
 library(roads)
 library(testthat)
