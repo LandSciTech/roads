@@ -114,13 +114,13 @@ plot.scenario <- function(cost.rast,landings,outPath,main=NA,col=NA,add.legend=T
 #
 # returns a list of sub-lists, with each sub-list representing an input scenario. The scenarios (sub-lists) contain the following named elements:
 #       - scen.number: an integer value representing the scenario number (generated scenarios are numbered incrementally from 1 to n.scenarios)
-#       - road.rast:   a logical RasterLayer object representing existing roads.  TRUE is existing road. FALSE is not existing road.
+#       - road.rast:   a logical RasterLayer representing existing roads.  TRUE is existing road. FALSE is not existing road.
 #                      - these roads are a rasterized versions of the road.line SpatialLines
-#       - road.line:   a sp::SpatialLines object representing the existing roads
-#       - cost.rast:   a raster::RasterLayer object representing the cost of developing new roads on a given cell
-#       - landings.points:  a sp::SpatialPointsDataFrame object representing landings sets and points
+#       - road.line:   SpatialLines representing the existing roads
+#       - cost.rast:   RasterLayer representing the cost of developing new roads on a given cell
+#       - landings.points:  a SpatialPointsDataFrame representing landings sets and points
 #                           - data frame includes a field named "set" containing integer values representing the landings set that each point belongs to
-#       - landings.stack:  a RasterStack object representing the landings and landings sets
+#       - landings.stack:  a RasterStack representing the landings and landings sets
 #                          - each layer in the stack represents an individual landings set as a logical RasterLayer where TRUE is a landing in that set and FALSE is not
 #                            a landing in the set
 #

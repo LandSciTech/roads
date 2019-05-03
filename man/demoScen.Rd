@@ -32,8 +32,9 @@ projRoadsResults <- roads::projectRoads(landings = landings.1,
 newRoads <- projRoadsResults$roads > 0 # get projected roads as a logical RasterLayer
 # visualize
 newRoads[!newRoads] <- NA
-plot(scen$cost.rast)
-plot(newRoads,col="grey40",add=T,legend=F) 
-points(landings.1,pch=16,cex=2)
+newRoads[scen$cost.rast==0] <- NA
+plot(scen$cost.rast,col=c("black",colorRamps::matlab.like(255+50+50)[50:(50+255)]))
+plot(newRoads,col="grey50",add=T,legend=F) 
+points(landings.1,pch=21,cex=2,bg="white")
 }
 \keyword{datasets}
