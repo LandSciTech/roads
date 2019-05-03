@@ -11,11 +11,11 @@
 #' \describe{
 #'   \item{scen.number}{An integer value representing the scenario number (generated scenarios are numbered incrementally from 1).}
 #'   \item{road.rast}{A logical RasterLayer representing existing roads.  TRUE is existing road. FALSE is not existing road.}
-#'   \item{road.line}{A SpatialLines representing existing roads.}
+#'   \item{road.line}{A SpatialLines object representing existing roads.}
 #'   \item{cost.rast}{A RasterLayer representing the cost of developing new roads on a given cell}
 #'   \item{landings.points}{A SpatialPointsDataFrame representing landings sets and landing locations within each set. The data frame includes 
 #'   a field named 'set' which contains integer values representing the landings set that each point belongs to}
-#'   \item{landings.stack}{A RasterStack object representing the landings and landings sets. Each logical RasterLayer in the RasterStack represents
+#'   \item{landings.stack}{A RasterStack representing the landings and landings sets. Each logical RasterLayer in the RasterStack represents
 #'   one landings set. Values of TRUE are a landing in the given set. Values of FALSE are not.}
 #' }
 #' 
@@ -24,7 +24,7 @@
 #' landings.1 <- scen$landings.points[scen$landings.points$set==1,] # landings set 1 of demo scenario 1
 #' projRoadsResults <- roads::projectRoads(landings = landings.1, 
 #'                                         cost = scen$cost.rast, 
-#'                                         roads=scen$road.rast, 
+#'                                         roads = scen$road.rast, 
 #'                                         roadMethod = "lcp") # project roads using least-cost path method
 #' newRoads <- projRoadsResults$roads > 0 # get projected roads as a logical RasterLayer
 #' # visualize
