@@ -29,33 +29,33 @@
 #'       for (i in nlayers:1){newRoads[projRoadsResults[[i]]]<-i}
 #'       plot(newRoads,col=c("black",grey.colors(nlayers-1)),add=T,legend=F)
 #'       points(landings,pch=21,cex=2.5,bg="white")
-#'       text(landings@coords[,1],landings@coords[,2],landings@data$set,cex=0.8)
+#'       text(landings\@coords[,1],landings\@coords[,2],landings@data$set,cex=0.8)
 #'    }
 #' }
 #'
-#' ### project roads: using scenario 1 / landings as a SpatialPointsDataFrame / the least-cost path ("lcp") approach 
+#' ### project roads: using scenario 1 / landings as a SpatialPointsDataFrame / the least-cost path ("lcp") approach
 #' scen <- roads::demoScen[[1]] # demo scenario 1
 #' landings.points <- scen$landings.points[scen$landings.points$set==1,] # use landing set 1 of demo scenario 1
 #' projRoadsResults <- roads::projectRoads(landings=landings.points,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="lcp")
 #' visualize(projRoadsResults,landings.points,scen)
-#'   
-#' ### project roads: using scenario 1 / landings as a RasterLayer / the minimum spanning tree ("mst") approach                      
+#'
+#' ### project roads: using scenario 1 / landings as a RasterLayer / the minimum spanning tree ("mst") approach
 #' scen <- roads::demoScen[[1]] # demo scenario 1
-#' landings.points <- scen$landings.points[scen$landings.points$set==1,] # use landing set 1 of demo scenario                             
+#' landings.points <- scen$landings.points[scen$landings.points$set==1,] # use landing set 1 of demo scenario
 #' landings.rastLayer   <- scen$landings.stack[[1]] # the RasterLayer version of landing set 1
 #' projRoadsResults <- roads::projectRoads(landings=landings.rastLayer,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="mst")
 #' visualize(projRoadsResults,landings.points,scen)
-#'           
-#' ### project roads: using scenario 2 / landings as a matrix / the snapping ("snap") approach 
+#'
+#' ### project roads: using scenario 2 / landings as a matrix / the snapping ("snap") approach
 #' scen <- roads::demoScen[[2]] # demo scenario 2
-#' landings.points <- scen$landings.points[scen$landings.points$set==5,] # use landing set 5 of demo scenario 2 
-#' landings.matrix <- landings.points@coords  # landings as a matrix
+#' landings.points <- scen$landings.points[scen$landings.points$set==5,] # use landing set 5 of demo scenario 2
+#' landings.matrix <- landings.points\@coords  # landings as a matrix
 #' projRoadsResults <- roads::projectRoads(landings=landings.matrix,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="snap")
 #' visualize(projRoadsResults,landings.points,scen)
-#' 
+#'
 #' ### project roads: using scenario 3 / landings as a RasterStack / the minimum spanning tree ("mst") approach
 #' scen <- roads::demoScen[[3]] # demo scenario 3
-#' landings.points <- scen$landings.points[scen$landings.points$set%in%1:4,] # use landing sets 1 to 4 of demo scenario 3 
+#' landings.points <- scen$landings.points[scen$landings.points$set%in%1:4,] # use landing sets 1 to 4 of demo scenario 3
 #' landings.rastStack <- scen$landings.stack[[1:4]]  # use landing sets 1 to 4 as a RasterStack
 #' projRoadsResults <- roads::projectRoads(landings=landings.rastStack,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="mst")
 #' visualize(projRoadsResults,landings.points,scen)
@@ -65,7 +65,7 @@
 #' landings.poly <- scen$landings.poly # use polygonal landgins of demo scenario 7
 #' projRoadsResults <- roads::projectRoads(landings=landings.poly,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="mst")
 #' visualize(projRoadsResults,landings.poly,scen)
-#' 
+#'
 #' @export
 setGeneric('projectRoads',function(landings,cost=NULL,roads=NULL,roadMethod="mst",plotRoads=T,sim=list()) standardGeneric('projectRoads'))
 
