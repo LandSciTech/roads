@@ -10,6 +10,8 @@
 #' @param plotRoads Boolean. Set FALSE to save time if output road rasters are not required. Default TRUE
 #' @param sim Sim list. Returned from a previous iteration of projectRoads. cost, roads, and roadMethod are ignored if a sim list is provided.
 #' @examples
+#' library(raster) # load the raster package
+#'
 #' # function for visualizing output
 #' visualize <- function(projRoadsResults,landings,scen){
 #'    plot(scen$cost.rast,col=c("black",colorRamps::matlab.like(255+50+50)[50:(50+255)]))
@@ -29,7 +31,7 @@
 #'       for (i in nlayers:1){newRoads[projRoadsResults[[i]]]<-i}
 #'       plot(newRoads,col=c("black",grey.colors(nlayers-1)),add=T,legend=F)
 #'       points(landings,pch=21,cex=2.5,bg="white")
-#'       text(landings\@coords[,1],landings\@coords[,2],landings@data$set,cex=0.8)
+#'       text(landings@coords[,1],landings@coords[,2],landings@data$set,cex=0.8)
 #'    }
 #' }
 #'
@@ -49,7 +51,7 @@
 #' ### project roads: using scenario 2 / landings as a matrix / the snapping ("snap") approach
 #' scen <- roads::demoScen[[2]] # demo scenario 2
 #' landings.points <- scen$landings.points[scen$landings.points$set==5,] # use landing set 5 of demo scenario 2
-#' landings.matrix <- landings.points\@coords  # landings as a matrix
+#' landings.matrix <- landings.points@coords  # landings as a matrix
 #' projRoadsResults <- roads::projectRoads(landings=landings.matrix,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="snap")
 #' visualize(projRoadsResults,landings.points,scen)
 #'
