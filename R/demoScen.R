@@ -17,20 +17,38 @@
 #'   a field named 'set' which contains integer values representing the landings set that each point belongs to}
 #'   \item{landings.stack}{A RasterStack representing the landings and landings sets. Each logical RasterLayer in the RasterStack represents
 #'   one landings set. Values of TRUE are a landing in the given set. Values of FALSE are not.}
+#'   \item{landings.stack}{A SpatialPolygonsDataFrame representing a single set of polygonal landings.}
 #' }
 #' 
 #' @examples  
 #' scen <- roads::demoScen[[1]] # demo scenario 1
+#' 
+#' ##### roads to point landings
 #' landings.1 <- scen$landings.points[scen$landings.points$set==1,] # landings set 1 of demo scenario 1
 #' projRoadsResults <- roads::projectRoads(landings = landings.1, 
 #'                                         cost = scen$cost.rast, 
 #'                                         roads = scen$road.rast, 
 #'                                         roadMethod = "lcp") # project roads using least-cost path method
 #' newRoads <- projRoadsResults$roads > 0 # get projected roads as a logical RasterLayer
-#' # visualize
+#' # visualize 
 #' newRoads[!newRoads] <- NA
 #' newRoads[scen$cost.rast==0] <- NA
 #' plot(scen$cost.rast,col=c("black",colorRamps::matlab.like(255+50+50)[50:(50+255)]))
 #' plot(newRoads,col="grey50",add=T,legend=F) 
 #' points(landings.1,pch=21,cex=2,bg="white")
+#' 
+#' ##### roads to polygonal landings
+#' landings.poly <- scen$landings.poly
+#' projRoadsResults2 <- roads::projectRoads(landings = landings.poly, 
+#'                                          cost = scen$cost.rast, 
+#'                                          roads = scen$road.rast, 
+#'                                          roadMethod = "lcp") # project roads using least-cost path method
+#' newRoads2 <- projRoadsResults2$roads > 0 # get projected roads as a logical RasterLayer                                         
+#' # visualize roads to landing points
+#' newRoads2[!newRoads2] <- NA
+#' newRoads2[scen$cost.rast==0] <- NA
+#' plot(scen$cost.rast,col=c("black",colorRamps::matlab.like(255+50+50)[50:(50+255)]))
+#' plot(newRoads2,col="grey50",add=T,legend=F) 
+#' plot(landings.poly,density=20,add=TRUE)
+#' 
 "demoScen"
