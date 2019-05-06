@@ -119,7 +119,7 @@ visualize(projRoadsResults,landings.points,scen)
 
 ### project roads: using scenario 7 / landings as a SpatialPolygonsDataFrame / the minimum spanning tree ("mst") approach
 scen <- roads::demoScen[[7]] # demo scenario 7
-landings.poly <- scen$landings.poly # use polygonal landgins of demo scenario 7
+landings.poly <- scen$landings.poly # use polygonal landings of demo scenario 7
 projRoadsResults <- roads::projectRoads(landings=landings.poly,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="mst")
 visualize(projRoadsResults,landings.poly,scen)
 

@@ -5,16 +5,17 @@ library(geoR)
 ###########################################################################
 # function for plotting input scenarios for the roads::projectRoads method
 #
-# outPath:   a character string representing the output path for the PNG image that is to be generated (must end with '.png')
 # function does not return anything, but PNG images will be generated at the user-specified outPath
 #
+# outPath:   a character string representing the output path for the PNG image that is to be generated (must end with '.png')
 # cost.rast: the raster for input into roads::projectRoads, as cost
 #            - existing roads are expected to have a cost value of zero
-# landings:  a spatial points data frame represeneting landings point locations, or NA for no plotting of point landings
+# landings:  a SpatialPointsDataFrame represeneting point landingslocations, or NA for no plotting of point landings
 #            - can have a column names "set" containing integers representing which landings set each point belongs to
-# landings.poly:  a spatial polygons data frame represeneting landings polygon locations, or NA for no plotting of polygonal landings
+#            - this function will only plot a maximum of 10 point landings sets (can have multiple points per set)
+# landings.poly:  a spatial polygons data frame represeneting polygonal landings locations, or NA for no plotting of polygonal landings
 # main:       a character string representing the main title for the plot. If NA, no main title will be added
-# col:        a vector (length=255) rperesenting colours to use for cose. If NA, a default colour ramp will be used, based on colorRamps::matlab.like
+# col:        a vector (length=255) rperesenting colours to use for displaying cost. If NA, a default colour ramp will be used, based on colorRamps::matlab.like
 # add.legend: logical representing whether or not to inlude the legend.  If TRUE, the legend will be added. If FALSE, no legend will be added
 plot.scenario <- function(outPath,cost.rast,landings=NA,landings.poly=NA,main=NA,col=NA,add.legend=T){
           rast <- cost.rast
