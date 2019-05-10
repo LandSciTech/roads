@@ -21,6 +21,7 @@ CLUS.mst.roads[c(1:25)[-c(6:9,15,17,18,20,21,23,24)]] <- 1   # expected results 
 landings <- roads::CLUSexample$landings
 cost     <- roads::CLUSexample$cost
 roads    <- roads::CLUSexample$roads
+
 pR.snap.roads <- roads::projectRoads(landings=landings, cost=cost, roads=roads, roadMethod="snap", plotRoads=T, sim=list())$roads
 pR.snap.roads[pR.snap.roads>0] <- 1
 pR.lcp.roads  <- roads::projectRoads(landings=landings, cost=cost, roads=roads, roadMethod="lcp",  plotRoads=T, sim=list())$roads
@@ -29,6 +30,7 @@ pR.mst.roads  <- roads::projectRoads(landings=landings, cost=cost, roads=roads, 
 pR.mst.roads[pR.mst.roads>0]   <- 1
 ###############################################
 # perform tests
+#TO DO: fix snap
 testthat::test_that("Projected roads results match CLUS example results for the 'snap' method",{
   testthat::expect_true(raster::all.equal(CLUS.snap.roads,pR.snap.roads,showwarning=FALSE))
 })
