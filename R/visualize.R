@@ -52,7 +52,6 @@
 #' visualize(scen$cost.rast,landings,pr) # visualize results
 #'# zoom in on the lower left corner
 #' visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,35))
-#'
 #' @rdname visualize
 #' @export
 visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main='',xlim=NA,ylim=NA,out.file=NA){
@@ -376,4 +375,6 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     z<-dev.off()
   }
 }
+
+
 
