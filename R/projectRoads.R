@@ -150,7 +150,11 @@ setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings
     #landings=sC
     #landings = raster::subset(raster::rasterize(landings,cost),1)
     cco = landings@coords
-    cco=cbind(cco,landings@data$ID)
+    if(is.element("data",slotNames(landings))){
+      cco=cbind(cco,landings@data$ID)
+    }else{
+      cco = cbind(cco,seq(1,nrow(cco)))
+    }
     dimnames(cco)[[2]][3]="layer"
     return(projectRoads(landings=cco,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
 })
