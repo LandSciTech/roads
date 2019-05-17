@@ -1,4 +1,4 @@
-#' Visualize roads projection input scenario and, optionally, output. 
+#' Visualize roads projection input scenario and, optionally, output.
 #'
 #' @details
 #' some details...
@@ -9,15 +9,15 @@
 #' If NA or NULL, landing locations will not be inculuded in the visualization.
 #' @param projRoadsResults NA, NULL, or one of the following return types from projectRoads:  list or RasterBrick.
 #' If NA or NULL, projected roads will not be inculuded in the visualization.
-#' @param col.cost A vector of colours (as returned by a colour palette). Represents colours for displaying cost. 
+#' @param col.cost A vector of colours (as returned by a colour palette). Represents colours for displaying cost.
 #' If NA or NULL, a default colour palette will be used, based on colorRamps::matlab.like.
 #' @param main Character. The main title for the visualization.
-#' @param xlim An integer vector of length 2 representing the minumum[0] and maximum[1] of the range (in the x direction) of the cost raster that 
+#' @param xlim An integer vector of length 2 representing the minumum[0] and maximum[1] of the range (in the x direction) of the cost raster that
 #' is to be shown. If NA or NULL, the full range of the cost raster will be shown in the x direction.
-#' @param ylim An integer vector of length 2 representing the minumum[0] and maximum[1] of the range (in the y direction) of the cost raster that 
-#' is to be shown. If NA or NULL, the full range of the cost raster will be shown in the y direction. 
+#' @param ylim An integer vector of length 2 representing the minumum[0] and maximum[1] of the range (in the y direction) of the cost raster that
+#' is to be shown. If NA or NULL, the full range of the cost raster will be shown in the y direction.
 #' @param out.file A character representing the path to an output image file.  If NA or NULL, the visualization will be generated in a new graphics
-#' device. If a path to a file is provided, an image file will be generated at the specified location, containing the visualization. Supported file types are .png, 
+#' device. If a path to a file is provided, an image file will be generated at the specified location, containing the visualization. Supported file types are .png,
 #' .jpg, .bmp, .tif, .pdf.
 #' @examples
 #' scen <- demoScen[[1]] # demonstration scenario 1
@@ -26,38 +26,39 @@
 #' # project roads
 #' pr <- projectRoads(landings,scen$cost.rast,scen$cost.rast==0,roadMethod='mst')
 #' # visualize both the input scenario and the projected roads
-#' visualize(scen$cost.rast,landings,pr,main='Scenario 1: Landing sets 1 to 3') 
+#' visualize(scen$cost.rast,landings,pr,main='Scenario 1: Landing sets 1 to 3')
 #' # zoom in on the lower left quadrant
 #' visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,50))
-#' 
-#' 
+#'
+#'
 #' # generate visualization as an image file instead of a new graphics device:
 #' ## set working directory as necessary, e.g. setwd('c:/myOutputFolder')
-#' visualize(scen$cost.rast,landings,pr,main='Scenario 1',out.file='myVisualization.png') 
-#' 
-#' 
+#' visualize(scen$cost.rast,landings,pr,main='Scenario 1',out.file='myVisualization.png')
+#'
+#'
 #' scen <- demoScen[[2]] # demonstration scenario 2
 #' landings <- scen$landings.poly # use landing polygons
 #' # project roads and visualize
 #' pr <- projectRoads(landings,scen$cost.rast,scen$cost.rast==0,roadMethod='mst')
 #' visualize(scen$cost.rast,landings,pr,main='Scenario 2: Polygonal landings')
-#' 
-#' 
+#'
+#'
 #' scen <- demoScen[[3]] # demonstration scenario 3
 #' visualize(scen$cost.rast) # visualize just the cost raster and existing roads network
 #' # use landing sets 1 to 4 of the landings RasterStack for multi-temporal roads projection
-#' landings <- scen$landings.stack[[1:4]] 
+#' landings <- scen$landings.stack[[1:4]]
 #' # project roads and visualize
 #' pr <- projectRoads(landings,scen$cost.rast,scen$cost.rast==0,roadMethod='mst')
 #' visualize(scen$cost.rast,landings,pr) # visualize results
 #'# zoom in on the lower left corner
 #' visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,35))
-#' 
+#'
 #' @rdname visualize
+#' @export
 visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main='',xlim=NA,ylim=NA,out.file=NA){
   graphics.off()
   #########################
-  ### CHECK AND ADJUST INPUTS 
+  ### CHECK AND ADJUST INPUTS
   ## set NULL inputs to NA
   if (is.null(landings)){landings<-NA}
   if (is.null(projRoadsResults)){projRoadsResults<-NA}
@@ -225,7 +226,7 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
              ' If a list, it should contain an component named \'roads\'.')
       }
       roads <- projRoadsResults$roads > 0 # new roads
-    }else{ 
+    }else{
       ## otherwise, it is a RasterLayer
       if (raster::dataType(projRoadsResults)!='LOG1S'){
         # if not a logical RasterLayer, assume it is an integer RasterLayer, where values > 0 represent new roads,
