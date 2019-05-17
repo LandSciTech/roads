@@ -27,22 +27,24 @@ A demonstration set of scenarios that can be used as input to \code{\link{projec
 library(raster) # load the raster package
 
 ####### Use of demoScen (scenario 1) in projectRoads method
+scen <- demoScen[[1]]
 ## using landing points, set 4
-landings <- subset(demoScen[[1]]$landings.points,subset=demoScen[[1]]$landings.points$set==4)
-pr <- projectRoads(landings,demoScen[[1]]$cost.rast,demoScen[[1]]$cost.rast==0,roadMethod='mst')
+landings <- subset(scen$landings.points,subset=scen$landings.points$set==4)
+pr <- projectRoads(landings,scen$cost.rast,scen$cost.rast==0,roadMethod='mst')
+visualize(scen$cost.rast,landings,pr,main='demoScen[[1]], points set 4 results')
 ## using landing points, sets 3, 5, and 10
-landings <- subset(demoScen[[1]]$landings.points,subset=demoScen[[1]]$landings.points$set\%in\%c(3,5,10))
-pr <- projectRoads(landings,demoScen[[1]]$cost.rast,demoScen[[1]]$cost.rast==0,roadMethod='mst')
-visualize(demoScen[[1]]$cost.rast,landings,pr)
+landings <- subset(scen$landings.points,subset=scen$landings.points$set\%in\%c(3,5,10))
+pr <- projectRoads(landings,scen$cost.rast,scen$cost.rast==0,roadMethod='mst')
+visualize(scen$cost.rast,landings,pr,main='demoScen[[1]], points sets 3, 5, and 10 results')
 ## using landing polygons
-pr <- projectRoads(scen01$landings.poly,scen01$cost.rast,scen01$cost.rast==0,roadMethod='mst')
-visualize(scen01$cost.rast,scen01$landings.poly,pr)
-## using landings RasterStack, sets 1 to 5  
-pr <- projectRoads(scen01$landings.stack[[1:5]],scen01$cost.rast,scen01$cost.rast==0,roadMethod='mst')
-visualize(scen01$cost.rast,scen01$landings.stack[[1:5]],pr)
+pr <- projectRoads(scen$landings.poly,scen$cost.rast,scen$cost.rast==0,roadMethod='mst')
+visualize(scen$cost.rast,scen$landings.poly,pr,main='demoScen[[1]], polygonal landings results')
+## using landings RasterStack, sets 1 to 5
+pr <- projectRoads(scen$landings.stack[[1:5]],scen$cost.rast,scen$cost.rast==0,roadMethod='mst')
+visualize(scen$cost.rast,scen$landings.stack[[1:5]],pr,main='demoScen[[1]], RasterStack sets 1 to 5 results')
 ## using complete landings RasterStack
-pr <- projectRoads(scen01$landings.stack,scen01$cost.rast,scen01$cost.rast==0,roadMethod='mst')
-visualize(scen01$cost.rast,scen01$landings.stack,pr)
+pr <- projectRoads(scen$landings.stack,scen$cost.rast,scen$cost.rast==0,roadMethod='mst')
+visualize(scen$cost.rast,scen$landings.stack,pr,main='demoScen[[1]], compete RasterStack results')
 
 ####### Scenario 1
 visualize(demoScen[[1]]$cost.rast,demoScen[[1]]$landings.points,main='demoScen[[1]], point sets')
