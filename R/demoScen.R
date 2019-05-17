@@ -24,41 +24,53 @@
 #'
 #' library(raster) # load the raster package
 #'
-#' scen <- roads::demoScen[[1]] # demo scenario 1
-#'
-#' # landing points, set 1
-#' landings <- subset(scen$landings.points,subset=scen$landings.points$set==1)
-#' visualize(scen$cost.rast,scenlandings)
-#'
-#'
-#'
-#'
-#' ##### roads to point landings
-#' landings.1 <- scen$landings.points[scen$landings.points$set==1,] # landings set 1 of demo scenario 1
-#' projRoadsResults <- roads::projectRoads(landings = landings.1,
-#'                                         cost = scen$cost.rast,
-#'                                         roads = scen$road.rast,
-#'                                         roadMethod = "lcp") # project roads using least-cost path method
-#' newRoads <- projRoadsResults$roads > 0 # get projected roads as a logical RasterLayer
-#' # visualize
-#' newRoads[!newRoads] <- NA
-#' newRoads[scen$cost.rast==0] <- NA
-#' plot(scen$cost.rast,col=c("black",colorRamps::matlab.like(255+50+50)[50:(50+255)]))
-#' plot(newRoads,col="grey50",add=T,legend=F)
-#' points(landings.1,pch=21,cex=2,bg="white")
-#'
-#' ##### roads to polygonal landings
-#' landings.poly <- scen$landings.poly
-#' projRoadsResults2 <- roads::projectRoads(landings = landings.poly,
-#'                                          cost = scen$cost.rast,
-#'                                          roads = scen$road.rast,
-#'                                          roadMethod = "lcp") # project roads using least-cost path method
-#' newRoads2 <- projRoadsResults2$roads > 0 # get projected roads as a logical RasterLayer
-#' # visualize roads to landing points
-#' newRoads2[!newRoads2] <- NA
-#' newRoads2[scen$cost.rast==0] <- NA
-#' plot(scen$cost.rast,col=c("black",colorRamps::matlab.like(255+50+50)[50:(50+255)]))
-#' plot(newRoads2,col="grey50",add=T,legend=F)
-#' plot(landings.poly,density=20,add=TRUE)
-#'
+#' ####### Use of demoScen (scenario 1) in projectRoads method
+#' ## using landing points, set 4
+#' landings <- subset(demoScen[[1]]$landings.points,subset=demoScen[[1]]$landings.points$set==4)
+#' pr <- projectRoads(landings,demoScen[[1]]$cost.rast,demoScen[[1]]$cost.rast==0,roadMethod='mst')
+#' ## using landing points, sets 3, 5, and 10
+#' landings <- subset(demoScen[[1]]$landings.points,subset=demoScen[[1]]$landings.points$set%in%c(3,5,10))
+#' pr <- projectRoads(landings,demoScen[[1]]$cost.rast,demoScen[[1]]$cost.rast==0,roadMethod='mst')
+#' visualize(demoScen[[1]]$cost.rast,landings,pr)
+#' ## using landing polygons
+#' pr <- projectRoads(scen01$landings.poly,scen01$cost.rast,scen01$cost.rast==0,roadMethod='mst')
+#' visualize(scen01$cost.rast,scen01$landings.poly,pr)
+#' ## using landings RasterStack, sets 1 to 5  
+#' pr <- projectRoads(scen01$landings.stack[[1:5]],scen01$cost.rast,scen01$cost.rast==0,roadMethod='mst')
+#' visualize(scen01$cost.rast,scen01$landings.stack[[1:5]],pr)
+#' ## using complete landings RasterStack
+#' pr <- projectRoads(scen01$landings.stack,scen01$cost.rast,scen01$cost.rast==0,roadMethod='mst')
+#' visualize(scen01$cost.rast,scen01$landings.stack,pr)
+#' 
+#' ####### Scenario 1
+#' visualize(demoScen[[1]]$cost.rast,demoScen[[1]]$landings.points,main='demoScen[[1]], point sets')
+#' visualize(demoScen[[1]]$cost.rast,demoScen[[1]]$landings.poly,main='demoScen[[1]], polygons')
+#' ####### Scenario 2
+#' visualize(demoScen[[2]]$cost.rast,demoScen[[2]]$landings.points,main='demoScen[[2]], point sets')
+#' visualize(demoScen[[2]]$cost.rast,demoScen[[2]]$landings.poly,main='demoScen[[2]], polygons')
+#' ####### Scenario 3
+#' visualize(demoScen[[3]]$cost.rast,demoScen[[3]]$landings.points,main='demoScen[[3]], point sets')
+#' visualize(demoScen[[3]]$cost.rast,demoScen[[3]]$landings.poly,main='demoScen[[3]], polygons')
+#' ####### Scenario 4
+#' visualize(demoScen[[4]]$cost.rast,demoScen[[4]]$landings.points,main='demoScen[[4]], point sets')
+#' visualize(demoScen[[4]]$cost.rast,demoScen[[4]]$landings.poly,main='demoScen[[4]], polygons')
+#' ####### Scenario 5
+#' visualize(demoScen[[5]]$cost.rast,demoScen[[5]]$landings.points,main='demoScen[[5]], point sets')
+#' visualize(demoScen[[5]]$cost.rast,demoScen[[5]]$landings.poly,main='demoScen[[5]], polygons')
+#' ####### Scenario 6
+#' visualize(demoScen[[6]]$cost.rast,demoScen[[6]]$landings.points,main='demoScen[[6]], point sets')
+#' visualize(demoScen[[6]]$cost.rast,demoScen[[6]]$landings.poly,main='demoScen[[6]], polygons')
+#' ####### Scenario 7
+#' visualize(demoScen[[7]]$cost.rast,demoScen[[7]]$landings.points,main='demoScen[[7]], point sets')
+#' visualize(demoScen[[7]]$cost.rast,demoScen[[7]]$landings.poly,main='demoScen[[7]], polygons')
+#' ####### Scenario 8
+#' visualize(demoScen[[8]]$cost.rast,demoScen[[8]]$landings.points,main='demoScen[[8]], point sets')
+#' visualize(demoScen[[8]]$cost.rast,demoScen[[8]]$landings.poly,main='demoScen[[8]], polygons')
+#' ####### Scenario 9
+#' visualize(demoScen[[9]]$cost.rast,demoScen[[9]]$landings.points,main='demoScen[[9]], point sets')
+#' visualize(demoScen[[9]]$cost.rast,demoScen[[9]]$landings.poly,main='demoScen[[9]], polygons')
+#' ####### Scenario 10
+#' visualize(demoScen[[10]]$cost.rast,demoScen[[10]]$landings.points,main='demoScen[[10]], point sets')
+#' visualize(demoScen[[10]]$cost.rast,demoScen[[10]]$landings.poly,main='demoScen[[10]], polygons')
+#' 
 "demoScen"
