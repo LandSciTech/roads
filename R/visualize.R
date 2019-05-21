@@ -55,6 +55,7 @@
 #' visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,35))
 #' @rdname visualize
 #' @export
+#' 
 visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main='',xlim=NA,ylim=NA,height=15,out.file=NA){
   graphics.off()
   #########################
@@ -93,6 +94,7 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
       }
     }
   }
+  spatialSubsetting <- FALSE # indicates whether spatial subsetting of the extent will occur for display
   ## prepare and check xlim and ylim
   if (any(is.na(xlim))){
     xlim<-c(costRast@extent@xmin,costRast@extent@xmax)
@@ -100,8 +102,15 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     if (length(xlim)!=2){
       stop('xlim should be NA, or a numerical vector of length 2.')
     }
-    if(xlim[1]<costRast@extent@xmin){xlim[1]<-costRast@extent@xmin}
-    if(xlim[2]>costRast@extent@xmax){xlim[2]<-costRast@extent@xmax}
+    if(xlim[1]>costRast@extent@xmin | xlim[1]<costRast@extent@xmin){
+      spatialSubsetting <- TRUE # spatial subsetting of the extent will occur for display
+    }
+    if(xlim[1]<costRast@extent@xmin){
+      xlim[1]<-costRast@extent@xmin
+      }
+    if(xlim[2]>costRast@extent@xmax){
+      xlim[2]<-costRast@extent@xmax
+      }
   }
   if (any(is.na(ylim))){
     ylim<-c(costRast@extent@ymin,costRast@extent@ymax)
@@ -109,8 +118,15 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     if (length(ylim)!=2){
       stop('ylim should be NA, or a numerical vector of length 2.')
     }
-    if(ylim[1]<costRast@extent@ymin){ylim[1]<-costRast@extent@ymin}
-    if(ylim[2]>costRast@extent@ymax){ylim[2]<-costRast@extent@ymax}
+    if(ylim[1]>costRast@extent@ymin | ylim[2]<costRast@extent@ymax){
+      spatialSubsetting <- TRUE # spatial subsetting of the extent will occur for display
+    }
+    if(ylim[1]<costRast@extent@ymin){
+      ylim[1]<-costRast@extent@ymin
+      }
+    if(ylim[2]>costRast@extent@ymax){
+      ylim[2]<-costRast@extent@ymax
+      }
   }
   ## landings prep (prepped landings called 'land')
   if (is(landings,'SpatialPointsDataFrame')){
@@ -195,7 +211,6 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
       grDevices::pdf(out.file,height=dev.height.in,width=dev.width.in)
     }
   }else{
-    #grDevices::dev.new(height=dev.height.cm,width=dev.width.cm,units='cm',noRStudioGD=T)
     grDevices::dev.new(height=dev.height.in,width=dev.width.in,noRStudioGD=T)
   }
   lyt <- graphics::layout(lyt.mat) ## apply layout
@@ -214,15 +229,27 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   rastNoZero[rastNoZero==0] <- NA
   ## get range of cost values
   cost.range <- c(raster::minValue(rastNoZero),raster::maxValue(rastNoZero))
-  ## plot cost raster, with existing roads excluded
-  raster::image(rastNoZero,axes=F,xlim=xlim,ylim=ylim,col=col.cost,
-                breaks=seq(cost.range[1],cost.range[2],diff(cost.range)/length(col.cost)),
-                xlab=NA,ylab=NA,main=NA,xpd=F)
+  if (spatialSubsetting){
+    ## spatially subset rastNoZero to xlim and ylim and display
+    ## subsetting is done to avoid memory error when using raster::image with small xlim/ylim extent relative to full image extent
+    ylim.rows <- raster::rowFromY(rastNoZero,c(ylim[1]+1,ylim[2]))
+    xlim.cols <- raster::colFromX(rastNoZero,c(xlim[1],xlim[2]-1))
+    rastNoZero.display <- raster::raster(x=matrix(rastNoZero[ylim.rows[2]:ylim.rows[1],xlim.cols[1]:xlim.cols[2]],
+                                                  byrow=T,ncol=abs(diff(xlim.cols))+1),
+                                         xmn=xlim[1],xmx=xlim[2],ymn=ylim[1],ymx=ylim[2],crs=costRast@crs)
+    raster::image(rastNoZero.display,axes=F,col=col.cost,
+                  breaks=seq(cost.range[1],cost.range[2],diff(cost.range)/length(col.cost)),
+                  xlab=NA,ylab=NA,main=NA,xpd=F)
+  }else{
+    raster::image(rastNoZero,axes=F,col=col.cost,breaks=seq(cost.range[1],cost.range[2],diff(cost.range)/length(col.cost)),
+                  xlab=NA,ylab=NA,main=NA,xpd=F)
+  }
+  box()
   ## axes
-  xTicks <- graphics::axTicks(1)[graphics::axTicks(1)>=costRast@extent@xmin &graphics::axTicks(1)<=costRast@extent@xmax]
-  yTicks <- graphics::axTicks(2)[graphics::axTicks(2)>=costRast@extent@ymin &graphics::axTicks(2)<=costRast@extent@ymax]
+  xTicks <- graphics::axTicks(1)[graphics::axTicks(1)>=costRast@extent@xmin & graphics::axTicks(1)<=costRast@extent@xmax]
+  yTicks <- graphics::axTicks(2)[graphics::axTicks(2)>=costRast@extent@ymin & graphics::axTicks(2)<=costRast@extent@ymax]
   graphics::axis(1,at=xTicks,labels=xTicks,pos=ylim[1],padj=-1+dev.height.ratio,cex.axis=cex.rast.axis,xpd=T) # bottom axis
-  graphics::axis(3,at=xTicks,labels=xTicks,pos=ylim[2],padj=1-dev.height.ratio,cex.axis=cex.rast.axis,xpd=T)   # top axis
+  graphics::axis(3,at=xTicks,labels=xTicks,pos=ylim[2],padj=1-dev.height.ratio,cex.axis=cex.rast.axis,xpd=T)  # top axis
   graphics::axis(2,at=yTicks,labels=yTicks,pos=xlim[1],las=1,cex.axis=cex.rast.axis,xpd=T)    # left axis
   graphics::axis(4,at=yTicks,labels=yTicks,pos=xlim[2],las=1,cex.axis=cex.rast.axis,xpd=T)    # right axis
   #########################
@@ -254,7 +281,16 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
       raster::image(roads,add=T,col=col.newRoad.single)
       roads <- costRast==0 # original roads
       roads[!roads] <- NA
-      raster::image(roads,add=T,col=col.roads.original)
+      if (spatialSubsetting){
+        # subset roads to xlim,xlim and display
+        roads.display <- raster::raster(x=matrix(roads[ylim.rows[2]:ylim.rows[1],xlim.cols[1]:xlim.cols[2]],
+                                                 byrow=T,ncol=abs(diff(xlim.cols))+1),
+                                        xmn=xlim[1],xmx=xlim[2],ymn=ylim[1],ymx=ylim[2],crs=costRast@crs)
+        # suppressWarnings used for case where warning is raised when no roads are present in the given xlim/ylim
+        suppressWarnings(raster::image(roads.display,add=T,col=col.roads.original))
+      }else{
+        raster::image(roads,add=T,col=col.roads.original)
+      }
     }else{
       stop('Unexpected input.  projRoadsResults should be specified as ',
            'the object returned by roads::projectRoads.')
@@ -265,12 +301,30 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
                             crs=raster::crs(costRast))
     nlayers <- raster::nlayers(projRoadsResults)
     for (i in nlayers:1){roads[projRoadsResults[[i]]]<-i}
-    raster::image(roads,col=c(col.roads.original,col.newRoad.multi),add=T)
+    if (spatialSubsetting){
+      # subset roads to xlim,xlim and display
+      roads.display <- raster::raster(x=matrix(roads[ylim.rows[2]:ylim.rows[1],xlim.cols[1]:xlim.cols[2]],
+                                               byrow=T,ncol=abs(diff(xlim.cols))+1),
+                                      xmn=xlim[1],xmx=xlim[2],ymn=ylim[1],ymx=ylim[2],crs=costRast@crs)
+      # suppressWarnings used for case where warning is raised when no roads are present in the given xlim/ylim
+      suppressWarnings(raster::image(roads.display,col=c(col.roads.original,col.newRoad.multi),add=T))
+    }else{
+      raster::image(roads,col=c(col.roads.original,col.newRoad.multi),add=T)
+    }
   }else if (is.na(projRoadsResults)){
     ## no projectRoads results, just plot existing roads (value of 0 in the cost raster)
     roads <- costRast==0 # existing roads
     roads[!roads] <- NA  # set non-roads to NA
-    raster::image(roads,col=col.roads.original,add=T)
+    if (spatialSubsetting){
+      # subset roads to xlim,xlim and display
+      roads.display <- raster::raster(x=matrix(roads[ylim.rows[2]:ylim.rows[1],xlim.cols[1]:xlim.cols[2]],
+                                               byrow=T,ncol=abs(diff(xlim.cols))+1),
+                                      xmn=xlim[1],xmx=xlim[2],ymn=ylim[1],ymx=ylim[2],crs=costRast@crs)
+      # suppressWarnings used for case where warning is raised when no roads are present in the given xlim/ylim
+      suppressWarnings(raster::image(roads.display,col=col.roads.original,add=T))
+    }else{
+      raster::image(roads,col=col.roads.original,add=T)
+    }
   }
   #########################
   ## MAIN PLOT: TITLE
@@ -280,12 +334,12 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   #########################
   ### MAIN PLOT: LANDING LOCATIONS
   if (is(land,'SpatialPointsDataFrame')){
-    graphics::points(land,cex=cex.land.pnts,pch=land.pch,bg=land.bg,xpd=T)
+    graphics::points(land,cex=cex.land.pnts,pch=land.pch,bg=land.bg,xpd=!spatialSubsetting)
     if ('set'%in%names(land)){
-      graphics::text(land@coords,labels=land$set,font=2,adj=c(0.5,0.3),xpd=T)
+      graphics::text(land@coords,labels=land$set,font=2,adj=c(0.5,0.3),xpd=!spatialSubsetting)
     }
   }else if (is(land,'SpatialPolygonsDataFrame')){
-    sp::plot(land,add=T,density=density.land.poly,xpd=T)
+    sp::plot(land,add=T,density=density.land.poly,xpd=F)
   }
   ######################
   ### LEGEND PREPARATION
