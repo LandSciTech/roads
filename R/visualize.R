@@ -29,11 +29,12 @@
 #' visualize(scen$cost.rast,landings,pr,main='Scenario 1: Landing sets 1 to 3')
 #' # zoom in on the lower left quadrant
 #' visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,50))
-#'
+#' # generate the same visualization as above, but with a window that is 20 cm hight (monitor permitting)
+#' visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,50),height=20)
 #'
 #' # generate visualization as an image file instead of a new graphics device:
 #' ## set working directory as necessary, e.g. setwd('c:/myOutputFolder')
-#' visualize(scen$cost.rast,landings,pr,main='Scenario 1',out.file='myVisualization.png')
+#' visualize(scen$cost.rast,landings,pr,main='Scenario 1',height=20,out.file='myVisualization.png')
 #'
 #'
 #' scen <- demoScen[[2]] # demonstration scenario 2
@@ -54,7 +55,7 @@
 #' visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,35))
 #' @rdname visualize
 #' @export
-visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main='',xlim=NA,ylim=NA,out.file=NA){
+visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main='',xlim=NA,ylim=NA,height=15,out.file=NA){
   graphics.off()
   #########################
   ### CHECK AND ADJUST INPUTS
@@ -63,8 +64,11 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   if (is.null(projRoadsResults)){projRoadsResults<-NA}
   if (is.null(col.cost)){col.cost<-NA}
   if (is.null(xlim)){xlim<-NA}
-  if (is.null(ylim)){ylim<-NA}
+  if (is.null(ylim)){ylim<-NA}  
   if (is.null(out.file)){out.file<-NA}
+  ## default heightof 12 cm
+  if (is.null(height)){height<-15}
+  if (is.na(height)){height<-15}
   # if user entered NULL or NA for main, use the default ''
   if (is.null(main)){
     main <- ''
@@ -140,10 +144,12 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   #########################
   ### TEXT SIZE / SYMBOLS / SPACING ADJUSTMENT
   ## text size and symmbol settings
-  dev.height.cm <- 10 ## graphics display height (in cm). Will be multiplied by 2.5 if plotting to out.file
-  cex.main <- 2      ## text size magnification for the main title
-  cex.rast.axis <- 1 ## text size magnification for raster axes labels
-  cex.leg.mainlabels <- 2 ## text size magnification for labels in the legend
+  ## graphics display height (in cm). Will be multiplied by 2.5 if plotting to out.file
+  dev.height.in <- height*0.393701
+  dev.height.ratio <- dev.height.in/10
+  cex.main <- 2*dev.height.ratio      ## text size magnification for the main title
+  cex.rast.axis <- 1*dev.height.ratio*1.5 ## text size magnification for raster axes labels
+  cex.leg.mainlabels <- 2*dev.height.ratio ## text size magnification for labels in the legend
   col.roads.original <- 'black'  ## colour for original roads
   col.newRoad.single <- 'grey50' ## colour for new roads, when there is a single time point
   if (is(projRoadsResults,'RasterBrick')){
@@ -173,29 +179,34 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   lyt.mat[,(ncol(lyt.mat)-11):ncol(lyt.mat)] <- 2
   lyt.mat[1:4,] <- 3
   lyt.mat[(nrow(lyt.mat)-2):nrow(lyt.mat),] <- 6
-  dev.width.cm <- (dev.height.cm*1.24)-(1-xTOy)*(43/50)*dev.height.cm
+  dev.width.in <- (dev.height.in*1.24)-(1-xTOy)*(43/50)*dev.height.in
   ### graphics device, based on user-specification for out.file
   if(!is.na(out.file)){
     ext <- utils::tail(strsplit(out.file,'\\.')[[1]],1)
     if (ext=='png'){
-      grDevices::png(out.file,height=dev.height.cm*2.5,width=dev.width.cm*2.5,units='cm',res=300)
+      grDevices::png(out.file,height=dev.height.in,width=dev.width.in,units='in',res=300)
     }else if (ext=='jpg'){
-      grDevices::jpeg(out.file,height=dev.height.cm*2.5,width=dev.width.cm*2.5,units='cm',res=300)
+      grDevices::jpeg(out.file,height=dev.height.in,width=dev.width.in,units='in',res=300)
     }else if (ext=='bmp'){
-      grDevices::bmp(out.file,height=dev.height.cm*2.5,width=dev.width.cm*2.5,units='cm',res=300)
+      grDevices::bmp(out.file,height=dev.height.in,width=dev.width.in,units='in',res=300)
     }else if (ext=='tif'){
-      grDevices::tiff(out.file,height=dev.height.cm*2.5,width=dev.width.cm*2.5,units='cm',res=300)
+      grDevices::tiff(out.file,height=dev.height.in,width=dev.width.in,units='in',res=300)
     }else if (ext=='pdf'){
-      grDevices::pdf(out.file,height=dev.height.cm*2.5*0.393701,width=dev.width.cm*2.5*0.393701)
+      grDevices::pdf(out.file,height=dev.height.in,width=dev.width.in)
     }
   }else{
-    grDevices::dev.new(height=dev.height.cm,width=dev.width.cm,units='cm',noRStudioGD=T)
+    #grDevices::dev.new(height=dev.height.cm,width=dev.width.cm,units='cm',noRStudioGD=T)
+    grDevices::dev.new(height=dev.height.in,width=dev.width.in,noRStudioGD=T)
   }
   lyt <- graphics::layout(lyt.mat) ## apply layout
   #########################
   ### MAIN PLOT PREPARATION
   graphics::par(xaxs='i',yaxs='i')
-  graphics::par(mar=c(0,0,0,0))
+  if(dev.height.ratio<0){
+    graphics::par(mar=c(rep(2-2*dev.height.ratio,2),rep(3-3*dev.height.ratio,2)))
+  }else{
+    graphics::par(mar=c(1,1,2,2))
+  }
   #########################
   ### MAIN PLOT: COST RASTER
   ## get copy of cost raster with existing roads excluded
@@ -210,8 +221,8 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   ## axes
   xTicks <- graphics::axTicks(1)[graphics::axTicks(1)>=costRast@extent@xmin &graphics::axTicks(1)<=costRast@extent@xmax]
   yTicks <- graphics::axTicks(2)[graphics::axTicks(2)>=costRast@extent@ymin &graphics::axTicks(2)<=costRast@extent@ymax]
-  graphics::axis(1,at=xTicks,labels=xTicks,pos=ylim[1],padj=0.5,cex.axis=cex.rast.axis,xpd=T) # bottom axis
-  graphics::axis(3,at=xTicks,labels=xTicks,pos=ylim[2],padj=0,cex.axis=cex.rast.axis,xpd=T)   # top axis
+  graphics::axis(1,at=xTicks,labels=xTicks,pos=ylim[1],padj=-1+dev.height.ratio,cex.axis=cex.rast.axis,xpd=T) # bottom axis
+  graphics::axis(3,at=xTicks,labels=xTicks,pos=ylim[2],padj=1-dev.height.ratio,cex.axis=cex.rast.axis,xpd=T)   # top axis
   graphics::axis(2,at=yTicks,labels=yTicks,pos=xlim[1],las=1,cex.axis=cex.rast.axis,xpd=T)    # left axis
   graphics::axis(4,at=yTicks,labels=yTicks,pos=xlim[2],las=1,cex.axis=cex.rast.axis,xpd=T)    # right axis
   #########################
@@ -261,9 +272,10 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     roads[!roads] <- NA  # set non-roads to NA
     raster::image(roads,col=col.roads.original,add=T)
   }
-  ## main title
+  #########################
+  ## MAIN PLOT: TITLE
   if(nchar(main)>0){
-    mtext(main,side=3,padj=-3/cex.main,cex=cex.main)
+    mtext(main,side=3,padj=-(4/cex.main)*dev.height.ratio,cex=cex.main)
   }
   #########################
   ### MAIN PLOT: LANDING LOCATIONS
@@ -284,25 +296,26 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   ## LEGEND: COST RASTER
   ## title
   cost.title <- 'Cost'
-  graphics::text(cost.x.left,cost.y.top+text.y.nudge*2,cost.title,adj=c(0,-0.5),cex=cex.leg.mainlabels,xpd=T) # colour ramp title
-  graphics::lines(c(cost.x.left,cost.x.left+strwidth(cost.title,cex=cex.leg.mainlabels)),rep(cost.y.top+text.y.nudge*2.2,2),lwd=2) # underline title
+  graphics::text(cost.x.left,cost.y.top+text.y.nudge*2.5,cost.title,adj=c(0,-0.5),cex=cex.leg.mainlabels,xpd=T) # colour ramp title
+  graphics::lines(c(cost.x.left,cost.x.left+strwidth(cost.title,cex=cex.leg.mainlabels)),rep(cost.y.top+text.y.nudge*2.7,2),
+                  lwd=2*dev.height.ratio) # underline title
   ## colour ramp
   col.n <- length(col.cost)
   z <- sapply(1:col.n,function(x){graphics::rect(cost.x.left,cost.y.bottom+(cost.y.top-cost.y.bottom)/col.n*(x-1),
                                                  cost.x.right,cost.y.bottom+(cost.y.top-cost.y.bottom)/col.n*x,
                                                  col=col.cost[x],border=NA,xpd=T)})
-  graphics::rect(cost.x.left,cost.y.bottom,cost.x.right,cost.y.top,lwd=2,xpd=T) # border around colour ramp
+  graphics::rect(cost.x.left,cost.y.bottom,cost.x.right,cost.y.top,lwd=2*dev.height.ratio,xpd=T) # border around colour ramp
   ## colour ramp ticks and labels
   z <- sapply(pretty(cost.range,5),function(x){if(x>=cost.range[1] & x<=cost.range[2]){
     y.coord <- cost.y.bottom+(cost.y.top-cost.y.bottom)*((x-cost.range[1])/diff(cost.range))
-    graphics::lines(c(cost.x.right,cost.x.right+text.x.nudge),rep(y.coord,2),xpd=T,lwd=2,xpd=T)
+    graphics::lines(c(cost.x.right,cost.x.right+text.x.nudge),rep(y.coord,2),xpd=T,lwd=2*dev.height.ratio,xpd=T)
     graphics::text(x=cost.x.right+text.x.nudge*2,y=y.coord,round(x,2),adj=0,cex=cex.leg.mainlabels,xpd=T)
   }})
-  graphics::text(x=cost.x.left,y=cost.y.bottom-text.y.nudge,round(cost.range[1],2),adj=0,cex=cex.leg.mainlabels,xpd=T)
-  graphics::text(x=cost.x.left,y=cost.y.top+text.y.nudge,round(cost.range[2],2),adj=0,cex=cex.leg.mainlabels,xpd=T)
+  graphics::text(x=cost.x.left,y=cost.y.bottom-text.y.nudge*1.5,round(cost.range[1],2),adj=0,cex=cex.leg.mainlabels,xpd=T)
+  graphics::text(x=cost.x.left,y=cost.y.top+text.y.nudge*1.5,round(cost.range[2],2),adj=0,cex=cex.leg.mainlabels,xpd=T)
   ######################
   ## LEGEND: ROADS
-  roads.y.top <- cost.y.bottom - yspacing.elements
+  roads.y.top <- cost.y.bottom - yspacing.elements*1.25
   if (is(projRoadsResults,'RasterBrick')){
     ## project roads results in the form of a RasterBrick
     n.tsteps <- length(col.newRoad.multi)
@@ -313,16 +326,17 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     ## title
     roads.title <- 'Roads at time t'
     graphics::text(cost.x.left,roads.y.top+text.y.nudge,roads.title,adj=c(0,-0.5),cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
-    graphics::lines(c(cost.x.left,cost.x.left+strwidth(roads.title,cex=cex.leg.mainlabels)),rep(roads.y.top+text.y.nudge*1.2,2),lwd=2) ## underline title
+    graphics::lines(c(cost.x.left,cost.x.left+strwidth(roads.title,cex=cex.leg.mainlabels)),rep(roads.y.top+text.y.nudge*1.2,2),
+                    lwd=2*dev.height.ratio) ## underline title
     ## colour ramp
     z <- sapply(1:(n.tsteps+1),function(x){graphics::rect(cost.x.left,roads.y.bottom+(roads.y.top-roads.y.bottom)/(n.tsteps+1)*(x-1),
                                                           cost.x.right,roads.y.bottom+(roads.y.top-roads.y.bottom)/(n.tsteps+1)*x,
                                                           col=c(col.roads.original,col.newRoad.multi)[x],border=NA,xpd=T)})
-    graphics::rect(cost.x.left,roads.y.bottom,cost.x.right,roads.y.top,lwd=2,xpd=T) ## border around colour ramp
+    graphics::rect(cost.x.left,roads.y.bottom,cost.x.right,roads.y.top,lwd=2*dev.height.ratio,xpd=T) ## border around colour ramp
     # ticks and labels
     z <- sapply(pretty(0:n.tsteps,3),function(x){if (x<=n.tsteps){
       y.coord <- roads.y.bottom+(roads.y.top-roads.y.bottom)*((x+0.5)/(n.tsteps+1))
-      graphics::lines(c(cost.x.right,cost.x.right+text.x.nudge),rep(y.coord,2),xpd=T,lwd=2,xpd=T)
+      graphics::lines(c(cost.x.right,cost.x.right+text.x.nudge),rep(y.coord,2),xpd=T,lwd=2*dev.height.ratio,xpd=T)
       graphics::text(x=cost.x.right+text.x.nudge*2,y=y.coord,labels=paste0('t = ',x),adj=0,cex=cex.leg.mainlabels,xpd=T)
     }})
   }else if(is(projRoadsResults,'list') | is(projRoadsResults,'RasterLayer')){
@@ -331,13 +345,18 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     ## title
     roads.title <- 'Roads'
     graphics::text(cost.x.left,roads.y.top+text.y.nudge,roads.title,adj=c(0,-0.5),cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
-    graphics::lines(c(cost.x.left,cost.x.left+strwidth(roads.title,cex=cex.leg.mainlabels)),rep(roads.y.top+text.y.nudge*1.2,2),lwd=2) ## underline title
+    graphics::lines(c(cost.x.left,cost.x.left+strwidth(roads.title,cex=cex.leg.mainlabels)),rep(roads.y.top+text.y.nudge*1.2,2),
+                    lwd=2*dev.height.ratio) ## underline title
     ## new roads
-    graphics::rect(cost.x.left,roads.y.top-roads.boxheight,cost.x.right,roads.y.top,col=col.newRoad.single,border=T,lwd=2,xpd=T)
-    graphics::text(cost.x.right+text.x.nudge,roads.y.top-roads.boxheight/2,'Projected roads',adj=c(0,0.5),cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
+    graphics::rect(cost.x.left,roads.y.top-roads.boxheight,cost.x.right,roads.y.top,col=col.newRoad.single,border=T,
+                   lwd=2*dev.height.ratio,xpd=T)
+    graphics::text(cost.x.right+text.x.nudge,roads.y.top-roads.boxheight/2,'Projected roads',adj=c(0,0.5),
+                   cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
     ## existing roads
-    graphics::rect(cost.x.left,roads.y.top-roads.boxheight*2.5,cost.x.right,roads.y.top-roads.boxheight*1.5,col=col.roads.original,border=T,lwd=2,xpd=T)
-    graphics::text(cost.x.right+text.x.nudge,roads.y.top-roads.boxheight*2,'Existing roads',adj=c(0,0.5),cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
+    graphics::rect(cost.x.left,roads.y.top-roads.boxheight*2.5,cost.x.right,roads.y.top-roads.boxheight*1.5,
+                   col=col.roads.original,border=T,lwd=2*dev.height.ratio,xpd=T)
+    graphics::text(cost.x.right+text.x.nudge,roads.y.top-roads.boxheight*2,'Existing roads',adj=c(0,0.5),
+                   cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
     ##
     roads.y.bottom <- roads.y.top-roads.boxheight*2.5
   }else if (is.na(projRoadsResults)) {
@@ -345,11 +364,13 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     ## title
     roads.title <- 'Roads'
     graphics::text(cost.x.left,roads.y.top+text.y.nudge,roads.title,adj=c(0,-0.5),cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
-    graphics::lines(c(cost.x.left,cost.x.left+strwidth(roads.title,cex=cex.leg.mainlabels)),rep(roads.y.top+text.y.nudge*1.2,2),lwd=2) ## underline title
+    graphics::lines(c(cost.x.left,cost.x.left+strwidth(roads.title,cex=cex.leg.mainlabels)),rep(roads.y.top+text.y.nudge*1.2,2),
+                    lwd=2*dev.height.ratio) ## underline title
     ## existing roads
-    graphics::rect(cost.x.left,roads.y.top-roads.boxheight,cost.x.right,roads.y.top,col=col.roads.original,border=T,lwd=2,xpd=T)
+    graphics::rect(cost.x.left,roads.y.top-roads.boxheight,cost.x.right,roads.y.top,col=col.roads.original,border=T,
+                   lwd=2*dev.height.ratio,xpd=T)
     graphics::text(cost.x.right+text.x.nudge,roads.y.top-roads.boxheight/2,'Existing roads',adj=c(0,0.5),cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
-    roads.y.bottom <-  roads.y.top-roads.boxheight*2.5
+    roads.y.bottom <-  roads.y.top-roads.boxheight*1.5
   }
   ######################
   ## LEGEND: LANDINGS
@@ -358,7 +379,8 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     ## title
     land.title <- 'Landings'
     graphics::text(cost.x.left,land.y.top+text.y.nudge*1.5,land.title,adj=c(0,-0.5),cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
-    graphics::lines(c(cost.x.left,cost.x.left+strwidth(land.title,cex=cex.leg.mainlabels)),rep(land.y.top+text.y.nudge*1.5*1.2,2),lwd=2) ## underline title
+    graphics::lines(c(cost.x.left,cost.x.left+strwidth(land.title,cex=cex.leg.mainlabels)),rep(land.y.top+text.y.nudge*1.5*1.2,2),
+                    lwd=2*dev.height.ratio) ## underline title
   }
   if (is(land,'SpatialPointsDataFrame')){
     ## landings point
@@ -375,6 +397,5 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     z<-dev.off()
   }
 }
-
 
 

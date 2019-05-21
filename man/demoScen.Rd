@@ -23,10 +23,7 @@ data(demoScen)
 A demonstration set of scenarios that can be used as input to \code{\link{projectRoads}} method.
 }
 \examples{
-
-library(raster) # load the raster package
-
-####### Use of demoScen (scenario 1) in projectRoads method
+#' ####### Use of demoScen (scenario 1) in projectRoads method
 scen <- demoScen[[1]]
 ## using landing points, set 4
 landings <- subset(scen$landings.points,subset=scen$landings.points$set==4)

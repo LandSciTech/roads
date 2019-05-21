@@ -5,7 +5,8 @@
 \title{Visualize roads projection input scenario and, optionally, output.}
 \usage{
 visualize(costRast, landings = NA, projRoadsResults = NA,
-  col.cost = NA, main = "", xlim = NA, ylim = NA, out.file = NA)
+  col.cost = NA, main = "", xlim = NA, ylim = NA, height = 15,
+  out.file = NA)
 }
 \arguments{
 \item{costRast}{A RasterLayer represening the cost of new roads. Existing road network will be identiifed by cells with a cost of zero.}
@@ -48,11 +49,12 @@ pr <- projectRoads(landings,scen$cost.rast,scen$cost.rast==0,roadMethod='mst')
 visualize(scen$cost.rast,landings,pr,main='Scenario 1: Landing sets 1 to 3')
 # zoom in on the lower left quadrant
 visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,50))
-
+# generate the same visualization as above, but with a window that is 20 cm hight (monitor permitting)
+visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,50),height=20)
 
 # generate visualization as an image file instead of a new graphics device:
 ## set working directory as necessary, e.g. setwd('c:/myOutputFolder')
-visualize(scen$cost.rast,landings,pr,main='Scenario 1',out.file='myVisualization.png')
+visualize(scen$cost.rast,landings,pr,main='Scenario 1',height=20,out.file='myVisualization.png')
 
 
 scen <- demoScen[[2]] # demonstration scenario 2
