@@ -67,7 +67,7 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   if (is.null(xlim)){xlim<-NA}
   if (is.null(ylim)){ylim<-NA}  
   if (is.null(out.file)){out.file<-NA}
-  ## default heightof 12 cm
+  ## default heightof 15 cm
   if (is.null(height)){height<-15}
   if (is.na(height)){height<-15}
   # if user entered NULL or NA for main, use the default ''
@@ -87,7 +87,7 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
       # if just a filename specified, use the current working directory
       out.file <- paste0(getwd(),'/',out.file)
     }else{
-      # otherwise, ensute that the specified directory exists. If not, stop and notify user.
+      # otherwise, ensure that the specified directory exists. If not, stop and notify user.
       dir <- paste(utils::head(strsplit(out.file,'/|\\\\')[[1]],-1),collapse='/')
       if(!dir.exists(dir)){
         stop('Could not find directory for output image file:\n             ',dir)
@@ -260,7 +260,7 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
       ## if projRoadsResults is a list returned by roads::projectRoads, get new roads as a logical raster RasterLayer
       if (!('roads'%in%names(projRoadsResults))){
         stop('Unexpected input.  projRoadsResults should be specified as the object returned by roads::projectRoads.',
-             ' If a list, it should contain an component named \'roads\'.')
+             ' If a list, it should contain a component named \'roads\'.')
       }
       roads <- projRoadsResults$roads > 0 # new roads
     }else{
@@ -307,9 +307,10 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
                                                byrow=T,ncol=abs(diff(xlim.cols))+1),
                                       xmn=xlim[1],xmx=xlim[2],ymn=ylim[1],ymx=ylim[2],crs=costRast@crs)
       # suppressWarnings used for case where warning is raised when no roads are present in the given xlim/ylim
-      suppressWarnings(raster::image(roads.display,col=c(col.roads.original,col.newRoad.multi),add=T))
+      suppressWarnings(raster::image(roads.display,col=c(col.roads.original,col.newRoad.multi),
+                                     breaks=0:nlayers,add=T))
     }else{
-      raster::image(roads,col=c(col.roads.original,col.newRoad.multi),add=T)
+      raster::image(roads,col=c(col.roads.original,col.newRoad.multi),breaks=0:nlayers,add=T)
     }
   }else if (is.na(projRoadsResults)){
     ## no projectRoads results, just plot existing roads (value of 0 in the cost raster)
@@ -370,6 +371,7 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   ######################
   ## LEGEND: ROADS
   roads.y.top <- cost.y.bottom - yspacing.elements*1.25
+  roads.boxheight <- 0.04 # box height for roads symbol in legend (for non multi-temporal projections)
   if (is(projRoadsResults,'RasterBrick')){
     ## project roads results in the form of a RasterBrick
     n.tsteps <- length(col.newRoad.multi)
@@ -395,7 +397,6 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     }})
   }else if(is(projRoadsResults,'list') | is(projRoadsResults,'RasterLayer')){
     ## project roads results in the form of a list or RasterLayer
-    roads.boxheight <- 0.04
     ## title
     roads.title <- 'Roads'
     graphics::text(cost.x.left,roads.y.top+text.y.nudge,roads.title,adj=c(0,-0.5),cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
@@ -414,7 +415,6 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
     ##
     roads.y.bottom <- roads.y.top-roads.boxheight*2.5
   }else if (is.na(projRoadsResults)) {
-    roads.boxheight <- 0.04
     ## title
     roads.title <- 'Roads'
     graphics::text(cost.x.left,roads.y.top+text.y.nudge,roads.title,adj=c(0,-0.5),cex=cex.leg.mainlabels,xpd=T) ## colour ramp title
