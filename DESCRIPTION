@@ -1,6 +1,6 @@
 Package: roads
-Title: Forest road network projection methods
-Version: 0.0.0.9000
+Title: road network projection methods
+Version: 0.1.0
 Authors@R: 
     person(given = "Kyle",
            family = "Lochhead",
@@ -10,7 +10,17 @@ Authors@R:
            family = "Hughes",
            role = c("aut", "cre"),
            email = "josie.hughes@canada.ca")
-Description: What the package does (one paragraph).
+    person(given = "Patrick",
+           family = "Kirby",
+           role = c("ctb"))
+    person(given = "Patrick",
+           family = "Kirby",
+           role = c("ctb"))
+    person("Her Majesty the Queen in Right of Canada, as represented by the Minister of Environment and Climate Change,
+           role = "cph")    
+URL:
+    https://github.com/LandSciTech/roads/
+Description: 
 License: Apache v2
 Encoding: UTF-8
 LazyData: true
