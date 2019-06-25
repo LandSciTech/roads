@@ -35,4 +35,7 @@ Imports:
 RoxygenNote: 6.1.1
 Suggests: 
     testthat,
-    colorRamps
+    colorRamps,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
