@@ -330,7 +330,7 @@ for (i in 1:nlayers(multiTime_sim)){
 ```
 
 
-If preparing the your landings is an issue, the same results can also be acheived by chaining calls to the `projectRoads` method, but altering the state of existing roads each time.
+If preparing the your landings as a [`RasterStack`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} or [`RasterBrick`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} object is an issue, the same results can also be acheived by chaining calls to the `projectRoads` method, but altering the state of existing roads, as well as the corresponding cost raster, for each call.
 
 ```{r, fig.show='hold'}
 costRast <- scen$cost.rast
