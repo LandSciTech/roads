@@ -22,7 +22,7 @@
 #' @importFrom sp SpatialPoints
 # @import gdistance
 # @import data.table
-#' @importFrom data.table data.table setDT setnames merge
+#' @importFrom data.table data.table setDT setnames
 # @import igraph
 #' @importFrom igraph graph.edgelist E distances graph_from_adjacency_matrix mst get.edgelist get.shortest.paths edge_attr
 # @import latticeExtra
@@ -69,7 +69,7 @@ roadCLUS.getGraph<- function(sim){
   edges[from < to, c("from", "to") := .(to, from)]
 
   edges<-unique(edges)
-  edges.w1<-data.table::merge(x=edges, y=weight, by.x= "from", by.y ="id") #merge in the weights from a cost surface
+  edges.w1<-merge(x=edges, y=weight, by.x= "from", by.y ="id") #merge in the weights from a cost surface
   data.table::setnames(edges.w1, c("from", "to", "w1")) #reformat
   edges.w2<-data.table::setDT(merge(x=edges.w1, y=weight, by.x= "to", by.y ="id"))#merge in the weights to a cost surface
   data.table::setnames(edges.w2, c("from", "to", "w1", "w2")) #reformat
