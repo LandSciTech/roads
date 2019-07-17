@@ -26,7 +26,8 @@
 # @import igraph
 #' @importFrom igraph graph.edgelist E distances graph_from_adjacency_matrix mst get.edgelist get.shortest.paths edge_attr
 # @import latticeExtra
-#' @import sf
+# @import sf
+#' @importFrom sf st_as_sf st_cast st_buffer
 # @import rgeos
 #' @importFrom rgeos gDistance
 #' @import dplyr
