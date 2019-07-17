@@ -22,7 +22,7 @@
 #' @importFrom sp SpatialPoints
 # @import gdistance
 # @import data.table
-#' @importFrom data.table data.table setDT setnames merge as.matrix
+#' @importFrom data.table data.table setDT setnames merge
 # @import igraph
 #' @importFrom igraph graph.edgelist E distances graph_from_adjacency_matrix mst get.edgelist get.shortest.paths edge_attr
 # @import latticeExtra
@@ -80,8 +80,8 @@ roadCLUS.getGraph<- function(sim){
   edges.weight[, id := seq_len(.N)] #set the ids of the edge list. Faster than using as.integer(row.names())
 
   #------make the graph
-  sim$g<-igraph::graph.edgelist(data.table::as.matrix(edges.weight)[,1:2], dir = FALSE) #create the graph using to and from columns. Requires a matrix input
-  igraph::E(sim$g)$weight<-data.table::as.matrix(edges.weight)[,3]#assign weights to the graph. Requires a matrix input
+  sim$g<-igraph::graph.edgelist(as.matrix(edges.weight)[,1:2], dir = FALSE) #create the graph using to and from columns. Requires a matrix input
+  igraph::E(sim$g)$weight<-as.matrix(edges.weight)[,3]#assign weights to the graph. Requires a matrix input
 
   #------clean up
   rm(edges.w1,edges.w2, edges, weight, ras.matrix)#remove unused objects
