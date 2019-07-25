@@ -16,24 +16,25 @@
 # - Using sim as argument for functions decreases transparency and modularity. Need to dig in to figure what inputs and outputs are. And risk of unintended consequences - function writer is free to mess with anything in sim object.
 # - Not enough metadata. What exactly is landings eg. Raster ok. But how are values interpreted?
 
-#' @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix
+#' @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell
 #' @importFrom sp SpatialPoints
-#' @importFrom data.table data.table setDT setnames
+#' @importFrom data.table data.table := .N setDT setnames
 #' @importFrom igraph graph.edgelist E distances graph_from_adjacency_matrix mst get.edgelist get.shortest.paths edge_attr
 #' @importFrom sf st_as_sf st_cast st_buffer
 #' @importFrom rgeos gDistance
 #' @importFrom fasterize fasterize
+#' @importFrom rlang .data
 #' @import dplyr
 NULL
 
 #' @export
 roadCLUS.analysis <- function(sim){
-  if(!is.element("roadMethod",names(sim))||!(sim$roadMethod == 'snap')){
+  if(!is.element('roadMethod',names(sim))||!(sim$roadMethod == 'snap')){
     ras.out<-sim$costSurface
     ras.out[]<-1:ncell(ras.out)
     ras.out[!(ras.out[] %in% as.matrix(sim$paths.v))] <- NA
     #ras.out<-raster::reclassify(ras.out, c(0.000000000001, maxValue(ras.out),0))
-    if(is.element("roads",names(sim))){
+    if(is.element('roads',names(sim))){
       sim$roads<-raster::merge(ras.out, sim$roads)
     }else{
       sim$roads = ras.out
@@ -58,8 +59,8 @@ roadCLUS.getGraph<- function(sim){
   #------get the adjacency using SpaDES function adj
   edges<-SpaDES.tools::adj(returnDT= TRUE, numCol = ncol(ras.matrix), numCell=ncol(ras.matrix)*nrow(ras.matrix), directions =8, cells = 1:as.integer(ncol(ras.matrix)*nrow(ras.matrix)))
   edges<-data.table::data.table(edges)
-  edges[from < to, c("from", "to") := .(to, from)]
-
+  #edges[from < to, c("from", "to") := .(to, from)]
+  edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]
   edges<-unique(edges)
   edges.w1<-merge(x=edges, y=weight, by.x= "from", by.y ="id") #merge in the weights from a cost surface
   data.table::setnames(edges.w1, c("from", "to", "w1")) #reformat
@@ -152,11 +153,11 @@ roadCLUS.buildSnapRoads <- function(sim){
 
   #remove anything that is a point, rather than a line
   checkPts = as.data.frame(table(unique(coodMatrix)$id))
-  checkPts = subset(checkPts,Freq>1)
+  checkPts = subset(checkPts,checkPts$Freq>1)
   coodMatrix=merge(coodMatrix,data.frame(id=checkPts$Var1))
 
-  mt<-coodMatrix %>% sf::st_as_sf(coords=c("x","y"))%>% dplyr::group_by(id) %>% dplyr::summarize(m=mean(attr_data)) %>% sf::st_cast("LINESTRING")
-  test<-fasterize::fasterize(sf::st_buffer(mt,50),sim$roads, field = "m")
+  mt<-coodMatrix %>% sf::st_as_sf(coords=c('x','y'))%>% dplyr::group_by(id) %>% dplyr::summarize(m=mean(.data$attr_data)) %>% sf::st_cast("LINESTRING")
+  test<-fasterize::fasterize(sf::st_buffer(mt,50),sim$roads, field = 'm')
   sim$roads<-raster::merge(test, sim$roads)
   rm(rdptsXY, landings, mt, coodMatrix, test)
   gc()
@@ -168,10 +169,10 @@ getCentroids<-function(newLandings,withIDs=T){
   cRes = raster::res(newLandings)
   p = raster::as.data.frame(raster::clump(newLandings,gaps=F), xy = TRUE)
   p = p[!is.na(p$clumps),]
-  pointLocs = p %>% dplyr::group_by(clumps) %>% dplyr::summarize(x=mean(x),y=mean(y))
+  pointLocs = p %>% dplyr::group_by(.data$clumps) %>% dplyr::summarize(x=mean(.data$x),y=mean(.data$y))
   pointLocs$x = cRes[1]*round(pointLocs$x/cRes[1])
   pointLocs$y = cRes[2]*round(pointLocs$y/cRes[2])
-  pointLocs = as.data.frame(subset(pointLocs,select=c(x,y,clumps)))
+  pointLocs = as.data.frame(subset(pointLocs,select=c('x','y','clumps')))
   newLandingCentroids = newLandings
   newLandingCentroids[!is.na(newLandingCentroids)]=NA
   cells = raster::cellFromXY(newLandingCentroids,pointLocs[,1:2])
