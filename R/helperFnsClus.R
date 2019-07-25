@@ -30,6 +30,7 @@
 #' @importFrom sf st_as_sf st_cast st_buffer
 # @import rgeos
 #' @importFrom rgeos gDistance
+#' @importFrom fasterize fasterize
 #' @import dplyr
 NULL
 #library(data.table);library(igraph)
@@ -175,14 +176,11 @@ roadCLUS.buildSnapRoads <- function(sim){
 getCentroids<-function(newLandings,withIDs=T){
   cRes = raster::res(newLandings)
   p = raster::as.data.frame(raster::clump(newLandings,gaps=F), xy = TRUE)
-  #p =  data.frame(raster::rasterToPoints(raster::clump(newLandings)))
   p = p[!is.na(p$clumps),]
-  pointLocs = plyr::ddply(p,plyr::.(clumps),plyr::summarize,x=mean(x),y=mean(y))
+  pointLocs = p %>% dplyr::group_by(clumps) %>% dplyr::summarize(x=mean(x),y=mean(y))
   pointLocs$x = cRes[1]*round(pointLocs$x/cRes[1])
-  pointLocs$y=cRes[2]*round(pointLocs$y/cRes[2])
-
-  pointLocs=subset(pointLocs,select=c(x,y,clumps))
-
+  pointLocs$y = cRes[2]*round(pointLocs$y/cRes[2])
+  pointLocs = as.data.frame(subset(pointLocs,select=c(x,y,clumps)))
   newLandingCentroids = newLandings
   newLandingCentroids[!is.na(newLandingCentroids)]=NA
   cells = raster::cellFromXY(newLandingCentroids,pointLocs[,1:2])

@@ -1,3 +1,4 @@
+#' @import spdep
 #' @export
 convertRasterToLineSegments<-function(cMap){
   #warning("Converting linear rasters to line segments. This will work for output from roads::projectRoads(), and raster::rasterize(SpatialLines), but not for rasters in general.")
