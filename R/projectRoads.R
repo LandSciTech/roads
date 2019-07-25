@@ -45,7 +45,7 @@
 #' visualize(scen$cost.rast,land.poly,prRes,height=15)
 
 #' @import methods
-NULL
+"projectRoads"
 
 #' @export
 setGeneric('projectRoads',function(landings,cost=NULL,roads=NULL,roadMethod="mst",plotRoads=T,sim=list()) standardGeneric('projectRoads'))

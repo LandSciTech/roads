@@ -98,5 +98,4 @@ scen <- demoScen[[7]] # demo scenario 7
 land.poly <- scen$landings.poly # polygonal landings of demo scenario 7
 prRes <- projectRoads(landings=land.poly,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="mst")
 visualize(scen$cost.rast,land.poly,prRes,height=15)
-
 }
