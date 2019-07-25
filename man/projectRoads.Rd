@@ -66,7 +66,7 @@ some details...
 }
 \examples{
 
-## visualize function's height parameter represents graphics window height in cm. 
+## visualize function's height parameter represents graphics window height in cm.
 ## Increase it for larger visualizations.
 
 ### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")

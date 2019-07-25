@@ -2,6 +2,8 @@
 
 export(adjustBrickNames)
 export(convertRasterToLineSegments)
+export(getCentroids)
+export(getLandingsFromTarget)
 export(projectRoads)
 export(roadCLUS.analysis)
 export(roadCLUS.getGraph)

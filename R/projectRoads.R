@@ -11,9 +11,9 @@
 #' @param sim Sim list. Returned from a previous iteration of projectRoads. cost, roads, and roadMethod are ignored if a sim list is provided.
 #' @examples
 #'
-#' ## visualize function's height parameter represents graphics window height in cm. 
+#' ## visualize function's height parameter represents graphics window height in cm.
 #' ## Increase it for larger visualizations.
-#' 
+#'
 #' ### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")
 #' scen <- demoScen[[1]] # demo scenario 1
 #' land.pnts <- scen$landings.points[scen$landings.points$set==1,] # landing set 1 of scenario 1
@@ -107,7 +107,7 @@ setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,r
 #' @export
 setMethod('projectRoads', signature(landings="RasterLayer"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
   landings = getCentroids(landings,withIDs=T)
-  landings = rasterToPoints(landings,fun=function(landings){landings>0})
+  landings = raster::rasterToPoints(landings,fun=function(landings){landings>0})
   return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
 })
 
