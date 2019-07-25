@@ -16,24 +16,15 @@
 # - Using sim as argument for functions decreases transparency and modularity. Need to dig in to figure what inputs and outputs are. And risk of unintended consequences - function writer is free to mess with anything in sim object.
 # - Not enough metadata. What exactly is landings eg. Raster ok. But how are values interpreted?
 
-# @import raster
 #' @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix
-# @import sp
 #' @importFrom sp SpatialPoints
-# @import gdistance
-# @import data.table
 #' @importFrom data.table data.table setDT setnames
-# @import igraph
 #' @importFrom igraph graph.edgelist E distances graph_from_adjacency_matrix mst get.edgelist get.shortest.paths edge_attr
-# @import latticeExtra
-# @import sf
 #' @importFrom sf st_as_sf st_cast st_buffer
-# @import rgeos
 #' @importFrom rgeos gDistance
 #' @importFrom fasterize fasterize
 #' @import dplyr
 NULL
-#library(data.table);library(igraph)
 
 #' @export
 roadCLUS.analysis <- function(sim){

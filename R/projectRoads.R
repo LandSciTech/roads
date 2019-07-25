@@ -43,7 +43,10 @@
 #' land.poly <- scen$landings.poly # polygonal landings of demo scenario 7
 #' prRes <- projectRoads(landings=land.poly,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="mst")
 #' visualize(scen$cost.rast,land.poly,prRes,height=15)
-#'
+
+#' @import methods
+NULL
+
 #' @export
 setGeneric('projectRoads',function(landings,cost=NULL,roads=NULL,roadMethod="mst",plotRoads=T,sim=list()) standardGeneric('projectRoads'))
 
