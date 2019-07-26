@@ -24,6 +24,7 @@
 #' @importFrom rgeos gDistance
 #' @importFrom fasterize fasterize
 #' @importFrom rlang .data
+#' @importFrom stats complete.cases
 #' @import dplyr
 NULL
 
@@ -69,7 +70,7 @@ roadCLUS.getGraph<- function(sim){
   edges.w2$weight<-(edges.w2$w1 + edges.w2$w2)/2 #take the average cost between the two pixels
 
   #------get the edges list
-  edges.weight<-edges.w2[complete.cases(edges.w2), c(1:2, 5)] #get rid of NAs caused by barriers. Drop the w1 and w2 costs.
+  edges.weight<-edges.w2[stats::complete.cases(edges.w2), c(1:2, 5)] #get rid of NAs caused by barriers. Drop the w1 and w2 costs.
   edges.weight[, id := seq_len(.N)] #set the ids of the edge list. Faster than using as.integer(row.names())
 
   #------make the graph

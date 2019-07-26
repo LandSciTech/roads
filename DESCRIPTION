@@ -36,7 +36,10 @@ Imports:
     fasterize,
     spdep,
     methods,
-    rlang
+    rlang,
+    grDevices,
+    graphics,
+    stats
 RoxygenNote: 6.1.1
 Suggests: 
     testthat,
