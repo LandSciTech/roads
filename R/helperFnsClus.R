@@ -28,7 +28,6 @@
 #' @import dplyr
 NULL
 
-#' @export
 roadCLUS.analysis <- function(sim){
   if(!is.element('roadMethod',names(sim))||!(sim$roadMethod == 'snap')){
     ras.out<-sim$costSurface
@@ -44,7 +43,6 @@ roadCLUS.analysis <- function(sim){
   return(invisible(sim))
 }
 
-#' @export
 roadCLUS.getGraph<- function(sim){
   ###Set the grpah which determines least cost paths
   #Creates a graph (sim$g) in inititation phase which can be updated and solved for paths
@@ -165,7 +163,6 @@ roadCLUS.buildSnapRoads <- function(sim){
   return(invisible(sim))
 }
 
-#' @export
 getCentroids<-function(newLandings,withIDs=T){
   cRes = raster::res(newLandings)
   p = raster::as.data.frame(raster::clump(newLandings,gaps=F), xy = TRUE)
@@ -184,7 +181,7 @@ getCentroids<-function(newLandings,withIDs=T){
   }
   return(newLandingCentroids)
 }
-#' @export
+
 getLandingsFromTarget<-function(inputPatches,numLandings){
   #Function to select a specific number of landings withing patches.
   #Landing set will include centroids, and additional randomly selected sample points if numLandings>numCentroids.
@@ -208,8 +205,6 @@ getLandingsFromTarget<-function(inputPatches,numLandings){
   return(landings)
 }
 
-
-#' @export
 simpleCost<-function(roads,newLandings,water){
   #roads=cRoadsRaster
   if(class(roads)!="RasterLayer"){
@@ -220,7 +215,6 @@ simpleCost<-function(roads,newLandings,water){
   return(cost)
 }
 
-#' @export
 adjustBrickNames<-function(x,ctag="X",cType="this"){
   #x=myTransitionGroup;ctag=tag
   cNames = names(x);cNames=gsub(ctag,"",cNames,fixed=T)

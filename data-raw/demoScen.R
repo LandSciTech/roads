@@ -53,12 +53,12 @@ library(geoR)
 #              - if n.landings is a single numeric value, then that value will be used when generating each landing set in each scenario
 #              - if n.landings is a vector (length=2) of integer values, then the number of landings in each landing set of each scenario will be uniformly
 #                randomly sampled from between n.landings[1] and n.landings[2]
-# n.poly.landings: either NA (in which case polygonal landings will not be generated) or a vector (length=2) of integer values representing the upper and 
+# n.poly.landings: either NA (in which case polygonal landings will not be generated) or a vector (length=2) of integer values representing the upper and
 #                  lower limits for the number of polygonal landings in each scenario
 #                  - polygonal landings will not be generated within 2 cells of: landscape edge, existing roads, or other polygonal landings
-# poly.landings.xdim: (ignored if n.poly.landings is NA) a vector (length=2) of integer values representing the upper and lower limits of the width of each 
+# poly.landings.xdim: (ignored if n.poly.landings is NA) a vector (length=2) of integer values representing the upper and lower limits of the width of each
 #                      polygonal landing, in # of cells
-# poly.landings.ydim: (ignored if n.poly.landings is NA) a vector (length=2) of integer values representing the upper and lower limits of the height of each 
+# poly.landings.ydim: (ignored if n.poly.landings is NA) a vector (length=2) of integer values representing the upper and lower limits of the height of each
 #                      polygonal landing, in # of cells
 # seed.value:  either NA (in which case the random seed will not be set) or a numeric value representing the seed value for generating the random scenarios
 #              - if seed.value is a numeric value, the random seed will be modified using the base::set.seed function
@@ -188,7 +188,7 @@ prepInputScenarios <- function(n.scenarios=10,xy.size=c(100,100),spat.corr=T,cos
 #################################################
 # generate 10 roads::projectRoads input scenarios
 demoScen <- prepInputScenarios(n.scenarios=10,seed.value=1)
-save(demoScen,file="data/demoScen.rda")
+save(demoScen,file="data/demoScen.rda",compress="xz")
 #################################################
 
 

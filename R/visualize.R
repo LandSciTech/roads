@@ -16,6 +16,7 @@
 #' is to be shown. If NA or NULL, the full range of the cost raster will be shown in the x direction.
 #' @param ylim An integer vector of length 2 representing the minumum[0] and maximum[1] of the range (in the y direction) of the cost raster that
 #' is to be shown. If NA or NULL, the full range of the cost raster will be shown in the y direction.
+#' @param height Numeric representing the height, in centimeters of the graphics device (window) containing the output visualization. Default is 15.
 #' @param out.file A character representing the path to an output image file.  If NA or NULL, the visualization will be generated in a new graphics
 #' device. If a path to a file is provided, an image file will be generated at the specified location, containing the visualization. Supported file types are .png,
 #' .jpg, .bmp, .tif, .pdf.
@@ -29,7 +30,7 @@
 #' visualize(scen$cost.rast,landings,pr,main='Scenario 1: Landing sets 1 to 3')
 #' # zoom in on the lower left quadrant
 #' visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,50))
-#' # generate the same visualization as above, but with a window that is 20 cm hight (monitor permitting)
+#' # generate the same visualization as above, but with a window that is 20 cm height
 #' visualize(scen$cost.rast,landings,pr,xlim=c(0,50),ylim=c(0,50),height=20)
 #'
 #' # generate visualization as an image file instead of a new graphics device:

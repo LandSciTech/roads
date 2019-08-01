@@ -16,32 +16,37 @@
 #'
 #' ### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")
 #' scen <- demoScen[[1]] # demo scenario 1
-#' land.pnts <- scen$landings.points[scen$landings.points$set==1,] # landing set 1 of scenario 1
-#' prRes <- projectRoads(landings=land.pnts,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="lcp")
+#' # landing set 1 of scenario 1:
+#' land.pnts <- scen$landings.points[scen$landings.points$set==1,]
+#' prRes <- projectRoads(land.pnts,scen$cost.rast,scen$road.rast,"lcp")
 #' visualize(scen$cost.rast,land.pnts,prRes,height=15)
 #'
 #' ### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
 #' scen <- demoScen[[1]] # demo scenario 1
-#' land.rLyr <- scen$landings.stack[[1]] # the RasterLayer version of landing set 1 of scenario 1
-#' prRes <- roads::projectRoads(landings=land.rLyr,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="mst")
+#' # the RasterLayer version of landing set 1 of scenario 1:
+#' land.rLyr <- scen$landings.stack[[1]]
+#' prRes <- projectRoads(land.rLyr,scen$cost.rast,scen$road.rast,"mst")
 #' visualize(scen$cost.rast,land.rLyr,prRes)
 #'
 #' ### using: scenario 2 / matrix landings / snapping ("snap")
 #' scen <- demoScen[[2]] # demo scenario 2
-#' land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords  # landing set 5 of scenario 2, as matrix
-#' prRes <- projectRoads(landings=land.mat,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="snap")
+#' # landing set 5 of scenario 2, as matrix:
+#' land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
+#' prRes <- projectRoads(land.mat,scen$cost.rast,scen$road.rast,"snap")
 #' visualize(scen$cost.rast,land.mat,prRes,height=15)
 #'
-#' ### project roads: using scenario 3 / RasterStack landings / minimum spanning tree ("mst")
+#' ### using: scenario 3 / RasterStack landings / minimum spanning tree ("mst")
 #' scen <- demoScen[[3]] # demo scenario 3
-#' land.rstack <- scen$landings.stack[[1:4]]  # landing sets 1 to 4 of scenario 3, as RasterStack
-#' prRes <- projectRoads(landings=land.rstack,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="mst")
+#' # landing sets 1 to 4 of scenario 3, as RasterStack:
+#' land.rstack <- scen$landings.stack[[1:4]]
+#' prRes <- projectRoads(land.rstack,scen$cost.rast,scen$road.rast,"mst")
 #' visualize(scen$cost.rast,land.rstack,prRes,height=15)
 #'
-#' ### project roads: using scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
+#' ### using: scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
 #' scen <- demoScen[[7]] # demo scenario 7
-#' land.poly <- scen$landings.poly # polygonal landings of demo scenario 7
-#' prRes <- projectRoads(landings=land.poly,cost=scen$cost.rast,roads=scen$road.rast,roadMethod="mst")
+#' # polygonal landings of demo scenario 7:
+#' land.poly <- scen$landings.poly
+#' prRes <- projectRoads(land.poly,scen$cost.rast,cen$road.rast,mst")
 #' visualize(scen$cost.rast,land.poly,prRes,height=15)
 
 #' @import methods
