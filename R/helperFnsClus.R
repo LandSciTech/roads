@@ -113,25 +113,40 @@ roadCLUS.mstList<- function(sim){
   return(invisible(sim))
 }
 
+newRoadsToLines <- function(pr){
+  ## pr is projectRoads results (or 'sim' at the point that it contains the results)
+  require(sp)
+  require(raster)
+  er <- pr$costSurface==0 ## existing roads
+  linelist <- lapply(1:length(pr$paths.list),function(i){
+    inds <- match(pr$paths.list[[i]],pr$paths.v$V1)
+    v <- pr$paths.v$V1[inds[1]:inds[2]]
+    pr$paths.v <<- pr$paths.v[-(inds[1]:inds[2]),]
+    v <- v[1:match(1,er[v])] ## remove portions that run along existing road
+    return(sp::Lines(list(sp::Line(raster::xyFromCell(pr$costSurface,v))),ID=names(pr$paths.list)[[i]]))
+  })
+  return(sp::SpatialLines(linelist,proj4string=sp::CRS(as.character(pr$costSurface@crs))))
+}
+
 roadCLUS.shortestPaths<- function(sim){
   #print('shortestPaths')
   #------finds the least cost paths between a list of two points
   if(!length(sim$paths.list)==0){
     #print(sim$paths.list)
     paths<-unlist(lapply(sim$paths.list, function(x) igraph::get.shortest.paths(sim$g, x[1], x[2], out = "both"))) #create a list of shortest paths
-    #sim$paths.v<-unique(rbind(data.table::data.table(paths[grepl("vpath",names(paths))] ), sim$paths.v))#save the verticies for mapping
     sim$paths.v<-rbind(data.table::data.table(paths[grepl("vpath",names(paths))] ), sim$paths.v) # save the verticies for mapping
     paths.e<-paths[grepl("epath",names(paths))]
     igraph::edge_attr(sim$g, index= igraph::E(sim$g)[igraph::E(sim$g) %in% paths.e], name= 'weight')<-0.00001 #changes the cost(weight) associated with the edge that became a path (or road)
-
     #reset landings and roads close to them
     sim$landings<-NULL
     sim$roads.close.XY<-NULL
+    sim$newRoads.lines<-newRoadsToLines(sim)
     rm(paths.e)
     gc()
   }
   return(invisible(sim))
 }
+
 
 roadCLUS.getClosestRoad <- function(sim){
   roads.pts <- raster::rasterToPoints(sim$roads, fun=function(x){x > 0})
