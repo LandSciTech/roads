@@ -119,7 +119,8 @@ roadCLUS.shortestPaths<- function(sim){
   if(!length(sim$paths.list)==0){
     #print(sim$paths.list)
     paths<-unlist(lapply(sim$paths.list, function(x) igraph::get.shortest.paths(sim$g, x[1], x[2], out = "both"))) #create a list of shortest paths
-    sim$paths.v<-unique(rbind(data.table::data.table(paths[grepl("vpath",names(paths))] ), sim$paths.v))#save the verticies for mapping
+    #sim$paths.v<-unique(rbind(data.table::data.table(paths[grepl("vpath",names(paths))] ), sim$paths.v))#save the verticies for mapping
+    sim$paths.v<-rbind(data.table::data.table(paths[grepl("vpath",names(paths))] ), sim$paths.v) # save the verticies for mapping
     paths.e<-paths[grepl("epath",names(paths))]
     igraph::edge_attr(sim$g, index= igraph::E(sim$g)[igraph::E(sim$g) %in% paths.e], name= 'weight')<-0.00001 #changes the cost(weight) associated with the edge that became a path (or road)
 
