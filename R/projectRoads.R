@@ -154,32 +154,25 @@ setMethod('projectRoads', signature(landings="RasterStack"), function(landings,c
 #' @rdname projectRoads
 #' @export
 setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
-  #sim=NULL;landings = raster::brick(raster::subset(raster::rasterize(landings,cost),1))
   checkAllign = raster::compareRaster(cost,roads)
   if(!checkAllign){
     stop("Problem with roads. All rasters must have the same same extent, number of rows and columns,
          projection, resolution, and origin.")
   }
-
   checkAllign = raster::compareRaster(cost,landings)
   if(!checkAllign){
     stop("Problem with landings. All rasters must have the same same extent, number of rows and columns,
          projection, resolution, and origin.")
   }
-
   landings[landings>0] = 1
-
   doYrs = names(landings)
-
   cRoadsRaster = raster::brick(roads)
   ym="t0"; names(cRoadsRaster)=ym
-
+  cRoadsRaster@history <- list(t0=NA)
   sim=list()
   #NOTE: looping over years here to speed calculations. The graph is g is only constructed once.
   for (cm in doYrs){
-    #cm=doYrs[1];plotRoads=T
     print(paste("building roads year",cm))
-
     if(length(sim)==0){
       sim = projectRoads(landings[[cm]],cost,cRoadsRaster[[ym]],roadMethod=roadMethod,plotRoads=plotRoads)
     }else{
@@ -187,9 +180,8 @@ setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,c
       sim = projectRoads(landings[[cm]],plotRoads=plotRoads,sim=sim)
     }
     cRoadsRaster[[cm]] = sim$roads>0 #ignoring values for now.
+    cRoadsRaster@history[[length(cRoadsRaster@history)+1]] = sim$newRoads.lines
+    names(cRoadsRaster@history)[-1] = cm
   }
-  #pdf("roadNetworkGrowth.pdf")
-  #plot(cRoadsRaster[[1:2]],col="black")
-  #dev.off()
   return(cRoadsRaster)
 })
