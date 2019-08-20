@@ -122,7 +122,8 @@ newRoadsToLines <- function(pr){
     inds <- match(pr$paths.list[[i]],pr$paths.v$V1)
     v <- pr$paths.v$V1[inds[1]:inds[2]]
     pr$paths.v <<- pr$paths.v[-(inds[1]:inds[2]),]
-    v <- v[1:match(1,er[v])] ## remove portions that run along existing road
+    conn <- match(1,er[v]) ## index of where new road connects to existing road
+    if (!is.na(conn)) v <- v[1:conn] ## remove portions that run along existing road, if applicable
     return(sp::Lines(list(sp::Line(raster::xyFromCell(pr$costSurface,v))),ID=names(pr$paths.list)[[i]]))
   })
   return(sp::SpatialLines(linelist,proj4string=sp::CRS(as.character(pr$costSurface@crs))))
