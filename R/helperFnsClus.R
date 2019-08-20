@@ -115,6 +115,7 @@ roadCLUS.mstList<- function(sim){
 
 newRoadsToLines <- function(pr){
   ## pr is projectRoads results (or 'sim' when it contains the results)
+  ## used for only the 'lcp' and 'mst' roadMethods
   er <- pr$costSurface==0 ## existing roads
   linelist <- lapply(1:length(pr$paths.list),function(i){
     inds <- match(pr$paths.list[[i]],pr$paths.v$V1)
@@ -165,23 +166,12 @@ roadCLUS.getClosestRoad <- function(sim){
 }
 
 roadCLUS.buildSnapRoads <- function(sim){
-  rdptsXY<-data.frame(sim$roads.close.XY) #convert to a data.frame
-  rdptsXY$id<-as.numeric(row.names(rdptsXY))
-  landings<-data.frame(sim$landings)
-  landings$id<-as.numeric(row.names(landings))
-  coodMatrix<-rbind(rdptsXY,subset(landings,select=names(rdptsXY)))
-  coodMatrix$attr_data<-100
-
-  #remove anything that is a point, rather than a line
-  checkPts = as.data.frame(table(unique(coodMatrix)$id))
-  checkPts = subset(checkPts,checkPts$Freq>1)
-  coodMatrix=merge(coodMatrix,data.frame(id=checkPts$Var1))
-
-  mt<-coodMatrix %>% sf::st_as_sf(coords=c('x','y'))%>% dplyr::group_by(id) %>% dplyr::summarize(m=mean(.data$attr_data)) %>% sf::st_cast("LINESTRING")
-  test<-fasterize::fasterize(sf::st_buffer(mt,50),sim$roads, field = 'm')
-  sim$roads<-raster::merge(test, sim$roads)
-  rm(rdptsXY, landings, mt, coodMatrix, test)
-  gc()
+  lineslist <- lapply(1:nrow(landings),function(i){
+    sp::Lines(sp::Line(rbind(sim$landings[i,],sim$roads.close.XY[i,])),ID=i)
+  })
+  sim$newRoads.lines <- sp::SpatialLines(lineslist,proj4string=sp::CRS(as.character(sim$costSurface@crs)))
+  newRoads.cells <- do.call(rbind,raster::extract(sim$costSurface,sim$newRoads.lines,cellnumbers=TRUE))
+  sim$roads[newRoads.cells[,1]] <- 1
   return(invisible(sim))
 }
 
