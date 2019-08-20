@@ -17,7 +17,7 @@
 # - Not enough metadata. What exactly is landings eg. Raster ok. But how are values interpreted?
 
 #' @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell
-#' @importFrom sp SpatialPoints
+#' @importFrom sp SpatialPoints Line Lines SpatialLines CRS
 #' @importFrom data.table data.table := .N setDT setnames
 #' @importFrom igraph graph.edgelist E distances graph_from_adjacency_matrix mst get.edgelist get.shortest.paths edge_attr
 #' @importFrom sf st_as_sf st_cast st_buffer
@@ -114,9 +114,7 @@ roadCLUS.mstList<- function(sim){
 }
 
 newRoadsToLines <- function(pr){
-  ## pr is projectRoads results (or 'sim' at the point that it contains the results)
-  require(sp)
-  require(raster)
+  ## pr is projectRoads results (or 'sim' when it contains the results)
   er <- pr$costSurface==0 ## existing roads
   linelist <- lapply(1:length(pr$paths.list),function(i){
     inds <- match(pr$paths.list[[i]],pr$paths.v$V1)
