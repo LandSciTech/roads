@@ -166,7 +166,7 @@ roadCLUS.getClosestRoad <- function(sim){
 }
 
 roadCLUS.buildSnapRoads <- function(sim){
-  lineslist <- lapply(1:nrow(landings),function(i){
+  lineslist <- lapply(1:nrow(sim$landings),function(i){
     sp::Lines(sp::Line(rbind(sim$landings[i,],sim$roads.close.XY[i,])),ID=i)
   })
   sim$newRoads.lines <- sp::SpatialLines(lineslist,proj4string=sp::CRS(as.character(sim$costSurface@crs)))
