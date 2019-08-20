@@ -166,8 +166,15 @@ roadCLUS.getClosestRoad <- function(sim){
 }
 
 roadCLUS.buildSnapRoads <- function(sim){
-  lineslist <- lapply(1:nrow(sim$landings),function(i){
-    sp::Lines(sp::Line(rbind(sim$landings[i,],sim$roads.close.XY[i,])),ID=i)
+  if (is(sim$landings,'SpatialPoints')){
+    landings <- sim$landings@coords
+  }else if (is(sim$landings,'RasterLayer')){
+    landings <- raster::rasterToPoints(sim$landings>0,fun=function(x)x>0)[,c('x','y')]
+  }else{
+    landings <- sim$landings
+  }
+  lineslist <- lapply(1:nrow(landings),function(i){
+    sp::Lines(sp::Line(rbind(landings[i,],sim$roads.close.XY[i,])),ID=i)
   })
   sim$newRoads.lines <- sp::SpatialLines(lineslist,proj4string=sp::CRS(as.character(sim$costSurface@crs)))
   newRoads.cells <- do.call(rbind,raster::extract(sim$costSurface,sim$newRoads.lines,cellnumbers=TRUE))
