@@ -174,7 +174,7 @@ roadCLUS.buildSnapRoads <- function(sim){
     landings <- sim$landings
   }
   lineslist <- lapply(1:nrow(landings),function(i){
-    sp::Lines(sp::Line(rbind(landings[i,],sim$roads.close.XY[i,])),ID=i)
+    sp::Lines(sp::Line(rbind(landings[i,c('x','y')],sim$roads.close.XY[i,c('x','y')])),ID=i)
   })
   sim$newRoads.lines <- sp::SpatialLines(lineslist,proj4string=sp::CRS(as.character(sim$costSurface@crs)))
   newRoads.cells <- do.call(rbind,raster::extract(sim$costSurface,sim$newRoads.lines,cellnumbers=TRUE))
