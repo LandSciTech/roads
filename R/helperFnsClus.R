@@ -201,6 +201,7 @@ getCentroids<-function(newLandings,withIDs=T){
   return(newLandingCentroids)
 }
 
+#' @export
 getLandingsFromTarget<-function(inputPatches,numLandings){
   #Function to select a specific number of landings withing patches.
   #Landing set will include centroids, and additional randomly selected sample points if numLandings>numCentroids.
