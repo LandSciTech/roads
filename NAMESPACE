@@ -3,6 +3,7 @@
 export(convertRasterToLineSegments)
 export(getLandingsFromTarget)
 export(projectRoads)
+export(roadCLUS.getGraph)
 export(visualize)
 exportMethods(projectRoads)
 import(dplyr)

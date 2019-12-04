@@ -3,3 +3,5 @@
 ^installRoads.R$
 ^kylesCLUSExample.Rmd$
 ^projectRoadsTroutLakeExample.R$
+^.*\.Rproj$
+^\.Rproj\.user$

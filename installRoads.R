@@ -6,3 +6,8 @@
 #usethis::create_package(getwd())
 devtools::document();devtools::load_all()
 #devtools::install_github("LandSciTech/roads")
+citation("roads")
+
+install.packages("fs")
+
+devtools::document();devtools::load_all()

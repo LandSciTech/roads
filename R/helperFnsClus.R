@@ -42,7 +42,7 @@ roadCLUS.analysis <- function(sim){
   }
   return(invisible(sim))
 }
-
+#' @export
 roadCLUS.getGraph<- function(sim){
   ###Set the grpah which determines least cost paths
   #Creates a graph (sim$g) in inititation phase which can be updated and solved for paths
