@@ -209,7 +209,9 @@ getLandingsFromTarget<-function(inputPatches,numLandings,omitCentroidsOutOfPolyg
   inputPatches[inputPatches==0]=NA
 
   landings = getCentroids(inputPatches,withIDs=T) #note centroids are not always in polygons
-  landings[is.na(inputPatches)]=NA
+  if (omitCentroidsOutOfPolygons){
+    landings[is.na(inputPatches)]=NA
+  }
   remL = inputPatches;remL[landings>0]=NA
   numSamples = numLandings-cellStats(landings>0,"sum")#select additional points so total number is equal to small alternative
 
