@@ -39,7 +39,9 @@ Imports:
     rlang,
     grDevices,
     graphics,
-    stats
+    stats,
+    roads,
+    caribouMetrics
 RoxygenNote: 6.1.1
 Suggests: 
     testthat,

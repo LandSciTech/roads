@@ -202,23 +202,27 @@ getCentroids<-function(newLandings,withIDs=T){
 }
 
 #' @export
-getLandingsFromTarget<-function(inputPatches,numLandings){
+getLandingsFromTarget<-function(inputPatches,numLandings,omitCentroidsOutOfPolygons=T){
   #Function to select a specific number of landings withing patches.
   #Landing set will include centroids, and additional randomly selected sample points if numLandings>numCentroids.
-  #inputPatches=anthDist;numLandings=numADSmall
+  #inputPatches=rasterLandings
   inputPatches[inputPatches==0]=NA
 
-  landings = getCentroids(inputPatches,withIDs=T)
-  landings = raster::rasterToPoints(landings,fun=function(landings){landings>0})
+  landings = getCentroids(inputPatches,withIDs=T) #note centroids are not always in polygons
+  landings[is.na(inputPatches)]=NA
+  remL = inputPatches;remL[landings>0]=NA
+  numSamples = numLandings-cellStats(landings>0,"sum")#select additional points so total number is equal to small alternative
+
+  landings = raster::rasterToPoints(landingsM,fun=function(landings){landings>0})
   #split into smaller patches to ensure adequate road density
   #sampleProp = 1/100
   #numSamples = round(cellStats(anthDist,"sum")*sampleProp)
-  numSamples = numLandings-nrow(landings)#select additional points so total number is equal to small alternative
 
   if(numSamples<=0){
     return(landings)
   }
-  landingPts = raster::sampleStratified(inputPatches, size=numSamples,xy=T)
+
+  landingPts = raster::sampleStratified(remL, size=numSamples,xy=T)
   landingPts=landingPts[,2:4]
   #add centroids to ensure all patches are included
   landings = rbind(landingPts,landings)
