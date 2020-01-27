@@ -202,7 +202,7 @@ getCentroids<-function(newLandings,withIDs=T){
 }
 
 #' @export
-getLandingsFromTarget<-function(inputPatches,numLandings,omitCentroidsOutOfPolygons=T){
+getLandingsFromTarget<-function(inputPatches,numLandings,omitCentroidsOutOfPolygons=F){
   #Function to select a specific number of landings withing patches.
   #Landing set will include centroids, and additional randomly selected sample points if numLandings>numCentroids.
   #inputPatches=rasterLandings
