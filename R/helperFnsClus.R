@@ -208,6 +208,10 @@ getLandingsFromTarget<-function(inputPatches,numLandings,omitCentroidsOutOfPolyg
   #inputPatches=rasterLandings
   inputPatches[inputPatches==0]=NA
 
+  if(numLandings >= cellStats(inputPatches>0,"sum")){
+    landings= raster::rasterToPoints(inputPatches,fun=function(landings){landings>0})
+  }
+
   landings = getCentroids(inputPatches,withIDs=T) #note centroids are not always in polygons
   if (omitCentroidsOutOfPolygons){
     landings[is.na(inputPatches)]=NA
@@ -215,7 +219,7 @@ getLandingsFromTarget<-function(inputPatches,numLandings,omitCentroidsOutOfPolyg
   remL = inputPatches;remL[landings>0]=NA
   numSamples = numLandings-cellStats(landings>0,"sum")#select additional points so total number is equal to small alternative
 
-  landings = raster::rasterToPoints(landingsM,fun=function(landings){landings>0})
+  landings = raster::rasterToPoints(landings,fun=function(landings){landings>0})
   #split into smaller patches to ensure adequate road density
   #sampleProp = 1/100
   #numSamples = round(cellStats(anthDist,"sum")*sampleProp)
