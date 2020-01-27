@@ -182,6 +182,7 @@ roadCLUS.buildSnapRoads <- function(sim){
   return(invisible(sim))
 }
 
+#' @export
 getCentroids<-function(newLandings,withIDs=T){
   cRes = raster::res(newLandings)
   p = raster::as.data.frame(raster::clump(newLandings,gaps=F), xy = TRUE)
