@@ -209,31 +209,44 @@ getLandingsFromTarget<-function(inputPatches,numLandings,omitCentroidsOutOfPolyg
   #inputPatches=rasterLandings
   inputPatches[inputPatches==0]=NA
 
-  if(numLandings >= cellStats(inputPatches>0,"sum")){
-    landings= raster::rasterToPoints(inputPatches,fun=function(landings){landings>0})
+  landPts = matrix(0,0,3)
+  colnames(landPts)=c("x","y","layer")
+  for(i in 1:length(numLandings)){
+    #i= 1
+    plot(rasterLandings)
+    nl = numLandings[[i]]
+    ip = inputPatches==i
+    ip[ip==0]=NA
+    if(nl >= cellStats(ip,"sum")){
+      landPts= rbind(landPts,raster::rasterToPoints(ip,fun=function(landings){landings>0}))
+      next
+    }
+
+    landC = getCentroids(ip,withIDs=T) #note centroids are not always in polygons
+    if (omitCentroidsOutOfPolygons){
+      landC[is.na(ip)]=NA
+    }
+    remL = ip;remL[landC>0]=NA
+    numSamples = nl-cellStats(landC>0,"sum")#select additional points so total number is equal to small alternative
+
+    landC = raster::rasterToPoints(landC,fun=function(landings){landings>0})
+    #split into smaller patches to ensure adequate road density
+    #sampleProp = 1/100
+    #numSamples = round(cellStats(anthDist,"sum")*sampleProp)
+
+    landPts = rbind(landPts,landC)
+
+    if(numSamples<=0){
+      next
+    }
+
+    landingPts = raster::sampleStratified(remL, size=numSamples,xy=T)
+    landingPts=landingPts[,2:4]
+    #add centroids to ensure all patches are included
+    landPts = rbind(landPts,landingPts)
+
   }
-
-  landings = getCentroids(inputPatches,withIDs=T) #note centroids are not always in polygons
-  if (omitCentroidsOutOfPolygons){
-    landings[is.na(inputPatches)]=NA
-  }
-  remL = inputPatches;remL[landings>0]=NA
-  numSamples = numLandings-cellStats(landings>0,"sum")#select additional points so total number is equal to small alternative
-
-  landings = raster::rasterToPoints(landings,fun=function(landings){landings>0})
-  #split into smaller patches to ensure adequate road density
-  #sampleProp = 1/100
-  #numSamples = round(cellStats(anthDist,"sum")*sampleProp)
-
-  if(numSamples<=0){
-    return(landings)
-  }
-
-  landingPts = raster::sampleStratified(remL, size=numSamples,xy=T)
-  landingPts=landingPts[,2:4]
-  #add centroids to ensure all patches are included
-  landings = rbind(landingPts,landings)
-  return(landings)
+  return(landPts)
 }
 
 simpleCost<-function(roads,newLandings,water){
