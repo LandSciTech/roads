@@ -56,6 +56,7 @@ roadCLUS.getGraph<- function(sim){
   weight[, id := seq_len(.N)] # get the id for ther verticies which is used to merge with the edge list from adj
 
   #------get the adjacency using SpaDES function adj
+  #rooks case
   edges<-SpaDES.tools::adj(returnDT= TRUE, numCol = ncol(ras.matrix), numCell=ncol(ras.matrix)*nrow(ras.matrix), directions =4, cells = 1:as.integer(ncol(ras.matrix)*nrow(ras.matrix)))
   edges<-data.table::data.table(edges)
   #edges[from < to, c("from", "to") := .(to, from)]
@@ -67,8 +68,26 @@ roadCLUS.getGraph<- function(sim){
   data.table::setnames(edges.w2, c("from", "to", "w1", "w2")) #reformat
   edges.w2$weight<-(edges.w2$w1 + edges.w2$w2)/2 #take the average cost between the two pixels
 
+  #bishop's case - multiply weights by 2^0.5
+  mW = 2^0.5
+  weight$weight = weight$weight*mW
+  edges<-SpaDES.tools::adj(returnDT= TRUE, numCol = ncol(ras.matrix), numCell=ncol(ras.matrix)*nrow(ras.matrix), directions ="bishop", cells = 1:as.integer(ncol(ras.matrix)*nrow(ras.matrix)))
+  edges<-data.table::data.table(edges)
+
+  #edges[from < to, c("from", "to") := .(to, from)]
+  edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]
+  edges<-unique(edges)
+
+  edges.w1<-merge(x=edges, y=weight, by.x= "from", by.y ="id") #merge in the weights from a cost surface
+  data.table::setnames(edges.w1, c("from", "to", "w1")) #reformat
+
+  edges.w3<-data.table::setDT(merge(x=edges.w1, y=weight, by.x= "to", by.y ="id"))#merge in the weights to a cost surface
+  data.table::setnames(edges.w3, c("from", "to", "w1", "w2")) #reformat
+  edges.w3$weight<-(edges.w3$w1 + edges.w3$w2)/2 #take the average cost between the two pixels
+
   #------get the edges list
-  edges.weight<-edges.w2[stats::complete.cases(edges.w2), c(1:2, 5)] #get rid of NAs caused by barriers. Drop the w1 and w2 costs.
+  edges.weight =rbind(edges.w2,edges.w3)
+  edges.weight<-edges.weight[stats::complete.cases(edges.weight), c(1:2, 5)] #get rid of NAs caused by barriers. Drop the w1 and w2 costs.
   edges.weight[, id := seq_len(.N)] #set the ids of the edge list. Faster than using as.integer(row.names())
 
   #------make the graph
@@ -76,7 +95,7 @@ roadCLUS.getGraph<- function(sim){
   igraph::E(sim$g)$weight<-as.matrix(edges.weight)[,3]#assign weights to the graph. Requires a matrix input
 
   #------clean up
-  rm(edges.w1,edges.w2, edges, weight, ras.matrix)#remove unused objects
+  rm(edges.w1,edges.w2,edges.w3, edges, weight, ras.matrix)#remove unused objects
   gc() #garbage collection
   return(invisible(sim))
 }
