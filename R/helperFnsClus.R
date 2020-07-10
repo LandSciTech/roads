@@ -56,7 +56,7 @@ roadCLUS.getGraph<- function(sim){
   weight[, id := seq_len(.N)] # get the id for ther verticies which is used to merge with the edge list from adj
 
   #------get the adjacency using SpaDES function adj
-  edges<-SpaDES.tools::adj(returnDT= TRUE, numCol = ncol(ras.matrix), numCell=ncol(ras.matrix)*nrow(ras.matrix), directions =8, cells = 1:as.integer(ncol(ras.matrix)*nrow(ras.matrix)))
+  edges<-SpaDES.tools::adj(returnDT= TRUE, numCol = ncol(ras.matrix), numCell=ncol(ras.matrix)*nrow(ras.matrix), directions =4, cells = 1:as.integer(ncol(ras.matrix)*nrow(ras.matrix)))
   edges<-data.table::data.table(edges)
   #edges[from < to, c("from", "to") := .(to, from)]
   edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]
@@ -213,7 +213,6 @@ getLandingsFromTarget<-function(inputPatches,numLandings,omitCentroidsOutOfPolyg
   colnames(landPts)=c("x","y","layer")
   for(i in 1:length(numLandings)){
     #i= 1
-    plot(rasterLandings)
     nl = numLandings[[i]]
     ip = inputPatches==i
     ip[ip==0]=NA
