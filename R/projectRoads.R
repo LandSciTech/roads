@@ -8,6 +8,7 @@
 #' @param roads RasterLayer. Existing road network.
 #' @param roadMethod Character. Options are "mst", "lcp", "snap".
 #' @param plotRoads Boolean. Set FALSE to save time if output road rasters are not required. Default TRUE
+#' @param neighbourhood Character. 'rook','queen', or 'octagon'. 'octagon' option is a modified version of the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x higher than horizontal/vertical weights.
 #' @param sim Sim list. Returned from a previous iteration of projectRoads. cost, roads, and roadMethod are ignored if a sim list is provided.
 #' @examples
 #'
@@ -48,17 +49,14 @@
 #' land.poly <- scen$landings.poly
 #' prRes <- projectRoads(land.poly,scen$cost.rast,cen$road.rast,mst")
 #' visualize(scen$cost.rast,land.poly,prRes,height=15)
-
-#' @import methods
-"projectRoads"
-
+#' @import methods "projectRoads"
 #' @export
-setGeneric('projectRoads',function(landings,cost=NULL,roads=NULL,roadMethod="mst",plotRoads=T,sim=list()) standardGeneric('projectRoads'))
+setGeneric('projectRoads',function(landings,cost=NULL,roads=NULL,roadMethod="mst",plotRoads=T,neighbourhood="octagon",sim=list()) standardGeneric('projectRoads'))
 
 #' @return  sim list.
 #' @rdname projectRoads
 #' @export
-setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
+setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
   #x=newLandingCentroids;roadMethod="mst";cost=cCost;roads=cRoadsRaster[[ym]];
   #sim=list();roadMethod="lcp"
   recognizedRoadMethods = c("mst","lcp","snap")
@@ -82,7 +80,7 @@ setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,r
 
   sim$landings=landings
   if(!is.element("g",names(sim))){
-    sim <- roadCLUS.getGraph(sim)
+    sim <- roadCLUS.getGraph(sim,neighbourhood)
   }
 
   if(!is.null(sim$landings)){
@@ -113,24 +111,24 @@ setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,r
 #' @return  sim list.
 #' @rdname projectRoads
 #' @export
-setMethod('projectRoads', signature(landings="RasterLayer"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
+setMethod('projectRoads', signature(landings="RasterLayer"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
   landings = getCentroids(landings,withIDs=T)
   landings = raster::rasterToPoints(landings,fun=function(landings){landings>0})
-  return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
+  return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim))
 })
 
 #' @return  sim list.
 #' @rdname projectRoads
 #' @export
-setMethod('projectRoads', signature(landings="SpatialPolygons"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
+setMethod('projectRoads', signature(landings="SpatialPolygons"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
   landings = raster::rasterize(landings,cost)
-  return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
+  return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim))
 })
 
 #' @return  sim list.
 #' @rdname projectRoads
 #' @export
-setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
+setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
     #landings=sC
     #landings = raster::subset(raster::rasterize(landings,cost),1)
     cco = landings@coords
@@ -140,20 +138,20 @@ setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings
       cco = cbind(cco,seq(1,nrow(cco)))
     }
     dimnames(cco)[[2]][3]="layer"
-    return(projectRoads(landings=cco,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,sim=sim))
+    return(projectRoads(landings=cco,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim))
 })
 
 #' @return  RasterBrick. Road network over time.
 #' @rdname projectRoads
 #' @export
-setMethod('projectRoads', signature(landings="RasterStack"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
-  return(projectRoads(raster::brick(landings),cost,roads,roadMethod,plotRoads,sim))
+setMethod('projectRoads', signature(landings="RasterStack"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
+  return(projectRoads(raster::brick(landings),cost,roads,roadMethod,plotRoads,neighbourhood,sim))
 })
 
 #' @return  RasterBrick. Road network over time.
 #' @rdname projectRoads
 #' @export
-setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,cost,roads,roadMethod,plotRoads,sim) {
+setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
   checkAllign = raster::compareRaster(cost,roads)
   if(!checkAllign){
     stop("Problem with roads. All rasters must have the same same extent, number of rows and columns,
@@ -174,10 +172,10 @@ setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,c
   for (cm in doYrs){
     print(paste("building roads year",cm))
     if(length(sim)==0){
-      sim = projectRoads(landings[[cm]],cost,cRoadsRaster[[ym]],roadMethod=roadMethod,plotRoads=plotRoads)
+      sim = projectRoads(landings[[cm]],cost,cRoadsRaster[[ym]],roadMethod=roadMethod,neighbourhood=neighbourhood,plotRoads=plotRoads)
     }else{
       #TO DO: how to preferentially route roads through cutblocks after the first iteration?
-      sim = projectRoads(landings[[cm]],plotRoads=plotRoads,sim=sim)
+      sim = projectRoads(landings[[cm]],plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim)
     }
     cRoadsRaster[[cm]] = sim$roads>0 #ignoring values for now.
     cRoadsRaster@history[[length(cRoadsRaster@history)+1]] = sim$newRoads.lines

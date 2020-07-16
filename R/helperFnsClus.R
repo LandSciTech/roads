@@ -43,7 +43,7 @@ roadCLUS.analysis <- function(sim){
   return(invisible(sim))
 }
 #' @export
-roadCLUS.getGraph<- function(sim){
+roadCLUS.getGraph<- function(sim,neighbourhood){
   ###Set the grpah which determines least cost paths
   #Creates a graph (sim$g) in inititation phase which can be updated and solved for paths
   sim$paths.v<-NULL
@@ -57,6 +57,10 @@ roadCLUS.getGraph<- function(sim){
 
   #------get the adjacency using SpaDES function adj
   #rooks case
+  if(!is.element(neighbourhood,c("rook","octagon","queen"))){
+    stop("neighbourhood type not recognized")
+  }
+
   edges<-SpaDES.tools::adj(returnDT= TRUE, numCol = ncol(ras.matrix), numCell=ncol(ras.matrix)*nrow(ras.matrix), directions =4, cells = 1:as.integer(ncol(ras.matrix)*nrow(ras.matrix)))
   edges<-data.table::data.table(edges)
   #edges[from < to, c("from", "to") := .(to, from)]
@@ -68,25 +72,32 @@ roadCLUS.getGraph<- function(sim){
   data.table::setnames(edges.w2, c("from", "to", "w1", "w2")) #reformat
   edges.w2$weight<-(edges.w2$w1 + edges.w2$w2)/2 #take the average cost between the two pixels
 
-  #bishop's case - multiply weights by 2^0.5
-  mW = 2^0.5
-  weight$weight = weight$weight*mW
-  edges<-SpaDES.tools::adj(returnDT= TRUE, numCol = ncol(ras.matrix), numCell=ncol(ras.matrix)*nrow(ras.matrix), directions ="bishop", cells = 1:as.integer(ncol(ras.matrix)*nrow(ras.matrix)))
-  edges<-data.table::data.table(edges)
+  if(neighbourhood=="rook"){
+    edges.weight =edges.w2
+  }else{
+    #bishop's case - multiply weights by 2^0.5
+    if(neighbourhood=="octagon"){
+      mW = 2^0.5
+    }else{mW=1}
+    weight$weight = weight$weight*mW
+    edges<-SpaDES.tools::adj(returnDT= TRUE, numCol = ncol(ras.matrix), numCell=ncol(ras.matrix)*nrow(ras.matrix), directions ="bishop", cells = 1:as.integer(ncol(ras.matrix)*nrow(ras.matrix)))
+    edges<-data.table::data.table(edges)
 
-  #edges[from < to, c("from", "to") := .(to, from)]
-  edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]
-  edges<-unique(edges)
+    #edges[from < to, c("from", "to") := .(to, from)]
+    edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]
+    edges<-unique(edges)
 
-  edges.w1<-merge(x=edges, y=weight, by.x= "from", by.y ="id") #merge in the weights from a cost surface
-  data.table::setnames(edges.w1, c("from", "to", "w1")) #reformat
+    edges.w1<-merge(x=edges, y=weight, by.x= "from", by.y ="id") #merge in the weights from a cost surface
+    data.table::setnames(edges.w1, c("from", "to", "w1")) #reformat
 
-  edges.w3<-data.table::setDT(merge(x=edges.w1, y=weight, by.x= "to", by.y ="id"))#merge in the weights to a cost surface
-  data.table::setnames(edges.w3, c("from", "to", "w1", "w2")) #reformat
-  edges.w3$weight<-(edges.w3$w1 + edges.w3$w2)/2 #take the average cost between the two pixels
+    edges.w3<-data.table::setDT(merge(x=edges.w1, y=weight, by.x= "to", by.y ="id"))#merge in the weights to a cost surface
+    data.table::setnames(edges.w3, c("from", "to", "w1", "w2")) #reformat
+    edges.w3$weight<-(edges.w3$w1 + edges.w3$w2)/2 #take the average cost between the two pixels
 
-  #------get the edges list
-  edges.weight =rbind(edges.w2,edges.w3)
+    #------get the edges list
+    edges.weight =rbind(edges.w2,edges.w3)
+  }
+
   edges.weight<-edges.weight[stats::complete.cases(edges.weight), c(1:2, 5)] #get rid of NAs caused by barriers. Drop the w1 and w2 costs.
   edges.weight[, id := seq_len(.N)] #set the ids of the edge list. Faster than using as.integer(row.names())
 

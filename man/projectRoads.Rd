@@ -12,25 +12,31 @@
 \title{Project road network.}
 \usage{
 projectRoads(landings, cost = NULL, roads = NULL, roadMethod = "mst",
-  plotRoads = T, sim = list())
+  plotRoads = T, neighbourhood = "octagon", sim = list())
 
 \S4method{projectRoads}{matrix}(landings, cost = NULL, roads = NULL,
-  roadMethod = "mst", plotRoads = T, sim = list())
+  roadMethod = "mst", plotRoads = T, neighbourhood = "octagon",
+  sim = list())
 
 \S4method{projectRoads}{RasterLayer}(landings, cost = NULL,
-  roads = NULL, roadMethod = "mst", plotRoads = T, sim = list())
+  roads = NULL, roadMethod = "mst", plotRoads = T,
+  neighbourhood = "octagon", sim = list())
 
 \S4method{projectRoads}{SpatialPolygons}(landings, cost = NULL,
-  roads = NULL, roadMethod = "mst", plotRoads = T, sim = list())
+  roads = NULL, roadMethod = "mst", plotRoads = T,
+  neighbourhood = "octagon", sim = list())
 
 \S4method{projectRoads}{SpatialPoints}(landings, cost = NULL,
-  roads = NULL, roadMethod = "mst", plotRoads = T, sim = list())
+  roads = NULL, roadMethod = "mst", plotRoads = T,
+  neighbourhood = "octagon", sim = list())
 
 \S4method{projectRoads}{RasterStack}(landings, cost = NULL,
-  roads = NULL, roadMethod = "mst", plotRoads = T, sim = list())
+  roads = NULL, roadMethod = "mst", plotRoads = T,
+  neighbourhood = "octagon", sim = list())
 
 \S4method{projectRoads}{RasterBrick}(landings, cost = NULL,
-  roads = NULL, roadMethod = "mst", plotRoads = T, sim = list())
+  roads = NULL, roadMethod = "mst", plotRoads = T,
+  neighbourhood = "octagon", sim = list())
 }
 \arguments{
 \item{landings}{RasterLayer, SpatialPolygons*, SpatialPointsDataFrame*, matrix, or RasterStack. Features to be connected to the road network. matrix should contain x,y,v columns, as returned by rasterToPoints etc. If RasterStack assume an ordered time-series.}
@@ -42,6 +48,8 @@ projectRoads(landings, cost = NULL, roads = NULL, roadMethod = "mst",
 \item{roadMethod}{Character. Options are "mst", "lcp", "snap".}
 
 \item{plotRoads}{Boolean. Set FALSE to save time if output road rasters are not required. Default TRUE}
+
+\item{neighbourhood}{Character. 'rook','queen', or 'octagon'. 'octagon' option is a modified version of the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x higher than horizontal/vertical weights.}
 
 \item{sim}{Sim list. Returned from a previous iteration of projectRoads. cost, roads, and roadMethod are ignored if a sim list is provided.}
 }
