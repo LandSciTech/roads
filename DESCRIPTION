@@ -40,7 +40,6 @@ Imports:
     grDevices,
     graphics,
     stats,
-    roads,
     caribouMetrics
 RoxygenNote: 6.1.1
 Suggests: 
