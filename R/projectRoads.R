@@ -49,13 +49,11 @@
 #' land.poly <- scen$landings.poly
 #' prRes <- projectRoads(land.poly,scen$cost.rast,cen$road.rast,mst")
 #' visualize(scen$cost.rast,land.poly,prRes,height=15)
-#' @import methods "projectRoads"
 #' @export
 setGeneric('projectRoads',function(landings,cost=NULL,roads=NULL,roadMethod="mst",plotRoads=T,neighbourhood="octagon",sim=list()) standardGeneric('projectRoads'))
 
 #' @return  sim list.
 #' @rdname projectRoads
-#' @export
 setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
   #x=newLandingCentroids;roadMethod="mst";cost=cCost;roads=cRoadsRaster[[ym]];
   #sim=list();roadMethod="lcp"
@@ -110,7 +108,6 @@ setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,r
 
 #' @return  sim list.
 #' @rdname projectRoads
-#' @export
 setMethod('projectRoads', signature(landings="RasterLayer"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
   landings = getCentroids(landings,withIDs=T)
   landings = raster::rasterToPoints(landings,fun=function(landings){landings>0})
@@ -119,7 +116,6 @@ setMethod('projectRoads', signature(landings="RasterLayer"), function(landings,c
 
 #' @return  sim list.
 #' @rdname projectRoads
-#' @export
 setMethod('projectRoads', signature(landings="SpatialPolygons"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
   landings = raster::rasterize(landings,cost)
   return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim))
@@ -127,7 +123,6 @@ setMethod('projectRoads', signature(landings="SpatialPolygons"), function(landin
 
 #' @return  sim list.
 #' @rdname projectRoads
-#' @export
 setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
     #landings=sC
     #landings = raster::subset(raster::rasterize(landings,cost),1)
@@ -143,14 +138,12 @@ setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings
 
 #' @return  RasterBrick. Road network over time.
 #' @rdname projectRoads
-#' @export
 setMethod('projectRoads', signature(landings="RasterStack"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
   return(projectRoads(raster::brick(landings),cost,roads,roadMethod,plotRoads,neighbourhood,sim))
 })
 
 #' @return  RasterBrick. Road network over time.
 #' @rdname projectRoads
-#' @export
 setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
   checkAllign = raster::compareRaster(cost,roads)
   if(!checkAllign){
