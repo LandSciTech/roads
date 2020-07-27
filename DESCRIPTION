@@ -34,13 +34,7 @@ Imports:
     latticeExtra,
     sf,
     fasterize,
-    spdep,
-    methods,
-    rlang,
-    grDevices,
-    graphics,
-    stats,
-    caribouMetrics
+    spdep
 RoxygenNote: 6.1.1
 Suggests: 
     testthat,
