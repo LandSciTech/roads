@@ -2,6 +2,7 @@
 #install.packages(c("RSQLite","Rcpp"))
 #install.packages(c("plyr","gdistance","data.table","latticeExtra","rgeos"))
 
+install.packages("SpaDES.tools")
 #devtools::install_github("PredictiveEcology/SpaDES.tools")
 #usethis::create_package(getwd())
 devtools::document();devtools::load_all()

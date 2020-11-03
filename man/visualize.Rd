@@ -4,9 +4,17 @@
 \alias{visualize}
 \title{Visualize roads projection input scenario and, optionally, output.}
 \usage{
-visualize(costRast, landings = NA, projRoadsResults = NA,
-  col.cost = NA, main = "", xlim = NA, ylim = NA, height = 15,
-  out.file = NA)
+visualize(
+  costRast,
+  landings = NA,
+  projRoadsResults = NA,
+  col.cost = NA,
+  main = "",
+  xlim = NA,
+  ylim = NA,
+  height = 15,
+  out.file = NA
+)
 }
 \arguments{
 \item{costRast}{A RasterLayer represening the cost of new roads. Existing road network will be identiifed by cells with a cost of zero.}
