@@ -184,7 +184,7 @@ roadCLUS.shortestPaths<- function(sim){
   return(invisible(sim))
 }
 
-
+# get the closest point on a road to each landing as a matrix of xy coords
 roadCLUS.getClosestRoad <- function(sim){
   roads.pts <- raster::rasterToPoints(sim$roads, fun=function(x){x > 0})
   closest.roads.pts <- apply(rgeos::gDistance(sp::SpatialPoints(roads.pts),sp::SpatialPoints(sim$landings), byid=TRUE), 1, which.min)
