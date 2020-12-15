@@ -112,7 +112,7 @@ roadCLUS.getGraph<- function(sim,neighbourhood){
 }
 
 roadCLUS.lcpList<- function(sim){
-  ##Get a list of paths from which there is a to and from point
+  ##Get a list of of cell indexs for to and from points
   paths.matrix<-cbind(raster::cellFromXY(sim$costSurface,sim$landings ), raster::cellFromXY(sim$costSurface,sim$roads.close.XY ))
   sim$paths.list<-split(paths.matrix, 1:nrow(paths.matrix))
   rm(paths.matrix)
