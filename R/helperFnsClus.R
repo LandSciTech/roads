@@ -31,7 +31,7 @@ NULL
 roadCLUS.analysis <- function(sim){
   if(!is.element('roadMethod',names(sim))||!(sim$roadMethod == 'snap')){
     ras.out<-sim$costSurface
-    ras.out[]<-1:ncell(ras.out)
+    ras.out[]<-1:raster::ncell(ras.out)
     ras.out[!(ras.out[] %in% as.matrix(sim$paths.v))] <- NA
     #ras.out<-raster::reclassify(ras.out, c(0.000000000001, maxValue(ras.out),0))
     if(is.element('roads',names(sim))){
@@ -122,7 +122,7 @@ roadCLUS.lcpList<- function(sim){
 
 roadCLUS.mstList<- function(sim){
   #print('mstList')
-  mst.v <- as.vector(rbind(raster::cellFromXY(sim$costSurface,sim$landings ), raster::cellFromXY(sim$costSurface,sim$roads.close.XY )))
+  mst.v <- as.vector(rbind(raster::cellFromXY(sim$costSurface,sim$landings), raster::cellFromXY(sim$costSurface,sim$roads.close.XY )))
   paths.matrix<-as.matrix(mst.v)
   paths.matrix<- paths.matrix[!duplicated(paths.matrix[,1]),]
   #print(paths.matrix)
