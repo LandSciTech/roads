@@ -3,7 +3,45 @@
 #' @import sp
 #' @importFrom raster res rasterToPoints
 #' @export
-convertRasterToLineSegments<-function(cMap){
+
+convertRasterToLineSegments <- function(rast){
+  pts <- sf::st_as_sf(raster::rasterToPoints(rast,
+                                             fun = function(x){x > 0},
+                                             spatial = TRUE))
+  
+  nearLn <- sf::st_nearest_points(pts, pts) %>% 
+    sf::st_as_sf() %>%  
+    mutate(len = sf::st_length(x), ID = 1:n())
+  
+  # speeds things up because filtering is slow on sf (as is [])
+  nearLn2 <- nearLn %>% sf::st_drop_geometry() %>% 
+    filter(len > 0) %>% 
+    filter(len == min(len))
+  
+  nearLn <- semi_join(nearLn, nearLn2, by = "ID")
+  
+  coords <- sf::st_coordinates(nearLn) %>% 
+    as.data.frame() %>% 
+    group_by(L1) %>% 
+    summarise(X =  first(X), Y = first(Y), )
+  
+  nearLn2 <- nearLn %>% sf::st_drop_geometry() %>% 
+    mutate(coordX = pull(coords, X),
+           coordY = pull(coords, Y)) %>% 
+    group_by(.data$coordX, .data$coordY) %>% 
+    summarise(ID = first(.data$ID)) 
+  
+  nearLn <- semi_join(nearLn, nearLn2, by = "ID") %>% 
+    sf::st_geometry() %>% 
+    sf::st_union() %>% 
+    sf::st_as_sf()
+  
+  return(nearLn)
+  
+}
+
+# Old version pretty slow doesn't work for demoScen[[1]]$road.rast
+convertRasterToLineSegments_old <- function(cMap){
   #warning("Converting linear rasters to line segments. This will work for output from roads::projectRoads(), and raster::rasterize(SpatialLines), but not for rasters in general.")
 
   cPts = raster::rasterToPoints(cMap,fun=function(x){!is.na(x)})

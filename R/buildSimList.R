@@ -14,9 +14,7 @@ buildSimList <- function(roads, cost, roadMethod, landings){
     if(is(roads, "Spatial")){
       roads <- sf::st_as_sf(roads)
     } else if(is(roads, "Raster")){
-      roads <- sf::st_as_sf(raster::rasterToPoints(roads, 
-                                                   fun = function(x){x > 0}, 
-                                                   spatial = TRUE))
+      roads <- convertRasterToLineSegments(roads)
     }
   }
   
