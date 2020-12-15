@@ -25,18 +25,18 @@ setMethod(
     }
     
     # set up sim list
-    roads = roads > 0
+    #roads = roads > 0
     sim <- buildSimList(roads = roads, cost = cost, 
                         roadMethod = roadMethod, 
                         landings = landings)
     
     sim <- roadCLUS.getGraph(sim,neighbourhood)
     
-    sim <- buildRoads(sim, roadMethod)
+    sim <- buildRoads(sim)
     
     if(plotRoads){
       
-      # convert paths.v roads into raster of roads 
+      # convert paths.v roads into raster of roads (doesn't do anything for snap) 
       sim <- roadCLUS.analysis(sim)
       
     }

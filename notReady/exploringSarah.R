@@ -287,17 +287,26 @@ roadCLUS.getGraph<- function(sim,neighbourhood){
 simList <- buildSimList(roads = demoScen[[1]]$road.rast, 
                         cost = demoScen[[1]]$cost.rast,
                         landings = demoScen[[1]]$landings.points, 
-                        roadMethod = "octagon")
+                        roadMethod = "snap")
 
 simListSF <- buildSimList(roads = demoScen[[1]]$road.rast, 
                           cost = demoScen[[1]]$cost.rast,
                           landings = demoScen[[1]]$landings.points %>%
                             sf::st_as_sf(), 
-                          roadMethod = "octagon")
+                          roadMethod = "snap")
 
 simListSF2 <- buildSimList(roads = demoScen[[1]]$road.line, 
                            cost = demoScen[[1]]$cost.rast,
                            landings = demoScen[[1]]$landings.points %>%
                              sf::st_as_sf(), 
-                           roadMethod = "octagon")
+                           roadMethod = "snap")
 out <- getClosestRoad(simList)
+
+# raster to lines using polygon and - buffer
+rdRast <- demoScen[[1]]$road.rast
+
+rdCont <- raster::rasterToContour(rdRast, nlevels = 1) %>% 
+  sf::st_as_sf()
+
+rdLine <- sf::st_simplify(rdCont, dTolerance = 4)
+
