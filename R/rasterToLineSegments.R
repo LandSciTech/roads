@@ -1,14 +1,11 @@
-#' @import spdep
-#' @import dplyr
-#' @import sp
-#' @importFrom raster res rasterToPoints
+
 #' @export
 
-convertRasterToLineSegments <- function(rast){
+rasterToLineSegments <- function(rast){
   pts <- sf::st_as_sf(raster::rasterToPoints(rast,
                                              fun = function(x){x > 0},
                                              spatial = TRUE))
-  
+  # finds line between all points and keep shortest
   nearLn <- sf::st_nearest_points(pts, pts) %>% 
     sf::st_as_sf() %>%  
     mutate(len = sf::st_length(x), ID = 1:n())
@@ -20,16 +17,17 @@ convertRasterToLineSegments <- function(rast){
   
   nearLn <- semi_join(nearLn, nearLn2, by = "ID")
   
+  # remove duplicate lines
   coords <- sf::st_coordinates(nearLn) %>% 
     as.data.frame() %>% 
     group_by(L1) %>% 
-    summarise(X =  first(X), Y = first(Y), )
+    slice(1)
   
   nearLn2 <- nearLn %>% sf::st_drop_geometry() %>% 
     mutate(coordX = pull(coords, X),
            coordY = pull(coords, Y)) %>% 
     group_by(.data$coordX, .data$coordY) %>% 
-    summarise(ID = first(.data$ID)) 
+    slice(1:2)
   
   nearLn <- semi_join(nearLn, nearLn2, by = "ID") %>% 
     sf::st_geometry() %>% 
@@ -40,6 +38,10 @@ convertRasterToLineSegments <- function(rast){
   
 }
 
+# #' @import spdep
+# #' @import dplyr
+# #' @import sp
+# #' @importFrom raster res rasterToPoints
 # Old version pretty slow doesn't work for demoScen[[1]]$road.rast
 convertRasterToLineSegments_old <- function(cMap){
   #warning("Converting linear rasters to line segments. This will work for output from roads::projectRoads(), and raster::rasterize(SpatialLines), but not for rasters in general.")

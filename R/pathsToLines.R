@@ -1,22 +1,22 @@
 
 #' copied from newRoadsToLines and made work with sf
 
-pathsToLines <- function(pr){
+pathsToLines <- function(sim){
   ## pr is projectRoads results (or 'sim' when it contains the results)
   ## used for only the 'lcp' and 'mst' roadMethods
   
   ## existing roads
-  er <- pr$costSurface == 0 
+  er <- sim$costSurface == 0 
   
-  linelist <- lapply(1:length(pr$paths.list), function(i){
+  linelist <- lapply(1:length(sim$paths.list), function(i){
     
-    inds <- match(pr$paths.list[[i]], pr$paths.v$V1)
+    inds <- match(sim$paths.list[[i]], sim$paths.v$V1)
     
     # cell indicies for vertexs on line
-    v <- pr$paths.v$V1[inds[1]:inds[2]]
+    v <- sim$paths.v$V1[inds[1]:inds[2]]
     
     # remove vertices in this line from pr object in parent environment
-    pr$paths.v <<- pr$paths.v[-(inds[1]:inds[2]), ]
+    sim$paths.v <<- sim$paths.v[-(inds[1]:inds[2]), ]
     
     ## index of where new road connects to existing road
     conn <- match(1, er[v]) 
@@ -34,15 +34,19 @@ pathsToLines <- function(pr){
       v <- v[1:conn] 
     }
     
-    id <- names(pr$paths.list)[[i]]
+    id <- names(sim$paths.list)[[i]]
     
-    return(sf::st_sf(
-      geometry = sf::st_sfc(sf::st_linestring(raster::xyFromCell(pr$costSurface,
+    outLines <- sf::st_sf(
+      geometry = sf::st_sfc(sf::st_linestring(raster::xyFromCell(sim$costSurface,
                                                                  v))),
       ID = id
-    ))
+    )
+    
+    return(outLines)
   })
   
-  outLines <- do.call(rbind, linelist)
-  return(sf::st_set_crs(outLines, sf::st_crs(pr$costSurface)))
+  outLines <- do.call(rbind, linelist)  %>% 
+    sf::st_union() %>% 
+    sf::st_as_sf()
+  return(sf::st_set_crs(outLines, sf::st_crs(sim$costSurface)))
 }

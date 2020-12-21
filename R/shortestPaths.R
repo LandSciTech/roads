@@ -15,15 +15,23 @@ shortestPaths<- function(sim){
     sim$paths.v <- rbind(data.table::data.table(paths[grepl("vpath", names(paths))] ), 
                          sim$paths.v) 
     
-    paths.e<-paths[grepl("epath",names(paths))]
-    igraph::edge_attr(sim$g, index= igraph::E(sim$g)[igraph::E(sim$g) %in% paths.e], name= 'weight')<-0.00001 #changes the cost(weight) associated with the edge that became a path (or road)
-    #reset landings and roads close to them
-    sim$landings<-NULL
-    sim$roads.close.XY<-NULL
-    sim$newRoads.lines<-newRoadsToLines(sim)
+    # get edges for updating graph
+    paths.e <- paths[grepl("epath", names(paths))]
     
-    rm(paths.e)
-    gc()
+    # updates the cost(weight) associated with the edge that became a road
+    igraph::edge_attr(sim$g, 
+                      index = igraph::E(sim$g)[igraph::E(sim$g) %in% paths.e],
+                      name = "weight") <- 0.00001 
+    
+    # add new roads to existing
+    sim$roads <- rbind(sim$roads, pathsToLines(sim))
+    
+    # remove no longer needed parts of list that aren't be used for update
+    sim$roads.close.XY <- NULL
+    sim$paths.v <- NULL
+    sim$paths.list <- NULL
+    
+    rm(paths.e, paths)
   }
   return(invisible(sim))
 }
