@@ -1,6 +1,7 @@
 # Sarah experimenting
 library(roads)
 library(dplyr)
+devtools::load_all(".")
 
 # Small example data
 CLUSexample
@@ -15,10 +16,10 @@ outs <- purrr::map(list(snap = "snap", lcp = "lcp", mst = "mst"),
 
 purrr::map(outs, names) %>% unlist() %>% unique()
 purrr::map(outs, length)
-purrr::map(outs, plot)
+
 
 # compare old method and new #==================================================
-# Inputs raster and sp points should give advatage to old method
+## Inputs raster and sp points should give advatage to old method
 roads <-  demoScen[[1]]$road.rast
 costSurface <- demoScen[[1]]$cost.rast
 
@@ -63,7 +64,7 @@ newMST$roads %>% plot()
 # all seem to match well
 
 
-# Inputs line and sp points should be even faster
+## Inputs line and sp points should be even faster
 roads <-  demoScen[[1]]$road.line
 costSurface <- demoScen[[1]]$cost.rast
 
@@ -75,39 +76,161 @@ landings <- rbind(demoScen[[1]]$landings.points,
 profvis::profvis({
   newSnap <- projectRoadsNew(landings, costSurface, roads, "snap")
   
-  oldSnap <- projectRoads(landings, costSurface, roads, "snap")
+  oldSnap <- projectRoads(landings, costSurface, 
+                          raster::rasterize(roads, costSurface),
+                          "snap")
 })
-# new is > 10x faster 
+# new is > 80x faster 
 
 # LCP
 profvis::profvis({
   newLCP <- projectRoadsNew(landings, costSurface, roads, "lcp")
   
-  oldLCP <- projectRoads(landings, costSurface, roads, "lcp")
+  oldLCP <- projectRoads(landings, costSurface, 
+                         raster::rasterize(roads, costSurface), 
+                         "lcp")
 })
-# new is 1.5 times faster but most of the difference is due to gc
+# new is 2.5x faster with rasterize and 1.7x faster without. But most
+# of the difference is due to gc
 
 # MST
 profvis::profvis({
   newMST <- projectRoadsNew(landings, costSurface, roads, "mst")
   
-  oldMST <- projectRoads(landings, costSurface, roads, "mst")
+  oldMST <- projectRoads(landings, costSurface, 
+                         raster::rasterize(roads, costSurface),
+                         "mst")
 })
-# new is 1.5 times faster but most of the difference is due to gc
+# new is 2.5x faster with rasterize and 1.9x faster without. But most of the
+# difference is due to gc and newRoadsToLine seems faster than pathsToLine
 
 # Compare results
 newSnap$roads %>% plot()
 oldSnap$newRoads.lines %>% plot()
+# results are a bit different because roads go to nearest point on road not
+# limited to raster cell centre
 
 newLCP$roads %>% plot()
 plot(oldLCP$roads > 0)
+# mostly match because still follow cost raster
 
 newMST$roads %>% plot()
 (oldMST$roads > 0) %>% plot()
+# mostly match because still follow cost raster
 
-# all seem to match well
+# overall similar but snap roads are slightly shifted
 
+## Inputs sf line and sf points. Check that landings being not cell centers still
+## works
+roadsSF <-  demoScen[[1]]$road.line %>% sf::st_as_sf()
+costSurface <- demoScen[[1]]$cost.rast
 
+# old method won't work with sf or line
+roads <- demoScen[[1]]$road.rast
+
+# randomly generate 126 points for landings
+landings <- sf::st_sf(geometry = sf::st_as_sfc(sf::st_bbox(roads))) %>% 
+  {sf::st_sf(geometry = sf::st_sample(., 126))}
+
+# snap
+profvis::profvis({
+  newSnap <- projectRoadsNew(landings, costSurface, roadsSF, "snap")
+  
+  oldSnap <- projectRoads(landings %>% mutate(ID = 1:n()) %>% sf::as_Spatial(),
+                          costSurface, 
+                          roads, 
+                          "snap")
+})
+# new is > 80x faster 
+
+# LCP
+profvis::profvis({
+  newLCP <- projectRoadsNew(landings, costSurface, roadsSF, "lcp")
+  
+  oldLCP <- projectRoads(landings %>% mutate(ID = 1:n()) %>% sf::as_Spatial(),
+                         costSurface, 
+                         roads,
+                         "lcp")
+})
+# new is 2.9x But most of the difference is due to gc
+
+# MST
+profvis::profvis({
+  newMST <- projectRoadsNew(landings, costSurface, roadsSF, "mst")
+  
+  oldMST <- projectRoads(landings %>% mutate(ID = 1:n()) %>% sf::as_Spatial(),
+                         costSurface, 
+                         roads,
+                         "mst")
+})
+# new is 1.6x faster. But most of the difference is due to gc and
+# newRoadsToLine seems faster than pathsToLine
+
+# Compare results
+newSnap$roads %>% plot()
+oldSnap$newRoads.lines %>% plot()
+# results are a bit different because roads go to nearest point on road not
+# limited to raster cell centre
+
+newLCP$roads %>% plot()
+plot(oldLCP$roads > 0)
+# mostly match because still follow cost raster
+
+newMST$roads %>% plot(col = "red", add = T)
+(oldMST$roads > 0) %>% plot()
+plot(landings %>% st_geometry(), pch = 4)
+# mostly match because still follow cost raster. Roads end at the closest raster
+# center rather than the actual landing point, could be an issue if res of cost
+# raster was course
+
+# overall similar but snap roads are slightly 
+
+# compare speeds
+
+# different inputs
+roadsR <- demoScen[[1]]$road.rast
+roadsSP <-  demoScen[[1]]$road.line
+roadsSF <-  demoScen[[1]]$road.line %>% sf::st_as_sf()
+
+landingsSP <- rbind(demoScen[[1]]$landings.points, 
+                    demoScen[[1]]$landings.points)
+
+landingsSF <- rbind(demoScen[[1]]$landings.points, 
+                    demoScen[[1]]$landings.points) %>% 
+  sf::st_as_sf()
+  
+costSurface <- demoScen[[1]]$cost.rast
+
+# plot differences in speed
+mb <- microbenchmark::microbenchmark(
+  oldSnap = projectRoads(landingsSP, costSurface, roadsR, "snap"),
+  oldLCP = projectRoads(landingsSP, costSurface, roadsR, "lcp"),
+  oldMST = projectRoads(landingsSP, costSurface, roadsR, "mst"),
+  
+  newSnap_sp_rast = projectRoadsNew(landingsSP, costSurface, roadsR, "snap"),
+  newLCP_sp_rast = projectRoadsNew(landingsSP, costSurface, roadsR, "lcp"),
+  newMST_sp_rast = projectRoadsNew(landingsSP, costSurface, roadsR, "mst"),
+  
+  newSnap_sp_sp = projectRoadsNew(landingsSP, costSurface, roadsSP, "snap"),
+  newLCP_sp_sp = projectRoadsNew(landingsSP, costSurface, roadsSP, "lcp"),
+  newMST_sp_sp = projectRoadsNew(landingsSP, costSurface, roadsSP, "mst"),
+  
+  newSnap_sf_sf = projectRoadsNew(landingsSF, costSurface, roadsSF, "snap"),
+  newLCP_sf_sf = projectRoadsNew(landingsSF, costSurface, roadsSF, "lcp"),
+  newMST_sf_sf = projectRoadsNew(landingsSF, costSurface, roadsSF, "mst"),
+  
+  times = 10
+)
+
+mb %>% 
+  mutate(version = ifelse(stringr::str_detect(expr, "old"), "old", "new"),
+         roadMethod = stringr::str_extract(expr, "MST|LCP|Snap"),
+         name = paste0(roadMethod,"-" ,version, stringr::str_extract(expr, "_.*"))) %>% 
+  ggplot2::ggplot(ggplot2::aes(x = name, y = time, fill = version))+
+  ggplot2::geom_violin(col = "grey", scale = "width")+
+  ggplot2::coord_flip()+
+  ggplot2::theme_bw()
+ggplot2::ggsave("notReady/compareOldVsNewSpeedRemoveGC.png")  
 
 # Miscellaneous exploring #=====================================================
 # Note call to gc that was in function caused 3 sec of wasted time!! when rest
