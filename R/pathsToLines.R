@@ -11,7 +11,9 @@ pathsToLines <- function(sim){
   linelist <- lapply(1:length(sim$paths.list), function(i){
     
     inds <- match(sim$paths.list[[i]], sim$paths.v$V1)
-    
+    if(inds[1] == inds[2]){
+      return(NULL)
+    }
     # cell indicies for vertexs on line
     v <- sim$paths.v$V1[inds[1]:inds[2]]
     
@@ -47,6 +49,6 @@ pathsToLines <- function(sim){
   
   outLines <- do.call(rbind, linelist)  %>% 
     sf::st_union() %>% 
-    sf::st_as_sf()
+    {sf::st_sf(geometry = .)}
   return(sf::st_set_crs(outLines, sf::st_crs(sim$costSurface)))
 }
