@@ -17,6 +17,99 @@ purrr::map(outs, names) %>% unlist() %>% unique()
 purrr::map(outs, length)
 purrr::map(outs, plot)
 
+# compare old method and new #==================================================
+# Inputs raster and sp points should give advatage to old method
+roads <-  demoScen[[1]]$road.rast
+costSurface <- demoScen[[1]]$cost.rast
+
+#double the landings to make it easier to compare speed
+landings <- rbind(demoScen[[1]]$landings.points, 
+                 demoScen[[1]]$landings.points)
+
+# snap
+profvis::profvis({
+  newSnap <- projectRoadsNew(landings, costSurface, roads, "snap")
+  
+  oldSnap <- projectRoads(landings, costSurface, roads, "snap")
+})
+# new is > 8x faster 
+
+# LCP
+profvis::profvis({
+  newLCP <- projectRoadsNew(landings, costSurface, roads, "lcp")
+  
+  oldLCP <- projectRoads(landings, costSurface, roads, "lcp")
+})
+# new is 1.5 times faster but most of the difference is due to gc
+
+# MST
+profvis::profvis({
+  newMST <- projectRoadsNew(landings, costSurface, roads, "mst")
+  
+  oldMST <- projectRoads(landings, costSurface, roads, "mst")
+})
+# new is 1.5 times faster but most of the difference is due to gc
+
+# Compare results
+newSnap$roads %>% plot()
+oldSnap$newRoads.lines %>% plot()
+
+newLCP$roads %>% plot()
+plot(oldLCP$roads > 0)
+
+newMST$roads %>% plot()
+(oldMST$roads > 0) %>% plot()
+
+# all seem to match well
+
+
+# Inputs line and sp points should be even faster
+roads <-  demoScen[[1]]$road.line
+costSurface <- demoScen[[1]]$cost.rast
+
+# double the landings to make it easier to compare speed
+landings <- rbind(demoScen[[1]]$landings.points, 
+                  demoScen[[1]]$landings.points)
+
+# snap
+profvis::profvis({
+  newSnap <- projectRoadsNew(landings, costSurface, roads, "snap")
+  
+  oldSnap <- projectRoads(landings, costSurface, roads, "snap")
+})
+# new is > 10x faster 
+
+# LCP
+profvis::profvis({
+  newLCP <- projectRoadsNew(landings, costSurface, roads, "lcp")
+  
+  oldLCP <- projectRoads(landings, costSurface, roads, "lcp")
+})
+# new is 1.5 times faster but most of the difference is due to gc
+
+# MST
+profvis::profvis({
+  newMST <- projectRoadsNew(landings, costSurface, roads, "mst")
+  
+  oldMST <- projectRoads(landings, costSurface, roads, "mst")
+})
+# new is 1.5 times faster but most of the difference is due to gc
+
+# Compare results
+newSnap$roads %>% plot()
+oldSnap$newRoads.lines %>% plot()
+
+newLCP$roads %>% plot()
+plot(oldLCP$roads > 0)
+
+newMST$roads %>% plot()
+(oldMST$roads > 0) %>% plot()
+
+# all seem to match well
+
+
+
+# Miscellaneous exploring #=====================================================
 # Note call to gc that was in function caused 3 sec of wasted time!! when rest
 # of funciton took 20ms
 
