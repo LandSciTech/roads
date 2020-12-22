@@ -7,17 +7,8 @@ getGraph<- function(sim, neighbourhood){
   sim$paths.v <- NULL
   
   # prepare the cost surface raster #===========
-  # get the cost surface as a matrix using the raster package
-  ras.matrix <- raster::as.matrix(sim$costSurface)
-  
-  # transpose then vectorize which matches the same order as adj
-  weight <- c(t(ras.matrix))
-  
-  # convert to a data.table - faster for large objects than data.frame
-  weight <- data.table::data.table(weight) 
-  
-  #Try
-  # weight<-data.table(getValues(sim$costSurface))
+  # get cost as data.table from raster
+  weight <- data.table(weight = raster::getValues(sim$costSurface))
   
   # get the id for ther verticies which is used to merge with the edge list from
   # adj
@@ -29,16 +20,21 @@ getGraph<- function(sim, neighbourhood){
     stop("neighbourhood type not recognized")
   }
   
+  nc <- ncol(sim$costSurface)
+  ncel <- ncell(sim$costSurface)
+  
   edges <- SpaDES.tools::adj(
       returnDT = TRUE,
-      numCol = ncol(ras.matrix),
-      numCell = ncol(ras.matrix) * nrow(ras.matrix),
+      numCol = nc,
+      numCell = ncel,
       directions = 4,
-      cells = 1:as.integer(ncol(ras.matrix) * nrow(ras.matrix))
+      cells = 1:as.integer(ncel)
     )
   
+  # adj will return matrix even if returnDT = TRUE if small  
   edges <- data.table::data.table(edges)
-  # edges[from < to, c("from", "to") := .(to, from)]
+  
+  # switch to and from where to > from so can remove duplicates
   edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]
   
   edges <- unique(edges)
@@ -50,8 +46,8 @@ getGraph<- function(sim, neighbourhood){
   data.table::setnames(edges.w1, c("from", "to", "w1"))
   
   # merge in the weights to a cost surface
-  edges.w2<-data.table::setDT(merge(x = edges.w1, y = weight,
-                                    by.x = "to", by.y = "id"))
+  edges.w2 <- data.table::setDT(merge(x = edges.w1, y = weight,
+                                      by.x = "to", by.y = "id"))
   
   # reformat
   data.table::setnames(edges.w2, c("from", "to", "w1", "w2")) 
@@ -71,10 +67,10 @@ getGraph<- function(sim, neighbourhood){
     
     edges <- SpaDES.tools::adj(
       returnDT = TRUE,
-      numCol = ncol(ras.matrix),
-      numCell = ncol(ras.matrix) * nrow(ras.matrix),
+      numCol = nc,
+      numCell = ncel,
       directions = "bishop",
-      cells = 1:as.integer(ncol(ras.matrix) * nrow(ras.matrix))
+      cells = 1:as.integer(ncel)
     )
     
     edges <- data.table::data.table(edges)
@@ -118,6 +114,6 @@ getGraph<- function(sim, neighbourhood){
   igraph::E(sim$g)$weight <- as.matrix(edges.weight)[,3]
   
   #------clean up
-  rm(edges.w1,edges.w2,edges.w3, edges, weight, ras.matrix)
+  rm(edges.w1, edges.w2, edges.w3, edges, weight, mW, nc, ncel, edges.weight)
   return(invisible(sim))
 }
