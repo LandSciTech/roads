@@ -107,7 +107,7 @@ roadCLUS.getGraph<- function(sim,neighbourhood){
 
   #------clean up
   rm(edges.w1,edges.w2,edges.w3, edges, weight, ras.matrix)#remove unused objects
-  gc() #garbage collection
+  # gc() #garbage collection
   return(invisible(sim))
 }
 
@@ -116,7 +116,7 @@ roadCLUS.lcpList<- function(sim){
   paths.matrix<-cbind(raster::cellFromXY(sim$costSurface,sim$landings ), raster::cellFromXY(sim$costSurface,sim$roads.close.XY ))
   sim$paths.list<-split(paths.matrix, 1:nrow(paths.matrix))
   rm(paths.matrix)
-  gc()
+  # gc()
   return(invisible(sim))
 }
 
@@ -138,7 +138,7 @@ roadCLUS.mstList<- function(sim){
     sim$paths.list<-split(paths.matrix, 1:nrow(paths.matrix)) # put the edge combinations in a list used for shortestPaths
     #print(sim$paths.list)
     rm(mst.paths,mst.g, mst.adj, mst.v, paths.matrix)
-    gc()
+    # gc()
   }
   return(invisible(sim))
 }
@@ -179,7 +179,7 @@ roadCLUS.shortestPaths<- function(sim){
     sim$roads.close.XY<-NULL
     sim$newRoads.lines<-newRoadsToLines(sim)
     rm(paths.e)
-    gc()
+    # gc()
   }
   return(invisible(sim))
 }
@@ -191,7 +191,7 @@ roadCLUS.getClosestRoad <- function(sim){
   sim$roads.close.XY <- as.matrix(roads.pts[closest.roads.pts, 1:2,drop=F]) #this function returns a matrix of x, y coordinates corresponding to the closest road
   #The drop =F is needed for a single landing - during the subset of a matrix it will become a column vector because as it converts a vector to a matrix, r will assume you have one column
   rm(roads.pts, closest.roads.pts)
-  gc()
+  # gc()
   return(invisible(sim))
 }
 
