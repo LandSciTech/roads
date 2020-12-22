@@ -32,7 +32,7 @@ rasterToLineSegments <- function(rast){
   nearLn <- semi_join(nearLn, nearLn2, by = "ID") %>% 
     sf::st_geometry() %>% 
     sf::st_union() %>% 
-    sf::st_as_sf()
+    {sf::st_sf(geometry = .)}
   
   return(nearLn)
   
