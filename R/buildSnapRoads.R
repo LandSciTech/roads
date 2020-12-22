@@ -17,7 +17,7 @@ buildSnapRoads <- function(sim){
   # the points
   snap_roads_lines <- sf::st_nearest_points(sim$landings, roads.pts)
   
-  snap_roads_lines <- sf::st_as_sf(snap_roads_lines) 
+  snap_roads_lines <- sf::st_sf(geometry = snap_roads_lines) 
   # snap_roads_lines <- mutate(snap_roads_lines, 
   #                            geometry = sf::st_cast(geometry, "MULTIPOINT"))
   
