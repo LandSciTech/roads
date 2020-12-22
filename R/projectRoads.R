@@ -132,7 +132,7 @@ setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings
     }else{
       cco = cbind(cco,seq(1,nrow(cco)))
     }
-    dimnames(cco)[[2]][3]="layer"
+    dimnames(cco)[[2]] = c("x", "y", "layer")
     return(projectRoads(landings=cco,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim))
 })
 
