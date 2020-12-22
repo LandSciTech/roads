@@ -12,7 +12,7 @@ mstList<- function(sim){
   paths.matrix <- unique(mst.v) 
 
   if(length(paths.matrix) > 1){
-    # get an adjaceny matrix given then cell numbers
+    # get an adjaceny matrix given the cell numbers
     mst.adj <- igraph::distances(sim$g, paths.matrix, paths.matrix) 
     
     # set the verticies names as the cell numbers in the costSurface
