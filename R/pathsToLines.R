@@ -10,6 +10,7 @@ pathsToLines <- function(sim){
   
   linelist <- lapply(1:length(sim$paths.list), function(i){
     
+    # finds first match for start and end cells in paths
     inds <- match(sim$paths.list[[i]], sim$paths.v$V1)
     if(inds[1] == inds[2]){
       return(NULL)
@@ -17,7 +18,7 @@ pathsToLines <- function(sim){
     # cell indicies for vertices on line
     v <- sim$paths.v$V1[inds[1]:inds[2]]
     
-    # remove vertices in this line from pr object in parent environment
+    # remove vertices in this line from sim object in parent environment
     sim$paths.v <<- sim$paths.v[-(inds[1]:inds[2]), ]
     
     ## index of where new road connects to existing road
