@@ -1,5 +1,4 @@
 # Sarah experimenting
-library(roads)
 library(dplyr)
 devtools::load_all(".")
 
@@ -8,6 +7,8 @@ CLUSexample
 roads <- CLUSexample$roads
 cost <- CLUSexample$cost
 landings <- CLUSexample$landings
+roadMethod = "mst"
+neighbourhood = "octagon"
 
 # check that all roadMethods return same list format
 outs <- purrr::map(list(snap = "snap", lcp = "lcp", mst = "mst"), 
@@ -33,7 +34,7 @@ profvis::profvis({
   
   oldSnap <- projectRoads(landings, costSurface, roads, "snap")
 })
-# new is > 8x faster 
+# new is 7x faster 
 
 # LCP
 profvis::profvis({
@@ -41,7 +42,7 @@ profvis::profvis({
   
   oldLCP <- projectRoads(landings, costSurface, roads, "lcp")
 })
-# new is 1.5 times faster but most of the difference is due to gc
+# old is 3 times faster after removing gc mostly bc of rasterToLineSegments
 
 # MST
 profvis::profvis({
@@ -49,7 +50,7 @@ profvis::profvis({
   
   oldMST <- projectRoads(landings, costSurface, roads, "mst")
 })
-# new is 1.5 times faster but most of the difference is due to gc
+# old is 3 times faster after removing gc mostly bc of rasterToLineSegments
 
 # Compare results
 newSnap$roads %>% plot()
@@ -90,8 +91,7 @@ profvis::profvis({
                          raster::rasterize(roads, costSurface), 
                          "lcp")
 })
-# new is 2.5x faster with rasterize and 1.7x faster without. But most
-# of the difference is due to gc
+# new is 2.9x faster with rasterize and 1.5x faster without. 
 
 # MST
 profvis::profvis({
@@ -101,8 +101,7 @@ profvis::profvis({
                          raster::rasterize(roads, costSurface),
                          "mst")
 })
-# new is 2.5x faster with rasterize and 1.9x faster without. But most of the
-# difference is due to gc and newRoadsToLine seems faster than pathsToLine
+# new is 1.8x faster with rasterize and even without. 
 
 # Compare results
 newSnap$roads %>% plot()
@@ -185,7 +184,7 @@ plot(landings %>% st_geometry(), pch = 4)
 
 # overall similar but snap roads are slightly 
 
-# compare speeds
+# Benchmark compare speeds #====================================================
 
 # different inputs
 roadsR <- demoScen[[1]]$road.rast
@@ -232,6 +231,116 @@ mb %>%
   ggplot2::theme_bw()
 ggplot2::ggsave("notReady/compareOldVsNewSpeedRemoveGC.png")  
 
+# compare getGraph on a big raster 
+bigrast <- raster::raster("wc10/tmin1.bil")
+medrast <- raster::aggregate(bigrast,4)
+profvis::profvis({
+  roadCLUS.getGraph(list(costSurface = medrast), "octagon")
+  getGraph(list(costSurface = medrast), "octagon")
+})
+
+microbenchmark::microbenchmark(
+  roadCLUS.getGraph(list(costSurface = bigrast), "octagon"),
+  getGraph(list(costSurface = bigrast), "octagon"), 
+  times = 10
+) %>% ggplot2::autoplot()
+
+# with the big rast there are a lot of GC calls that make it hard to tell so
+# profile with medrast. Overall new seems slightly faster
+
+
+# Check with different sf col name #============================================
+roadsSF <-  demoScen[[1]]$road.line %>% sf::st_as_sf() %>% rename(g = geometry)
+
+landingsSF <- rbind(demoScen[[1]]$landings.points, 
+                    demoScen[[1]]$landings.points) %>% 
+  sf::st_as_sf() %>%
+  rename(g = geometry)
+
+costSurface <- demoScen[[1]]$cost.rast
+
+projectRoadsNew(landingsSF, costSurface, roadsSF)
+
+# explore polygon landings process
+landings <- demoScen[[1]]$landings.stack$layer.1.1.1
+
+# projectRoads does for RasterLayer 
+landingsCent = getCentroids(landings, withIDs=T)
+
+landingsPts = raster::rasterToPoints(landings,fun=function(landings){landings>0})
+
+# getCentroids finds clumps in raster and then gets average coords at res of
+# raster. This seems to shift the landings when there is no clump but just one
+# raster cell per landing. 
+
+plot(landings, col = c("white", "black"))
+plot(landingsCent, add = T)
+
+# check if there are any clumps of more than 1 cell
+clumps <- raster::clump(landings, gaps = F)
+raster::freq(clumps) %>% as.data.frame() %>% filter(!is.na(value)) %>% 
+  pull(count) %>% max() > 1
+
+# in this case make more sense to just take rasterToPoints to get centoid
+
+# make example with clumps
+landClumps <- raster::raster(ncols=100, nrows=100, crs = NA)
+landClumps[c(1:5,101:105)] <- 1
+landClumps[c(450:455,550:555)] <- 1
+landClumps[700] <- 1
+rc <- raster::clump(landClumps, gaps = F) 
+raster::freq(rc)
+plot(rc)
+raster::freq(rc, useNA = "no")[,2] > 1
+
+# this makes them all one multipolygon
+polys1 <- raster::rasterToPolygons(landClumps, dissolve = TRUE)
+
+# this makes each clump a separate poly
+polys2 <- raster::rasterToPolygons(rc, dissolve = TRUE) %>% sf::st_as_sf()
+
+# can get center of poly as landing approximation
+ptClumpCent <- polys2 %>% sf::st_centroid()
+
+# or could get nearest point on poly border to another feature
+ptOnClumpEdge <-  sf::st_nearest_points(polys2, sf::st_point(c(15, 50))) %>% 
+  sf::st_cast("POINT") %>% .[seq(1, length(.), 2)]
+
+plot(polys2 %>% sf::st_geometry())
+plot(ptOnClumpEdge, add = TRUE, col = "red")
+plot(sf::st_point(c(15, 50)), add = TRUE)
+
+plot(ptClumpCent, add = TRUE, col = "green")
+
+# or multiple points has problems for very small polygons, size is not exact
+ptsInClump <- sf::st_sample(polys2$geometry, type = "regular", size = 3, 
+                            offset = c(raster::extent(landClumps)@xmin,
+                                       raster::extent(landClumps)@ymin))
+plot(ptsInClump, add = TRUE, col = "blue")
+
+# Raster to lines with Voronoi Not working... #=================================
+rast <- demoScen[[1]]$road.rast
+
+rast.poly <- raster::rasterToContour(rast, levels = 1) %>% st_as_sf()
+
+rast.line <- sf::st_buffer(rast.poly, dist = 0.01, singleSide = TRUE) %>% 
+  {sf::st_difference(rast.poly, .)} %>% st_cast("LINESTRING")
+
+rast.pts <- raster::rasterToPoints(rast, fun = function(x)x>0, 
+                                   spatial = TRUE) %>% 
+  sf::st_as_sf() %>% sf::st_union()
+
+env <- sf::st_buffer(rast.pts, dist = 1)
+
+vor.pts <- env %>% 
+  sf::st_cast("MULTIPOINT") %>%  
+  sf::st_union() %>% 
+  sf::st_make_valid()
+
+rast.vor <- sf::st_voronoi(vor.pts, sf::st_buffer(env, dist = 1)) %>% 
+  unlist(recursive = FALSE) %>% sf::st_as_sfc() %>% sf::st_make_valid()
+
+rast.vor2 <- sf::st_intersection(rast.vor, rast.pts)
 # Miscellaneous exploring #=====================================================
 # Note call to gc that was in function caused 3 sec of wasted time!! when rest
 # of funciton took 20ms
