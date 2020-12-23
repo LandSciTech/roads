@@ -14,7 +14,7 @@ pathsToLines <- function(sim){
     if(inds[1] == inds[2]){
       return(NULL)
     }
-    # cell indicies for vertexs on line
+    # cell indicies for vertices on line
     v <- sim$paths.v$V1[inds[1]:inds[2]]
     
     # remove vertices in this line from pr object in parent environment
@@ -36,18 +36,14 @@ pathsToLines <- function(sim){
       v <- v[1:conn] 
     }
     
-    id <- names(sim$paths.list)[[i]]
+    #id <- names(sim$paths.list)[[i]]
     
-    outLines <- sf::st_sf(
-      geometry = sf::st_sfc(sf::st_linestring(raster::xyFromCell(sim$costSurface,
-                                                                 v))),
-      ID = id
-    )
+    outLine <- sf::st_linestring(raster::xyFromCell(sim$costSurface, v))
     
-    return(outLines)
+    return(outLine)
   })
   
-  outLines <- do.call(rbind, linelist)  %>% 
+  outLines <- sf::st_as_sfc(linelist)  %>% 
     sf::st_union() %>% 
     {sf::st_sf(geometry = .)}
   return(sf::st_set_crs(outLines, sf::st_crs(sim$costSurface)))
