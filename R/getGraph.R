@@ -20,8 +20,8 @@ getGraph<- function(sim, neighbourhood){
     stop("neighbourhood type not recognized")
   }
   
-  nc <- ncol(sim$costSurface)
-  ncel <- ncell(sim$costSurface)
+  nc <- raster::ncol(sim$costSurface)
+  ncel <- raster::ncell(sim$costSurface) %>% as.integer()
   
   edges <- SpaDES.tools::adj(
       returnDT = TRUE,
@@ -31,8 +31,10 @@ getGraph<- function(sim, neighbourhood){
       cells = 1:as.integer(ncel)
     )
   
-  # adj will return matrix even if returnDT = TRUE if small  
-  edges <- data.table::data.table(edges)
+  if(!is(edges, "data.table")){
+    # adj will return matrix even if returnDT = TRUE if small  
+    edges <- data.table::as.data.table(edges)
+  }
   
   # switch to and from where to > from so can remove duplicates
   edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]
@@ -40,30 +42,32 @@ getGraph<- function(sim, neighbourhood){
   edges <- unique(edges)
   
   # merge in the weights from a cost surface
-  edges.w1 <- merge(x = edges, y = weight, by.x = "from", by.y = "id") 
+  edges_rook <- merge(x = edges, y = weight, by.x = "from", by.y = "id") 
   
   # reformat
-  data.table::setnames(edges.w1, c("from", "to", "w1"))
+  data.table::setnames(edges_rook, c("from", "to", "w1"))
   
   # merge in the weights to a cost surface
-  edges.w2 <- data.table::setDT(merge(x = edges.w1, y = weight,
+  edges_rook <- data.table::setDT(merge(x = edges_rook, y = weight,
                                       by.x = "to", by.y = "id"))
   
   # reformat
-  data.table::setnames(edges.w2, c("from", "to", "w1", "w2")) 
+  data.table::setnames(edges_rook, c("from", "to", "w1", "w2")) 
   
-  # take the average cost between the two pixels
-  edges.w2$weight <- (edges.w2$w1 + edges.w2$w2)/2 
+  # take the average cost between the two pixels and remove w1 w2
+  edges_rook[,`:=`(weight = (w1 + w2)/ 2,
+                   w1 = NULL,
+                   w2 = NULL)]
   
   if(neighbourhood == "rook"){
-    edges.weight = edges.w2
+    edges.weight = edges_rook
   } else {
     
     # bishop's case - multiply weights by 2^0.5
     if(neighbourhood == "octagon"){
       mW = 2^0.5
     } else {mW = 1}
-    weight$weight = weight$weight*mW
+    weight[, weight := weight*mW]
     
     edges <- SpaDES.tools::adj(
       returnDT = TRUE,
@@ -73,35 +77,40 @@ getGraph<- function(sim, neighbourhood){
       cells = 1:as.integer(ncel)
     )
     
-    edges <- data.table::data.table(edges)
+    if(!is(edges, "data.table")){
+      # adj will return matrix even if returnDT = TRUE if small  
+      edges <- data.table::as.data.table(edges)
+    }
     
     # edges[from < to, c("from", "to") := .(to, from)]
     edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]
     
-    edges<-unique(edges)
+    edges <- unique(edges)
     
     # merge in the weights from a cost surface
-    edges.w1 <- merge(x = edges, y = weight, by.x = "from", by.y = "id") 
+    edges_bishop <- merge(x = edges, y = weight, by.x = "from", by.y = "id") 
     
     # reformat
-    data.table::setnames(edges.w1, c("from", "to", "w1")) 
+    data.table::setnames(edges_bishop, c("from", "to", "w1")) 
     
     # merge in the weights to a cost surface
-    edges.w3 <- data.table::setDT(merge(x = edges.w1, y = weight, 
+    edges_bishop <- data.table::setDT(merge(x = edges_bishop, y = weight, 
                                         by.x = "to", by.y = "id"))
     
     # reformat
-    data.table::setnames(edges.w3, c("from", "to", "w1", "w2")) 
+    data.table::setnames(edges_bishop, c("from", "to", "w1", "w2")) 
     
-    # take the average cost between the two pixels
-    edges.w3$weight<-(edges.w3$w1 + edges.w3$w2)/2 
+    # take the average cost between the two pixels and remove w1 w2
+    edges_bishop[,`:=`(weight = (w1 + w2)/ 2,
+                       w1 = NULL,
+                       w2 = NULL)]
     
     # get the edges list #==================
-    edges.weight = rbind(edges.w2, edges.w3)
+    edges.weight = rbind(edges_rook, edges_bishop)
   }
   
   # get rid of NAs caused by barriers. Drop the w1 and w2 costs.
-  edges.weight <- edges.weight[stats::complete.cases(edges.weight), c(1:2, 5)] 
+  edges.weight <- na.omit(edges.weight) 
   
   # set the ids of the edge list. Faster than using as.integer(row.names())
   edges.weight[, id := seq_len(.N)] 
@@ -114,6 +123,6 @@ getGraph<- function(sim, neighbourhood){
   igraph::E(sim$g)$weight <- as.matrix(edges.weight)[,3]
   
   #------clean up
-  rm(edges.w1, edges.w2, edges.w3, edges, weight, mW, nc, ncel, edges.weight)
+  rm(edges_rook, edges_bishop, edges, weight, mW, nc, ncel, edges.weight)
   return(invisible(sim))
 }
