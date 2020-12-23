@@ -18,10 +18,14 @@ shortestPaths<- function(sim){
     # get edges for updating graph
     paths.e <- paths[grepl("epath", names(paths))]
     
+    rm(paths)
+    
     # updates the cost(weight) associated with the edge that became a road
     igraph::edge_attr(sim$g, 
                       index = igraph::E(sim$g)[igraph::E(sim$g) %in% paths.e],
                       name = "weight") <- 0.00001 
+    
+    rm(paths.e)
     
     # add new roads to existing
     sim$roads <- rbind(sim$roads, pathsToLines(sim))
@@ -30,8 +34,7 @@ shortestPaths<- function(sim){
     sim$roads.close.XY <- NULL
     sim$paths.v <- NULL
     sim$paths.list <- NULL
-    
-    rm(paths.e, paths)
+
   }
   return(invisible(sim))
 }

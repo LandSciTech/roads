@@ -22,6 +22,8 @@ buildSimList <- function(roads, cost, roadMethod, landings){
     if(is(landings, "Spatial")){
       landings <- sf::st_as_sf(landings)
     } else if(is(landings, "Raster")){
+      # TODO:check if landings are clumps of cells (ie polygons) or single cells
+      # (ie points) and if clumps chose an appropriate point
       landings <- sf::st_as_sf(raster::rasterToPoints(landings, 
                                                       fun = function(x){x > 0}, 
                                                       spatial = TRUE))
