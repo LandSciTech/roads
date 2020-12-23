@@ -44,7 +44,16 @@ setMethod(
                         roadMethod = roadMethod, 
                         landings = landings)
     
-    sim <- getGraph(sim,neighbourhood)
+    geoColInL <- attr(sim$landings, "sf_column")
+    if(geoColInL != "geometry"){
+      sim$landings <- rename(sim$landings, geometry = all_of(geoColInL))
+    }
+    geoColInR <- attr(sim$roads, "sf_column")
+    if(geoColInR != "geometry"){
+      sim$roads <- rename(sim$roads, geometry = all_of(geoColInR))
+    }
+    
+    sim <- getGraph(sim, neighbourhood)
     
     sim <- switch(sim$roadMethod,
                   snap= {
@@ -77,6 +86,15 @@ setMethod(
         plot(sf::st_geometry(sim$roads), add = TRUE)
         plot(sf::st_geometry(sim$landings), add = TRUE)
         title(main = mainTitle, sub = paste0("Method: ", sim$roadMethod))})
+    }
+    
+    # put back original geometry column names
+    if(geoColInL != attr(sim$landings, "sf_column")){
+      sim$landings <- rename(sim$landings, geoColInL = geometry)
+    }
+
+    if(geoColInR != attr(sim$roads, "sf_column")){
+      sim$roads <- rename(sim$roads, geoColInR = geometry)
     }
     
     return(sim)
