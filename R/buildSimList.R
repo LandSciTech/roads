@@ -20,21 +20,54 @@ buildSimList <- function(roads, cost, roadMethod, landings){
   
   if(!(is(landings, "sf") || is(landings, "sfc"))){
     if(is(landings, "Spatial")){
+      
       landings <- sf::st_as_sf(landings)
+      
     } else if(is(landings, "Raster")){
-      # TODO:check if landings are clumps of cells (ie polygons) or single cells
-      # (ie points) and if clumps chose an appropriate point
-      landings <- sf::st_as_sf(raster::rasterToPoints(landings, 
-                                                      fun = function(x){x > 0}, 
-                                                      spatial = TRUE))
+      # check if landings are clumps of cells (ie polygons) or single cells
+      # (ie points) and if clumps take centroid
+      clumpedRast <- raster::clump(landings, gaps = F) 
+      
+      clumps <- clumpedRast %>% 
+        raster::freq(useNA = "no") %>% 
+        .[,2] %>% max() > 1
+      
+      if(clumps){
+        landings <- sf::st_as_sf(raster::rasterToPolygons(clumpedRast, 
+                                                          dissolve = TRUE))
+      } else {
+        landings <- sf::st_as_sf(raster::rasterToPoints(landings, 
+                                                        fun = function(x){x > 0}, 
+                                                        spatial = TRUE))
+      }
+      
+
+    } else if(is(landings, "matrix")){
+      landings <- sf::st_sf(
+        geometry = sf::st_as_sfc(list(sf::st_multipoint(landings[, c("x", "y")])))
+        ) %>%
+        sf::st_cast("POINT")
     }
   }
   
+  if(sf::st_geometry_type(landings, by_geometry = FALSE) %in% 
+     c("POLYGON", "MULTIPOLYGON")){
+    # Use point on surface not centroid to ensure point is inside irregular polygons
+    landings <- sf::st_point_on_surface(landings)
+  }
+  
   # check crs error if different
-  if(!all(sf::st_crs(roads) == sf::st_crs(landings),
-          sf::st_crs(roads) == sf::st_crs(cost))){
+  if(!all(raster::compareCRS(raster::crs(roads), raster::crs(landings)),
+          raster::compareCRS(raster::crs(roads), raster::crs(cost)))){
     stop("the crs of roads, landings and cost must match")
   }
+  
+  # crop landings and roads to bbox of cost raster
+  ext <- st_bbox(cost) %>% as.numeric() %>% 
+    `names<-`(c("xmin", "ymin", "xmax", "ymax"))
+  landings <- st_crop(landings, ext)
+  roads <- st_crop(roads, ext)
+  
 
   sim <- list(roads = roads, costSurface = cost, 
               roadMethod = roadMethod, 
