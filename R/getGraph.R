@@ -5,7 +5,6 @@
 
 getGraph<- function(sim, neighbourhood){
   sim$paths.v <- NULL
-  
   # prepare the cost surface raster #===========
   # get cost as data.table from raster
   weight <- data.table(weight = raster::getValues(sim$costSurface))
@@ -115,14 +114,19 @@ getGraph<- function(sim, neighbourhood){
   # set the ids of the edge list. Faster than using as.integer(row.names())
   edges.weight[, id := seq_len(.N)] 
   
+  # clean-up
+  rm(edges_rook, edges_bishop, edges, weight, mW, nc, ncel)
+
   # make the graph #================
+  edge_mat <- as.matrix(edges.weight)[,1:2]
+ # browser()
   # create the graph using to and from columns. Requires a matrix input
-  sim$g <- igraph::graph.edgelist(as.matrix(edges.weight)[,1:2], dir = FALSE)
-  
+  sim$g <- igraph::graph.edgelist(edge_mat, dir = FALSE)
+
   # assign weights to the graph. Requires a matrix input
   igraph::E(sim$g)$weight <- as.matrix(edges.weight)[,3]
   
   #------clean up
-  rm(edges_rook, edges_bishop, edges, weight, mW, nc, ncel, edges.weight)
+  rm(edges.weight)
   return(invisible(sim))
 }
