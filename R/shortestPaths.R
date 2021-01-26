@@ -27,8 +27,10 @@ shortestPaths<- function(sim){
     
     rm(paths.e)
     
+    # make new roads
+    new_roads <- pathsToLines(sim)
     # add new roads to existing
-    sim$roads <- rbind(sim$roads, pathsToLines(sim))
+    sim$roads <- rbind(sim$roads, new_roads)
     
     # remove no longer needed parts of list that aren't be used for update
     sim$roads.close.XY <- NULL
