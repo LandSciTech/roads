@@ -4,12 +4,13 @@
 
 mstList<- function(sim){
   # get cell indexs for new road start and end
-  mst.v <- as.vector(rbind(raster::cellFromXY(sim$costSurface, 
+  mst.v <- rbind(raster::cellFromXY(sim$costSurface, 
                                               sf::st_coordinates(sim$landings)),
                            raster::cellFromXY(sim$costSurface,
-                                              sim$roads.close.XY)))
-  
+                                              sim$roads.close.XY))
+  mst.v <- as.vector(mst.v)
   paths.matrix <- unique(mst.v) 
+
 
   if(length(paths.matrix) > 1){
     # get an adjaceny matrix given the cell numbers
