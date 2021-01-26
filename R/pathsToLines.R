@@ -2,9 +2,6 @@
 #' copied from newRoadsToLines and made work with sf
 
 pathsToLines <- function(sim){
-  ## pr is projectRoads results (or 'sim' when it contains the results)
-  ## used for only the 'lcp' and 'mst' roadMethods
-  
   ## existing roads
   er <- sim$costSurface == 0 
   
@@ -12,6 +9,11 @@ pathsToLines <- function(sim){
     
     # finds first match for start and end cells in paths
     inds <- match(sim$paths.list[[i]], sim$paths.v$V1)
+    
+    if(any(is.na(inds))){
+      stop("NA values in cost raster along paths, check raster", call. = FALSE)
+    }
+    
     if(inds[1] == inds[2]){
       return(NULL)
     }
@@ -47,5 +49,5 @@ pathsToLines <- function(sim){
   outLines <- sf::st_as_sfc(linelist)  %>% 
     sf::st_union() %>% 
     {sf::st_sf(geometry = .)}
-  return(sf::st_set_crs(outLines, sf::st_crs(sim$costSurface)))
+  return(sf::st_set_crs(outLines, sf::st_crs(sim$roads)))
 }
