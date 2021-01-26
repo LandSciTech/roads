@@ -19,7 +19,7 @@ purrr::map(outs, names) %>% unlist() %>% unique()
 purrr::map(outs, length)
 
 
-# compare old method and new #==================================================
+# Profile compare old method and new #==================================================
 ## Inputs raster and sp points should give advatage to old method
 roads <-  demoScen[[1]]$road.rast
 costSurface <- demoScen[[1]]$cost.rast
@@ -42,7 +42,7 @@ profvis::profvis({
   
   oldLCP <- projectRoads(landings, costSurface, roads, "lcp")
 })
-# old is 3 times faster after removing gc mostly bc of rasterToLineSegments
+# old is 2 times faster after removing gc mostly bc of rasterToLineSegments
 
 # MST
 profvis::profvis({
@@ -50,7 +50,7 @@ profvis::profvis({
   
   oldMST <- projectRoads(landings, costSurface, roads, "mst")
 })
-# old is 3 times faster after removing gc mostly bc of rasterToLineSegments
+# old is 1.5 times faster after removing gc mostly bc of rasterToLineSegments
 
 # Compare results
 newSnap$roads %>% plot()
@@ -81,7 +81,7 @@ profvis::profvis({
                           raster::rasterize(roads, costSurface),
                           "snap")
 })
-# new is > 80x faster 
+# new is > 40x faster 
 
 # LCP
 profvis::profvis({
@@ -105,16 +105,16 @@ profvis::profvis({
 
 # Compare results
 newSnap$roads %>% plot()
-oldSnap$newRoads.lines %>% plot()
+raster::plot(oldSnap$newRoads.lines)
 # results are a bit different because roads go to nearest point on road not
 # limited to raster cell centre
 
 newLCP$roads %>% plot()
-plot(oldLCP$roads > 0)
+raster::plot(oldLCP$roads > 0)
 # mostly match because still follow cost raster
 
 newMST$roads %>% plot()
-(oldMST$roads > 0) %>% plot()
+raster::plot(oldMST$roads > 0) 
 # mostly match because still follow cost raster
 
 # overall similar but snap roads are slightly shifted
@@ -247,6 +247,8 @@ microbenchmark::microbenchmark(
 
 # with the big rast there are a lot of GC calls that make it hard to tell so
 # profile with medrast. Overall new seems slightly faster
+
+
 
 
 # Check with different sf col name #============================================
@@ -593,3 +595,40 @@ rdCont <- raster::rasterToContour(rdRast, nlevels = 1) %>%
 
 rdLine <- sf::st_simplify(rdCont, dTolerance = 4)
 
+
+
+# examples from old docs #======================================================
+### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")
+scen <- demoScen[[1]] # demo scenario 1
+# landing set 1 of scenario 1:
+land.pnts <- scen$landings.points[scen$landings.points$set==1,]
+prRes <- projectRoads(land.pnts,scen$cost.rast,scen$road.rast,"lcp")
+visualize(scen$cost.rast,land.pnts,prRes,height=15)
+
+### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
+scen <- demoScen[[1]] # demo scenario 1
+# the RasterLayer version of landing set 1 of scenario 1:
+land.rLyr <- scen$landings.stack[[1]]
+prRes <- projectRoads(land.rLyr,scen$cost.rast,scen$road.rast,"mst")
+visualize(scen$cost.rast,land.rLyr,prRes)
+
+### using: scenario 2 / matrix landings / snapping ("snap")
+scen <- demoScen[[2]] # demo scenario 2
+# landing set 5 of scenario 2, as matrix:
+land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
+prRes <- projectRoads(land.mat,scen$cost.rast,scen$road.rast,"snap")
+visualize(scen$cost.rast,land.mat,prRes,height=15)
+
+### using: scenario 3 / RasterStack landings / minimum spanning tree ("mst")
+scen <- demoScen[[3]] # demo scenario 3
+# landing sets 1 to 4 of scenario 3, as RasterStack:
+land.rstack <- scen$landings.stack[[1:4]]
+prRes <- projectRoads(land.rstack,scen$cost.rast,scen$road.rast,"mst")
+visualize(scen$cost.rast,land.rstack,prRes,height=15)
+
+### using: scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
+scen <- demoScen[[7]] # demo scenario 7
+# polygonal landings of demo scenario 7:
+land.poly <- scen$landings.poly
+prRes <- projectRoads(land.poly,scen$cost.rast,scen$road.rast,"mst")
+visualize(scen$cost.rast,land.poly,prRes,height=15)

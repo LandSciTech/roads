@@ -44,3 +44,22 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
+Collate: 
+    'AAAClassDefinitions.R'
+    'CLUSexample.R'
+    'buildRoadFromPath.R'
+    'buildSimList.R'
+    'buildSnapRoads.R'
+    'demoScen.R'
+    'getClosestRoad.R'
+    'getGraph.R'
+    'helperFnsClus.R'
+    'lcpList.R'
+    'mstList.R'
+    'pathsToLines.R'
+    'plot.R'
+    'projectRoads.R'
+    'projectRoadsNew.R'
+    'rasterToLineSegments.R'
+    'shortestPaths.R'
+    'visualize.R'
