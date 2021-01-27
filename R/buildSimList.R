@@ -63,10 +63,10 @@ buildSimList <- function(roads, cost, roadMethod, landings){
   }
   
   # crop landings and roads to bbox of cost raster
-  ext <- st_bbox(cost) %>% as.numeric() %>% 
+  ext <- sf::st_bbox(cost) %>% as.numeric() %>% 
     `names<-`(c("xmin", "ymin", "xmax", "ymax"))
-  landings <- st_crop(landings, ext)
-  roads <- st_crop(roads, ext)
+  landings <- sf::st_crop(landings, ext)
+  roads <- sf::st_crop(roads, ext)
   
 
   sim <- list(roads = roads, costSurface = cost, 
