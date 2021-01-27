@@ -75,9 +75,20 @@ roads <- roads %>%  st_transform(st_crs(cost_st))
 harvCH2010 <- harvCH2010 %>%  st_transform(st_crs(cost_st))
 
 # run projection of roads to connect landings to existing road network
+# mst
 roadsProjCH2010 <- projectRoadsNew(landings = harvCH2010, 
                                    cost = cost_st, 
                                    roads = roads)
+
+# lcp
+roadsProjCH2010lcp <- projectRoadsNew(landings = harvCH2010, 
+                                   cost = cost_st, 
+                                   roads = roads, roadMethod = "lcp")
+
+# snap
+roadsProjCH2010snap <- projectRoadsNew(landings = harvCH2010, 
+                                   cost = cost_st, 
+                                   roads = roads, roadMethod = "snap")
 
 # Look at maps in interactive mode, change to "plot" for non-interactive
 tmap::tmap_mode("view")
@@ -89,3 +100,15 @@ tmap::qtm(roadsProjCH2010$costSurface)+
 # you might want to add these layers to compare to the polygons or 2020 roads
   #tmap::qtm(harvCH2 %>% filter(yrdep == 2010))+
   #tmap::qtm(roads2020)
+
+# lcp
+tmap::qtm(roadsProjCH2010lcp$costSurface)+
+  tmap::qtm(roadsProjCH2010lcp$landings, dots.col = "red")+
+  tmap::qtm(roadsProjCH2010lcp$roads, lines.col = "red")+
+  tmap::qtm(roads)
+
+# snap
+tmap::qtm(roadsProjCH2010lcp$costSurface)+
+  tmap::qtm(roadsProjCH2010lcp$landings, dots.col = "red")+
+  tmap::qtm(roadsProjCH2010lcp$roads, lines.col = "red")+
+  tmap::qtm(roads)
