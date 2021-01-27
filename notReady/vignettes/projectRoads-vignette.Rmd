@@ -14,10 +14,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(roads)
-library(raster)
-library(colorspace)
-library(colorRamps)
 ```
 
 # Introduction
@@ -26,8 +22,8 @@ This vignette provides a tutorial on the use of the `roads` package for the spat
 
 In the context of this package, resource development scenarios are represented by three components:
 
-1. a spatial, gridded cost layer covering the entire landscape, wherein each cell represents the cost of new road developement through it.
-2. a spatial, gridded representation of the existing road network within the landscape, and
+1. a spatial, gridded cost layer covering the entire landscape, wherein each cell value represents the cost of new road developement through it.
+2. a spatial, representation of the existing road network within the landscape, and
 3. a set of locations, refered to as "**landings**", where new resource development is to take place.
 
 The nature of how the landings are defined in the resource development scenario dictates whether the new roads development simulation will be a one-time or multi-temporal simulation.
@@ -71,10 +67,7 @@ Notice that the top row of the raster has a cost of zero.  This row is where, in
 
 ### 2. Existing road network layer
 
-Since, in the context of this package, new roads simulation involves connecting landings to an existing roads network, the state of the existing roads network must be specified to the `projectRoads` method.  This specification is made in the form of a binary or logical raster layer, with a value of `1` or `TRUE` representing cells covered by the existing roads network, and `0` or `FALSE` representing cells that are not.
-
-* The traversal cost of existing road segments is assumed to be zero.
-* This raster is expected to match the input cost raster layer in terms of cell size (or resolution), CRS, and extent.  If unsure, the [raster::compareRaster](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/compareRaster) function can be used to compare the the cost raster layer with the existing roads raster layer.  It will return TRUE if they are a valid match.
+Since, in the context of this package, new roads simulation involves connecting landings to an existing roads network, the state of the existing roads network must be specified to the `projectRoads` method.  This specification is made in the form of a sf object with geometry type "LINES", a SpatialLines object, or a RasterLayer.
 
 The existing roads network used in the CLUS roads simulation example is included within the `CLUSexample` data-set of this package.  Alternatively, it could be extracted from cost raster layer by isolating cells where the cost is zero.
 
@@ -108,7 +101,8 @@ Landings, or resource development locations, that are to be connected to the exi
 * A logical [`RasterLayer`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} object with cell values of `TRUE` for landings,
 * A [`SpatialPoints`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPoints) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} or [`SpatialPointsDataFrame`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPointsDataFrame-class) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} object with points representing landings,
 * A matrix with at least two columns, with columns 1 and 2 representing x any y coordinates of landing locations respectively, 
-* A [`SpatialPolygons`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPolygons-class) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} or [`SpatialPolygonsDataFrame`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPolygonsDataFrame-class) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} object with polygons representing landings, or
+* A [`SpatialPolygons`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPolygons-class) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} or [`SpatialPolygonsDataFrame`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPolygonsDataFrame-class) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} object with polygons representing landings, 
+* A sf object with geometry type "LINES" or "POLYGONs" or,
 * A [`RasterStack`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} or [`RasterBrick`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} object with each raster layer in the stack or brick representing a new time step for which new roads are to be simulated for (i.e. layer 1 represents landings at time t=1, layer 2 represents landings at time t=2, and so on).  Within each raster layer, cell values of `TRUE` represent new landings for that time-step.
 
 The set of landings used in the CLUS roads simulation example is included within the CLUSexample data-set of this package.
@@ -139,22 +133,16 @@ This approach simply 'snaps' a landing (i.e., cutblock location) to the nearest 
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'snap' approach
-projRoads_snap <- roads::projectRoads(landings,costRaster,existingRoadsRast,roadMethod='snap')
-## plot the cost raster, landings, and closest existing roads segmensts to the landings
-plot(costRaster,col=rastColours,main='\'Snapped\' roads')
-points(landings,pch=19)  ## landings points
-points(projRoads_snap$roads.close.XY,pch=17)  ## closest point on existing roads
-## add lines representing new roads, projected using the 'snap' approach
-z <- lapply(1:length(landings),function(i){
-  lines(rbind(landings@coords[i,],projRoads_snap$roads.close.XY[i,]),lty=3,lwd=2)
-  })
+projRoads_snap <- roads::projectRoadsNew(landings,costRaster,existingRoadsRast,roadMethod='snap')
+## plot the cost raster, landings, and roads segments to the landings
+plot(costRaster, col=rastColours,main='\'Snapped\' roads')
+points(landings, pch=19)  ## landings points
+plot(projRoads_snap$roads, add = TRUE) ## roads
 ## update legend
-points(x=5.5,y=6,pch=19,xpd=TRUE)
-text(x=5.7,y=6,labels='landing',adj=c(0,0.4),xpd=TRUE)
-points(x=5.5,y=5.4,pch=17,xpd=TRUE)
-text(x=5.7,y=5.6,labels='closest\nexisting\nroad seg',adj=c(0,1),xpd=TRUE)
-lines(x=c(5.3,5.7),y=c(4.2,4.2),lty=3,lwd=2,xpd=TRUE)
-text(x=5.75,y=4.2,labels='new road',adj=c(0,0.3),xpd=TRUE)
+points(x = 5.5, y = 4.8, pch = 19, xpd = TRUE)
+text(x=5.7,y=4.8,labels='landing',adj=c(0,0.4),xpd=TRUE)
+lines(x=c(5.3,5.7),y=c(4.2,4.2),lwd=2,xpd=TRUE)
+text(x=5.75,y=4.2,labels='roads',adj=c(0,0.3),xpd=TRUE)
 ```
 
 Using this approach, a few issues would arise: 
@@ -178,21 +166,14 @@ knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'LCP' approach
-projRoads_lcp <- roads::projectRoads(landings,costRaster,existingRoadsRast,roadMethod='lcp')
-## isolate the new roads for plotting (TRUE for new road, NA elsewhere)
-newroad_lcp <- projRoads_lcp$roads>0
-newroad_lcp[existingRoadsRast] <- NA
-newroad_lcp[!newroad_lcp] <- NA
-## (left) plot the cost raster and landings
-par(mfrow=c(1,2))
-plot(costRaster,col=rastColours,main='Cost')
-points(landings,pch=19)  ## landings points
-## (right) plot the cost raster and overlay it with new roads
+projRoads_lcp <- roads::projectRoadsNew(landings, costRaster, existingRoadsRast, roadMethod = 'lcp')
+
+## plot the cost raster and overlay it with new roads
 plot(costRaster,col=rastColours,main='Cost with new roads')
-plot(newroad_lcp,col='grey30',add=TRUE,legend=FALSE)
+plot(projRoads_lcp$roads, add = TRUE)
 points(landings,pch=19,col='red')  ## landings points
 ## legend
-rect(-0.5,-1.7,0,-1.2,col='grey30',xpd=TRUE)
+lines(c(-0.5, 0), c(-1.45, -1.45), xpd = TRUE)
 text(x=0.1,y=-1.45,labels='new road',adj=c(0,0.4),xpd=TRUE)
 points(x=2.5,y=-1.45,pch=19,col='red',xpd=TRUE)
 text(x=2.7,y=-1.45,labels='landing',adj=c(0,0.4),xpd=TRUE)
@@ -210,11 +191,8 @@ knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'MST' approach
-projRoads_mst <- roads::projectRoads(landings,costRaster,existingRoadsRast,roadMethod='mst')
-## isolate the new roads for plotting (TRUE for new road, NA elsewhere)
-newroad_mst <- projRoads_mst$roads>0
-newroad_mst[existingRoadsRast] <- NA
-newroad_mst[!newroad_mst] <- NA
+projRoads_mst <- roads::projectRoadsNew(landings, costRaster, existingRoadsRast, roadMethod = 'mst')
+
 ## (left) plot the cost raster and landings
 par(mfrow=c(1,2))
 plot(costRaster,col=rastColours,main='Cost')
