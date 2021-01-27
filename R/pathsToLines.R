@@ -29,6 +29,10 @@ pathsToLines <- function(sim){
     ## remove portions that run along existing road, if applicable
     if(length(conn) > 0){
       keep <- which(er[v] == 0)
+      if(length(keep) == 0){
+        # the whole path is on existing road
+        return(NULL)
+      }
       if(min(keep) > 1){
         keep <- c(min(keep)-1, keep)
       }
@@ -44,6 +48,9 @@ pathsToLines <- function(sim){
     
     return(outLine)
   })
+  
+  # remove NULLs
+  linelist <- linelist[vapply(linelist,function(x) !is.null(x), c(TRUE))]
   
   outLines <- sf::st_as_sfc(linelist)  %>% 
     sf::st_union() %>% 
