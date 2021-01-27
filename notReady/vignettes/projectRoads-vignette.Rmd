@@ -53,7 +53,8 @@ knitr::opts_chunk$set(fig.width=5,fig.height=4.85)
 ```
 
 ```{r, fig.show='hold'}
-library(roads)
+#library(roads)
+devtools::load_all(".")
 library(raster)
 library(colorspace)
 ## colours for displaying cost raster (optional; could just use default)
@@ -193,16 +194,12 @@ knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
 ## project new roads using the 'MST' approach
 projRoads_mst <- roads::projectRoadsNew(landings, costRaster, existingRoadsRast, roadMethod = 'mst')
 
-## (left) plot the cost raster and landings
-par(mfrow=c(1,2))
-plot(costRaster,col=rastColours,main='Cost')
-points(landings,pch=19)  ## landings points
-## (right) plot the cost raster and overlay it with new roads
+## plot the cost raster and overlay it with new roads
 plot(costRaster,col=rastColours,main='Cost with new roads')
-plot(newroad_mst,col='grey30',add=TRUE,legend=FALSE)
+plot(projRoads_mst$roads,col='grey30',add=TRUE,legend=FALSE)
 points(landings,pch=19,col='red')  ## landings points
 ## legend
-rect(-0.5,-1.7,0,-1.2,col='grey30',xpd=TRUE)
+lines(c(-0.5, 0), c(-1.45, -1.45), xpd = TRUE)
 text(x=0.1,y=-1.45,labels='new road',adj=c(0,0.4),xpd=TRUE)
 points(x=2.5,y=-1.45,pch=19,col='red',xpd=TRUE)
 text(x=2.7,y=-1.45,labels='landing',adj=c(0,0.4),xpd=TRUE)
