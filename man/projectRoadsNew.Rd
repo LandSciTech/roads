@@ -9,28 +9,36 @@ projectRoadsNew(
   cost = NULL,
   roads = NULL,
   roadMethod = "mst",
-  plotRoads = F,
+  plotRoads = FALSE,
   mainTitle = NULL,
   neighbourhood = "octagon",
   sim = NULL
 )
 }
 \arguments{
-\item{landings}{}
+\item{landings}{sf polygons or points, RasterLayer, SpatialPolygons*,
+SpatialPoints*, matrix, or RasterStack containing features to be connected
+to the road network. Matrix should contain columns x, y with coordinates,
+all columns will be ignored. If RasterStack assume an ordered time-series.}
 
-\item{cost}{}
+\item{cost}{RasterLayer. Cost surface.}
 
-\item{roads}{}
+\item{roads}{sf lines, SpatialLines*, RasterLayer. Existing road network.}
 
-\item{roadMethod}{}
+\item{roadMethod}{Character. Options are "mst", "lcp", "snap".}
 
-\item{plotRoads}{}
+\item{plotRoads}{Boolean. Should the resulting road network be ploted.
+Default FALSE.}
 
-\item{mainTitle}{}
+\item{mainTitle}{Character. A title for the plot}
 
-\item{neighbourhood}{}
+\item{neighbourhood}{Character. 'rook','queen', or 'octagon'. The cells that
+should be considered adjacent. 'octagon' option is a modified version of
+the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
+higher than horizontal/vertical weights.}
 
-\item{sim}{}
+\item{sim}{Sim list. Returned from a previous iteration of projectRoads.
+cost, roads, and roadMethod are ignored if a sim list is provided.}
 }
 \description{
 Project road locations based on existing roads, planned landings, and a cost
@@ -38,14 +46,67 @@ surface that defines the cost of building roads.
 }
 \details{
 Three different methods for projecting road networks have been implemented:
- \itemize{
- \item{"snap":} {connects each landing directly to the closest road without
-  reference to the cost or other landings}
- \item{"lcp":} {Least Cost Path connects each landing to the closest point on 
- the road by determining the least cost path based on the cost surface 
- provided, it does not consider other landings}
- \item{"mst":} {Minimum Spanning Tree connects all landings to the road by 
- determining the least cost path to the road or other landings based on the 
- cost surface}
- }
+\itemize{ \item{"snap":} {Connects each landing directly to the closest road
+without reference to the cost or other landings} \item{"lcp":} {Least Cost
+Path connects each landing to the closest point on the road by determining
+the least cost path based on the cost surface provided, it does not consider
+other landings} \item{"mst":} {Minimum Spanning Tree connects all landings to
+the road by determining the least cost path to the road or other landings
+based on the cost surface} }
+}
+\examples{
+### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")
+# demo scenario 1
+scen <- demoScen[[1]]
+
+# landing set 1 of scenario 1:
+land.pnts <- scen$landings.points[scen$landings.points$set==1,]
+
+prRes <- projectRoadsNew(land.pnts ,scen$cost.rast, scen$road.rast, "lcp",
+                         plotRoads = TRUE, mainTitle = "Scen 1: SPDF-LCP")
+
+### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
+# demo scenario 1
+scen <- demoScen[[1]] 
+
+# the RasterLayer version of landing set 1 of scenario 1:
+land.rLyr <- scen$landings.stack[[1]]
+
+prRes <- projectRoadsNew(land.rLyr, scen$cost.rast, scen$road.rast, "mst",
+                         plotRoads = TRUE, mainTitle = "Scen 1: Raster-MST")
+
+
+### using: scenario 2 / matrix landings / snapping ("snap")
+# demo scenario 2
+scen <- demoScen[[2]] 
+
+# landing set 5 of scenario 2, as matrix:
+land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
+
+prRes <- projectRoadsNew(land.mat, scen$cost.rast, scen$road.rast, "snap",
+                         plotRoads = TRUE, mainTitle = "Scen 2: Matrix-Snap")
+
+# TODO: Make this and a list of sf objects, (or maybe a year column?) work
+# ### using: scenario 3 / RasterStack landings / minimum spanning tree ("mst")
+# # demo scenario 3
+# scen <- demoScen[[3]] 
+# 
+# # landing sets 1 to 4 of scenario 3, as RasterStack:
+# land.rstack <- scen$landings.stack[[1:4]]
+# 
+# prRes <- projectRoadsNew(land.rstack, scen$cost.rast, scen$road.rast ,"mst",
+#                          plotRoads = TRUE, mainTitle = "Scen 3: RasterStack-MST")
+
+
+### using: scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
+# demo scenario 7
+scen <- demoScen[[7]]
+
+# polygonal landings of demo scenario 7:
+land.poly <- scen$landings.poly
+
+prRes <- projectRoadsNew(land.poly, scen$cost.rast, scen$road.rast, "mst",
+                         plotRoads = TRUE, mainTitle = "Scen 7: SpPoly-MST")
+                         
+                       
 }
