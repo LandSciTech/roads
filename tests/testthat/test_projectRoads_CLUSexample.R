@@ -27,37 +27,45 @@ pR_snap <- projectRoadsNew(landings = landingsC,
 pR_lcp <- projectRoadsNew(landings = landingsC,
                           cost = costC,
                           roads = roadsC,
-                          roadMethod = "lcp")
+                          roadMethod = "lcp", 
+                          neighbourhood = "queen")
 
 pR_mst <- projectRoadsNew(landings = landingsC,
                           cost = costC,
                           roads = roadsC,
-                          roadMethod="mst")
+                          roadMethod="mst", 
+                          neighbourhood = "queen")
 
-getRoadCells <- function(rast, roads){
-  raster::cellFromLine(rast, 
-                       sf::as_Spatial(roads) %>%
-                         sp::as.SpatialLines.SLDF()) %>%
-    unlist() %>% unique() %>% sort()
+getRoadCells <- function(rast, roads, method){
+  if(method == "snap"){
+    raster::extract(rast, 
+                    roads %>% 
+                      sf::st_segmentize(dfMaxLength = raster::xres(costC)) %>% 
+                      sf::st_cast("MULTILINESTRING") %>%
+                      sf::st_cast("POINT"), 
+                    cellnumbers = T) %>% 
+      .[,1] %>% unique() %>% sort()
+  } else {
+    raster::extract(rast, 
+                    roads %>% 
+                      sf::st_cast("MULTILINESTRING") %>%
+                      sf::st_cast("POINT"), 
+                    cellnumbers = T) %>% 
+      .[,1] %>% unique() %>% sort()
+  }
+  
 }
 ###############################################
 # perform tests
-#TO DO: fix snap
 testthat::test_that("Projected roads results match CLUS example results for the 'snap' method",{
-  testthat::expect_equal(getRoadCells(costC, pR_snap$roads), CLUS.snap.roads)
+  testthat::expect_equal(getRoadCells(costC, pR_snap$roads, "snap"), CLUS.snap.roads)
 })
 testthat::test_that("Projected roads results match CLUS example results for the 'lcp' method",{
-  testthat::expect_equal(getRoadCells(costC, pR_lcp$roads), CLUS.lcp.roads)
+  testthat::expect_equal(getRoadCells(costC, pR_lcp$roads, "lcp"), CLUS.lcp.roads)
 })
 testthat::test_that("Projected roads results match CLUS example results for the 'mst' method",{
-  testthat::expect_equal(getRoadCells(costC, pR_mst$roads), CLUS.mst.roads)
+  testthat::expect_equal(getRoadCells(costC, pR_mst$roads, "mst"), CLUS.mst.roads)
 })
 ###############################################
 # end of tests
 
-# get total cost from CLUS example vs ours
-sum(costC[CLUS.lcp.roads])
-sum(costC[getRoadCells(costC, pR_lcp$roads)])
-
-sum(costC[CLUS.mst.roads])
-sum(costC[getRoadCells(costC, pR_mst$roads)])
