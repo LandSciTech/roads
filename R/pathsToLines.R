@@ -9,7 +9,7 @@ pathsToLines <- function(sim){
     
     # finds first match for start and end cells in paths
     inds <- match(sim$paths.list[[i]], sim$paths.v$V1)
-    
+    #print(i)
     if(any(is.na(inds))){
       stop("NA values in cost raster along paths, check raster", call. = FALSE)
     }
@@ -26,7 +26,13 @@ pathsToLines <- function(sim){
     ## index of where new road connects to existing road
     conn <- which(er[v] == 1)
     
-    ## remove portions that run along existing road, if applicable
+    #outLine1 <- sf::st_linestring(raster::xyFromCell(sim$costSurface, v))
+    
+    ## remove portions that run along existing road, if applicable. If there are
+    ## multiple sections of new road with sections of old road in between we
+    ## need to split it into multiple lines so it doesn't jump. Split at more
+    ## than 1 true in a row followed by a false?
+    ## something with cumsum(rle(er[v]==1)$lengths)?
     if(length(conn) > 0){
       keep <- which(er[v] == 0)
       if(length(keep) == 0){
@@ -45,6 +51,12 @@ pathsToLines <- function(sim){
     #id <- names(sim$paths.list)[[i]]
     
     outLine <- sf::st_linestring(raster::xyFromCell(sim$costSurface, v))
+    
+    # plot(sim$landings %>% st_geometry())
+    # plot(sim$roads %>% st_geometry(), add = T)
+    # plot(outLine1, col = "blue", add = T)
+    # plot(outLine, col = "red", add = T)
+    # title(main = i) %>% print()
     
     return(outLine)
   })

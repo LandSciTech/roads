@@ -120,6 +120,44 @@ tmap::qtm(roadsProjCH2010$costSurface)+
 # into connecting roads generated based on raster cells to sf road network, at
 # least for mapping
 
+# Explore disconnected existing roads #==================
+
+#using data pulled from the top left of the churchill example
+plot(roads %>% st_geometry())
+ext <- raster::drawExtent()
+
+roadsTest <- st_crop(roads, ext)
+
+landingsTest <- st_crop(harvCH2010, ext) %>% mutate(ID = 1:n())
+
+costTest <- raster::crop(cost_st, ext)
+
+roadsProjTest <- projectRoadsNew(landings = landingsTest, 
+                                   cost = costTest, 
+                                   roads = roadsTest)
+
+tmap::qtm(roadsProjTest$costSurface)+
+  tmap::qtm(roadsProjTest$landings, dots.col = "red")+
+  tmap::qtm(roadsProjTest$roads, lines.col = "red")+
+  tmap::qtm(roadsTest)
+  #tmap::qtm(roads)+
+  #tmap::qtm(harvCH2 %>% filter(yrdep == 2010))+
+  #tmap::qtm(roads2020)
+
+# points connected to weird chunk of road are 52:54, and 40:43 try with just those points
+roadsProjTest2 <- projectRoadsNew(landings = landingsTest %>% slice(12:20, 52:54, 40:43), 
+                                 cost = costTest, 
+                                 roads = roadsTest)
+
+tmap::qtm(roadsProjTest2$costSurface)+
+  tmap::qtm(roadsProjTest2$landings, dots.col = "red")+
+  tmap::qtm(roadsProjTest2$roads, lines.col = "red")+
+  tmap::qtm(roadsTest)
+# results in them being connected to the closest road fragments but not the
+# larger network and no weird chunk, add 12 to 20 and see if that changes things
+# Now it does a long straight line crossing existing road to connect the two clumps.
+# this is probably related to the conn and keep part of pathsToLine
+
 # Profile compare old method and new #==================================================
 ## Inputs raster and sp points should give advatage to old method
 roads <-  demoScen[[1]]$road.rast
