@@ -277,7 +277,7 @@ getLandingsFromTarget<-function(inputPatches,numLandings,omitCentroidsOutOfPolyg
   }
   return(landPts)
 }
-
+#' @export
 simpleCost<-function(roads,newLandings,water){
   #roads=cRoadsRaster
   if(class(roads)!="RasterLayer"){
