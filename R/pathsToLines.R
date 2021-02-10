@@ -26,7 +26,7 @@ pathsToLines <- function(sim){
     ## index of where new road connects to existing road
     conn <- which(er[v] == 1)
     
-    #outLine1 <- sf::st_linestring(raster::xyFromCell(sim$costSurface, v))
+    # outLine1 <- sf::st_linestring(raster::xyFromCell(sim$costSurface, v))
     
     ## remove portions that run along existing road, if applicable. If there are
     ## multiple sections of new road with sections of old road in between we
@@ -56,7 +56,7 @@ pathsToLines <- function(sim){
     # plot(sim$roads %>% st_geometry(), add = T)
     # plot(outLine1, col = "blue", add = T)
     # plot(outLine, col = "red", add = T)
-    # title(main = i) %>% print()
+    # title(main = i) 
     
     return(outLine)
   })

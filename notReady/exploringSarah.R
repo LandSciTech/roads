@@ -95,10 +95,10 @@ harvCH3 <- harvCH2 %>% st_cast("MULTIPOLYGON") %>% st_cast("POLYGON") %>%
 st_write(harvCH3, "../genData/roadsChurchill/harvPCIFRI.shp")
 
 # pick landings as points on the surface
-harvCH2010 <- harvCH3 %>% filter(yrdep == 2010) %>% 
+harvCH2010 <- harvCH2010 %>% filter(yrdep == 2010) %>% 
   st_point_on_surface()
 
-roads <- roads %>%  st_transform(st_crs(cost_st))
+roads <- roads %>% st_transform(st_crs(cost_st))
 
 roadsProjCH2010 <- projectRoadsNew(landings = harvCH2010, 
                                    cost = cost_st, 
@@ -121,10 +121,19 @@ tmap::qtm(roadsProjCH2010$costSurface)+
 # least for mapping
 
 # Explore disconnected existing roads #==================
+harvCH2010 <- st_read("../ChurchillAnalysis/inputNV/ChurchillData/ChurchillRoadsHarv/harvPCIFRI.shp")
+harvCH2010 <- harvCH2010 %>% filter(yrdep == 2010) %>% 
+  st_point_on_surface()
 
 #using data pulled from the top left of the churchill example
 plot(roads %>% st_geometry())
 ext <- raster::drawExtent()
+
+# class      : Extent 
+# xmin       : 343502.5 
+# xmax       : 441107.8 
+# ymin       : 12708389 
+# ymax       : 12766271 
 
 roadsTest <- st_crop(roads, ext)
 
@@ -153,9 +162,7 @@ tmap::qtm(roadsProjTest2$costSurface)+
   tmap::qtm(roadsProjTest2$landings, dots.col = "red")+
   tmap::qtm(roadsProjTest2$roads, lines.col = "red")+
   tmap::qtm(roadsTest)
-# results in them being connected to the closest road fragments but not the
-# larger network and no weird chunk, add 12 to 20 and see if that changes things
-# Now it does a long straight line crossing existing road to connect the two clumps.
+# Does a long straight line crossing existing road to connect the two clumps.
 # this is probably related to the conn and keep part of pathsToLine
 
 # Profile compare old method and new #==================================================
