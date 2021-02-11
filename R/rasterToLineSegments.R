@@ -2,40 +2,41 @@
 #' @export
 
 rasterToLineSegments <- function(rast){
+  #rast=roads
   pts <- sf::st_as_sf(raster::rasterToPoints(rast,
                                              fun = function(x){x > 0},
                                              spatial = TRUE))
   # finds line between all points and keep shortest
-  nearLn <- sf::st_nearest_points(pts, pts) %>% 
-    sf::st_as_sf() %>%  
+  nearLn <- sf::st_nearest_points(pts, pts) %>%
+    sf::st_as_sf() %>%
     mutate(len = sf::st_length(x), ID = 1:n())
-  
+
   # speeds things up because filtering is slow on sf (as is [])
-  nearLn2 <- nearLn %>% sf::st_drop_geometry() %>% 
-    filter(len > 0) %>% 
+  nearLn2 <- nearLn %>% sf::st_drop_geometry() %>%
+    filter(len > 0) %>%
     filter(len == min(len))
-  
+
   nearLn <- semi_join(nearLn, nearLn2, by = "ID")
-  
+
   # remove duplicate lines
-  coords <- sf::st_coordinates(nearLn) %>% 
-    as.data.frame() %>% 
-    group_by(L1) %>% 
+  coords <- sf::st_coordinates(nearLn) %>%
+    as.data.frame() %>%
+    group_by(L1) %>%
     slice(1)
-  
-  nearLn2 <- nearLn %>% sf::st_drop_geometry() %>% 
+
+  nearLn2 <- nearLn %>% sf::st_drop_geometry() %>%
     mutate(coordX = pull(coords, X),
-           coordY = pull(coords, Y)) %>% 
-    group_by(.data$coordX, .data$coordY) %>% 
+           coordY = pull(coords, Y)) %>%
+    group_by(.data$coordX, .data$coordY) %>%
     slice(1:2)
-  
-  nearLn <- semi_join(nearLn, nearLn2, by = "ID") %>% 
-    sf::st_geometry() %>% 
-    sf::st_union() %>% 
+
+  nearLn <- semi_join(nearLn, nearLn2, by = "ID") %>%
+    sf::st_geometry() %>%
+    sf::st_union() %>%
     {sf::st_sf(geometry = .)}
-  
+
   return(nearLn)
-  
+
 }
 
 # #' @import spdep
