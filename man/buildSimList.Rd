@@ -4,7 +4,7 @@
 \alias{buildSimList}
 \title{Build sim list object}
 \usage{
-buildSimList(roads, cost, roadMethod, landings)
+buildSimList(roads, cost, roadMethod, landings, roadsInCost)
 }
 \description{
 Build a sim list object to be used in the rest of the functions and returned

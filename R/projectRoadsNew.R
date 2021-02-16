@@ -31,6 +31,15 @@ NULL
 #'   higher than horizontal/vertical weights.
 #' @param sim Sim list. Returned from a previous iteration of projectRoads.
 #'   cost, roads, and roadMethod are ignored if a sim list is provided.
+#' @param roadsOut Character. Either "raster", "sf" or NULL. If "raster" roads
+#'   are returned as a raster in the sim list. If "sf" the roads are returned as
+#'   an sf object which will contain lines if the roads input was sf lines but a
+#'   geometry collection of lines and points if the roads input was a raster. If
+#'   NULL (default) then the returned roads are sf if the input is sf or
+#'   Spatial* and raster if the input was a raster.
+#' @param roadsInCost Logical. The default is TRUE which means the cost raster
+#'   is assumed to include existing roads in its cost surface. If FALSE then the
+#'   roads will be "burned in" to the cost raster with a cost of 0.
 #'
 #' @examples
 #' ### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")
@@ -85,7 +94,7 @@ NULL
 #'
 #' prRes <- projectRoadsNew(land.poly, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = TRUE, mainTitle = "Scen 7: SpPoly-MST")
-#'
+#' 
 
 ### using scenario 7 / Polygon landings raster / minimum spanning tree
 # # demo scenario 7

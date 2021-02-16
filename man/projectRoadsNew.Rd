@@ -12,7 +12,9 @@ projectRoadsNew(
   plotRoads = FALSE,
   mainTitle = NULL,
   neighbourhood = "octagon",
-  sim = NULL
+  sim = NULL,
+  roadsOut = NULL,
+  roadsInCost = TRUE
 )
 }
 \arguments{
@@ -39,6 +41,17 @@ higher than horizontal/vertical weights.}
 
 \item{sim}{Sim list. Returned from a previous iteration of projectRoads.
 cost, roads, and roadMethod are ignored if a sim list is provided.}
+
+\item{roadsOut}{Character. Either "raster", "sf" or NULL. If "raster" roads
+are returned as a raster in the sim list. If "sf" the roads are returned as
+an sf object which will contain lines if the roads input was sf lines but a
+geometry collection of lines and points if the roads input was a raster. If
+NULL (default) then the returned roads are sf if the input is sf or
+Spatial* and raster if the input was a raster.}
+
+\item{roadsInCost}{Logical. The default is TRUE which means the cost raster
+is assumed to include existing roads in its cost surface. If FALSE then the
+roads will be "burned in" to the cost raster with a cost of 0.}
 }
 \description{
 Project road locations based on existing roads, planned landings, and a cost
@@ -67,7 +80,7 @@ prRes <- projectRoadsNew(land.pnts ,scen$cost.rast, scen$road.rast, "lcp",
 
 ### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
 # demo scenario 1
-scen <- demoScen[[1]] 
+scen <- demoScen[[1]]
 
 # the RasterLayer version of landing set 1 of scenario 1:
 land.rLyr <- scen$landings.stack[[1]]
@@ -78,7 +91,7 @@ prRes <- projectRoadsNew(land.rLyr, scen$cost.rast, scen$road.rast, "mst",
 
 ### using: scenario 2 / matrix landings / snapping ("snap")
 # demo scenario 2
-scen <- demoScen[[2]] 
+scen <- demoScen[[2]]
 
 # landing set 5 of scenario 2, as matrix:
 land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
@@ -89,11 +102,11 @@ prRes <- projectRoadsNew(land.mat, scen$cost.rast, scen$road.rast, "snap",
 # TODO: Make this and a list of sf objects, (or maybe a year column?) work
 # ### using: scenario 3 / RasterStack landings / minimum spanning tree ("mst")
 # # demo scenario 3
-# scen <- demoScen[[3]] 
-# 
+# scen <- demoScen[[3]]
+#
 # # landing sets 1 to 4 of scenario 3, as RasterStack:
 # land.rstack <- scen$landings.stack[[1:4]]
-# 
+#
 # prRes <- projectRoadsNew(land.rstack, scen$cost.rast, scen$road.rast ,"mst",
 #                          plotRoads = TRUE, mainTitle = "Scen 3: RasterStack-MST")
 
@@ -107,6 +120,6 @@ land.poly <- scen$landings.poly
 
 prRes <- projectRoadsNew(land.poly, scen$cost.rast, scen$road.rast, "mst",
                          plotRoads = TRUE, mainTitle = "Scen 7: SpPoly-MST")
-                         
-                       
+
+
 }
