@@ -54,10 +54,10 @@ cost <- raster::reclassify(plc, plcToCost)
 cost_st <- stars::st_as_stars(cost)
 
 # rasterize roads to template
-tmplt <- stars::st_as_stars(st_bbox(cost_st), nx = raster::ncol(cost), 
+tmplt <- stars::st_as_stars(st_bbox(cost_st), nx = raster::ncol(cost),
                             ny = raster::nrow(cost), values = 1)
 
-roads_st <- stars::st_rasterize(roads %>% select(-YEAR_CO), template = tmplt, 
+roads_st <- stars::st_rasterize(roads %>% select(-YEAR_CO), template = tmplt,
                                 options = "ALL_TOUCHED=TRUE") == 1
 
 # road raster is 1 where there are no roads and 0 where there are roads
@@ -67,7 +67,7 @@ cost_st <- cost_st * roads_st
 cost_st <- as(cost_st, "Raster")
 
 # pick landings as points on the surface
-harvCH2010 <- harvCH %>% filter(yrdep == 2010) %>% 
+harvCH2010 <- harvCH %>% filter(yrdep == 2010) %>%
   st_point_on_surface()
 
 # transform to the same crs
@@ -76,18 +76,20 @@ harvCH2010 <- harvCH2010 %>%  st_transform(st_crs(cost_st))
 
 # run projection of roads to connect landings to existing road network
 # mst
-roadsProjCH2010 <- projectRoadsNew(landings = harvCH2010, 
-                                   cost = cost_st, 
+
+
+roadsProjCH2010 <- projectRoadsNew(landings = harvCH2010,
+                                   cost = cost_st,
                                    roads = roads)
 
 # lcp
-roadsProjCH2010lcp <- projectRoadsNew(landings = harvCH2010, 
-                                   cost = cost_st, 
+roadsProjCH2010lcp <- projectRoadsNew(landings = harvCH2010,
+                                   cost = cost_st,
                                    roads = roads, roadMethod = "lcp")
 
 # snap
-roadsProjCH2010snap <- projectRoadsNew(landings = harvCH2010, 
-                                   cost = cost_st, 
+roadsProjCH2010snap <- projectRoadsNew(landings = harvCH2010,
+                                   cost = cost_st,
                                    roads = roads, roadMethod = "snap")
 
 # Look at maps in interactive mode, change to "plot" for non-interactive
