@@ -239,21 +239,31 @@ knitr::opts_chunk$set(fig.width=7,fig.height=6.86)
 ```
 
 ```{r, fig.show='hold'}
+
+
 ## project roads for landing sets 1 to 4, with independent one-time simulations
-oneTime_sim <- stack() ## empty raster stack will be updated with sim results rasters
+oneTime_sim <- list() ## empty raster stack will be updated with sim results rasters
 for (i in 1:4){
-  oneTime_sim <- stack(oneTime_sim,roads::projectRoads(land.pnts[land.pnts$set==i,],scen$cost.rast,
-                                                       scen$cost.rast==0,roadMethod='mst')$roads)
+  oneTime_sim <- c(oneTime_sim,
+                       roads::projectRoadsNew(land.pnts[land.pnts$set==i,],
+                                              scen$cost.rast,
+                                              scen$cost.rast==0,
+                                              roadMethod='mst')$roads)
 }
-oneTime_sim[oneTime_sim==0 | scen$cost.rast==0] <- NA ## set non-road to NA for display purposes
+#oneTime_sim[oneTime_sim==0 | scen$cost.rast==0] <- NA ## set non-road to NA for display purposes
 
 ## plot
-par(mfrow=c(2,2))
-par(mar=par('mar')/2)
+par(mfrow = c(2, 2))
+par(mar = par('mar')/2)
 for (i in 1:4){
-  plot(scen$cost.rast,col=rastColours2,main=paste0('Landings set ',i),legend=FALSE)
-  plot(oneTime_sim[[i]],col='grey30',add=TRUE,legend=FALSE)
-  plot(land.pnts[land.pnts$set==i,],add=TRUE,pch=21,cex=1.5,bg='white')
+  plot(scen$cost.rast, col = rastColours2, 
+       main = paste0('Landings set ', i),
+       legend = FALSE)
+  plot(oneTime_sim[[i]], add = TRUE)#,
+       # col = 'grey30', 
+       # add = TRUE, legend = FALSE)
+  plot(land.pnts[land.pnts$set == i, ], add = TRUE,
+       pch = 21, cex = 1.5, bg = 'white')
 }
 
 ```

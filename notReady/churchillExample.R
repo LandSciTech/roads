@@ -112,3 +112,13 @@ tmap::qtm(roadsProjCH2010lcp$costSurface)+
   tmap::qtm(roadsProjCH2010lcp$landings, dots.col = "red")+
   tmap::qtm(roadsProjCH2010lcp$roads, lines.col = "red")+
   tmap::qtm(roads)
+
+# Try with roads as raster on input
+roads_rast <- as(roads_st, "Raster")
+
+# gives memory error
+roadsProjCH2010mst_rast <- projectRoadsNew(landings = harvCH2010, 
+                                       cost = cost_st, 
+                                       roads = roads_rast == 0, 
+                                       roadMethod = "mst")
+plot(roadsProjCH2010mst_rast$roads)

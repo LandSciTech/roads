@@ -106,13 +106,14 @@ setGeneric('projectRoadsNew', function(landings = NULL,
                                        plotRoads = FALSE,
                                        mainTitle = NULL,
                                        neighbourhood = "octagon",
-                                       sim = NULL)
+                                       sim = NULL, 
+                                       roadsOut = NULL)
   standardGeneric('projectRoadsNew'))
 
 setMethod(
   'projectRoadsNew', signature(sim = "missing"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, sim) {
+           neighbourhood, sim, roadsOut) {
     
     # check required args
     missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings), 
@@ -128,9 +129,15 @@ setMethod(
       stop("Invalid road method ", roadMethod, ". Options are:", 
            paste(recognizedRoadMethods, collapse=','))
     }
+    
+    # If roads in are raster return as raster
+    if(is(roads, "Raster") && is.null(roadsOut) ){
+      roadsOut <- "raster"
+    } else if(is.null(roadsOut)) {
+      roadsOut <- "sf"
+    }
 
     # set up sim list
-    #roads = roads > 0
     sim <- buildSimList(roads = roads, cost = cost, 
                         roadMethod = roadMethod, 
                         landings = landings)
@@ -170,8 +177,6 @@ setMethod(
                   }
     )
     
-    # sim <- new("SimList", sim)
-    
     if(plotRoads){
       print({raster::plot(sim$costSurface)
         plot(sf::st_geometry(sim$roads), add = TRUE)
@@ -193,6 +198,16 @@ setMethod(
 
     if(geoColInR != attr(sim$roads, "sf_column")){
       sim$roads <- rename(sim$roads, geoColInR = geometry)
+    }
+    
+    if(roadsOut == "raster"){
+      # rasterize roads to template
+      tmplt <- stars::st_as_stars(st_bbox(sim$cost), nx = raster::ncol(sim$cost), 
+                                  ny = raster::nrow(sim$cost), values = 0)
+      
+      sim$roads <- (stars::st_rasterize(sim$roads, template = tmplt, 
+                                       options = "ALL_TOUCHED=TRUE") > 0) %>% 
+        as("Raster")
     }
     
     return(sim)

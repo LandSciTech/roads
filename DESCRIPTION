@@ -34,7 +34,8 @@ Imports:
     latticeExtra,
     sf,
     fasterize,
-    spdep
+    spdep,
+    stars
 RoxygenNote: 7.1.1
 Suggests: 
     testthat,
