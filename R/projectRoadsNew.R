@@ -107,13 +107,14 @@ setGeneric('projectRoadsNew', function(landings = NULL,
                                        mainTitle = NULL,
                                        neighbourhood = "octagon",
                                        sim = NULL, 
-                                       roadsOut = NULL)
+                                       roadsOut = NULL, 
+                                       roadsInCost = TRUE)
   standardGeneric('projectRoadsNew'))
 
 setMethod(
   'projectRoadsNew', signature(sim = "missing"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, sim, roadsOut) {
+           neighbourhood, sim, roadsOut, roadsInCost) {
 
     # check required args
     missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings),
@@ -136,11 +137,12 @@ setMethod(
     } else if(is.null(roadsOut)) {
       roadsOut <- "sf"
     }
-
+    
     # set up sim list
     sim <- buildSimList(roads = roads, cost = cost, 
                         roadMethod = roadMethod, 
-                        landings = landings)
+                        landings = landings, 
+                        roadsInCost = roadsInCost)
 
     # make sure the name of the sf_column is "geometry"
     geoColInL <- attr(sim$landings, "sf_column")

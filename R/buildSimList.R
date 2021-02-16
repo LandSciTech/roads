@@ -5,10 +5,17 @@
 #' or raster.
 #' 
 
-buildSimList <- function(roads, cost, roadMethod, landings){
+buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
   if(!is(cost, "RasterLayer")){
     stop("cost must be provided as a RasterLayer", call. = FALSE)
   } 
+  
+  # Burn roads into raster if not already for raster roads before converting 
+  if(!roadsInCost && is(roads, "Raster")){
+    message("Burning in roads to cost raster from road raster")
+    cost <- cost * (roads == 0)
+    roadsInCost <- TRUE
+  }
   
   if(!(is(roads, "sf") || is(roads, "sfc"))){
     if(is(roads, "Spatial")){
@@ -21,6 +28,7 @@ buildSimList <- function(roads, cost, roadMethod, landings){
     }
   }
   
+
   if(!(is(landings, "sf") || is(landings, "sfc"))){
     if(is(landings, "Spatial")){
       
@@ -63,6 +71,31 @@ buildSimList <- function(roads, cost, roadMethod, landings){
   if(!all(raster::compareCRS(raster::crs(roads), raster::crs(landings)),
           raster::compareCRS(raster::crs(roads), raster::crs(cost)))){
     stop("the crs of roads, landings and cost must match")
+  }
+  
+  # burn in roads to have 0 cost 
+  if(!roadsInCost){
+    message("Burning in roads to cost raster from sf")
+    # use stars package because raster::rasterize and raster::mask are slow
+    cost_st <- stars::st_as_stars(cost)
+    
+    # The crs is checked above but stars requires that they be identical
+    roads <- st_transform(roads, st_crs(cost_st))
+    
+    # rasterize roads to template
+    tmplt <- stars::st_as_stars(st_bbox(cost_st), nx = raster::ncol(cost),
+                                ny = raster::nrow(cost), values = 1)
+    
+    # road raster is 1 where there are no roads and 0 where there are roads
+    roads_st <- stars::st_rasterize(roads %>% select(), template = tmplt,
+                                    options = "ALL_TOUCHED=TRUE") == 1
+   
+    cost_st <- cost_st * roads_st
+    
+    # convert back to Raster from stars
+    cost <- as(cost_st, "Raster")
+
+    rm(cost_st, roads_st, tmplt)
   }
   
   # crop landings and roads to bbox of cost raster

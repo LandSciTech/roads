@@ -50,8 +50,13 @@ cost <- raster::reclassify(plc, plcToCost)
 # very slow!
 # cost2 <- raster::mask(cost, roads, updatevalue = 0)
 
+# # try with stars [] Also very slow
+# cost_roads <- cost_st[roads]
+
 # use stars package instead
 cost_st <- stars::st_as_stars(cost)
+
+roads <- st_transform(roads, st_crs(cost_st))
 
 # rasterize roads to template
 tmplt <- stars::st_as_stars(st_bbox(cost_st), nx = raster::ncol(cost),
@@ -118,9 +123,26 @@ tmap::qtm(roadsProjCH2010lcp$costSurface)+
 # Try with roads as raster on input
 roads_rast <- as(roads_st, "Raster")
 
-# gives memory error
+# No longer gives memory error. Gives results as raster
 roadsProjCH2010mst_rast <- projectRoadsNew(landings = harvCH2010, 
                                        cost = cost_st, 
                                        roads = roads_rast == 0, 
                                        roadMethod = "mst")
-plot(roadsProjCH2010mst_rast$roads)
+plot(roadsProjCH2010mst_rast$roads, main = "Raster roads, Roads included in cost")
+
+# cost can be burned in inside the function
+roadsProjCH2010mst_rast2 <- projectRoadsNew(landings = harvCH2010, 
+                                           cost = cost, 
+                                           roads = roads_rast == 0, 
+                                           roadMethod = "mst", 
+                                           roadsInCost = FALSE)
+plot(roadsProjCH2010mst_rast2$roads, main = "Raster roads, Roads NOT included in cost")
+
+roadsProjCH2010mst_cost <- projectRoadsNew(landings = harvCH2010, 
+                                           cost = cost, 
+                                           roads = roads, 
+                                           roadMethod = "mst",
+                                           roadsInCost = FALSE)
+
+plot(roadsProjCH2010mst_cost$roads, main = "sf roads, Roads NOT included in cost")
+
