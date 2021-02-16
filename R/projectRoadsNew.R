@@ -204,7 +204,7 @@ setMethod(
 
     if(roadsOut == "raster"){
       # rasterize roads to template
-      tmplt <- stars::st_as_stars(st_bbox(sim$cost), nx = raster::ncol(sim$cost), 
+      tmplt <- stars::st_as_stars(sf::st_bbox(sim$cost), nx = raster::ncol(sim$cost), 
                                   ny = raster::nrow(sim$cost), values = 0)
       
       sim$roads <- (stars::st_rasterize(sim$roads, template = tmplt, 

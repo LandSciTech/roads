@@ -22,33 +22,33 @@ roadsC    <- CLUSexample$roads
 pR_snap <- projectRoadsNew(landings = landingsC, 
                            cost = costC,
                            roads = roadsC,
-                           roadMethod = "snap")
+                           roadMethod = "snap", roadsOut = "sf")
 
 pR_lcp <- projectRoadsNew(landings = landingsC,
                           cost = costC,
                           roads = roadsC,
                           roadMethod = "lcp", 
-                          neighbourhood = "queen")
+                          neighbourhood = "queen", roadsOut = "sf")
 
 pR_mst <- projectRoadsNew(landings = landingsC,
                           cost = costC,
                           roads = roadsC,
                           roadMethod="mst", 
-                          neighbourhood = "queen")
+                          neighbourhood = "queen", roadsOut = "sf")
 
 getRoadCells <- function(rast, roads, method){
   if(method == "snap"){
     raster::extract(rast, 
                     roads %>% 
                       sf::st_segmentize(dfMaxLength = raster::xres(costC)) %>% 
-                      sf::st_cast("MULTILINESTRING") %>%
+                      sf::st_cast("MULTIPOINT") %>%
                       sf::st_cast("POINT"), 
                     cellnumbers = T) %>% 
       .[,1] %>% unique() %>% sort()
   } else {
     raster::extract(rast, 
                     roads %>% 
-                      sf::st_cast("MULTILINESTRING") %>%
+                      sf::st_cast("MULTIPOINT") %>%
                       sf::st_cast("POINT"), 
                     cellnumbers = T) %>% 
       .[,1] %>% unique() %>% sort()

@@ -83,7 +83,7 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
     roads <- st_transform(roads, st_crs(cost_st))
     
     # rasterize roads to template
-    tmplt <- stars::st_as_stars(st_bbox(cost_st), nx = raster::ncol(cost),
+    tmplt <- stars::st_as_stars(sf::st_bbox(cost_st), nx = raster::ncol(cost),
                                 ny = raster::nrow(cost), values = 1)
     
     # road raster is 1 where there are no roads and 0 where there are roads
