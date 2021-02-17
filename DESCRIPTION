@@ -54,6 +54,7 @@ Collate:
     'demoScen.R'
     'getClosestRoad.R'
     'getGraph.R'
+    'getLandingsFromTarget.R'
     'helperFnsClus.R'
     'lcpList.R'
     'mstList.R'
@@ -63,4 +64,5 @@ Collate:
     'projectRoadsNew.R'
     'rasterToLineSegments.R'
     'shortestPaths.R'
+    'updateSimList.R'
     'visualize.R'
