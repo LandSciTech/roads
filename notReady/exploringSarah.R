@@ -17,7 +17,36 @@ outs <- purrr::map(list(snap = "snap", lcp = "lcp", mst = "mst"),
 
 purrr::map(outs, names) %>% unlist() %>% unique()
 purrr::map(outs, length)
+# Try passing a sim list object to projectRoadsNew #============================
+# first pass
+roadsLine <-  demoScen[[1]]$road.line
+costRaster <- demoScen[[1]]$cost.rast
 
+# double the landings to make it easier to compare speed
+landings1 <- demoScen[[1]]$landings.points %>% st_as_sf() %>% 
+  filter(set == 1)
+landings2 <- demoScen[[1]]$landings.points %>% st_as_sf() %>% 
+  filter(set == 2)
+landings3 <- demoScen[[1]]$landings.points %>% st_as_sf() %>% 
+  filter(set == 3)
+
+sim1 <- projectRoadsNew(landings = landings1, cost = costRaster, 
+                        roads = roadsLine)
+
+# Snap method doesn't use the graph shortestPath updates the graph but the cost
+# is not updated should be burned in at start of sim method
+sim2 <- projectRoadsNew(sim = sim1, landings = landings2)
+
+sim3 <- projectRoadsNew(sim = sim2, landings = landings3)
+
+plot(sim1$costSurface)
+#plot(sim2$costSurface)
+plot(landings3, add = T, col = "blue")
+plot(sim3$roads, col = "blue", add = T)
+plot(landings2, add = T, col = "red")
+plot(sim2$roads, col = "red", add = T)
+plot(landings1, col = "black", add = T)
+plot(sim1$roads, add = T)
 # Churchill Example #========================
 library(dplyr)
 library(sf)

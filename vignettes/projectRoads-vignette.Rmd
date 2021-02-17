@@ -61,7 +61,7 @@ library(colorspace)
 rastColours <- c('grey50',diverge_hcl(20,h=c(130,43),c=100,l=c(70,90)))
 ## get the cost raster from the CLUSexmaple data-set and plot
 costRaster <- roads::CLUSexample$cost
-plot(costRaster,col=rastColours,main='Cost')
+plot(costRaster, col = rastColours, main = 'Cost')
 ```
 
 Notice that the top row of the raster has a cost of zero.  This row is where, in this scenario, an existing road traverses the landscape.
@@ -79,6 +79,7 @@ knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
 ```{r, fig.show='hold'}
 ## existing roads network raster from the CLUSexample data-set
 existingRoadsRast <- roads::CLUSexample$roads
+roadsLine <- roads::CLUSexample$roads %>% rasterToLineSegments()
 ## alternatively, existing roads network raster from the cost raster layer, where cells are zero
 alt_existingRoadsRast <- costRaster==0
 ## they are the same?
@@ -134,10 +135,13 @@ This approach simply 'snaps' a landing (i.e., cutblock location) to the nearest 
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'snap' approach
-projRoads_snap <- roads::projectRoadsNew(landings,costRaster,existingRoadsRast,roadMethod='snap')
+projRoads_snap <- roads::projectRoadsNew(landings,
+                                         costRaster,
+                                         roadsLine,
+                                         roadMethod='snap')
 ## plot the cost raster, landings, and roads segments to the landings
-plot(costRaster, col=rastColours,main='\'Snapped\' roads')
-points(landings, pch=19)  ## landings points
+plot(costRaster, col = rastColours, main = '\'Snapped\' roads')
+points(landings, pch = 19)  ## landings points
 plot(projRoads_snap$roads, add = TRUE) ## roads
 ## update legend
 points(x = 5.5, y = 4.8, pch = 19, xpd = TRUE)
@@ -167,7 +171,10 @@ knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'LCP' approach
-projRoads_lcp <- roads::projectRoadsNew(landings, costRaster, existingRoadsRast, roadMethod = 'lcp')
+projRoads_lcp <- roads::projectRoadsNew(landings, 
+                                        costRaster, 
+                                        roadsLine, 
+                                        roadMethod = 'lcp')
 
 ## plot the cost raster and overlay it with new roads
 plot(costRaster,col=rastColours,main='Cost with new roads')
@@ -192,12 +199,15 @@ knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'MST' approach
-projRoads_mst <- roads::projectRoadsNew(landings, costRaster, existingRoadsRast, roadMethod = 'mst')
+projRoads_mst <- roads::projectRoadsNew(landings, 
+                                        costRaster,
+                                        roadsLine, 
+                                        roadMethod = 'mst')
 
 ## plot the cost raster and overlay it with new roads
-plot(costRaster,col=rastColours,main='Cost with new roads')
-plot(projRoads_mst$roads,col='grey30',add=TRUE,legend=FALSE)
-points(landings,pch=19,col='red')  ## landings points
+plot(costRaster, col = rastColours, main = 'Cost with new roads')
+plot(projRoads_mst$roads, col = 'grey30', add = TRUE, legend = FALSE)
+points(landings, pch = 19, col = 'red')  ## landings points
 ## legend
 lines(c(-0.5, 0), c(-1.45, -1.45), xpd = TRUE)
 text(x=0.1,y=-1.45,labels='new road',adj=c(0,0.4),xpd=TRUE)
@@ -218,21 +228,22 @@ knitr::opts_chunk$set(fig.width=7,fig.height=6.5)
 ```{r, fig.show='hold'}
 ## colours for displaying cost raster (optional; could just use default)
 library(colorRamps)
-rastColours2 <- c('grey50',colorRamps::matlab.like(300)[25:275])
+rastColours2 <- c('grey50', colorRamps::matlab.like(300)[25:275])
 ## scenario 
 scen <- roads::demoScen[[1]]
 ## landing sets 1 to 4 of this scenario 
 land.pnts <- scen$landings.points[scen$landings.points$set%in%c(1:4),]
 ## plot the cost raster and landings
 par(mar=par('mar')/2)
-plot(scen$cost.rast,col=rastColours2,main='Cost and landings (by set)')
-plot(land.pnts,add=TRUE,pch=21,cex=2,bg='white')
-text(land.pnts@coords,labels=land.pnts$set,cex=0.6,adj=c(0.5,0.3),xpd=TRUE)
+plot(scen$cost.rast, col = rastColours2, main = 'Cost and landings (by set)')
+plot(land.pnts, add = TRUE, pch = 21, cex = 2, bg = 'white')
+text(land.pnts@coords, labels = land.pnts$set, cex = 0.6, adj = c(0.5, 0.3),
+     xpd = TRUE)
 ```
 
 ### One-time simulation
 
-If landings are specified to the `projectRoads` method as any valid object other than a multi-layer [`RasterStack`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} or [`RasterBrick`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} object, then a one-time road simulation will be performed.
+If landings, costs, and roads are all specified to `projectRoads`, then a one-time road simulation will be performed that returns a list object holding the projected roads and related information. This can be repeated multiple time for different road building scenarios.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(fig.width=7,fig.height=6.86)
@@ -276,7 +287,8 @@ knitr::opts_chunk$set(fig.width=5,fig.height=4.85)
 
 ```{r, fig.show='hold'}
 ## raster representing the union of completely independent simulations for multiple sets
-independent <- any(!is.na(oneTime_sim))
+oneTime_sim <- raster::stack(oneTime_sim)
+independent <- any(oneTime_sim == 1)
 independent[!independent] <- NA ## set non-road to NA for display purposes
 ## plot 
 plot(scen$cost.rast,col=rastColours2,main='Union of independent sim results',legend=FALSE)
@@ -286,7 +298,7 @@ plot(land.pnts,add=TRUE,pch=21,cex=1.5,bg='white')
 
 ### Multi-temporal simulation
 
-Multi-temporal (multiple time steps) roads projections can be performed by the `projectRoads` method, by specifying landings in the form of a multi-layer [`RasterStack`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} or [`RasterBrick`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} object.
+Multi-temporal (multiple time steps) roads projections can be performed by `projectRoads`, by providing the list produced by a previous simulation run (sim list) and the landings for the current time period. The function uses the sim list as a starting point and does not need to recompute the graph used to determine the least cost path. This can be implemented in a loop.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(fig.width=7,fig.height=9.97)
@@ -298,49 +310,37 @@ knitr::opts_chunk$set(fig.width=7,fig.height=9.97)
 ## landing sets 1 to 4 of this scenario as a raster stack
 land.stack <- scen$landings.stack[[1:4]]
 ## pass the landings RasterStack to the projectRoads method for multi-temporal simulation
-multiTime_sim <- roads::projectRoads(land.stack,scen$cost.rast,
-                                     scen$cost.rast==0,roadMethod='mst')
-multiTime_sim[multiTime_sim==0] <- NA ## set non-road to NA for display purposes
-## rather than a list, projectRoads returns a RasterBrick with simulated roads for each time point
-par(mfrow=c(3,2))
-par(mar=par('mar')/2)
-for (i in 1:nlayers(multiTime_sim)){
-  plot(scen$cost.rast,col=rastColours2,main=paste0('Roads at time t=',(i-1)),legend=FALSE)
-  plot(multiTime_sim[[i]],col='grey30',add=TRUE,legend=FALSE)
+# initialize sim list with first landings set
+multiTime_sim <- list(projectRoadsNew(land.stack[[1]], scen$cost.rast, 
+                                               scen$road.line))
+
+# iterate over landings sets using the sim list from the previous run as input
+for (i in 2:nlayers(land.stack)) {
+  multiTime_sim <- c(
+    multiTime_sim,
+    list(projectRoadsNew(sim =  multiTime_sim[[i-1]], landings = land.stack[[i]]))
+  ) 
+}
+
+
+par(mfrow = c(3, 2))
+par(mar = par('mar')/2)
+  plot(scen$cost.rast, col = rastColours2, main = 'Roads at time t=0', 
+       legend = FALSE)
+  plot(scen$road.line, col = 'grey30', add = TRUE, legend = FALSE)
+  
+for (i in 1:length(multiTime_sim)){
+  plot(scen$cost.rast, col = rastColours2, 
+       main = paste0('Roads at time t=', i), legend = FALSE)
+  plot(multiTime_sim[[i]]$roads, col = 'grey30', add = TRUE, legend = FALSE)
   if (i >= 2){
-    plot(land.pnts[land.pnts$set<(i-1),],add=TRUE,pch=1,cex=1.5)
-    plot(land.pnts[land.pnts$set==(i-1),],add=TRUE,pch=21,cex=1.5,bg='white')
+    plot(land.pnts[land.pnts$set < i, ], add = TRUE, pch = 1, cex = 1.5)
+    plot(land.pnts[land.pnts$set == i, ], add = TRUE, pch = 21, 
+         cex = 1.5, bg = 'white')
   }
 }
 ```
 
-
-If preparing the your landings as a [`RasterStack`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} or [`RasterBrick`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} object is an issue, the same results can also be acheived by chaining calls to the `projectRoads` method, but altering the state of existing roads, as well as the corresponding cost raster, for each call.
-
-```{r, fig.show='hold'}
-costRast <- scen$cost.rast
-existing_roads <- costRast==0
-multiTime_sim2 <- stack(existing_roads) ## first element in output stack is roads at time t=0
-for (i in 1:4){
-  newroads <- roads::projectRoads(land.pnts[land.pnts$set==i,],costRast,
-                                  existing_roads,roadMethod='mst')$roads
-  existing_roads <- newroads > 0  ## new roads become existing roads for next time step
-  costRast[existing_roads] <- 0   ## update costRast under existing roads (value of 0)
-  multiTime_sim2 <-stack(multiTime_sim2,existing_roads) ## update stack
-}
-multiTime_sim2[multiTime_sim2==0] <- NA ## set non-road to NA for display purposes
-## plot
-par(mfrow=c(3,2))
-par(mar=par('mar')/2)
-for (i in 1:nlayers(multiTime_sim2)){
-  plot(scen$cost.rast,col=rastColours2,main=paste0('Roads at time t=',(i-1)),legend=FALSE)
-  plot(multiTime_sim2[[i]],col='grey30',add=TRUE,legend=FALSE)
-  if (i >= 2){
-    plot(land.pnts[land.pnts$set<(i-1),],add=TRUE,pch=1,cex=1.5)
-    plot(land.pnts[land.pnts$set==(i-1),],add=TRUE,pch=21,cex=1.5,bg='white')
-  }
-}
-```
 
 
 
