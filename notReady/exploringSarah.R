@@ -462,12 +462,18 @@ raster::freq(clumps) %>% as.data.frame() %>% filter(!is.na(value)) %>%
 
 # make example with clumps
 landClumps <- raster::raster(ncols=100, nrows=100, crs = NA)
-landClumps[c(1:5,101:105)] <- 1
-landClumps[c(450:455,550:555)] <- 1
-landClumps[700] <- 1
+landClumps[c(1:5,101:105, 201:205, 301:305, 401:405)] <- 1
+landClumps[c(450:455,550:555)] <- 2
+landClumps[690:691] <- 3
+
+# try getLandingsFromTarget
+landTarget <- getLandingsFromTarget(landClumps, c(3,3,3))
+raster::plot(landClumps)
+plot(landTarget, add = TRUE)
+
 rc <- raster::clump(landClumps, gaps = F) 
 raster::freq(rc)
-plot(rc)
+raster::plot(rc)
 raster::freq(rc, useNA = "no")[,2] > 1
 
 # this makes them all one multipolygon
@@ -490,10 +496,16 @@ plot(sf::st_point(c(15, 50)), add = TRUE)
 plot(ptClumpCent, add = TRUE, col = "green")
 
 # or multiple points has problems for very small polygons, size is not exact
-ptsInClump <- sf::st_sample(polys2$geometry, type = "regular", size = 3, 
-                            offset = c(raster::extent(landClumps)@xmin,
-                                       raster::extent(landClumps)@ymin))
-plot(ptsInClump, add = TRUE, col = "blue")
+# better if do each polygon individuall
+
+ptsInClump2 <- sf::st_sample(polys2, type = "regular", size = 6, 
+                             offset = c(1.5, 1.5))
+
+
+plot(polys2 %>% sf::st_geometry())
+plot(ptsInClump2, add = TRUE, col = "red")
+
+plot(ptsInClump2 %>% sf::st_bbox() %>% sf::st_as_sfc(), add = TRUE, col = "green")
 
 # Raster to lines with Voronoi Not working... #=================================
 rast <- demoScen[[1]]$road.rast
