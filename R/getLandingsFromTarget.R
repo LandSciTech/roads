@@ -1,3 +1,15 @@
+#' Get landing points inside raster patches
+#' 
+#' 
+
+
+#' @param inputPatches A RasterLayer. Harvested patches should have values equal
+#'   to a unique identifier
+#' @param numLandings Numeric. A vector of the number of points to randomly
+#'   sample inside harvested patches
+#' @param omitCentroidsOutOfPolygons Logical. Default is FALSE in which case
+#'   some points may be outside the borders of the harvested patch
+#'
 #' @export
 getLandingsFromTarget<-function(inputPatches,
                                 numLandings,
@@ -26,7 +38,8 @@ getLandingsFromTarget<-function(inputPatches,
     if (omitCentroidsOutOfPolygons){
       landC[is.na(ip)]=NA
     }
-    remL = ip;remL[landC>0]=NA
+    remL = ip
+    remL[landC>0]=NA
     numSamples = nl-raster::cellStats(landC>0,"sum")#select additional points so total number is equal to small alternative
     
     landC = raster::rasterToPoints(landC,fun=function(landings){landings>0})
