@@ -94,7 +94,7 @@ NULL
 #'
 #' prRes <- projectRoadsNew(land.poly, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = TRUE, mainTitle = "Scen 7: SpPoly-MST")
-#' 
+#'
 
 ### using scenario 7 / Polygon landings raster / minimum spanning tree
 # # demo scenario 7
@@ -115,8 +115,8 @@ setGeneric('projectRoadsNew', function(landings = NULL,
                                        plotRoads = FALSE,
                                        mainTitle = NULL,
                                        neighbourhood = "octagon",
-                                       sim = NULL, 
-                                       roadsOut = NULL, 
+                                       sim = NULL,
+                                       roadsOut = NULL,
                                        roadsInCost = TRUE)
   standardGeneric('projectRoadsNew'))
 
@@ -124,6 +124,8 @@ setMethod(
   'projectRoadsNew', signature(sim = "missing"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
            neighbourhood, sim, roadsOut, roadsInCost) {
+    #landings=outObj$landings;cost=outObj$cost;roads=outObj$roads;roadMethod="mst";roadsOut = "raster"
+    #mainTitle = NULL;neighbourhood = "queen";sim = NULL;roadsInCost = TRUE
 
     # check required args
     missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings),
@@ -139,18 +141,18 @@ setMethod(
       stop("Invalid road method ", roadMethod, ". Options are:",
            paste(recognizedRoadMethods, collapse=','))
     }
-    
+
     # If roads in are raster return as raster
     if(is(roads, "Raster") && is.null(roadsOut) ){
       roadsOut <- "raster"
     } else if(is.null(roadsOut)) {
       roadsOut <- "sf"
     }
-    
+
     # set up sim list
-    sim <- buildSimList(roads = roads, cost = cost, 
-                        roadMethod = roadMethod, 
-                        landings = landings, 
+    sim <- buildSimList(roads = roads, cost = cost,
+                        roadMethod = roadMethod,
+                        landings = landings,
                         roadsInCost = roadsInCost)
 
     # make sure the name of the sf_column is "geometry"
@@ -159,9 +161,10 @@ setMethod(
       sim$landings <- rename(sim$landings, geometry = all_of(geoColInL))
     }
 
+    #library(dplyr);library(sf)
     geoColInR <- attr(sim$roads, "sf_column")
     sim$roads <- select(sim$roads, geometry = all_of(geoColInR))
-    
+
     sim <- getGraph(sim, neighbourhood)
 
     sim <- switch(sim$roadMethod,
@@ -213,14 +216,14 @@ setMethod(
 
     if(roadsOut == "raster"){
       # rasterize roads to template
-      tmplt <- stars::st_as_stars(sf::st_bbox(sim$cost), nx = raster::ncol(sim$cost), 
+      tmplt <- stars::st_as_stars(sf::st_bbox(sim$cost), nx = raster::ncol(sim$cost),
                                   ny = raster::nrow(sim$cost), values = 0)
-      
-      sim$roads <- (stars::st_rasterize(sim$roads, template = tmplt, 
-                                       options = "ALL_TOUCHED=TRUE") > 0) %>% 
+
+      sim$roads <- (stars::st_rasterize(sim$roads, template = tmplt,
+                                       options = "ALL_TOUCHED=TRUE") > 0) %>%
         as("Raster")
     }
-    
+
     return(sim)
   })
 
@@ -228,7 +231,7 @@ setMethod(
   'projectRoadsNew', signature(sim = "list"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
            neighbourhood, sim, roadsOut, roadsInCost) {
-    
+
     # # check required args
     # missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings),
     #                                   is.null)))
@@ -236,57 +239,57 @@ setMethod(
     #   stop("Argument(s): ", paste0(missingNames, collapse = ", "),
     #        " are required if sim is not supplied")
     # }
-    # 
+    #
     # recognizedRoadMethods = c("mst", "lcp", "snap")
-    # 
+    #
     # if(!is.element(roadMethod,recognizedRoadMethods)){
     #   stop("Invalid road method ", roadMethod, ". Options are:",
     #        paste(recognizedRoadMethods, collapse=','))
     # }
-    
+
     # If roads in are raster return as raster
     if(is(sim$roads, "Raster")){
       roadsOut <- "raster"
     } else {
       roadsOut <- "sf"
     }
-    
+
     # add landings to sim list. Should involve all the same checks as before
     sim <- updateSimList(sim, landings)
-   
+
     # make sure the name of the sf_column is "geometry"
     geoColInL <- attr(sim$landings, "sf_column")
     if(geoColInL != "geometry"){
       sim$landings <- rename(sim$landings, geometry = all_of(geoColInL))
     }
-    
+
     geoColInR <- attr(sim$roads, "sf_column")
     sim$roads <- select(sim$roads, geometry = all_of(geoColInR))
-    
+
     sim <- switch(sim$roadMethod,
                   snap= {
                     sim <- buildSnapRoads(sim)
                   } ,
                   lcp ={
                     sim <- getClosestRoad(sim)
-                    
+
                     sim <- lcpList(sim)
-                    
+
                     # includes update graph
                     sim <- shortestPaths(sim)
                   },
                   mst ={
                     sim <- getClosestRoad(sim)
-                    
+
                     # will take more time than lcpList given the construction of
                     # a mst
                     sim <- mstList(sim)
-                    
+
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)
                   }
     )
-    
+
     if(plotRoads){
       print({raster::plot(sim$costSurface)
         plot(sf::st_geometry(sim$roads), add = TRUE)
@@ -300,26 +303,26 @@ setMethod(
         }
         title(main = mainTitle, sub = paste0("Method: ", sim$roadMethod))})
     }
-    
+
     # put back original geometry column names
     if(geoColInL != attr(sim$landings, "sf_column")){
       sim$landings <- rename(sim$landings, geoColInL = geometry)
     }
-    
+
     if(geoColInR != attr(sim$roads, "sf_column")){
       sim$roads <- rename(sim$roads, geoColInR = geometry)
     }
-    
+
     if(roadsOut == "raster"){
       # rasterize roads to template
-      tmplt <- stars::st_as_stars(sf::st_bbox(sim$cost), nx = raster::ncol(sim$cost), 
+      tmplt <- stars::st_as_stars(sf::st_bbox(sim$cost), nx = raster::ncol(sim$cost),
                                   ny = raster::nrow(sim$cost), values = 0)
-      
-      sim$roads <- (stars::st_rasterize(sim$roads, template = tmplt, 
-                                        options = "ALL_TOUCHED=TRUE") > 0) %>% 
+
+      sim$roads <- (stars::st_rasterize(sim$roads, template = tmplt,
+                                        options = "ALL_TOUCHED=TRUE") > 0) %>%
         as("Raster")
     }
-    
+
     return(sim)
   })
 
