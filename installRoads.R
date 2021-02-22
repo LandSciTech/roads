@@ -6,7 +6,7 @@ install.packages("SpaDES.tools")
 #devtools::install_github("PredictiveEcology/SpaDES.tools")
 #usethis::create_package(getwd())
 devtools::document();devtools::load_all()
-#devtools::install_github("LandSciTech/roads")
+#devtools::install_github("LandSciTech/roads",ref="dev")
 citation("roads")
 
 install.packages("fs")
