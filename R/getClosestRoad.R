@@ -13,6 +13,18 @@ getClosestRoad <- function(sim){
   # the points
   closest.roads.pts <- sf::st_nearest_points(sim$landings, roads.pts)
   
+  # find landings that are within the space of one raster cell from the road
+  touching_road <- which(units::drop_units(st_length(closest.roads.pts)) < 
+                           raster::res(sim$costSurface))
+  
+  # make snap roads for these ones 
+  snap_roads_lines <- sf::st_sf(geometry = closest.roads.pts[touching_road]) 
+  sim$roads <- rbind(sim$roads, snap_roads_lines)
+  
+  # Remove touching roads pts from rest of roads and from landings set 
+  # the original landings will be replaced at the end
+  closest.roads.pts <- closest.roads.pts[-touching_road]
+  sim$landings <- slice(sim$landings, -touching_road)
   # convert lines to points
   closest.roads.pts <- sf::st_cast(closest.roads.pts, "POINT")
   

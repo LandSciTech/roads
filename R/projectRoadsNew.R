@@ -154,6 +154,8 @@ setMethod(
                         roadMethod = roadMethod,
                         landings = landings,
                         roadsInCost = roadsInCost)
+    
+    sim$landingsIn <- sim$landings
 
     # make sure the name of the sf_column is "geometry"
     geoColInL <- attr(sim$landings, "sf_column")
@@ -204,12 +206,11 @@ setMethod(
         }
         title(main = mainTitle, sub = paste0("Method: ", sim$roadMethod))})
     }
+    
+    # return original landings
+    sim$landings <- sim$landingsIn
 
     # put back original geometry column names
-    if(geoColInL != attr(sim$landings, "sf_column")){
-      sim$landings <- rename(sim$landings, geoColInL = geometry)
-    }
-
     if(geoColInR != attr(sim$roads, "sf_column")){
       sim$roads <- rename(sim$roads, geoColInR = geometry)
     }
