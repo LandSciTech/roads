@@ -34,7 +34,7 @@ mstList<- function(sim){
     paths.matrix <- matrix(as.numeric(paths.matrix), ncol = 2)
 
     # put the edge combinations in a list used for shortestPaths
-    sim$paths.list<-split(paths.matrix, 1:nrow(paths.matrix)) 
+    sim$paths.list <- split(paths.matrix, 1:nrow(paths.matrix)) 
     
     rm(mst.paths,mst.g, mst.adj, mst.v, paths.matrix)
   }

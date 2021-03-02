@@ -9,7 +9,7 @@ pathsToLines <- function(sim){
     
     # finds first match for start and end cells in paths
     inds <- match(sim$paths.list[[i]], sim$paths.v$V1)
-    #print(i)
+    print(i)
     if(any(is.na(inds))){
       stop("NA values in cost raster along paths, check raster", call. = FALSE)
     }
@@ -34,29 +34,90 @@ pathsToLines <- function(sim){
     ## than 1 true in a row followed by a false?
     ## something with cumsum(rle(er[v]==1)$lengths)?
     if(length(conn) > 0){
-      keep <- which(er[v] == 0)
-      if(length(keep) == 0){
+    
+      if(length(er[v] == 0) == 0){
         # the whole path is on existing road
         return(NULL)
       }
-      if(min(keep) > 1){
-        keep <- c(min(keep)-1, keep)
+      
+      run_lengths <- rle(er[v]==0)$length 
+      if(length(run_lengths) > 1){
+        if(er[v[1]] == 0){
+          if(er[v[length(v)]] == 1){
+            # first cell is not existing road and last cell is existing road
+            run_lengths_mat <- run_lengths %>% cumsum() %>% {c(1, .)} %>% 
+              .[-length(.)] %>% 
+              matrix(ncol = 2, byrow = T) %>% 
+              as.data.frame() %>% 
+              `names<-`(c("start", "end")) %>% 
+              mutate(end = end + 1)
+          } else {
+            # first cell is not existing road and last cell is not existing road
+            run_lengths_mat <- run_lengths %>% cumsum() %>% {c(1, .)} %>% 
+              #.[-length(.)] %>% 
+              matrix(ncol = 2, byrow = T) %>% 
+              as.data.frame() %>% 
+              `names<-`(c("start", "end")) %>% 
+              mutate(end = end + 1)
+          }
+        } else {
+          if(er[v[length(v)]] == 1) {
+            # first cell is existing road and last cell is existing road
+            run_lengths_mat <- run_lengths %>% cumsum() %>% 
+              #{c(1, .)} %>% 
+              .[-length(.)] %>% 
+              matrix(ncol = 2, byrow = T) %>% 
+              as.data.frame() %>% 
+              `names<-`(c("start", "end")) %>% 
+              mutate(end = end + 1)
+          } else {
+            # first cell is existing road and last cell is not existing road
+            run_lengths_mat <- run_lengths %>% cumsum() %>% 
+              #{c(1, .)} %>% 
+              #.[-length(.)] %>% 
+              matrix(ncol = 2, byrow = T) %>% 
+              as.data.frame() %>% 
+              `names<-`(c("start", "end")) %>% 
+              mutate(end = end + 1)
+          }
+        }
+        if(nrow(run_lengths_mat) == 1){
+          keep <- list(seq(from = run_lengths_mat$start, 
+                       to = run_lengths_mat$end))
+        } else {
+          keep <- apply(run_lengths_mat, 1, function(x) seq(from = x[1], to = x[2]))
+        } 
       }
-      if(max(keep) < length(v)){
-        keep <- c(keep, max(keep)+1)
-      }
-      v <- v[keep]
+      
+    }
+    if(length(keep) == 1){
+      cellsToKeep <- v[keep[[1]]]
+      cellsToKeep <- na.omit(cellsToKeep)
+      outLine <- sf::st_linestring(raster::xyFromCell(sim$costSurface, 
+                                                      cellsToKeep)) %>%
+        st_sfc()
+    } else {
+      outLine <- lapply(keep, function(x){
+        cellsToKeep <- v[x]
+        cellsToKeep <- na.omit(cellsToKeep)
+        sf::st_linestring(raster::xyFromCell(sim$costSurface, cellsToKeep))
+      })
+      outLine <- st_union(outLine %>% st_as_sfc())
     }
     
-    #id <- names(sim$paths.list)[[i]]
     
-    outLine <- sf::st_linestring(raster::xyFromCell(sim$costSurface, v))
-    
-    # plot(sim$landings %>% st_geometry())
+    # strt_end <-raster::xyFromCell(sim$costSurface, sim$paths.list[[i]]) %>% 
+    #   as.data.frame %>% 
+    #   st_as_sf(coords = c("x", "y"))
+    # 
+    # plot(outLine1, col = "blue")
+    # #raster::plot(sim$costSurface, add = TRUE)
+    # plot(sim$landings %>% st_geometry(), add = T)
     # plot(sim$roads %>% st_geometry(), add = T)
     # plot(outLine1, col = "blue", add = T)
     # plot(outLine, col = "red", add = T)
-    # title(main = i) 
+    # plot(strt_end, col = "red", add = T, pch = 4)
+    # title(main = i)
     
     return(outLine)
   })
@@ -64,7 +125,7 @@ pathsToLines <- function(sim){
   # remove NULLs
   linelist <- linelist[vapply(linelist,function(x) !is.null(x), c(TRUE))]
   
-  outLines <- sf::st_as_sfc(linelist)  %>% 
+  outLines <- do.call(c, linelist) %>% 
     sf::st_union() %>% 
     {sf::st_sf(geometry = .)}
   return(sf::st_set_crs(outLines, sf::st_crs(sim$roads)))
