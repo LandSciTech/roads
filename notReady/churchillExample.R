@@ -87,15 +87,15 @@ roadsProjCH2010 <- projectRoadsNew(landings = harvCH2010,
                                    cost = cost_st,
                                    roads = roads)
 
-# lcp
-roadsProjCH2010lcp <- projectRoadsNew(landings = harvCH2010,
-                                   cost = cost_st,
-                                   roads = roads, roadMethod = "lcp")
-
-# snap
-roadsProjCH2010snap <- projectRoadsNew(landings = harvCH2010,
-                                   cost = cost_st,
-                                   roads = roads, roadMethod = "snap")
+# # lcp
+# roadsProjCH2010lcp <- projectRoadsNew(landings = harvCH2010,
+#                                    cost = cost_st,
+#                                    roads = roads, roadMethod = "lcp")
+# 
+# # snap
+# roadsProjCH2010snap <- projectRoadsNew(landings = harvCH2010,
+#                                    cost = cost_st,
+#                                    roads = roads, roadMethod = "snap")
 
 # Look at maps in interactive mode, change to "plot" for non-interactive
 tmap::tmap_mode("view")
@@ -108,41 +108,41 @@ tmap::qtm(roadsProjCH2010$costSurface)+
   #tmap::qtm(harvCH2 %>% filter(yrdep == 2010))+
   #tmap::qtm(roads2020)
 
-# lcp
-tmap::qtm(roadsProjCH2010lcp$costSurface)+
-  tmap::qtm(roadsProjCH2010lcp$landings, dots.col = "red")+
-  tmap::qtm(roadsProjCH2010lcp$roads, lines.col = "red")+
-  tmap::qtm(roads)
+# # lcp
+# tmap::qtm(roadsProjCH2010lcp$costSurface)+
+#   tmap::qtm(roadsProjCH2010lcp$landings, dots.col = "red")+
+#   tmap::qtm(roadsProjCH2010lcp$roads, lines.col = "red")+
+#   tmap::qtm(roads)
+# 
+# # snap
+# tmap::qtm(roadsProjCH2010lcp$costSurface)+
+#   tmap::qtm(roadsProjCH2010lcp$landings, dots.col = "red")+
+#   tmap::qtm(roadsProjCH2010lcp$roads, lines.col = "red")+
+#   tmap::qtm(roads)
 
-# snap
-tmap::qtm(roadsProjCH2010lcp$costSurface)+
-  tmap::qtm(roadsProjCH2010lcp$landings, dots.col = "red")+
-  tmap::qtm(roadsProjCH2010lcp$roads, lines.col = "red")+
-  tmap::qtm(roads)
-
-# Try with roads as raster on input
-roads_rast <- as(roads_st, "Raster")
-
-# No longer gives memory error. Gives results as raster
-roadsProjCH2010mst_rast <- projectRoadsNew(landings = harvCH2010, 
-                                       cost = cost_st, 
-                                       roads = roads_rast == 0, 
-                                       roadMethod = "mst")
-plot(roadsProjCH2010mst_rast$roads, main = "Raster roads, Roads included in cost")
-
-# cost can be burned in inside the function
-roadsProjCH2010mst_rast2 <- projectRoadsNew(landings = harvCH2010, 
-                                           cost = cost, 
-                                           roads = roads_rast == 0, 
-                                           roadMethod = "mst", 
-                                           roadsInCost = FALSE)
-plot(roadsProjCH2010mst_rast2$roads, main = "Raster roads, Roads NOT included in cost")
-
-roadsProjCH2010mst_cost <- projectRoadsNew(landings = harvCH2010, 
-                                           cost = cost, 
-                                           roads = roads, 
-                                           roadMethod = "mst",
-                                           roadsInCost = FALSE)
-
-plot(roadsProjCH2010mst_cost$roads, main = "sf roads, Roads NOT included in cost")
+# # Try with roads as raster on input
+# roads_rast <- as(roads_st, "Raster")
+# 
+# # No longer gives memory error. Gives results as raster
+# roadsProjCH2010mst_rast <- projectRoadsNew(landings = harvCH2010, 
+#                                        cost = cost_st, 
+#                                        roads = roads_rast == 0, 
+#                                        roadMethod = "mst")
+# plot(roadsProjCH2010mst_rast$roads, main = "Raster roads, Roads included in cost")
+# 
+# # cost can be burned in inside the function
+# roadsProjCH2010mst_rast2 <- projectRoadsNew(landings = harvCH2010, 
+#                                            cost = cost, 
+#                                            roads = roads_rast == 0, 
+#                                            roadMethod = "mst", 
+#                                            roadsInCost = FALSE)
+# plot(roadsProjCH2010mst_rast2$roads, main = "Raster roads, Roads NOT included in cost")
+# 
+# roadsProjCH2010mst_cost <- projectRoadsNew(landings = harvCH2010, 
+#                                            cost = cost, 
+#                                            roads = roads, 
+#                                            roadMethod = "mst",
+#                                            roadsInCost = FALSE)
+# 
+# plot(roadsProjCH2010mst_cost$roads, main = "sf roads, Roads NOT included in cost")
 
