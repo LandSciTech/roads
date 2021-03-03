@@ -2,9 +2,12 @@
 % Please edit documentation in R/pathsToLines.R
 \name{pathsToLines}
 \alias{pathsToLines}
-\title{copied from newRoadsToLines and made work with sf}
+\title{Convert raster cell numbers in paths to lines}
 \usage{
 pathsToLines(sim)
+}
+\arguments{
+\item{sim}{sim list}
 }
 \description{
 copied from newRoadsToLines and made work with sf

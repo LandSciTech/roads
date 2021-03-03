@@ -6,6 +6,11 @@
 \usage{
 updateSimList(sim, landings)
 }
+\arguments{
+\item{sim}{sim list from input}
+
+\item{landings}{input landigs}
+}
 \description{
 Update sim list with new landings and burn in roads to have 0 cost
 }

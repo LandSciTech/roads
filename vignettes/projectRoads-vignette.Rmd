@@ -53,8 +53,9 @@ knitr::opts_chunk$set(fig.width=5,fig.height=4.85)
 ```
 
 ```{r, fig.show='hold'}
-#library(roads)
-devtools::load_all(".")
+library(roads)
+#devtools::load_all(".")
+library(dplyr)
 library(raster)
 library(colorspace)
 ## colours for displaying cost raster (optional; could just use default)

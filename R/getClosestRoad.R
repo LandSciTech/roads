@@ -2,6 +2,8 @@
 #'
 #' Find the closest point on the road to each landing and return as an x y
 #' matrix
+#' 
+#' @param sim sim list
 
 
 # Ideally use this one

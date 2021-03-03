@@ -6,6 +6,9 @@
 \usage{
 shortestPaths(sim)
 }
+\arguments{
+\item{sim}{sim list}
+}
 \description{
 Get shortest path between points in list
 }

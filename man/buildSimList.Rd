@@ -6,6 +6,17 @@
 \usage{
 buildSimList(roads, cost, roadMethod, landings, roadsInCost)
 }
+\arguments{
+\item{roads}{roads input}
+
+\item{cost}{cost input}
+
+\item{roadMethod}{method of road projection}
+
+\item{landings}{landings input}
+
+\item{roadsInCost}{Whether the roads have already been burned into cost}
+}
 \description{
 Build a sim list object to be used in the rest of the functions and returned
 by \code{projectRoads}. It will convert other types of spatial objects to sf

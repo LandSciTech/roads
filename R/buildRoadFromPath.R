@@ -1,5 +1,7 @@
 #' build road based on paths
 #' 
+#' @param sim a sim list
+#' 
 #' Changed from roadCLUS.analysis
 
 

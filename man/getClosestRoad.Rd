@@ -6,6 +6,9 @@
 \usage{
 getClosestRoad(sim)
 }
+\arguments{
+\item{sim}{sim list}
+}
 \description{
 Find the closest point on the road to each landing and return as an x y
 matrix

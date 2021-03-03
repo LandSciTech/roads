@@ -2,9 +2,12 @@
 % Please edit documentation in R/mstList.R
 \name{mstList}
 \alias{mstList}
-\title{slight update from roadClus version to use sf}
+\title{Make list of paths that are part of mst}
 \usage{
 mstList(sim)
+}
+\arguments{
+\item{sim}{sim list}
 }
 \description{
 slight update from roadClus version to use sf

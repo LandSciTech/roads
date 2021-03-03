@@ -7,7 +7,7 @@
 buildSnapRoads(sim)
 }
 \arguments{
-\item{sim}{}
+\item{sim}{a sim list}
 }
 \value{
 sim list

@@ -1,6 +1,8 @@
-#' 
+#' Make list of paths that are part of mst
 #' 
 #' slight update from roadClus version to use sf
+#' 
+#' @param sim sim list
 
 mstList<- function(sim){
   if(nrow(sim$landings) == 0){

@@ -42,7 +42,7 @@ roadCLUS.analysis <- function(sim){
   }
   return(invisible(sim))
 }
-#' @export
+
 roadCLUS.getGraph<- function(sim,neighbourhood){
   ###Set the grpah which determines least cost paths
   #Creates a graph (sim$g) in inititation phase which can be updated and solved for paths
@@ -212,6 +212,12 @@ roadCLUS.buildSnapRoads <- function(sim){
   return(invisible(sim))
 }
 
+#' Get centroids from raster landings
+#' 
+#' @param newLandings raster landings
+#'
+#' @param withIDs logical
+#'
 #' @export
 getCentroids<-function(newLandings,withIDs=T){
   cRes = raster::res(newLandings)
@@ -232,6 +238,13 @@ getCentroids<-function(newLandings,withIDs=T){
   return(newLandingCentroids)
 }
 
+#' Creat a simple cost layer
+#' 
+#' @param roads roads lines or raster
+#'
+#' @param newLandings landings raster
+#' @param water water raster
+#'
 #' @export
 simpleCost<-function(roads,newLandings,water){
   #roads=cRoadsRaster

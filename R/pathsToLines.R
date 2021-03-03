@@ -1,5 +1,8 @@
-
+#' Convert raster cell numbers in paths to lines
+#' 
 #' copied from newRoadsToLines and made work with sf
+#' 
+#' @param sim sim list
 
 pathsToLines <- function(sim){
   ## existing roads
