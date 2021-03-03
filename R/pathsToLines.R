@@ -9,7 +9,7 @@ pathsToLines <- function(sim){
     
     # finds first match for start and end cells in paths
     inds <- match(sim$paths.list[[i]], sim$paths.v$V1)
-    print(i)
+    
     if(any(is.na(inds))){
       stop("NA values in cost raster along paths, check raster", call. = FALSE)
     }
@@ -89,20 +89,22 @@ pathsToLines <- function(sim){
         } 
       }
       
+    } else {
+      keep <- list(1:length(v))
     }
     if(length(keep) == 1){
       cellsToKeep <- v[keep[[1]]]
       cellsToKeep <- na.omit(cellsToKeep)
       outLine <- sf::st_linestring(raster::xyFromCell(sim$costSurface, 
                                                       cellsToKeep)) %>%
-        st_sfc()
+        sf::st_sfc()
     } else {
       outLine <- lapply(keep, function(x){
         cellsToKeep <- v[x]
         cellsToKeep <- na.omit(cellsToKeep)
         sf::st_linestring(raster::xyFromCell(sim$costSurface, cellsToKeep))
       })
-      outLine <- st_union(outLine %>% st_as_sfc())
+      outLine <- sf::st_union(outLine %>% sf::st_as_sfc())
     }
     
     
