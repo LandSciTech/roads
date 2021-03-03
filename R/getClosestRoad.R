@@ -15,7 +15,7 @@ getClosestRoad <- function(sim){
 
   # find landings that are within the space of one raster cell from the road
   touching_road <- which(units::set_units(sf::st_length(closest.roads.pts), NULL) < 
-                           raster::res(sim$costSurface))
+                           raster::res(sim$costSurface)[1])
   
   if(length(touching_road) > 0){
     # make snap roads for these ones 
@@ -29,6 +29,7 @@ getClosestRoad <- function(sim){
   }
   
   if(length(closest.roads.pts) == 0){
+    sim$roads.close.XY = closest.roads.pts
     return(sim)
   }
 

@@ -3,6 +3,9 @@
 #' slight update from roadClus version to use sf
 
 mstList<- function(sim){
+  if(nrow(sim$landings) == 0){
+    return(invisible(sim))
+  }
   # get cell indexs for new road start and end
   mst.v <- rbind(raster::cellFromXY(sim$costSurface, 
                                               sf::st_coordinates(sim$landings)),

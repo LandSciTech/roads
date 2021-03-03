@@ -35,7 +35,7 @@ pathsToLines <- function(sim){
     ## something with cumsum(rle(er[v]==1)$lengths)?
     if(length(conn) > 0){
     
-      if(length(er[v] == 0) == 0){
+      if(length(which(er[v] == 0)) == 0){
         # the whole path is on existing road
         return(NULL)
       }

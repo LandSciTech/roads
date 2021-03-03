@@ -333,6 +333,8 @@ for (i in 1:length(multiTime_sim)){
   plot(scen$cost.rast, col = rastColours2, 
        main = paste0('Roads at time t=', i), legend = FALSE)
   plot(multiTime_sim[[i]]$roads, col = 'grey30', add = TRUE, legend = FALSE)
+  plot(land.pnts[land.pnts$set == i, ], add = TRUE, pch = 21, 
+         cex = 1.5, bg = 'white')
   if (i >= 2){
     plot(land.pnts[land.pnts$set < i, ], add = TRUE, pch = 1, cex = 1.5)
     plot(land.pnts[land.pnts$set == i, ], add = TRUE, pch = 21, 

@@ -1,4 +1,7 @@
 lcpList<- function(sim){
+  if(nrow(sim$landings) == 0){
+    return(invisible(sim))
+  }
   ##Get a list of of cell indexs for to and from points
   paths.matrix <- cbind(raster::cellFromXY(sim$costSurface,
                                          sf::st_coordinates(sim$landings)), 
