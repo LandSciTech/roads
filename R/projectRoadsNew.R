@@ -19,7 +19,9 @@ NULL
 #'   SpatialPoints*, matrix, or RasterStack containing features to be connected
 #'   to the road network. Matrix should contain columns x, y with coordinates,
 #'   all columns will be ignored. If RasterStack assume an ordered time-series.
-#' @param cost RasterLayer. Cost surface.
+#' @param cost RasterLayer. Cost surface where existing roads must be the only
+#'   cells with a cost of 0. If existing roads do not have 0 cost set
+#'   \code{roadsInCost = FALSE} and they will be burned in.
 #' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
 #' @param roadMethod Character. Options are "mst", "lcp", "snap".
 #' @param plotRoads Boolean. Should the resulting road network be ploted.
@@ -38,42 +40,42 @@ NULL
 #'   NULL (default) then the returned roads are sf if the input is sf or
 #'   Spatial* and raster if the input was a raster.
 #' @param roadsInCost Logical. The default is TRUE which means the cost raster
-#'   is assumed to include existing roads in its cost surface. If FALSE then the
-#'   roads will be "burned in" to the cost raster with a cost of 0.
+#'   is assumed to include existing roads as 0 in its cost surface. If FALSE
+#'   then the roads will be "burned in" to the cost raster with a cost of 0.
 #'
 #' @examples
 #' doPlots <- interactive()
 #' ### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")
 #' # demo scenario 1
 #' scen <- demoScen[[1]]
-#' 
+#'
 #' # landing set 1 of scenario 1:
 #' land.pnts <- scen$landings.points[scen$landings.points$set==1,]
-#' 
+#'
 #' prRes <- projectRoadsNew(land.pnts, scen$cost.rast, scen$road.rast, "lcp",
 #'                          plotRoads = doPlots, mainTitle = "Scen 1: SPDF-LCP")
-#' 
+#'
 #' ### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
 #' # demo scenario 1
 #' scen <- demoScen[[1]]
-#' 
+#'
 #' # the RasterLayer version of landing set 1 of scenario 1:
 #' land.rLyr <- scen$landings.stack[[1]]
-#' 
+#'
 #' prRes <- projectRoadsNew(land.rLyr, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 1: Raster-MST")
-#' 
-#' 
+#'
+#'
 #' ### using: scenario 2 / matrix landings / snapping ("snap")
 #' # demo scenario 2
 #' scen <- demoScen[[2]]
-#' 
+#'
 #' # landing set 5 of scenario 2, as matrix:
 #' land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
-#' 
+#'
 #' prRes <- projectRoadsNew(land.mat, scen$cost.rast, scen$road.rast, "snap",
 #'                          plotRoads = doPlots, mainTitle = "Scen 2: Matrix-Snap")
-#' 
+#'
 #' # TODO: Make this and a list of sf objects, (or maybe a year column?) work
 #' # ### using: scenario 3 / RasterStack landings / minimum spanning tree ("mst")
 #' # # demo scenario 3
@@ -84,25 +86,25 @@ NULL
 #' #
 #' # prRes <- projectRoadsNew(land.rstack, scen$cost.rast, scen$road.rast ,"mst",
 #' #                          plotRoads = doPlots, mainTitle = "Scen 3: RasterStack-MST")
-#' 
-#' 
+#'
+#'
 #' ### using: scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
 #' # demo scenario 7
 #' scen <- demoScen[[7]]
-#' 
+#'
 #' # polygonal landings of demo scenario 7:
 #' land.poly <- scen$landings.poly
-#' 
+#'
 #' prRes <- projectRoadsNew(land.poly, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 7: SpPoly-MST")
-#' 
-#' 
+#'
+#'
 #' ## using scenario 7 / Polygon landings raster / minimum spanning tree
 #' # demo scenario 7
 #' scen <- demoScen[[7]]
 #' # rasterize polygonal landings of demo scenario 7:
 #' land.polyR <- raster::rasterize(scen$landings.poly, scen$cost.rast)
-#' 
+#'
 #' prRes <- projectRoadsNew(land.polyR, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
 #' @import dplyr
@@ -112,7 +114,7 @@ NULL
 #' @importFrom sf st_crs st_transform
 #'
 #' @export
-#'
+#' 
 setGeneric('projectRoadsNew', function(landings = NULL,
                                        cost = NULL,
                                        roads = NULL,
