@@ -1,6 +1,9 @@
 library(raster)
 #I think I should be able to recreate existing road network from a point on it, setting cost to 0 where roads exist.
 #But I can't.
+#DO: set cost low but not 0
+#DO: convert landings to points.
+#If this works reasonably quickly, consider replacing existing rasterToLineSegments function.
 
 cMap = CLUSexample$roads
 
