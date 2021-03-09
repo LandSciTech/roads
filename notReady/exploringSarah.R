@@ -438,7 +438,7 @@ costSurface <- demoScen[[1]]$cost.rast
 
 projectRoadsNew(landingsSF, costSurface, roadsSF)
 
-# explore polygon landings process
+# explore polygon landings process #==========================================
 landings <- demoScen[[1]]$landings.stack$layer.1.1.1
 
 # projectRoads does for RasterLayer 
@@ -463,7 +463,7 @@ raster::freq(clumps) %>% as.data.frame() %>% filter(!is.na(value)) %>%
 # make example with clumps
 landClumps <- raster::raster(ncols=100, nrows=100, crs = NA)
 landClumps[c(1:5,101:105, 201:205, 301:305, 401:405)] <- 1
-landClumps[c(450:455,550:555)] <- 2
+landClumps[c(8501:8550,8601:8650)] <- 2
 landClumps[690:691] <- 3
 
 # try getLandingsFromTarget
@@ -498,15 +498,35 @@ plot(ptClumpCent, add = TRUE, col = "green")
 # or multiple points has problems for very small polygons, size is not exact
 # better if do each polygon individuall
 
-ptsInClump2 <- sf::st_sample(polys2, type = "regular", size = 6, 
-                             offset = c(1.5, 1.5))
+# this does ~ 10 points across all polygons
+ptsInClump2 <- sf::st_sample(polys2, type = "hexagonal", size = 10)
 
+# this does ~10 points per polygon
+ptsInClump3 <- sf::st_sample(polys2, type = "hexagonal", size = c(10, 10, 10))
+
+# 2 point per 10 unit area
+ptsInClump4 <- polys2 %>%
+  group_by(clumps) %>% 
+  mutate(size = ceiling(0.01 * sf::st_area(geometry)),
+    lands = sf::st_sample(geometry, type = "hexagonal", size = size) %>% list()) %>% 
+  {do.call(c, .$lands)}
 
 plot(polys2 %>% sf::st_geometry())
 plot(ptsInClump2, add = TRUE, col = "red")
+plot(ptsInClump3, add = TRUE, col = "green")
+plot(ptsInClump4, add = T)
 
 plot(ptsInClump2 %>% sf::st_bbox() %>% sf::st_as_sfc(), add = TRUE, col = "green")
 
+
+# test getLanding on some of these
+data_path <- "../ChurchillAnalysis/inputNV/ChurchillData/"
+harvCH <- st_read(paste0(data_path, "ChurchillRoadsHarv/harvPCIFRI.shp"))
+
+lnds <- getLandingsFromHarvest(harvCH %>% slice(1:20), 0.000001)
+
+tmap::qtm(harvCH %>% slice(1:20) %>% sf::st_geometry())+
+  tmap::qtm(lnds)
 # Raster to lines with Voronoi Not working... #=================================
 rast <- demoScen[[1]]$road.rast
 
