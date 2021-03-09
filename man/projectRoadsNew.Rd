@@ -75,9 +75,10 @@ cost, roads, and roadMethod are ignored if a sim list is provided.}
 \item{roadsOut}{Character. Either "raster", "sf" or NULL. If "raster" roads
 are returned as a raster in the sim list. If "sf" the roads are returned as
 an sf object which will contain lines if the roads input was sf lines but a
-geometry collection of lines and points if the roads input was a raster. If
-NULL (default) then the returned roads are sf if the input is sf or
-Spatial* and raster if the input was a raster.}
+geometry collection of lines and points if the roads input was a raster.
+The points in the geometry collection represent the existing roads while
+new roads are created as lines. If NULL (default) then the returned roads
+are sf if the input is sf or Spatial* and raster if the input was a raster.}
 
 \item{roadsInCost}{Logical. The default is TRUE which means the cost raster
 is assumed to include existing roads as 0 in its cost surface. If FALSE

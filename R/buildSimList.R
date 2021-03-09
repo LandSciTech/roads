@@ -14,6 +14,9 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
   if(!is(cost, "RasterLayer")){
     stop("cost must be provided as a RasterLayer", call. = FALSE)
   } 
+  if(0 %in% raster::unique(cost)){
+    message("0s detected in cost raster, these will be considered as existing roads")
+  }
   
   # Burn roads into raster if not already for raster roads before converting 
   if(!roadsInCost && is(roads, "Raster")){
