@@ -1,4 +1,9 @@
-
+#' Convert raster to lines
+#' 
+#' Doesn't work perfectly
+#' 
+#' @param rast raster with lines
+#' 
 #' @export
 
 rasterToLineSegments <- function(rast){

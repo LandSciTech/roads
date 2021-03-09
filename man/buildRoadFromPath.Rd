@@ -6,6 +6,11 @@
 \usage{
 buildRoadFromPath(sim)
 }
+\arguments{
+\item{sim}{a sim list
+
+Changed from roadCLUS.analysis}
+}
 \description{
-Changed from roadCLUS.analysis
+build road based on paths
 }

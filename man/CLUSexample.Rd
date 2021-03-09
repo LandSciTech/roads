@@ -4,11 +4,9 @@
 \name{CLUSexample}
 \alias{CLUSexample}
 \title{Data from the CLUS example}
-\format{
-A named list where: $cost is an object of class RasterLayer representing road cost
+\format{A named list where: $cost is an object of class RasterLayer representing road cost
                             $landings is an oject of class SpatialPoints representing landing locations
-                            $roads is an object of class RasterLayer representing existing roads
-}
+                            $roads is an object of class RasterLayer representing existing roads}
 \usage{
 data(CLUSexample)
 }

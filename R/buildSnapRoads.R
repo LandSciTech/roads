@@ -3,7 +3,7 @@
 #' Build roads that simply connect each landing to each road "as the crow
 #' flies."
 #'
-#' @param sim
+#' @param sim a sim list
 #'
 #' @return sim list
 #'

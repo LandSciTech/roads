@@ -1,6 +1,9 @@
 #' Set the graph which determines least cost paths
 #' 
 #' Creates a graph in inititation phase which can be updated and solved for paths
+#'
+#' @param sim a sim list
+#' @param neighbourhood neighbour hood type
 
 
 getGraph<- function(sim, neighbourhood){

@@ -2,6 +2,8 @@
 #' 
 #' Update sim list with new landings and burn in roads to have 0 cost
 #' 
+#' @param sim sim list from input
+#' @param landings input landigs
 
 updateSimList <- function(sim, landings){
   

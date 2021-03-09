@@ -6,6 +6,11 @@
 \usage{
 getLandingsFromHarvest(harvest, numLandings = 1)
 }
+\arguments{
+\item{harvest}{harvest blocks}
+
+\item{numLandings}{number of landings per harvest block}
+}
 \description{
 Get landing points inside harvest blocks
 }

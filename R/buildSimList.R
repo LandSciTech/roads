@@ -4,6 +4,11 @@
 #' by \code{projectRoads}. It will convert other types of spatial objects to sf
 #' or raster.
 #' 
+#' @param roads roads input
+#' @param cost cost input
+#' @param roadMethod method of road projection
+#' @param landings landings input
+#' @param roadsInCost Whether the roads have already been burned into cost
 
 buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
   if(!is(cost, "RasterLayer")){

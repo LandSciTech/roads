@@ -1,8 +1,13 @@
-#' 
+#' Make list of paths that are part of mst
 #' 
 #' slight update from roadClus version to use sf
+#' 
+#' @param sim sim list
 
 mstList<- function(sim){
+  if(nrow(sim$landings) == 0){
+    return(invisible(sim))
+  }
   # get cell indexs for new road start and end
   mst.v <- rbind(raster::cellFromXY(sim$costSurface, 
                                               sf::st_coordinates(sim$landings)),
@@ -34,7 +39,7 @@ mstList<- function(sim){
     paths.matrix <- matrix(as.numeric(paths.matrix), ncol = 2)
 
     # put the edge combinations in a list used for shortestPaths
-    sim$paths.list<-split(paths.matrix, 1:nrow(paths.matrix)) 
+    sim$paths.list <- split(paths.matrix, 1:nrow(paths.matrix)) 
     
     rm(mst.paths,mst.g, mst.adj, mst.v, paths.matrix)
   }

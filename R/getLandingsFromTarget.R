@@ -1,6 +1,8 @@
 #' Get landing points inside harvest blocks
 #'
 #'
+#' @param harvest harvest blocks
+#' @param numLandings number of landings per harvest block
 
 getLandingsFromHarvest <- function(harvest, numLandings = 1){
   if(!(is(landings, "sf") || is(landings, "sfc"))){

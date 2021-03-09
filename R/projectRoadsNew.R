@@ -42,37 +42,38 @@ NULL
 #'   roads will be "burned in" to the cost raster with a cost of 0.
 #'
 #' @examples
+#' doPlots <- interactive()
 #' ### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")
 #' # demo scenario 1
 #' scen <- demoScen[[1]]
-#'
+#' 
 #' # landing set 1 of scenario 1:
 #' land.pnts <- scen$landings.points[scen$landings.points$set==1,]
-#'
-#' prRes <- projectRoadsNew(land.pnts ,scen$cost.rast, scen$road.rast, "lcp",
-#'                          plotRoads = TRUE, mainTitle = "Scen 1: SPDF-LCP")
-#'
+#' 
+#' prRes <- projectRoadsNew(land.pnts, scen$cost.rast, scen$road.rast, "lcp",
+#'                          plotRoads = doPlots, mainTitle = "Scen 1: SPDF-LCP")
+#' 
 #' ### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
 #' # demo scenario 1
 #' scen <- demoScen[[1]]
-#'
+#' 
 #' # the RasterLayer version of landing set 1 of scenario 1:
 #' land.rLyr <- scen$landings.stack[[1]]
-#'
+#' 
 #' prRes <- projectRoadsNew(land.rLyr, scen$cost.rast, scen$road.rast, "mst",
-#'                          plotRoads = TRUE, mainTitle = "Scen 1: Raster-MST")
-#'
-#'
+#'                          plotRoads = doPlots, mainTitle = "Scen 1: Raster-MST")
+#' 
+#' 
 #' ### using: scenario 2 / matrix landings / snapping ("snap")
 #' # demo scenario 2
 #' scen <- demoScen[[2]]
-#'
+#' 
 #' # landing set 5 of scenario 2, as matrix:
 #' land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
-#'
+#' 
 #' prRes <- projectRoadsNew(land.mat, scen$cost.rast, scen$road.rast, "snap",
-#'                          plotRoads = TRUE, mainTitle = "Scen 2: Matrix-Snap")
-#'
+#'                          plotRoads = doPlots, mainTitle = "Scen 2: Matrix-Snap")
+#' 
 #' # TODO: Make this and a list of sf objects, (or maybe a year column?) work
 #' # ### using: scenario 3 / RasterStack landings / minimum spanning tree ("mst")
 #' # # demo scenario 3
@@ -82,29 +83,33 @@ NULL
 #' # land.rstack <- scen$landings.stack[[1:4]]
 #' #
 #' # prRes <- projectRoadsNew(land.rstack, scen$cost.rast, scen$road.rast ,"mst",
-#' #                          plotRoads = TRUE, mainTitle = "Scen 3: RasterStack-MST")
-#'
-#'
+#' #                          plotRoads = doPlots, mainTitle = "Scen 3: RasterStack-MST")
+#' 
+#' 
 #' ### using: scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
 #' # demo scenario 7
 #' scen <- demoScen[[7]]
-#'
+#' 
 #' # polygonal landings of demo scenario 7:
 #' land.poly <- scen$landings.poly
-#'
+#' 
 #' prRes <- projectRoadsNew(land.poly, scen$cost.rast, scen$road.rast, "mst",
-#'                          plotRoads = TRUE, mainTitle = "Scen 7: SpPoly-MST")
-#'
-
-### using scenario 7 / Polygon landings raster / minimum spanning tree
-# # demo scenario 7
-# scen <- demoScen[[7]]
-# # rasterize polygonal landings of demo scenario 7:
-# land.polyR <- raster::rasterize(scen$landings.poly, scen$cost.rast)
-#
-# prRes <- projectRoadsNew(land.polyR, scen$cost.rast, scen$road.rast, "mst",
-#                          plotRoads = TRUE, mainTitle = "Scen 7: PolyRast-MST")
-
+#'                          plotRoads = doPlots, mainTitle = "Scen 7: SpPoly-MST")
+#' 
+#' 
+#' ## using scenario 7 / Polygon landings raster / minimum spanning tree
+#' # demo scenario 7
+#' scen <- demoScen[[7]]
+#' # rasterize polygonal landings of demo scenario 7:
+#' land.polyR <- raster::rasterize(scen$landings.poly, scen$cost.rast)
+#' 
+#' prRes <- projectRoadsNew(land.polyR, scen$cost.rast, scen$road.rast, "mst",
+#'                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
+#' @import dplyr
+#' @importFrom methods is as slotNames
+#' @importFrom stats end na.omit
+#' @importFrom graphics plot title
+#' @importFrom sf st_crs st_transform
 #'
 #' @export
 #'
@@ -120,6 +125,7 @@ setGeneric('projectRoadsNew', function(landings = NULL,
                                        roadsInCost = TRUE)
   standardGeneric('projectRoadsNew'))
 
+#' @rdname projectRoadsNew
 setMethod(
   'projectRoadsNew', signature(sim = "missing"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
@@ -154,16 +160,18 @@ setMethod(
                         roadMethod = roadMethod,
                         landings = landings,
                         roadsInCost = roadsInCost)
+    
+    sim$landingsIn <- sim$landings
 
     # make sure the name of the sf_column is "geometry"
     geoColInL <- attr(sim$landings, "sf_column")
     if(geoColInL != "geometry"){
-      sim$landings <- rename(sim$landings, geometry = all_of(geoColInL))
+      sim$landings <- rename(sim$landings, geometry = tidyselect::all_of(geoColInL))
     }
 
     #library(dplyr);library(sf)
     geoColInR <- attr(sim$roads, "sf_column")
-    sim$roads <- select(sim$roads, geometry = all_of(geoColInR))
+    sim$roads <- select(sim$roads, geometry = tidyselect::all_of(geoColInR))
 
     sim <- getGraph(sim, neighbourhood)
 
@@ -192,7 +200,7 @@ setMethod(
     )
 
     if(plotRoads){
-      print({raster::plot(sim$costSurface)
+        raster::plot(sim$costSurface)
         plot(sf::st_geometry(sim$roads), add = TRUE)
         plot(sf::st_geometry(sim$landings), add = TRUE)
         if(is(landings, "SpatialPolygons")){
@@ -202,14 +210,13 @@ setMethod(
                   c("POLYGON", "MULTIPOLYGON")){
           plot(landings, add = TRUE)
         }
-        title(main = mainTitle, sub = paste0("Method: ", sim$roadMethod))})
+        title(main = mainTitle, sub = paste0("Method: ", sim$roadMethod))
     }
+    
+    # return original landings
+    sim$landings <- sim$landingsIn
 
     # put back original geometry column names
-    if(geoColInL != attr(sim$landings, "sf_column")){
-      sim$landings <- rename(sim$landings, geoColInL = geometry)
-    }
-
     if(geoColInR != attr(sim$roads, "sf_column")){
       sim$roads <- rename(sim$roads, geoColInR = geometry)
     }
@@ -227,6 +234,7 @@ setMethod(
     return(sim)
   })
 
+#' @rdname projectRoadsNew
 setMethod(
   'projectRoadsNew', signature(sim = "list"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
@@ -260,11 +268,11 @@ setMethod(
     # make sure the name of the sf_column is "geometry"
     geoColInL <- attr(sim$landings, "sf_column")
     if(geoColInL != "geometry"){
-      sim$landings <- rename(sim$landings, geometry = all_of(geoColInL))
+      sim$landings <- rename(sim$landings, geometry = tidyselect::all_of(geoColInL))
     }
 
     geoColInR <- attr(sim$roads, "sf_column")
-    sim$roads <- select(sim$roads, geometry = all_of(geoColInR))
+    sim$roads <- select(sim$roads, geometry = tidyselect::all_of(geoColInR))
 
     sim <- switch(sim$roadMethod,
                   snap= {

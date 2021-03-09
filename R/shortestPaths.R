@@ -1,6 +1,6 @@
 #' Get shortest path between points in list
 #' 
-#' 
+#' @param sim sim list
 shortestPaths<- function(sim){
   # finds the least cost paths between a list of two points
   if(!length(sim$paths.list) == 0){
