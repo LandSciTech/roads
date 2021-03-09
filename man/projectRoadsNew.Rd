@@ -51,7 +51,9 @@ SpatialPoints*, matrix, or RasterStack containing features to be connected
 to the road network. Matrix should contain columns x, y with coordinates,
 all columns will be ignored. If RasterStack assume an ordered time-series.}
 
-\item{cost}{RasterLayer. Cost surface.}
+\item{cost}{RasterLayer. Cost surface where existing roads must be the only
+cells with a cost of 0. If existing roads do not have 0 cost set
+\code{roadsInCost = FALSE} and they will be burned in.}
 
 \item{roads}{sf lines, SpatialLines*, RasterLayer. Existing road network.}
 
@@ -78,8 +80,8 @@ NULL (default) then the returned roads are sf if the input is sf or
 Spatial* and raster if the input was a raster.}
 
 \item{roadsInCost}{Logical. The default is TRUE which means the cost raster
-is assumed to include existing roads in its cost surface. If FALSE then the
-roads will be "burned in" to the cost raster with a cost of 0.}
+is assumed to include existing roads as 0 in its cost surface. If FALSE
+then the roads will be "burned in" to the cost raster with a cost of 0.}
 }
 \description{
 Project road locations based on existing roads, planned landings, and a cost
