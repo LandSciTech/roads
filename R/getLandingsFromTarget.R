@@ -3,14 +3,17 @@
 #'
 #' @param harvest harvest blocks
 #' @param numLandings number of landings per unit area of harvest block. This
-#'   should be in the same units as the crs of the harvest
+#'   should be in the same units as the crs of the harvest. Or "centroid"
+#'   (default) which returns one landing per polygon using
+#'   \code{sf::st_point_on_surface} to select either the centroid or another
+#'   point near the middle if the centoid is not inside the polygon.
 
 
-getLandingsFromHarvest <- function(harvest, numLandings = 1){
+getLandingsFromHarvest <- function(harvest, numLandings = "centroid"){
   if(!(is(harvest, "sf") || is(harvest, "sfc"))){
     if(is(harvest, "Spatial")){
 
-      harvest <- sf::st_as_sf(harvest)
+      harvest <- sf::st_as_sf(harvest) %>% sf::st_set_agr("constant")
 
     } else if(is(harvest, "Raster")){
       # check if harvest are clumps of cells (ie polygons) or single cells
@@ -23,11 +26,18 @@ getLandingsFromHarvest <- function(harvest, numLandings = 1){
 
       if(clumps){
         harvest <- sf::st_as_sf(raster::rasterToPolygons(clumpedRast,
-                                                          dissolve = TRUE))
+                                                          dissolve = TRUE)) %>% 
+          sf::st_set_agr("constant")
       } else {
         landings <- sf::st_as_sf(raster::rasterToPoints(harvest,
                                                         fun = function(x){x > 0},
                                                         spatial = TRUE))
+        if(numLandings != "centroid"){
+          warning("raster has only single cell havest blocks so",
+                  " numLandings is ignored and cells > 0 converted to points",
+                  call. = FALSE)
+        }
+        return(landings)
       }
 
 
@@ -41,32 +51,31 @@ getLandingsFromHarvest <- function(harvest, numLandings = 1){
 
   if(sf::st_geometry_type(harvest, by_geometry = FALSE) %in%
      c("POLYGON", "MULTIPOLYGON")){
-    if(numLandings == 1){
+    if(numLandings == "centroid"){
       # Use point on surface not centroid to ensure point is inside irregular polygons
       landings <- sf::st_point_on_surface(harvest)
     } else {
       landings <- harvest %>% mutate(id = 1:n()) %>% 
-        group_by(id) %>% 
-        mutate(size = ceiling(numLandings * sf::st_area(geometry)),
-               lands = sf::st_sample(geometry, type = "hexagonal", 
-                                     size = size) %>%
-                 list()) 
-      landings2 <- purrr::pmap(list(lands = landings$lands,
-                                    size = landings$size,
-                                    geo = sf::st_geometry(landings)),
-                               ~case_when(length(..1) == 0 ~ 
-                                            list(sf::st_point_on_surface(..3)),
-                                          length(..1) <= ..2 ~ list(..1),
-                                          length(..1) > ..2 ~ 
-                                            list(..1[sample(1:length(..1),
-                                                            ifelse(..2 > length(..1), length(..1), ..2))]),
-                                          TRUE ~ list(..1))) %>% 
-        {do.call(c, .)} %>% 
-        {do.call(c, .)}
+        mutate(size = round(numLandings * sf::st_area(geometry)) %>%
+                 units::set_units(NULL) %>% ifelse(. == 0, 1,.))
+      
+      landings1 <- filter(landings, size == 1) %>% 
+        mutate(lands = sf::st_point_on_surface(geometry))
+      
+      if(nrow(landings1) < nrow(landings)){
+        landings2Plus <- filter(landings, size > 1) %>% 
+           sf::st_sample(geometry, type = "regular", size = .$size) 
+        
+        landings <- c(landings1$lands, landings2Plus)
+      } else {
+        landings <- landings1$lands
+      }
+      sf::st_sf(landings)
     }
 
   }
 }
+
 
 #' Select random landing locations within patches.
 #'

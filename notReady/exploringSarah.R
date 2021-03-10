@@ -523,10 +523,30 @@ plot(ptsInClump2 %>% sf::st_bbox() %>% sf::st_as_sfc(), add = TRUE, col = "green
 data_path <- "../ChurchillAnalysis/inputNV/ChurchillData/"
 harvCH <- st_read(paste0(data_path, "ChurchillRoadsHarv/harvPCIFRI.shp"))
 
-lnds <- getLandingsFromHarvest(harvCH %>% slice(1:20), 0.000001)
+lnds <- getLandingsFromHarvest(harvCH %>% slice(1:20), 0.0001)
 
 tmap::qtm(harvCH %>% slice(1:20) %>% sf::st_geometry())+
   tmap::qtm(lnds)
+
+# try on large dataset stopped after 11 mins
+system.time({
+  lnds <- getLandingsFromHarvest(harvCH, 0.000005)
+})
+
+
+
+# Faster version... set distance between landings, make a grid with points at
+# that distance and intersect, check for polygon with no points and use centroid
+# instead
+harv10_20 <- harvCH %>% filter(yrdep > 2010) %>% mutate(ID = 1:n())
+grd <- sf::st_make_grid(st_as_sfc(st_bbox(harv10_20)), cellsize = 500, what = "corners")
+
+inter <- sf::st_intersection(harv10_20, grd)
+
+notInter <- anti_join(harv10_20, st_drop_geometry(inter), by = "ID") %>% 
+  st_point_on_surface()
+
+tmap::qtm(harv10_20)+ tmap::qtm(inter)+tmap::qtm(notInter)
 # Raster to lines with Voronoi Not working... #=================================
 rast <- demoScen[[1]]$road.rast
 
