@@ -55,22 +55,19 @@ getLandingsFromHarvest <- function(harvest, numLandings = "centroid"){
       # Use point on surface not centroid to ensure point is inside irregular polygons
       landings <- sf::st_point_on_surface(harvest)
     } else {
-      landings <- harvest %>% mutate(id = 1:n()) %>% 
-        mutate(size = round(numLandings * sf::st_area(geometry)) %>%
-                 units::set_units(NULL) %>% ifelse(. == 0, 1,.))
+      harvest <- mutate(harvest, ID = 1:n()) %>% sf::st_set_agr("constant")
       
-      landings1 <- filter(landings, size == 1) %>% 
-        mutate(lands = sf::st_point_on_surface(geometry))
+      grd <- sf::st_make_grid(sf::st_as_sfc(sf::st_bbox(harvest)),
+                              cellsize = 1/numLandings, what = "corners")
       
-      if(nrow(landings1) < nrow(landings)){
-        landings2Plus <- filter(landings, size > 1) %>% 
-           sf::st_sample(geometry, type = "regular", size = .$size) 
-        
-        landings <- c(landings1$lands, landings2Plus)
-      } else {
-        landings <- landings1$lands
-      }
-      sf::st_sf(landings)
+      inter <- sf::st_intersection(harvest, grd)
+      
+      notInter <- anti_join(harvest, sf::st_drop_geometry(inter), by = "ID") %>% 
+        sf::st_set_agr("constant") %>% 
+        sf::st_point_on_surface()
+      
+      landings <- rbind(inter, notInter)
+      
     }
 
   }

@@ -528,9 +528,10 @@ lnds <- getLandingsFromHarvest(harvCH %>% slice(1:20), 0.0001)
 tmap::qtm(harvCH %>% slice(1:20) %>% sf::st_geometry())+
   tmap::qtm(lnds)
 
-# try on large dataset stopped after 11 mins
+# try on large dataset 3.5 mins to get 90777 points in 10338 polygons
+# takes longer the higher the density of points
 system.time({
-  lnds <- getLandingsFromHarvest(harvCH, 0.000005)
+  lnds <- getLandingsFromHarvest(harvCH, 0.005)
 })
 
 
