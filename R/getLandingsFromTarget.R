@@ -86,7 +86,8 @@ getLandingsFromHarvest <- function(harvest, numLandings = "centroid"){
 #' @export
 getLandingsFromTarget<-function(inputPatches,
                                 numLandings,
-                                omitCentroidsOutOfPolygons=F){
+                                omitCentroidsOutOfPolygons=F, 
+                                sampleType = "regular"){
   # Function to select a specific number of landings withing patches. Landing set
   # will include centroids, and additional randomly selected sample points if
   # numLandings>numCentroids.
@@ -113,26 +114,38 @@ getLandingsFromTarget<-function(inputPatches,
     }
     remL = ip
     remL[landC>0]=NA
-    #numSamples = nl-raster::cellStats(landC>0,"sum")#select additional points so total number is equal to small alternative
-
+    
     landC = raster::rasterToPoints(landC,fun=function(landings){landings>0})
-    #split into smaller patches to ensure adequate road density
-    #sampleProp = 1/100
-    #numSamples = round(cellStats(anthDist,"sum")*sampleProp)
-
+    
     landPts = rbind(landPts,landC)
+    
+    if(sampleType == "centroid"){
+      landPts <- as.data.frame(landPts) %>%
+        sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(inputPatches))
+      
+      return(landPts)
+    }
+    
+    if(sampleType == "random"){
+      #select additional points so total number is equal to small alternative
+      #numSamples = nl - raster::cellStats(landC > 0, "sum")
+      
+      # 
+      numSamples = round(raster::cellStats(inputPatches, "sum") * 
+                           numLandings * 
+                           prod(raster::res(inputPatches)))
 
-    # if(numSamples<=0){
-    #   next
-    # }
-    extArea <- prod(raster::res(remL))*raster::ncell(remL)
-    nPts <- numLandings * extArea
+      landingPts = raster::sampleStratified(remL, size=numSamples,xy=T)
+      landingPts=landingPts[,2:4]
+    }
+    if(sampleType == "regular"){
+      extArea <- prod(raster::res(remL))*raster::ncell(remL)
+      nPts <- numLandings * extArea
+      
+      landingPts <- raster::sampleRegular(remL, size = nPts, xy = TRUE)
+      landingPts <- dplyr::filter(as.data.frame(landingPts), !is.na(layer))
+    }
     
-    landingPts <- raster::sampleRegular(remL, size = nPts, xy = TRUE)
-    landingPts <- dplyr::filter(as.data.frame(landingPts), !is.na(layer))
-    
-    # landingPts = raster::sampleStratified(remL, size=numSamples,xy=T)
-    # landingPts=landingPts[,2:4]
     #add centroids to ensure all patches are included
     landPts = rbind(landPts,landingPts)
 

@@ -46,5 +46,7 @@ test_that("old version is similar to new", {
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
   outOld <- getLandingsFromTarget(rast > 0, numLandings = 0.1)
+  outOldRand <- getLandingsFromTarget(rast > 0, numLandings = 0.1, 
+                                      sampleType = "random")
 })
 
