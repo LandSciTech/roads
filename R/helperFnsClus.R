@@ -212,29 +212,7 @@ roadCLUS.buildSnapRoads <- function(sim){
   return(invisible(sim))
 }
 
-#' Get centroids from raster landings
-#' 
-#' @param newLandings raster landings
-#'
-#' @param withIDs logical
-#'
-#' @export
-getCentroids<-function(newLandings,withIDs=T){
-  cRes = raster::res(newLandings)
-  p = raster::as.data.frame(raster::clump(newLandings,gaps=F), xy = TRUE)
-  p = p[!is.na(p$clumps),]
-  pointLocs = p %>% dplyr::group_by(.data$clumps) %>% dplyr::summarize(x=mean(.data$x),y=mean(.data$y))
-  pointLocs = as.data.frame(subset(pointLocs,select=c('x','y','clumps')))
-  newLandingCentroids = newLandings
-  newLandingCentroids[!is.na(newLandingCentroids)]=NA
-  cells = raster::cellFromXY(newLandingCentroids,pointLocs[,1:2])
-  if(withIDs){
-    newLandingCentroids[cells] = pointLocs$clumps
-  }else{
-    newLandingCentroids[cells] = 1
-  }
-  return(newLandingCentroids)
-}
+
 
 #' Creat a simple cost layer
 #' 

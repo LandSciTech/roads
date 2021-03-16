@@ -1,52 +1,88 @@
 context("test getLandingsFromTarget works for different scenarios")
 
 
-lndsTest <- list("centroid", 1, 0.5, 0.25, 0.1, 0.01, 0.001)
+lndsDenTest <- list(1, 0.5, 0.25, 0.1, 0.01, 0.001)
 
 lndPoly <- demoScen[[1]]$landings.poly %>% sf::st_as_sf() %>% 
   sf::st_set_agr("constant")
 
 test_that("sf input polygons work", {
-  # replicate because some errors only happened wit specific samples
-  outs <- replicate(20, 
-                    {purrr::map(lndsTest, 
-                                ~getLandingsFromHarvest(lndPoly, 
-                                                        numLandings = .x))},
-                    simplify = FALSE)
-  expect_type(outs, "list")
+  # replicate because some errors only happened with specific samples
+  outsReg <- replicate(20, 
+                       {purrr::map(lndsDenTest, 
+                                   ~getLandingsFromTarget(lndPoly, 
+                                                          landingDens = .x, 
+                                                          sampleType = "regular"))},
+                       simplify = FALSE)
+  expect_type(outsReg, "list")
+  
+  if(interactive()){
+    plot(lndPoly %>% st_geometry())
+    plot(outsReg[[1]][[4]], col = "red", add = T)
+  }
 })
 
-test_that("sp polygon input works",{
- outs <- purrr::map(lndsTest, 
-             ~getLandingsFromHarvest(demoScen[[1]]$landings.poly, 
-                                     numLandings = .x))
- expect_type(outs, "list")
+test_that("sf input polygons work for random", {
+  # replicate because some errors only happened with specific samples
+  outsRand <- replicate(20, 
+                        {purrr::map(lndsDenTest, 
+                                    ~getLandingsFromTarget(lndPoly, 
+                                                           landingDens = .x, 
+                                                           sampleType = "random"))},
+                        simplify = FALSE)
+  expect_type(outsRand, "list")
+  
+  if(interactive()){
+    plot(lndPoly %>% st_geometry())
+    plot(outsRand[[1]][[4]], col = "red", add = T)
+  }
+  
+})
+
+
+test_that("sp polygon input works for centroid",{
+  outCent <- getLandingsFromTarget(demoScen[[1]]$landings.poly)
+  expect_type(outCent, "list")
+  
+  if(interactive()){
+    raster::plot(demoScen[[1]]$landings.poly)
+    plot(outsCent[[1]], col = "red", add = T)
+  }
+  
 })
 
 test_that("raster no clumps input works",{
- out <- getLandingsFromHarvest(demoScen[[1]]$landings.stack[[1]])
- expect_warning(getLandingsFromHarvest(demoScen[[1]]$landings.stack[[1]], 0.5),
-                "numLandings is ignored")
+ outRast1 <- getLandingsFromTarget(demoScen[[1]]$landings.stack[[1]])
+ 
+ expect_warning(getLandingsFromTarget(demoScen[[1]]$landings.stack[[1]], 0.5, 
+                                      sampleType = "regular"),
+                "landingDens is ignored")
+ if(interactive()){
+   raster::plot(demoScen[[1]]$landings.stack[[1]])
+   plot(outRast1, col = "red", add = T)
+ }
 })
 
 test_that("raster with clumps input works",{
   rast <- demoScen[[1]]$landings.poly %>% raster::rasterize(demoScen[[1]]$cost.rast)
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
-  
-  out <- getLandingsFromHarvest(rast, 0.1)
-  out <- getLandingsFromHarvest(rast)
-  
-  expect_type(out, "list")
+  outRastCent <- getLandingsFromTarget(rast > 0)
+  outRastRand <- getLandingsFromTarget(rast > 0, landingDens = 0.1, 
+                                      sampleType = "random")
+  outRastReg <- getLandingsFromTarget(rast > 0, landingDens = 0.1, 
+                                      sampleType = "regular")
+  if(interactive()){
+    raster::plot(rast)
+    plot(outRastCent, col = "red", add = T)
+    
+    raster::plot(rast)
+    plot(outRastRand, col = "red", add = T)
+    
+    raster::plot(rast)
+    plot(outRastReg, col = "red", add = T)
+  }
 })
 
-# compare to old version
-test_that("old version is similar to new", {
-  rast <- demoScen[[1]]$landings.poly %>% raster::rasterize(demoScen[[1]]$cost.rast)
-  # make sure that a single celled havest block will work with clumps
-  rast[10,10] <- 6
-  outOld <- getLandingsFromTarget(rast > 0, numLandings = 0.1)
-  outOldRand <- getLandingsFromTarget(rast > 0, numLandings = 0.1, 
-                                      sampleType = "random")
-})
+
 

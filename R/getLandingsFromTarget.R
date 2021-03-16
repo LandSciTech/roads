@@ -1,64 +1,89 @@
 #' Get landing points inside harvest blocks
 #'
 #'
-#' @param harvest harvest blocks
-#' @param numLandings number of landings per unit area of harvest block. This
-#'   should be in the same units as the crs of the harvest. Or "centroid"
-#'   (default) which returns one landing per polygon using
-#'   \code{sf::st_point_on_surface} to select either the centroid or another
-#'   point near the middle if the centoid is not inside the polygon.
+#' @param harvest sf, SpatialPolygons or RasterLayer object with harvested areas
+#' @param landingDens number of landings per unit area. This should be in the
+#'   same units as the crs of the harvest.
+#' @param sampleType character. "centroid" (default), "regular" or "random".
+#'   Centroid returns one landing per harvest block, which is gauranteed to be
+#'   in the harvest block for sf objects but not for rasters. Regular returns
+#'   points from a grid with density \code{landingDens} that overlap the
+#'   harvested areas. Random returns a random set of points from each polygon
+#'   where the number is determined by the area of the polygons and
+#'   \code{landingDens}. If \code{harvest} is a raster the centroid is always
+#'   returned as one of the landings to ensure all harvest areas get at least
+#'   one landing. 
 
 
-getLandingsFromHarvest <- function(harvest, numLandings = "centroid"){
+getLandingsFromTarget <- function(harvest, 
+                                  landingDens = NULL,
+                                  sampleType = "centroid"){
+  if(!sampleType %in% c("regular", "centroid", "random")){
+    stop("sampleType must be one of ", c("regular", "centroid", "random"))
+  }
+  
+  if(sampleType != "centroid" && is.null(landingDens)){
+    stop("landingDens must be supplied unless sampleType = 'centroid'")
+  }
+  if(sampleType == "centroid" && !is.null(landingDens)){
+    warning("sampleType is 'centroid' so landingDens will be ignored")
+  }
+  
+  if(!is.numeric(landingDens) && !is.null(landingDens)){
+    stop("landingDens must be numeric not", class(landingDens))
+  }
+  if(!is.na(sf::st_crs(harvest))){
+    if(!sf::st_is_longlat(harvest) && 
+       !is.null(landingDens) && 
+       landingDens > 0.001){
+      message("you have asked for > 0.001 pts per m2",
+              " which is > 1000 pts per km2 and may take a long time")
+    }
+  }
+  
   if(!(is(harvest, "sf") || is(harvest, "sfc"))){
     if(is(harvest, "Spatial")){
 
       harvest <- sf::st_as_sf(harvest) %>% sf::st_set_agr("constant")
 
     } else if(is(harvest, "Raster")){
+
       # check if harvest are clumps of cells (ie polygons) or single cells
       # (ie points) and if clumps take centroid
       clumpedRast <- raster::clump(harvest, gaps = F)
-
+      
       clumps <- clumpedRast %>%
         raster::freq(useNA = "no") %>%
         .[,2] %>% max() > 1
-
+      
       if(clumps){
-        harvest <- sf::st_as_sf(raster::rasterToPolygons(clumpedRast,
-                                                          dissolve = TRUE)) %>% 
-          sf::st_set_agr("constant")
+        landings <- getLandingsFromTargetRast(harvest, landingDens, sampleType)
       } else {
         landings <- sf::st_as_sf(raster::rasterToPoints(harvest,
                                                         fun = function(x){x > 0},
                                                         spatial = TRUE))
-        if(numLandings != "centroid"){
+        if(sampleType != "centroid"){
           warning("raster has only single cell havest blocks so",
-                  " numLandings is ignored and cells > 0 converted to points",
+                  " landingDens is ignored and cells > 0 converted to points",
                   call. = FALSE)
         }
-        return(landings)
+        
       }
-
-
-    } else if(is(harvest, "matrix")){
-      landings <- sf::st_sf(
-        geometry = sf::st_as_sfc(list(sf::st_multipoint(harvest[, c("x", "y")])))
-      ) %>%
-        sf::st_cast("POINT")
-    }
+      return(landings)
+    } 
   }
 
   if(sf::st_geometry_type(harvest, by_geometry = FALSE) %in%
      c("POLYGON", "MULTIPOLYGON")){
-    if(numLandings == "centroid"){
-      # Use point on surface not centroid to ensure point is inside irregular polygons
+    if(sampleType == "centroid"){
+      # Use point on surface not centroid to ensure point is inside irregular
+      # polygons
       landings <- sf::st_point_on_surface(harvest)
-    } else {
+    } else if (sampleType == "regular"){
       harvest <- mutate(harvest, ID = 1:n()) %>% sf::st_set_agr("constant")
       
       grd <- sf::st_make_grid(sf::st_as_sfc(sf::st_bbox(harvest)),
-                              cellsize = sqrt(1/numLandings), what = "corners")
+                              cellsize = sqrt(1/landingDens), what = "corners")
       
       inter <- sf::st_intersection(harvest, grd)
       
@@ -68,6 +93,25 @@ getLandingsFromHarvest <- function(harvest, numLandings = "centroid"){
       
       landings <- rbind(inter, notInter)
       
+    } else if (sampleType == "random"){
+      
+      landings <- harvest %>% mutate(id = 1:n()) %>% 
+        mutate(size = round(landingDens * sf::st_area(geometry)) %>%
+                 units::set_units(NULL) %>% ifelse(. == 0, 1,.))
+      
+      landings1 <- filter(landings, size == 1) %>% 
+        mutate(lands = sf::st_point_on_surface(geometry))
+      
+      if(nrow(landings1) < nrow(landings)){
+        landings2Plus <- filter(landings, size > 1) %>% 
+          sf::st_sample(geometry, type = "random", size = .$size) 
+        
+        landings <- c(landings1$lands, landings2Plus)
+      } else {
+      
+        landings <- landings1$lands
+      }
+      sf::st_sf(landings)
     }
 
   }
@@ -77,83 +121,122 @@ getLandingsFromHarvest <- function(harvest, numLandings = "centroid"){
 #' Select random landing locations within patches.
 #'
 #' @param inputPatches A RasterLayer. Harvested patches should have values equal
-#'   to a unique identifier
-#' @param numLandings Numeric. A vector of the number of points to randomly
+#'   to 1
+#' @param landingDens Numeric. A vector of the number of points to randomly
 #'   sample inside harvested patches
 #' @param omitCentroidsOutOfPolygons Logical. Default is FALSE in which case
 #'   some points may be outside the borders of the harvested patch
 #'
-#' @export
-getLandingsFromTarget<-function(inputPatches,
-                                numLandings,
-                                omitCentroidsOutOfPolygons=F, 
-                                sampleType = "regular"){
+getLandingsFromTargetRast<-function(inputPatches,
+                                    landingDens,
+                                    sampleType = "regular",
+                                    omitCentroidsOutOfPolygons = F){
   # Function to select a specific number of landings withing patches. Landing set
   # will include centroids, and additional randomly selected sample points if
-  # numLandings>numCentroids.
+  # landingDens>numCentroids.
 
   # inputPatches=newBlocks[[cm]]
+  
+  if(length(landingDens) > 1){
+    stop("landingDens should have length 1 not ", length(landingDens))
+  }
+  if(!sampleType %in% c("regular", "centroid", "random")){
+    stop("sampleType must be one of ", c("regular", "centroid", "random"))
+  }
 
-  inputPatches[inputPatches==0]=NA
-
+  inputPatches[inputPatches == 0] <- NA
+  
   landPts = matrix(0,0,3)
   colnames(landPts)=c("x","y","layer")
-  for(i in 1:length(numLandings)){
-    #i= 1
-    nl = numLandings[[i]]
-    ip = inputPatches==i
-    ip[ip==0]=NA
-    if(nl >= raster::cellStats(ip,"sum")){
-      landPts= rbind(landPts,raster::rasterToPoints(ip,fun=function(landings){landings>0}))
-      next
-    }
-
-    landC = getCentroids(ip,withIDs=T) #note centroids are not always in polygons
-    if (omitCentroidsOutOfPolygons){
-      landC[is.na(ip)]=NA
-    }
-    remL = ip
-    remL[landC>0]=NA
-    
-    landC = raster::rasterToPoints(landC,fun=function(landings){landings>0})
-    
-    landPts = rbind(landPts,landC)
-    
-    if(sampleType == "centroid"){
-      landPts <- as.data.frame(landPts) %>%
-        sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(inputPatches))
-      
-      return(landPts)
-    }
-    
-    if(sampleType == "random"){
-      #select additional points so total number is equal to small alternative
-      #numSamples = nl - raster::cellStats(landC > 0, "sum")
-      
-      # 
-      numSamples = round(raster::cellStats(inputPatches, "sum") * 
-                           numLandings * 
-                           prod(raster::res(inputPatches)))
-
-      landingPts = raster::sampleStratified(remL, size=numSamples,xy=T)
-      landingPts=landingPts[,2:4]
-    }
-    if(sampleType == "regular"){
-      extArea <- prod(raster::res(remL))*raster::ncell(remL)
-      nPts <- numLandings * extArea
-      
-      landingPts <- raster::sampleRegular(remL, size = nPts, xy = TRUE)
-      landingPts <- dplyr::filter(as.data.frame(landingPts), !is.na(layer))
-    }
-    
-    #add centroids to ensure all patches are included
-    landPts = rbind(landPts,landingPts)
-
+  
+  nl = ifelse(is.null(landingDens), 0, landingDens)
+  ip = inputPatches
+  ip[ip == 0] <- NA
+  if(nl >= raster::cellStats(ip, "sum")) {
+    landPts <- rbind(landPts, 
+                     raster::rasterToPoints(
+                       ip,
+                       fun = function(landings) {landings > 0}
+                       )
+                     )
+    next
   }
+  
+  landC = getCentroids(ip, withIDs = T) #note centroids are not always in polygons
+  if (omitCentroidsOutOfPolygons) {
+    landC[is.na(ip)] <- NA
+  }
+  remL <- ip
+  remL[landC > 0] <- NA
+  
+  landC <- raster::rasterToPoints(landC, fun = function(landings){landings > 0})
+  
+  landPts <- rbind(landPts, landC)
+  
+  if(sampleType == "centroid"){
+    landPts <- as.data.frame(landPts) %>%
+      sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(inputPatches))
+    
+    return(landPts)
+  }
+  
+  if(sampleType == "random"){
+    #select additional points so total number is equal to small alternative
+    #numSamples = nl - raster::cellStats(landC > 0, "sum")
+    
+    # 
+    numSamples <- round(raster::cellStats(inputPatches, "sum") * 
+                          landingDens * 
+                          prod(raster::res(inputPatches)))
+    
+    landingPts <- raster::sampleStratified(remL, size = numSamples, xy = TRUE)
+    landingPts <-  landingPts[, 2:4]
+  }
+  if(sampleType == "regular"){
+    extArea <- prod(raster::res(remL))*raster::ncell(remL)
+    nPts <- landingDens * extArea
+    
+    landingPts <- raster::sampleRegular(remL, size = nPts, xy = TRUE)
+    landingPts <- dplyr::filter(as.data.frame(landingPts), !is.na(layer))
+  }
+  
+  #add centroids to ensure all patches are included
+  landPts = rbind(landPts,landingPts)
 
   # make sf object
   landPts <- as.data.frame(landPts) %>%
     sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(inputPatches))
 
   return(landPts)
+}
+
+#' Get centroids from raster landings
+#' 
+#' @param newLandings raster landings
+#'
+#' @param withIDs logical
+#'
+#' @export
+getCentroids<-function(newLandings, withIDs = TRUE){
+  cRes = raster::res(newLandings)
+  
+  p = raster::as.data.frame(raster::clump(newLandings, gaps = F), xy = TRUE)
+  p = p[!is.na(p$clumps), ]
+  
+  pointLocs = p %>% dplyr::group_by(.data$clumps) %>%
+    dplyr::summarize(x = mean(.data$x), y = mean(.data$y))
+  
+  pointLocs = as.data.frame(subset(pointLocs, select = c('x', 'y', 'clumps')))
+  
+  newLandingCentroids = newLandings
+  newLandingCentroids[!is.na(newLandingCentroids)] = NA
+  
+  cells = raster::cellFromXY(newLandingCentroids, pointLocs[, 1:2])
+  
+  if (withIDs) {
+    newLandingCentroids[cells] = pointLocs$clumps
+  } else{
+    newLandingCentroids[cells] = 1
+  }
+  return(newLandingCentroids)
 }

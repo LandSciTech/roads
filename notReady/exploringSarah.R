@@ -523,19 +523,27 @@ plot(ptsInClump2 %>% sf::st_bbox() %>% sf::st_as_sfc(), add = TRUE, col = "green
 data_path <- "../ChurchillAnalysis/inputNV/ChurchillData/"
 harvCH <- st_read(paste0(data_path, "ChurchillRoadsHarv/harvPCIFRI.shp"))
 
-lnds <- getLandingsFromHarvest(harvCH %>% slice(1:20), 0.0001)
+lnds <- getLandingsFromTarget(harvCH %>% slice(1:20), 0.002, sampleType = "regular")
 
 tmap::tmap_mode("view")
 
-tmap::qtm(harvCH )+
+tmap::qtm(harvCH)+
   tmap::qtm(lnds)
 
 # try on large dataset 3.5 mins to get 90777 points in 10338 polygons
 # takes longer the higher the density of points
 system.time({
-  lnds <- getLandingsFromHarvest(harvCH, 0.001)
+  lndssf <- getLandingsFromTarget(harvCH, 0.000001, sampleType = "regular")
 })
 
+# try on large raster dataset. 
+harvCHRast <- fasterize::fasterize(harvCH, 
+                                   raster::raster(paste0(data_path, "plc50.tif")),
+                                   field = "objid")
+
+system.time({
+  lnds <- getLandingsFromTarget(harvCHRast, 0.000001, sampleType = "regular")
+})
 
 
 # Faster version... set distance between landings, make a grid with points at
