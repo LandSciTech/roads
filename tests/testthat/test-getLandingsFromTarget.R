@@ -34,7 +34,7 @@ test_that("raster with clumps input works",{
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
   
-  out <- getLandingsFromHarvest(rast, 0.25)
+  out <- getLandingsFromHarvest(rast, 0.1)
   out <- getLandingsFromHarvest(rast)
   
   expect_type(out, "list")
@@ -45,6 +45,6 @@ test_that("old version is similar to new", {
   rast <- demoScen[[1]]$landings.poly %>% raster::rasterize(demoScen[[1]]$cost.rast)
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
-  outOld <- getLandingsFromTarget(rast > 0, numLandings = 614*0.1)
+  outOld <- getLandingsFromTarget(rast > 0, numLandings = 0.1)
 })
 

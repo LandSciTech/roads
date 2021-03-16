@@ -113,7 +113,7 @@ getLandingsFromTarget<-function(inputPatches,
     }
     remL = ip
     remL[landC>0]=NA
-    numSamples = nl-raster::cellStats(landC>0,"sum")#select additional points so total number is equal to small alternative
+    #numSamples = nl-raster::cellStats(landC>0,"sum")#select additional points so total number is equal to small alternative
 
     landC = raster::rasterToPoints(landC,fun=function(landings){landings>0})
     #split into smaller patches to ensure adequate road density
@@ -122,12 +122,17 @@ getLandingsFromTarget<-function(inputPatches,
 
     landPts = rbind(landPts,landC)
 
-    if(numSamples<=0){
-      next
-    }
-
-    landingPts = raster::sampleStratified(remL, size=numSamples,xy=T)
-    landingPts=landingPts[,2:4]
+    # if(numSamples<=0){
+    #   next
+    # }
+    extArea <- prod(raster::res(remL))*raster::ncell(remL)
+    nPts <- numLandings * extArea
+    
+    landingPts <- raster::sampleRegular(remL, size = nPts, xy = TRUE)
+    landingPts <- dplyr::filter(as.data.frame(landingPts), !is.na(layer))
+    
+    # landingPts = raster::sampleStratified(remL, size=numSamples,xy=T)
+    # landingPts=landingPts[,2:4]
     #add centroids to ensure all patches are included
     landPts = rbind(landPts,landingPts)
 
