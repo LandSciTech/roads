@@ -2,24 +2,46 @@
 % Please edit documentation in R/getLandingsFromTarget.R
 \name{getLandingsFromTarget}
 \alias{getLandingsFromTarget}
-\title{Select random landing locations within patches.}
+\title{Get landing points inside harvest blocks}
 \usage{
-getLandingsFromTarget(
-  inputPatches,
-  numLandings,
-  omitCentroidsOutOfPolygons = F
-)
+getLandingsFromTarget(harvest, landingDens = NULL, sampleType = "centroid")
 }
 \arguments{
-\item{inputPatches}{A RasterLayer. Harvested patches should have values equal
-to a unique identifier}
+\item{harvest}{sf, SpatialPolygons or RasterLayer object with harvested areas}
 
-\item{numLandings}{Numeric. A vector of the number of points to randomly
-sample inside harvested patches}
+\item{landingDens}{number of landings per unit area. This should be in the
+same units as the crs of the harvest. Note that 0.001 pts per m2 is >
+1000 pts per km2 so this number is usually very small for projected crs.}
 
-\item{omitCentroidsOutOfPolygons}{Logical. Default is FALSE in which case
-some points may be outside the borders of the harvested patch}
+\item{sampleType}{character. "centroid" (default), "regular" or "random".
+Centroid returns one landing per harvest block, which is gauranteed to be
+in the harvest block for sf objects but not for rasters. Regular returns
+points from a grid with density \code{landingDens} that overlap the
+harvested areas. Random returns a random set of points from each polygon
+where the number is determined by the area of the polygons and
+\code{landingDens}. If \code{harvest} is a raster the centroid is always
+returned as one of the landings to ensure all harvest areas get at least
+one landing.}
 }
 \description{
-Select random landing locations within patches.
+Get landing points inside harvest blocks
+}
+\examples{
+# Get centroid
+outCent <- getLandingsFromTarget(demoScen[[1]]$landings.poly)
+raster::plot(demoScen[[1]]$landings.poly)
+plot(outCent, col = "red", add = T)
+
+# Get random sample with density 0.1 pts per unit area
+outRand <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "random")
+
+raster::plot(demoScen[[1]]$landings.poly)
+plot(outRand, col = "red", add = T)
+
+# Get regular sample with density 0.1 pts per unit area
+outReg <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "regular")
+
+raster::plot(demoScen[[1]]$landings.poly)
+plot(outReg, col = "red", add = T)
+
 }
