@@ -224,8 +224,6 @@ getCentroids<-function(newLandings,withIDs=T){
   p = raster::as.data.frame(raster::clump(newLandings,gaps=F), xy = TRUE)
   p = p[!is.na(p$clumps),]
   pointLocs = p %>% dplyr::group_by(.data$clumps) %>% dplyr::summarize(x=mean(.data$x),y=mean(.data$y))
-  pointLocs$x = cRes[1]*round(pointLocs$x/cRes[1])
-  pointLocs$y = cRes[2]*round(pointLocs$y/cRes[2])
   pointLocs = as.data.frame(subset(pointLocs,select=c('x','y','clumps')))
   newLandingCentroids = newLandings
   newLandingCentroids[!is.na(newLandingCentroids)]=NA
