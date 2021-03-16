@@ -58,7 +58,7 @@ getLandingsFromHarvest <- function(harvest, numLandings = "centroid"){
       harvest <- mutate(harvest, ID = 1:n()) %>% sf::st_set_agr("constant")
       
       grd <- sf::st_make_grid(sf::st_as_sfc(sf::st_bbox(harvest)),
-                              cellsize = 1/numLandings, what = "corners")
+                              cellsize = sqrt(1/numLandings), what = "corners")
       
       inter <- sf::st_intersection(harvest, grd)
       
