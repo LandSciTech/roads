@@ -523,11 +523,12 @@ plot(ptsInClump2 %>% sf::st_bbox() %>% sf::st_as_sfc(), add = TRUE, col = "green
 data_path <- "../ChurchillAnalysis/inputNV/ChurchillData/"
 harvCH <- st_read(paste0(data_path, "ChurchillRoadsHarv/harvPCIFRI.shp"))
 
-lnds <- getLandingsFromTarget(harvCH %>% slice(1:20), 0.002, sampleType = "regular")
+lnds <- getLandingsFromTarget(harvCH %>% slice(1:20), 0.00002, sampleType = "random")
 
 tmap::tmap_mode("view")
+tmap::tmap_options(max.raster = c(plot = 1e+09, view = 1e+09))
 
-tmap::qtm(harvCH)+
+tmap::qtm(harvCH %>% slice(1:20))+
   tmap::qtm(lnds)
 
 # try on large dataset 3.5 mins to get 90777 points in 10338 polygons
@@ -541,10 +542,17 @@ harvCHRast <- fasterize::fasterize(harvCH,
                                    raster::raster(paste0(data_path, "plc50.tif")),
                                    field = "objid")
 
+# with Ids as raster values TAKES 10 mins
 system.time({
-  lnds <- getLandingsFromTarget(harvCHRast, 0.000001, sampleType = "regular")
+  lndswId <- getLandingsFromTarget(harvCHRast, 0.00000001, sampleType = "random")
 })
 
+# with 0/1 raster values takes < 1 min
+lndsnId <- getLandingsFromTarget(harvCHRast > 0, 0.00000001, sampleType = "random")
+
+tmap::qtm(harvCHRast >0)+
+  tmap::qtm(lndswId)+
+  tmap::qtm(lndsnId, dots.col = "red")
 
 # Faster version... set distance between landings, make a grid with points at
 # that distance and intersect, check for polygon with no points and use centroid

@@ -46,7 +46,7 @@ test_that("sp polygon input works for centroid",{
   
   if(interactive()){
     raster::plot(demoScen[[1]]$landings.poly)
-    plot(outsCent[[1]], col = "red", add = T)
+    plot(outCent, col = "red", add = T)
   }
   
 })
@@ -63,7 +63,7 @@ test_that("raster no clumps input works",{
  }
 })
 
-test_that("raster with clumps input works",{
+test_that("raster with clumps input works no ID",{
   rast <- demoScen[[1]]$landings.poly %>% raster::rasterize(demoScen[[1]]$cost.rast)
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
@@ -84,5 +84,24 @@ test_that("raster with clumps input works",{
   }
 })
 
-
+test_that("raster with clumps input works with ID",{
+  rast <- demoScen[[1]]$landings.poly %>% raster::rasterize(demoScen[[1]]$cost.rast)
+  # make sure that a single celled havest block will work with clumps
+  rast[10,10] <- 6
+  outRastCent <- getLandingsFromTarget(rast)
+  outRastRand <- getLandingsFromTarget(rast, landingDens = 0.1, 
+                                       sampleType = "random")
+  outRastReg <- getLandingsFromTarget(rast, landingDens = 0.1, 
+                                      sampleType = "regular")
+  if(interactive()){
+    raster::plot(rast)
+    plot(outRastCent, col = "red", add = T)
+    
+    raster::plot(rast)
+    plot(outRastRand, col = "red", add = T)
+    
+    raster::plot(rast)
+    plot(outRastReg, col = "red", add = T)
+  }
+})
 

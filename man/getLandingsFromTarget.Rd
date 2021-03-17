@@ -7,11 +7,14 @@
 getLandingsFromTarget(harvest, landingDens = NULL, sampleType = "centroid")
 }
 \arguments{
-\item{harvest}{sf, SpatialPolygons or RasterLayer object with harvested areas}
+\item{harvest}{sf, SpatialPolygons or RasterLayer object with harvested
+areas. If it is a RasterLayer with more than one unique value other than 0
+each value will be run separately which will produce different results from
+a 0/1 raster but will be much slower.}
 
 \item{landingDens}{number of landings per unit area. This should be in the
-same units as the crs of the harvest. Note that 0.001 pts per m2 is >
-1000 pts per km2 so this number is usually very small for projected crs.}
+same units as the crs of the harvest. Note that 0.001 pts per m2 is > 1000
+pts per km2 so this number is usually very small for projected crs.}
 
 \item{sampleType}{character. "centroid" (default), "regular" or "random".
 Centroid returns one landing per harvest block, which is gauranteed to be
