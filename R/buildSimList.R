@@ -27,12 +27,15 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
   
   if(!(is(roads, "sf") || is(roads, "sfc"))){
     if(is(roads, "Spatial")){
-      roads <- sf::st_as_sf(roads)
+      roads <- sf::st_as_sf(roads) %>% 
+        sf::st_set_agr("constant")
+      
     } else if(is(roads, "Raster")){
      # roads <- rasterToLineSegments(roads)
       roads <- raster::rasterToPoints(roads, fun = function(x){x > 0}, 
                                       spatial = TRUE) %>% 
-        sf::st_as_sf()
+        sf::st_as_sf() %>% 
+        sf::st_set_agr("constant")
     }
   }
   
@@ -40,7 +43,8 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
   if(!(is(landings, "sf") || is(landings, "sfc"))){
     if(is(landings, "Spatial")){
       
-      landings <- sf::st_as_sf(landings)
+      landings <- sf::st_as_sf(landings) %>% 
+        sf::st_set_agr("constant")
       
     } else if(is(landings, "Raster")){
       # check if landings are clumps of cells (ie polygons) or single cells
@@ -53,11 +57,13 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
       
       if(clumps){
         landings <- sf::st_as_sf(raster::rasterToPolygons(clumpedRast, 
-                                                          dissolve = TRUE))
+                                                          dissolve = TRUE)) %>% 
+          sf::st_set_agr("constant")
       } else {
         landings <- sf::st_as_sf(raster::rasterToPoints(landings, 
                                                         fun = function(x){x > 0}, 
-                                                        spatial = TRUE))
+                                                        spatial = TRUE)) %>% 
+          sf::st_set_agr("constant")
       }
       
 
@@ -65,20 +71,22 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
       landings <- sf::st_sf(
         geometry = sf::st_as_sfc(list(sf::st_multipoint(landings[, c("x", "y")])))
         ) %>%
-        sf::st_cast("POINT")
+        sf::st_cast("POINT") %>% 
+        sf::st_set_agr("constant")
     }
   }
   
   if(sf::st_geometry_type(landings, by_geometry = FALSE) %in% 
      c("POLYGON", "MULTIPOLYGON")){
     # Use point on surface not centroid to ensure point is inside irregular polygons
-    landings <- sf::st_point_on_surface(landings)
+    landings <- sf::st_point_on_surface(landings) %>% 
+      sf::st_set_agr("constant")
   }
   
   # check crs error if different
   if(!all(raster::compareCRS(raster::crs(roads), raster::crs(landings)),
           raster::compareCRS(raster::crs(roads), raster::crs(cost)))){
-    stop("the crs of roads, landings and cost must match")
+    stop("the crs of roads, landings and cost must match", call. = FALSE)
   }
   
   # burn in roads to have 0 cost 
