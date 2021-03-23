@@ -65,8 +65,13 @@ test_that("raster no clumps input works",{
 
 test_that("raster with clumps input works no ID",{
   rast <- demoScen[[1]]$landings.poly %>% raster::rasterize(demoScen[[1]]$cost.rast)
+  
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
+
+  # Show effect of ID
+  rast[78:88, 4:5] <- 7
+  
   outRastCent <- getLandingsFromTarget(rast > 0)
   outRastRand <- getLandingsFromTarget(rast > 0, landingDens = 0.1, 
                                       sampleType = "random")
@@ -86,8 +91,13 @@ test_that("raster with clumps input works no ID",{
 
 test_that("raster with clumps input works with ID",{
   rast <- demoScen[[1]]$landings.poly %>% raster::rasterize(demoScen[[1]]$cost.rast)
+  
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
+  
+  # Show effect of ID
+  rast[78:88, 4:5] <- 7
+  
   outRastCent <- getLandingsFromTarget(rast)
   outRastRand <- getLandingsFromTarget(rast, landingDens = 0.1, 
                                        sampleType = "random")
