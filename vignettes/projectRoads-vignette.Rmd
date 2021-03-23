@@ -18,30 +18,36 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-This vignette provides a tutorial on the use of the `roads` package for the spatial simulation of future roads development under a given resource development scenario.  This tutorial, which borrows heavily from a demonstration written by Kyle Lochhead and Tyler Muhly in 2018, will focus primarily on the `projectRoads` method of the `roads` package, as it is responsible for performing the simulation. Example datasets from Kyle Lochhead and Tyler Muhly's **CLUS road simulation example** will be again used within this documentation.
+This vignette provides a tutorial on the use of the `roads` package for the spatial simulation of future roads development under a given resource development scenario.  This tutorial, which borrows heavily from a demonstration written by Kyle Lochhead and Tyler Muhly in 2018, will focus primarily on the `projectRoads` method of the `roads` package, as it is responsible for performing the simulation. Example datasets from Kyle Lochhead and Tyler Muhly's **CLUS road simulation example** are included in the package as `CLUSexample` and will used within this documentation.
 
 In the context of this package, resource development scenarios are represented by three components:
 
-1. a spatial, gridded cost layer covering the entire landscape, wherein each cell value represents the cost of new road developement through it.
-2. a spatial, representation of the existing road network within the landscape, and
-3. a set of locations, refered to as "**landings**", where new resource development is to take place.
+1. **Cost Layer:** a spatial, gridded cost layer covering the entire landscape, wherein each cell value represents the cost of new road developement through it.
+2. **Existing Road Network:** a spatial, representation of the existing road network within the landscape.
+3. **Landings:** a set of locations where new resource development is to take place.
 
-The nature of how the landings are defined in the resource development scenario dictates whether the new roads development simulation will be a one-time or multi-temporal simulation.
+Given an input resource development scenario, `projectRoads` will simulate new roads between the existing road network and the landings using one of three algorithms:
 
-Given an input resource development scenario, the `projectRoads` method will simulate new roads between the existing road network and the landings using one of three user-specific simulation methods (not to be confused with R language methods):
+1. **Snapping** 
+2. **Least-cost path (LCP)** 
+3. **Minimum spanning tree (MST)** 
 
-1. the **snapping** simulation method,
-2. the **least-cost path (LCP)** simulation method, or
-3. the **minimum spanning tree (MST)** simulation method.
+The output of `projectRoads` is a list of simulation results refered to as a "sim list". The list contains five elements:
+
+1. **roads:** the projected road network, which includes the projected roads.
+2. **costSurface:** the input cost surface, this is *not* updated to reflect the new roads that were added.
+3. **roadMethod** either the road simulation method used.
+4. **landings** the landings used in the simulation.
+5. **g** the graph that describes the cost of paths between each cell in the cost raster. This is updated based on the new roads so that vertices were connected by new roads now have a cost of 0. This can be used to avoid recomputing the graph in a simulation with multiple time steps. 
 
 
 # Resource development scenario
 
 ### 1. Cost layer
 
-The cost of new roads development within a landscape is specified to the `projectRoads` method in the form of a single, numeric [`RasterLayer`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} object.  Each cell of this raster represents the cost of new road developement (the definition of which is up to the user) through it.  Following this, the total cost of the development of a new road segment is considered to be the sum of the cost raster cells that it traverses.
+The cost of new roads development within a landscape is must be provided as a single, numeric [`RasterLayer`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) object.  Each cell of this raster represents the cost of new road developement (the definition of which is up to the user) through it.  Following this, the total cost of the development of a new road segment is considered to be the sum of the cost raster cells that it traverses.
 
-* The traversal cost of existing road segments is assumed to be zero.
+* The traversal cost of existing road segments is assumed to be zero. If existing roads are not 0 in the cost layer they can be "burned in" by setting `roadsInCost = FALSE`.
 * The extent of the landscape of interest is assumed to match the extent of the specified cost raster layer.
 * The coordinate reference system (CRS) of this raster does not need to be specified, so long as all other resource development scenario input data-sets match.  
 * While the cell size (or resolution) of this cost raster is up the user, it is important to remember that the a unit area of road is assumed to take up an entire cell.
@@ -52,26 +58,24 @@ The simple cost raster used in the CLUS roads simulation example is included wit
 knitr::opts_chunk$set(fig.width=5,fig.height=4.85)
 ```
 
-```{r, fig.show='hold'}
-library(roads)
-#devtools::load_all(".")
-library(dplyr)
+```{r results='hide', warning=FALSE, message=FALSE}
 library(raster)
+#library(roads)
+devtools::load_all(".")
+library(dplyr)
 library(colorspace)
-## colours for displaying cost raster (optional; could just use default)
-rastColours <- c('grey50',diverge_hcl(20,h=c(130,43),c=100,l=c(70,90)))
-## get the cost raster from the CLUSexmaple data-set and plot
-costRaster <- roads::CLUSexample$cost
-plot(costRaster, col = rastColours, main = 'Cost')
-```
 
-Notice that the top row of the raster has a cost of zero.  This row is where, in this scenario, an existing road traverses the landscape.
+## colours for displaying cost raster 
+rastColours <- c('grey50', diverge_hcl(20, h = c(130, 43), c = 100,l = c(70, 90)))
+
+costRaster <- CLUSexample$cost
+```
 
 ### 2. Existing road network layer
 
-Since, in the context of this package, new roads simulation involves connecting landings to an existing roads network, the state of the existing roads network must be specified to the `projectRoads` method.  This specification is made in the form of a sf object with geometry type "LINES", a SpatialLines object, or a RasterLayer.
+The state of the existing roads network must be specified to the `projectRoads` method. This specification is made in the form of a sf object with geometry type "LINES", a SpatialLines object, or a RasterLayer.
 
-The existing roads network used in the CLUS roads simulation example is included within the `CLUSexample` data-set of this package.  Alternatively, it could be extracted from cost raster layer by isolating cells where the cost is zero.
+The existing roads network used in the CLUS roads simulation example is included within the `CLUSexample` data-set of this package.  
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
@@ -80,33 +84,22 @@ knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
 ```{r, fig.show='hold'}
 ## existing roads network raster from the CLUSexample data-set
 existingRoadsRast <- roads::CLUSexample$roads
+
+# Note rasterToLineSegments only works for simple road networks
 roadsLine <- roads::CLUSexample$roads %>% rasterToLineSegments()
-## alternatively, existing roads network raster from the cost raster layer, where cells are zero
-alt_existingRoadsRast <- costRaster==0
-## they are the same?
-raster::compareRaster(existingRoadsRast,alt_existingRoadsRast,
-                      values=TRUE,extent=TRUE,res=TRUE,crs=TRUE)
-## the existing roads raster matches the cost raster in terms of extent, resolution, and CRS?
-raster::compareRaster(existingRoadsRast,costRaster,
-                      values=FALSE,extent=TRUE,res=TRUE,crs=TRUE)
-## plot cost ratser (left) and existing roads raster (right)
-par(mfrow=c(1,2))
-plot(costRaster,col=rastColours,main='Cost')
-plot(existingRoadsRast,col=c('grey80','grey50'),main='Current roads',legend=FALSE)
-text(x=2.5,y=4.5,labels='existing road',cex=1.3)
-text(x=2.5,y=2,labels='not currently\nroad',cex=1.3)
 ```
 
 ## 3. Landings layer(s)
 
 Landings, or resource development locations, that are to be connected to the existing road network can be specified to the `projectRoads` method in a variety of forms.  These include specification as:
 
-* A logical [`RasterLayer`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} object with cell values of `TRUE` for landings,
-* A [`SpatialPoints`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPoints) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} or [`SpatialPointsDataFrame`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPointsDataFrame-class) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} object with points representing landings,
+* A logical `RasterLayer` object with cell values of `TRUE` for landings,
+* A `SpatialPoints` or `SpatialPointsDataFrame` {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} object with points representing landings,
 * A matrix with at least two columns, with columns 1 and 2 representing x any y coordinates of landing locations respectively, 
-* A [`SpatialPolygons`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPolygons-class) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} or [`SpatialPolygonsDataFrame`](https://www.rdocumentation.org/packages/sp/versions/1.3-1/topics/SpatialPolygonsDataFrame-class) {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} object with polygons representing landings, 
-* A sf object with geometry type "LINES" or "POLYGONs" or,
-* A [`RasterStack`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} or [`RasterBrick`](https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class) {[`raster`](https://cran.r-project.org/web/packages/raster/index.html)} object with each raster layer in the stack or brick representing a new time step for which new roads are to be simulated for (i.e. layer 1 represents landings at time t=1, layer 2 represents landings at time t=2, and so on).  Within each raster layer, cell values of `TRUE` represent new landings for that time-step.
+* A `SpatialPolygons`or `SpatialPolygonsDataFrame` {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} object with polygons representing landings, 
+* A sf {[`sf`](https://r-spatial.github.io/sf/)} object with geometry type "POINTS" or "POLYGONs"
+
+If the landings are polygons then the centroid is used as the destination for new roads. For more control or to have more than one landing per polygon see `getLandingsFromTarget`.
 
 The set of landings used in the CLUS roads simulation example is included within the CLUSexample data-set of this package.
 
@@ -117,13 +110,19 @@ knitr::opts_chunk$set(fig.width=5,fig.height=4.85)
 ```{r, fig.show='hold'}
 ## landings as spatial points
 landings <- roads::CLUSexample$landings
-## plot landings on top of cost raster
-plot(costRaster,col=rastColours,main='Cost with landings')
-plot(landings,add=TRUE,pch=19)
-text(x=2.5,y=4.5,labels='existing road',cex=1.3)
+
+## plot example scenario
+plot(costRaster, col = rastColours, main = 'Example Scenario')
+plot(roadsLine, add = TRUE)
+plot(landings, add = TRUE, pch = 19)
 points(x=5.6,y=4.5,pch=19,xpd=TRUE)
 text(x=5.8,y=4.5,labels='landing',adj=c(0,0.4),xpd=TRUE)
+lines(x=c(5.3,5.6),y=c(4.2,4.2),lwd=2,xpd=TRUE)
+text(x=5.75,y=4.2,labels='roads',adj=c(0,0.3),xpd=TRUE)
+
 ```
+
+Notice that the top row of the raster has a cost of zero.  This row is where, in this scenario, an existing road traverses the landscape.
 
 # Simulation of new roads development
 
@@ -136,18 +135,18 @@ This approach simply 'snaps' a landing (i.e., cutblock location) to the nearest 
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'snap' approach
-projRoads_snap <- roads::projectRoads(landings,
-                                         costRaster,
-                                         roadsLine,
-                                         roadMethod='snap')
+projRoads_snap <- roads::projectRoads(landings, costRaster, roadsLine,
+                                      roadMethod = 'snap')
+
 ## plot the cost raster, landings, and roads segments to the landings
-plot(costRaster, col = rastColours, main = '\'Snapped\' roads')
+plot(costRaster, col = rastColours, main = "'Snapped' roads")
 points(landings, pch = 19)  ## landings points
 plot(projRoads_snap$roads, add = TRUE) ## roads
+
 ## update legend
 points(x = 5.5, y = 4.8, pch = 19, xpd = TRUE)
 text(x=5.7,y=4.8,labels='landing',adj=c(0,0.4),xpd=TRUE)
-lines(x=c(5.3,5.7),y=c(4.2,4.2),lwd=2,xpd=TRUE)
+lines(x=c(5.3,5.6),y=c(4.2,4.2),lwd=2,xpd=TRUE)
 text(x=5.75,y=4.2,labels='roads',adj=c(0,0.3),xpd=TRUE)
 ```
 
@@ -161,7 +160,7 @@ This means this approach, while simple to implement, would over estimate the amo
 
 ### 2. Least Cost Paths (LCP) approach /method
 
-This approach builds upon the snapping approach by assuming a 'cost directed' path (i.e., "as the wolf runs") for each landing to the existing road network. This includes the cost of barriers and impedance attributes. However, this approach requires a cost surface that needs to be estimated, then updated within the simulations and thus, requires greater computational time relative to the snapping approach. This data.table is then used to build a mathematical [graph](https://en.wikipedia.org/wiki/Graph_theory) using [igraph](http://igraph.org/r/).
+This approach builds upon the snapping approach by assuming a 'cost directed' path (i.e., "as the wolf runs") for each landing to the existing road network.  However, this approach requires that a cost surface be provided and used to build a mathematical [graph](https://en.wikipedia.org/wiki/Graph_theory) using [igraph](http://igraph.org/r/). This takes considerably longer to compute.
 
 Once the graph is built, it is simple to get the least cost path between any two verticies. Using [Dijkstra’s algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), the [shortest_paths](http://igraph.org/r/doc/distances.html) function is called in [igraph](http://igraph.org/r/doc/#R). Further, the graph can be easily updated to simulate the change in the cost surface from dynamically developing roads during the simulation. Note, that this dynamic behaviour would not be possible in a pre-solve of the road network. To implement a pre-solve approach the [igraph](http://igraph.org/r/doc/#R) function [all_shortest_paths](http://igraph.org/r/doc/distances.html) can be used to calculate all shortest paths between pairs of vertices; however, this is not included in the comparison.
 
@@ -178,7 +177,7 @@ projRoads_lcp <- roads::projectRoads(landings,
                                         roadMethod = 'lcp')
 
 ## plot the cost raster and overlay it with new roads
-plot(costRaster,col=rastColours,main='Cost with new roads')
+plot(costRaster,col=rastColours,main="'LCP' roads")
 plot(projRoads_lcp$roads, add = TRUE)
 points(landings,pch=19,col='red')  ## landings points
 ## legend
@@ -206,21 +205,21 @@ projRoads_mst <- roads::projectRoads(landings,
                                         roadMethod = 'mst')
 
 ## plot the cost raster and overlay it with new roads
-plot(costRaster, col = rastColours, main = 'Cost with new roads')
-plot(projRoads_mst$roads, col = 'grey30', add = TRUE, legend = FALSE)
+plot(costRaster, col = rastColours, main = "'MST' roads")
+plot(projRoads_mst$roads, col = 'grey30', add = TRUE)
 points(landings, pch = 19, col = 'red')  ## landings points
 ## legend
 lines(c(-0.5, 0), c(-1.45, -1.45), xpd = TRUE)
-text(x=0.1,y=-1.45,labels='new road',adj=c(0,0.4),xpd=TRUE)
-points(x=2.5,y=-1.45,pch=19,col='red',xpd=TRUE)
-text(x=2.7,y=-1.45,labels='landing',adj=c(0,0.4),xpd=TRUE)
+text(x = 0.1, y = -1.45, labels = 'new road', adj = c(0, 0.4), xpd = TRUE)
+points(x = 2.5, y = -1.45, pch = 19, col = 'red', xpd = TRUE)
+text(x = 2.7, y = -1.45, labels = 'landing', adj = c(0, 0.4), xpd = TRUE)
 ```
 
 The MST approach will produce the least amount of roads (relative to the other approaches), given targets are allowed to connect to other target locations. This approach simulates a realistic view of road branching relative to the other two approaches. However, given the need to get LCP distances, solve a MST and then construct the LCPs, it will likely be the most costly in terms of computation time.
 
 ## One-time versus multi-temporal simulation
 
-Roads development simulation can be performed either for a single time step (one-time) or for multiple time steps.  This section will use a demonstration scenario data-set that is included with the roads package.
+Roads development simulation can be performed either for a single time step (one-time) or for multiple time steps.  This section will use a demonstration scenario `demoScen` data-set that is included with the roads package. There are four different sets of landings. 
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(fig.width=7,fig.height=6.5)
@@ -228,8 +227,7 @@ knitr::opts_chunk$set(fig.width=7,fig.height=6.5)
 
 ```{r, fig.show='hold'}
 ## colours for displaying cost raster (optional; could just use default)
-library(colorRamps)
-rastColours2 <- c('grey50', colorRamps::matlab.like(300)[25:275])
+rastColours2 <- c('grey50', viridis::viridis(30))
 ## scenario 
 scen <- roads::demoScen[[1]]
 ## landing sets 1 to 4 of this scenario 
@@ -244,7 +242,7 @@ text(land.pnts@coords, labels = land.pnts$set, cex = 0.6, adj = c(0.5, 0.3),
 
 ### One-time simulation
 
-If landings, costs, and roads are all specified to `projectRoads`, then a one-time road simulation will be performed that returns a list object holding the projected roads and related information. This can be repeated multiple time for different road building scenarios.
+If landings, costs, and roads are all specified to `projectRoads`, then a one-time road simulation will be performed that returns a list object holding the projected roads and related information. This can be repeated multiple times for different road building scenarios but each simulation will be independant of previous simulations. This would be appropriate if each landing set represented alternate scenarios for development.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(fig.width=7,fig.height=6.86)
@@ -254,7 +252,7 @@ knitr::opts_chunk$set(fig.width=7,fig.height=6.86)
 
 
 ## project roads for landing sets 1 to 4, with independent one-time simulations
-oneTime_sim <- list() ## empty raster stack will be updated with sim results rasters
+oneTime_sim <- list() ## empty list 
 for (i in 1:4){
   oneTime_sim <- c(oneTime_sim,
                        roads::projectRoads(land.pnts[land.pnts$set==i,],
@@ -262,7 +260,7 @@ for (i in 1:4){
                                               scen$cost.rast==0,
                                               roadMethod='mst')$roads)
 }
-#oneTime_sim[oneTime_sim==0 | scen$cost.rast==0] <- NA ## set non-road to NA for display purposes
+
 
 ## plot
 par(mfrow = c(2, 2))
@@ -271,9 +269,7 @@ for (i in 1:4){
   plot(scen$cost.rast, col = rastColours2, 
        main = paste0('Landings set ', i),
        legend = FALSE)
-  plot(oneTime_sim[[i]], add = TRUE)#,
-       # col = 'grey30', 
-       # add = TRUE, legend = FALSE)
+  plot(oneTime_sim[[i]], add = TRUE)
   plot(land.pnts[land.pnts$set == i, ], add = TRUE,
        pch = 21, cex = 1.5, bg = 'white')
 }
@@ -291,15 +287,20 @@ knitr::opts_chunk$set(fig.width=5,fig.height=4.85)
 oneTime_sim <- raster::stack(oneTime_sim)
 independent <- any(oneTime_sim == 1)
 independent[!independent] <- NA ## set non-road to NA for display purposes
+
 ## plot 
-plot(scen$cost.rast,col=rastColours2,main='Union of independent sim results',legend=FALSE)
-plot(independent,col='grey30',add=TRUE,legend=FALSE)
+plot(scen$cost.rast, col = rastColours2,
+     main = 'Union of independent sim results',
+     legend = FALSE)
+
+plot(independent, col = 'grey30', add = TRUE, legend = FALSE)
+
 plot(land.pnts,add=TRUE,pch=21,cex=1.5,bg='white')
 ```
 
 ### Multi-temporal simulation
 
-Multi-temporal (multiple time steps) roads projections can be performed by `projectRoads`, by providing the list produced by a previous simulation run (sim list) and the landings for the current time period. The function uses the sim list as a starting point and does not need to recompute the graph used to determine the least cost path. This can be implemented in a loop.
+Multi-temporal (multiple time steps) roads projections can be performed by `projectRoads`, by providing the list produced by a previous simulation run (sim list) to the `sim` argument and the landings for the current time period. The function uses the sim list as a starting point and does not need to recompute the graph used to determine the least cost path. This can be implemented in a loop.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(fig.width=7,fig.height=9.97)
@@ -310,7 +311,7 @@ knitr::opts_chunk$set(fig.width=7,fig.height=9.97)
 ## continuing on with demo scenario 1
 ## landing sets 1 to 4 of this scenario as a raster stack
 land.stack <- scen$landings.stack[[1:4]]
-## pass the landings RasterStack to the projectRoads method for multi-temporal simulation
+
 # initialize sim list with first landings set
 multiTime_sim <- list(projectRoads(land.stack[[1]], scen$cost.rast, 
                                                scen$road.line))
