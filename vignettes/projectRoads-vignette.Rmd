@@ -136,7 +136,7 @@ This approach simply 'snaps' a landing (i.e., cutblock location) to the nearest 
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'snap' approach
-projRoads_snap <- roads::projectRoadsNew(landings,
+projRoads_snap <- roads::projectRoads(landings,
                                          costRaster,
                                          roadsLine,
                                          roadMethod='snap')
@@ -172,7 +172,7 @@ knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'LCP' approach
-projRoads_lcp <- roads::projectRoadsNew(landings, 
+projRoads_lcp <- roads::projectRoads(landings, 
                                         costRaster, 
                                         roadsLine, 
                                         roadMethod = 'lcp')
@@ -200,7 +200,7 @@ knitr::opts_chunk$set(fig.width=7,fig.height=3.93)
 
 ```{r, fig.show='hold'}
 ## project new roads using the 'MST' approach
-projRoads_mst <- roads::projectRoadsNew(landings, 
+projRoads_mst <- roads::projectRoads(landings, 
                                         costRaster,
                                         roadsLine, 
                                         roadMethod = 'mst')
@@ -257,7 +257,7 @@ knitr::opts_chunk$set(fig.width=7,fig.height=6.86)
 oneTime_sim <- list() ## empty raster stack will be updated with sim results rasters
 for (i in 1:4){
   oneTime_sim <- c(oneTime_sim,
-                       roads::projectRoadsNew(land.pnts[land.pnts$set==i,],
+                       roads::projectRoads(land.pnts[land.pnts$set==i,],
                                               scen$cost.rast,
                                               scen$cost.rast==0,
                                               roadMethod='mst')$roads)
@@ -312,14 +312,14 @@ knitr::opts_chunk$set(fig.width=7,fig.height=9.97)
 land.stack <- scen$landings.stack[[1:4]]
 ## pass the landings RasterStack to the projectRoads method for multi-temporal simulation
 # initialize sim list with first landings set
-multiTime_sim <- list(projectRoadsNew(land.stack[[1]], scen$cost.rast, 
+multiTime_sim <- list(projectRoads(land.stack[[1]], scen$cost.rast, 
                                                scen$road.line))
 
 # iterate over landings sets using the sim list from the previous run as input
 for (i in 2:nlayers(land.stack)) {
   multiTime_sim <- c(
     multiTime_sim,
-    list(projectRoadsNew(sim =  multiTime_sim[[i-1]], landings = land.stack[[i]]))
+    list(projectRoads(sim =  multiTime_sim[[i-1]], landings = land.stack[[i]]))
   ) 
 }
 

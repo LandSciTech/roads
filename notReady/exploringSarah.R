@@ -12,12 +12,12 @@ neighbourhood = "octagon"
 
 # check that all roadMethods return same list format
 outs <- purrr::map(list(snap = "snap", lcp = "lcp", mst = "mst"), 
-                   ~projectRoadsNew(landings = landings, cost = cost, 
+                   ~projectRoads(landings = landings, cost = cost, 
                                     roads = roads, roadMethod = .x))
 
 purrr::map(outs, names) %>% unlist() %>% unique()
 purrr::map(outs, length)
-# Try passing a sim list object to projectRoadsNew #============================
+# Try passing a sim list object to projectRoads #============================
 # first pass
 roadsLine <-  demoScen[[1]]$road.line
 costRaster <- demoScen[[1]]$cost.rast
@@ -30,14 +30,14 @@ landings2 <- demoScen[[1]]$landings.points %>% st_as_sf() %>%
 landings3 <- demoScen[[1]]$landings.points %>% st_as_sf() %>% 
   filter(set == 3)
 
-sim1 <- projectRoadsNew(landings = landings1, cost = costRaster, 
+sim1 <- projectRoads(landings = landings1, cost = costRaster, 
                         roads = roadsLine)
 
 # Snap method doesn't use the graph shortestPath updates the graph but the cost
 # is not updated should be burned in at start of sim method
-sim2 <- projectRoadsNew(sim = sim1, landings = landings2)
+sim2 <- projectRoads(sim = sim1, landings = landings2)
 
-sim3 <- projectRoadsNew(sim = sim2, landings = landings3)
+sim3 <- projectRoads(sim = sim2, landings = landings3)
 
 plot(sim1$costSurface)
 #plot(sim2$costSurface)
@@ -129,7 +129,7 @@ harvCH2010 <- harvCH2010 %>% filter(yrdep == 2010) %>%
 
 roads <- roads %>% st_transform(st_crs(cost_st))
 
-roadsProjCH2010 <- projectRoadsNew(landings = harvCH2010, 
+roadsProjCH2010 <- projectRoads(landings = harvCH2010, 
                                    cost = cost_st, 
                                    roads = roads)
 
@@ -170,7 +170,7 @@ landingsTest <- st_crop(harvCH2010, ext) %>% mutate(ID = 1:n())
 
 costTest <- raster::crop(cost_st, ext)
 
-roadsProjTest <- projectRoadsNew(landings = landingsTest, 
+roadsProjTest <- projectRoads(landings = landingsTest, 
                                    cost = costTest, 
                                    roads = roadsTest)
 
@@ -183,7 +183,7 @@ tmap::qtm(roadsProjTest$costSurface)+
   #tmap::qtm(roads2020)
 
 # points connected to weird chunk of road are 52:54, and 40:43 try with just those points
-roadsProjTest2 <- projectRoadsNew(landings = landingsTest %>% slice(12:20, 52:54, 40:43), 
+roadsProjTest2 <- projectRoads(landings = landingsTest %>% slice(12:20, 52:54, 40:43), 
                                  cost = costTest, 
                                  roads = roadsTest)
 
@@ -205,7 +205,7 @@ landings <- rbind(demoScen[[1]]$landings.points,
 
 # snap
 profvis::profvis({
-  newSnap <- projectRoadsNew(landings, costSurface, roads, "snap")
+  newSnap <- projectRoads(landings, costSurface, roads, "snap")
   
   oldSnap <- projectRoads(landings, costSurface, roads, "snap")
 })
@@ -213,7 +213,7 @@ profvis::profvis({
 
 # LCP
 profvis::profvis({
-  newLCP <- projectRoadsNew(landings, costSurface, roads, "lcp")
+  newLCP <- projectRoads(landings, costSurface, roads, "lcp")
   
   oldLCP <- projectRoads(landings, costSurface, roads, "lcp")
 })
@@ -221,7 +221,7 @@ profvis::profvis({
 
 # MST
 profvis::profvis({
-  newMST <- projectRoadsNew(landings, costSurface, roads, "mst")
+  newMST <- projectRoads(landings, costSurface, roads, "mst")
   
   oldMST <- projectRoads(landings, costSurface, roads, "mst")
 })
@@ -250,7 +250,7 @@ landings <- rbind(demoScen[[1]]$landings.points,
 
 # snap
 profvis::profvis({
-  newSnap <- projectRoadsNew(landings, costSurface, roads, "snap")
+  newSnap <- projectRoads(landings, costSurface, roads, "snap")
   
   oldSnap <- projectRoads(landings, costSurface, 
                           raster::rasterize(roads, costSurface),
@@ -260,7 +260,7 @@ profvis::profvis({
 
 # LCP
 profvis::profvis({
-  newLCP <- projectRoadsNew(landings, costSurface, roads, "lcp")
+  newLCP <- projectRoads(landings, costSurface, roads, "lcp")
   
   oldLCP <- projectRoads(landings, costSurface, 
                          raster::rasterize(roads, costSurface), 
@@ -270,7 +270,7 @@ profvis::profvis({
 
 # MST
 profvis::profvis({
-  newMST <- projectRoadsNew(landings, costSurface, roads, "mst")
+  newMST <- projectRoads(landings, costSurface, roads, "mst")
   
   oldMST <- projectRoads(landings, costSurface, 
                          raster::rasterize(roads, costSurface),
@@ -308,7 +308,7 @@ landings <- sf::st_sf(geometry = sf::st_as_sfc(sf::st_bbox(roads))) %>%
 
 # snap
 profvis::profvis({
-  newSnap <- projectRoadsNew(landings, costSurface, roadsSF, "snap")
+  newSnap <- projectRoads(landings, costSurface, roadsSF, "snap")
   
   oldSnap <- projectRoads(landings %>% mutate(ID = 1:n()) %>% sf::as_Spatial(),
                           costSurface, 
@@ -319,7 +319,7 @@ profvis::profvis({
 
 # LCP
 profvis::profvis({
-  newLCP <- projectRoadsNew(landings, costSurface, roadsSF, "lcp")
+  newLCP <- projectRoads(landings, costSurface, roadsSF, "lcp")
   
   oldLCP <- projectRoads(landings %>% mutate(ID = 1:n()) %>% sf::as_Spatial(),
                          costSurface, 
@@ -330,7 +330,7 @@ profvis::profvis({
 
 # MST
 profvis::profvis({
-  newMST <- projectRoadsNew(landings, costSurface, roadsSF, "mst")
+  newMST <- projectRoads(landings, costSurface, roadsSF, "mst")
   
   oldMST <- projectRoads(landings %>% mutate(ID = 1:n()) %>% sf::as_Spatial(),
                          costSurface, 
@@ -381,17 +381,17 @@ mb <- microbenchmark::microbenchmark(
   oldLCP = projectRoads(landingsSP, costSurface, roadsR, "lcp"),
   oldMST = projectRoads(landingsSP, costSurface, roadsR, "mst"),
   
-  newSnap_sp_rast = projectRoadsNew(landingsSP, costSurface, roadsR, "snap"),
-  newLCP_sp_rast = projectRoadsNew(landingsSP, costSurface, roadsR, "lcp"),
-  newMST_sp_rast = projectRoadsNew(landingsSP, costSurface, roadsR, "mst"),
+  newSnap_sp_rast = projectRoads(landingsSP, costSurface, roadsR, "snap"),
+  newLCP_sp_rast = projectRoads(landingsSP, costSurface, roadsR, "lcp"),
+  newMST_sp_rast = projectRoads(landingsSP, costSurface, roadsR, "mst"),
   
-  newSnap_sp_sp = projectRoadsNew(landingsSP, costSurface, roadsSP, "snap"),
-  newLCP_sp_sp = projectRoadsNew(landingsSP, costSurface, roadsSP, "lcp"),
-  newMST_sp_sp = projectRoadsNew(landingsSP, costSurface, roadsSP, "mst"),
+  newSnap_sp_sp = projectRoads(landingsSP, costSurface, roadsSP, "snap"),
+  newLCP_sp_sp = projectRoads(landingsSP, costSurface, roadsSP, "lcp"),
+  newMST_sp_sp = projectRoads(landingsSP, costSurface, roadsSP, "mst"),
   
-  newSnap_sf_sf = projectRoadsNew(landingsSF, costSurface, roadsSF, "snap"),
-  newLCP_sf_sf = projectRoadsNew(landingsSF, costSurface, roadsSF, "lcp"),
-  newMST_sf_sf = projectRoadsNew(landingsSF, costSurface, roadsSF, "mst"),
+  newSnap_sf_sf = projectRoads(landingsSF, costSurface, roadsSF, "snap"),
+  newLCP_sf_sf = projectRoads(landingsSF, costSurface, roadsSF, "lcp"),
+  newMST_sf_sf = projectRoads(landingsSF, costSurface, roadsSF, "mst"),
   
   times = 10
 )
@@ -436,7 +436,7 @@ landingsSF <- rbind(demoScen[[1]]$landings.points,
 
 costSurface <- demoScen[[1]]$cost.rast
 
-projectRoadsNew(landingsSF, costSurface, roadsSF)
+projectRoads(landingsSF, costSurface, roadsSF)
 
 # explore polygon landings process #==========================================
 landings <- demoScen[[1]]$landings.stack$layer.1.1.1

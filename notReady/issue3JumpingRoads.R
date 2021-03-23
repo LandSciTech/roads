@@ -22,7 +22,7 @@ landingsTest <- st_crop(harvCH2010, ext) %>% mutate(ID = 1:n())
 
 costTest <- raster::crop(cost_st, ext)
 
-roadsProjTest <- projectRoadsNew(landings = landingsTest, 
+roadsProjTest <- projectRoads(landings = landingsTest, 
                                  cost = costTest, 
                                  roads = roadsTest)
 
@@ -37,7 +37,7 @@ tmap::qtm(roadsProjTest$costSurface)+
 # checked and the issue is the same with input as raster
 
 # points connected to weird chunk of road are 52:54, and 40:43 try with just those points
-roadsProjTest2 <- projectRoadsNew(landings = landingsTest %>% slice(12:20, 52:54, 40:43), 
+roadsProjTest2 <- projectRoads(landings = landingsTest %>% slice(12:20, 52:54, 40:43), 
                                   cost = costTest, 
                                   roads = roadsTest)
 

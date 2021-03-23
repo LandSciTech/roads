@@ -65,7 +65,6 @@ Collate:
     'pathsToLines.R'
     'plot.R'
     'projectRoads.R'
-    'projectRoadsNew.R'
     'rasterToLineSegments.R'
     'shortestPaths.R'
     'updateSimList.R'

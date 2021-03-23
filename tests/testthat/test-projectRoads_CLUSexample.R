@@ -14,23 +14,23 @@ CLUS.lcp.roads <- c(1:25)[-c(6,7,9,15,17,18,20,21,23,24)]
 
 CLUS.mst.roads <- c(1:25)[-c(6:9,15,17,18,20,21,23,24)] 
 ###############################################
-# generate the results from roads::projectRoadsNew
+# generate the results from roads::projectRoads
 landingsC <- CLUSexample$landings
 costC     <- CLUSexample$cost
 roadsC    <- CLUSexample$roads
 
-pR_snap <- projectRoadsNew(landings = landingsC, 
+pR_snap <- projectRoads(landings = landingsC, 
                            cost = costC,
                            roads = roadsC,
                            roadMethod = "snap", roadsOut = "sf")
 
-pR_lcp <- projectRoadsNew(landings = landingsC,
+pR_lcp <- projectRoads(landings = landingsC,
                           cost = costC,
                           roads = roadsC,
                           roadMethod = "lcp", 
                           neighbourhood = "queen", roadsOut = "sf")
 
-pR_mst <- projectRoadsNew(landings = landingsC,
+pR_mst <- projectRoads(landings = landingsC,
                           cost = costC,
                           roads = roadsC,
                           roadMethod="mst", 

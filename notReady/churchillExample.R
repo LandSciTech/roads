@@ -83,17 +83,17 @@ harvCH2010 <- harvCH2010 %>%  st_transform(st_crs(cost_st))
 # mst
 
 
-roadsProjCH2010 <- projectRoadsNew(landings = harvCH2010,
+roadsProjCH2010 <- projectRoads(landings = harvCH2010,
                                    cost = cost_st,
                                    roads = roads)
 
 # # lcp
-# roadsProjCH2010lcp <- projectRoadsNew(landings = harvCH2010,
+# roadsProjCH2010lcp <- projectRoads(landings = harvCH2010,
 #                                    cost = cost_st,
 #                                    roads = roads, roadMethod = "lcp")
 # 
 # # snap
-# roadsProjCH2010snap <- projectRoadsNew(landings = harvCH2010,
+# roadsProjCH2010snap <- projectRoads(landings = harvCH2010,
 #                                    cost = cost_st,
 #                                    roads = roads, roadMethod = "snap")
 
@@ -124,21 +124,21 @@ tmap::qtm(roadsProjCH2010$costSurface)+
 # roads_rast <- as(roads_st, "Raster")
 # 
 # # No longer gives memory error. Gives results as raster
-# roadsProjCH2010mst_rast <- projectRoadsNew(landings = harvCH2010, 
+# roadsProjCH2010mst_rast <- projectRoads(landings = harvCH2010, 
 #                                        cost = cost_st, 
 #                                        roads = roads_rast == 0, 
 #                                        roadMethod = "mst")
 # plot(roadsProjCH2010mst_rast$roads, main = "Raster roads, Roads included in cost")
 # 
 # # cost can be burned in inside the function
-# roadsProjCH2010mst_rast2 <- projectRoadsNew(landings = harvCH2010, 
+# roadsProjCH2010mst_rast2 <- projectRoads(landings = harvCH2010, 
 #                                            cost = cost, 
 #                                            roads = roads_rast == 0, 
 #                                            roadMethod = "mst", 
 #                                            roadsInCost = FALSE)
 # plot(roadsProjCH2010mst_rast2$roads, main = "Raster roads, Roads NOT included in cost")
 # 
-# roadsProjCH2010mst_cost <- projectRoadsNew(landings = harvCH2010, 
+# roadsProjCH2010mst_cost <- projectRoads(landings = harvCH2010, 
 #                                            cost = cost, 
 #                                            roads = roads, 
 #                                            roadMethod = "mst",

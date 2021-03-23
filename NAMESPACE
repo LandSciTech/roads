@@ -3,7 +3,6 @@
 export(getCentroids)
 export(getLandingsFromTarget)
 export(projectRoads)
-export(projectRoadsNew)
 export(rasterToLineSegments)
 export(simpleCost)
 export(visualize)

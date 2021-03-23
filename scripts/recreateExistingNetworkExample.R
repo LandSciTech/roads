@@ -24,7 +24,7 @@ cost <- 1-cMap
 # need to set cost to slightly more than 0 because the algorithm uses cost 0
 # cells as existing roads (I will make this clear in the documentation)
 cost[cost == 0] <- 0.001
-nw = roads::projectRoadsNew(landings = lnds,
+nw = roads::projectRoads(landings = lnds,
                             cost = cost,
                             roads = rds,roadsOut="raster")
 plot(nw$roads)
