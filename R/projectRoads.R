@@ -233,6 +233,10 @@ setMethod(
                                        options = "ALL_TOUCHED=TRUE") > 0) %>%
         as("Raster")
     }
+    
+    # reset landings to include all input landings
+    sim$landings <- sim$landingsIn
+    sim$landingsIn <- NULL
 
     return(sim)
   })
@@ -333,6 +337,10 @@ setMethod(
                                         options = "ALL_TOUCHED=TRUE") > 0) %>%
         as("Raster")
     }
+    
+    # reset landings to include all input landings
+    sim$landings <- sim$landingsIn
+    sim$landingsIn <- NULL
 
     return(sim)
   })
