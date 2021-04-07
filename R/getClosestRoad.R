@@ -21,8 +21,8 @@ getClosestRoad <- function(sim){
   
   if(length(touching_road) > 0){
     # make snap roads for these ones 
-    snap_roads_lines <- sf::st_sf(geometry = closest.roads.pts[touching_road]) 
-    sim$roads <- rbind(sim$roads, snap_roads_lines)
+    # snap_roads_lines <- sf::st_sf(geometry = closest.roads.pts[touching_road]) 
+    # sim$roads <- rbind(sim$roads, snap_roads_lines)
     
     # Remove touching roads pts from rest of roads and from landings set 
     # the original landings will be replaced at the end
