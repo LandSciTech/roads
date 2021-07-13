@@ -9,15 +9,17 @@ lndPoly <- demoScen[[1]]$landings.poly %>% sf::st_as_sf() %>%
 test_that("sf input polygons work", {
   # replicate because some errors only happened with specific samples
   outsReg <- replicate(20, 
-                       {purrr::map(lndsDenTest, 
-                                   ~getLandingsFromTarget(lndPoly, 
-                                                          landingDens = .x, 
-                                                          sampleType = "regular"))},
+                       {lapply(lndsDenTest, function(x){
+                         getLandingsFromTarget(lndPoly, 
+                                               landingDens = x, 
+                                               sampleType = "regular")
+                       })
+                       },
                        simplify = FALSE)
   expect_type(outsReg, "list")
   
   if(interactive()){
-    plot(lndPoly %>% st_geometry())
+    plot(lndPoly %>% sf::st_geometry())
     plot(outsReg[[1]][[4]], col = "red", add = T)
   }
 })
@@ -25,10 +27,12 @@ test_that("sf input polygons work", {
 test_that("sf input polygons work for random", {
   # replicate because some errors only happened with specific samples
   outsRand <- replicate(20, 
-                        {purrr::map(lndsDenTest, 
-                                    ~getLandingsFromTarget(lndPoly, 
-                                                           landingDens = .x, 
-                                                           sampleType = "random"))},
+                        {lapply(lndsDenTest, function(x){
+                          getLandingsFromTarget(lndPoly, 
+                                                landingDens = x, 
+                                                sampleType = "random")
+                        })
+                        },
                         simplify = FALSE)
   expect_type(outsRand, "list")
   

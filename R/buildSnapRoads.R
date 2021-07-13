@@ -7,7 +7,6 @@
 #'
 #' @return sim list
 #'
-#' @examples
 
 buildSnapRoads <- function(sim){
   # union roads to one feature
