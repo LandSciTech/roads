@@ -1,20 +1,76 @@
-# Road network simulation methods for use with forest landcover change projection models
-This package is in development, and may or may not function. 
-We are in the process of adapting a BC-specific SpaDES module (https://github.com/bcgov/clus/tree/master/R/SpaDES-modules/roadCLUS) for general use. Here a description of the methods: https://github.com/bcgov/clus/blob/master/reports/roads/draft-CLUS-roads.md
-Contact josie.hughes@canada.ca with questions.
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# roads
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+The goal of roads is to simulate road development under resource
+development scenarios.
+
+## Installation
+
+You can install the released version of roads from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("roads")
+```
+
+And the development version from
+[GitHub](https://github.com/LandSciTech/roads) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("LandSciTech/roads")
+```
+
+## Example
+
+To simulate the development of roads three inputs are needed: the
+current road network (roads), the locations that should be connected to
+the road network (landings) and the cost of building roads across the
+landscape (cost). Typically the roads and landings are sf objects or sp
+Spatial\* objects and the cost is a raster.
+
+``` r
+library(roads)
+
+# data set installed with roads package
+scen <- demoScen[[1]]
+
+prRoads <- projectRoads(landings = scen$landings.points, 
+                        cost = scen$cost.rast,
+                        roads = scen$road.line, 
+                        plotRoads = TRUE) 
+```
+
+<img src="man/figures/README-example-1.png" width="100%" />
+
+By default `projectRoads` uses a minimum spaning tree with least cost
+paths algorithm (`roadMethod = "mst"`) to connect all landings to the
+nearest existing road or other landing following the path with the
+lowest cost. Other methods avaiable are least cost path (`roadMethod =
+"lcp"`) which connects each landing to the nearest road via the least
+cost path but independent of other landings and snapping (`roadMethod =
+"snap"`) which ignores both cost and other landings and simply connects
+each landing to the nearest road “as the crow flies”
 
 # License
-Copyright (C) 2018-2019 Her Majesty the Queen in Right of Canada, as represented
-by the Minister of Environment and Climate Change.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
+Copyright (C) 2021 Her Majesty the Queen in Right of Canada, as
+represented by the Minister of Environment and Climate Change.
 
-   http://www.apache.org/licenses/LICENSE-2.0
+Licensed under the Apache License, Version 2.0 (the “License”); you may
+not use this file except in compliance with the License. You may obtain
+a copy of the License at
+
+<http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
+distributed under the License is distributed on an “AS IS” BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
