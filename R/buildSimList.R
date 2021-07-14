@@ -51,6 +51,10 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
         sf::st_set_agr("constant")
       
     } else if(is(landings, "Raster")){
+      if(is(landings, "RasterStack")|| is(landings, "RasterBrick")){
+        stop("landings cannot be a RasterStack or Brick please supply",
+             " a single RasterLayer", call. = FALSE)
+      }
       # check if landings are clumps of cells (ie polygons) or single cells
       # (ie points) and if clumps take centroid
       clumpedRast <- raster::clump(landings, gaps = F) 

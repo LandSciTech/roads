@@ -212,14 +212,11 @@ setMethod(
         } else if(is(landings, "sf") &&
                   sf::st_geometry_type(landings, by_geometry = FALSE) %in%
                   c("POLYGON", "MULTIPOLYGON")){
-          plot(landings, add = TRUE)
+          plot(sf::st_geometry(landings), add = TRUE)
         }
         title(main = mainTitle, sub = paste0("Method: ", sim$roadMethod))
     }
     
-    # return original landings
-    sim$landings <- sim$landingsIn
-
     # put back original geometry column names
     if(geoColInR != attr(sim$roads, "sf_column")){
       sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
@@ -315,7 +312,7 @@ setMethod(
         } else if(is(landings, "sf") &&
                   sf::st_geometry_type(landings, by_geometry = FALSE) %in%
                   c("POLYGON", "MULTIPOLYGON")){
-          plot(landings, add = TRUE)
+          plot(sf::st_geometry(landings), add = TRUE)
         }
         title(main = mainTitle, sub = paste0("Method: ", sim$roadMethod))})
     }
