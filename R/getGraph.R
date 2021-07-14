@@ -8,7 +8,7 @@
 
 getGraph<- function(sim, neighbourhood){
   # define global varaiables to avoid NOTEs on R CMD check 
-  # w1 <- w2 <- NULL
+  w1 <- w2 <- NULL
   
   sim$paths.v <- NULL
   # prepare the cost surface raster #===========
