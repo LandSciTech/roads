@@ -16,7 +16,7 @@
 # - Using sim as argument for functions decreases transparency and modularity. Need to dig in to figure what inputs and outputs are. And risk of unintended consequences - function writer is free to mess with anything in sim object.
 # - Not enough metadata. What exactly is landings eg. Raster ok. But how are values interpreted?
 
-#' @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell
+#' @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell plot
 #' @importFrom sp SpatialPoints Line Lines SpatialLines CRS
 #' @importFrom data.table data.table := .N setDT setnames
 #' @importFrom igraph graph.edgelist E distances graph_from_adjacency_matrix mst get.edgelist get.shortest.paths edge_attr

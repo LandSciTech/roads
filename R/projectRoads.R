@@ -113,6 +113,7 @@ NULL
 #' @importFrom stats end na.omit
 #' @importFrom graphics plot title
 #' @importFrom sf st_crs st_transform
+#' @importFrom rlang .data
 #'
 #' @export
 #' 
@@ -221,7 +222,7 @@ setMethod(
 
     # put back original geometry column names
     if(geoColInR != attr(sim$roads, "sf_column")){
-      sim$roads <- rename(sim$roads, geoColInR = geometry)
+      sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
     }
 
     if(roadsOut == "raster"){
@@ -321,11 +322,11 @@ setMethod(
 
     # put back original geometry column names
     if(geoColInL != attr(sim$landings, "sf_column")){
-      sim$landings <- rename(sim$landings, geoColInL = geometry)
+      sim$landings <- rename(sim$landings, geoColInL = .data$geometry)
     }
 
     if(geoColInR != attr(sim$roads, "sf_column")){
-      sim$roads <- rename(sim$roads, geoColInR = geometry)
+      sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
     }
 
     if(roadsOut == "raster"){

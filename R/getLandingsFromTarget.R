@@ -22,19 +22,19 @@
 #' # Get centroid
 #' outCent <- getLandingsFromTarget(demoScen[[1]]$landings.poly)
 #' raster::plot(demoScen[[1]]$landings.poly)
-#' plot(outCent, col = "red", add = T)
+#' plot(outCent, col = "red", add = TRUE)
 #'
 #' # Get random sample with density 0.1 pts per unit area
 #' outRand <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "random")
 #'
 #' raster::plot(demoScen[[1]]$landings.poly)
-#' plot(outRand, col = "red", add = T)
+#' plot(outRand, col = "red", add = TRUE)
 #'
 #' # Get regular sample with density 0.1 pts per unit area
 #' outReg <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "regular")
 #'
 #' raster::plot(demoScen[[1]]$landings.poly)
-#' plot(outReg, col = "red", add = T)
+#' plot(outReg, col = "red", add = TRUE)
 #'
 #' @export
 getLandingsFromTarget <- function(harvest, 
@@ -75,8 +75,8 @@ getLandingsFromTarget <- function(harvest,
       clumpedRast <- raster::clump(harvest, gaps = F)
       
       clumps <- clumpedRast %>%
-        raster::freq(useNA = "no") %>%
-        .[,2] %>% max() > 1
+        raster::freq(useNA = "no") 
+      clumps <- max(clumps[,2])  > 1
       
       if(clumps){
         landings <- getLandingsFromTargetRast(harvest, landingDens, sampleType)
@@ -118,15 +118,17 @@ getLandingsFromTarget <- function(harvest,
     } else if (sampleType == "random"){
       
       landings <- harvest %>% mutate(id = 1:n()) %>% 
-        mutate(size = round(landingDens * sf::st_area(geometry)) %>%
-                 units::set_units(NULL) %>% ifelse(. == 0, 1,.))
+        mutate(size = round(landingDens * sf::st_area(.data$geometry)) %>%
+                 units::set_units(NULL)) %>% 
+        mutate(size = ifelse(.data$size == 0, 1, .data$size))
       
-      landings1 <- filter(landings, size == 1) %>% 
-        mutate(lands = sf::st_point_on_surface(geometry))
+      landings1 <- filter(landings, .data$size == 1) %>% 
+        mutate(lands = sf::st_point_on_surface(.data$geometry))
       
       if(nrow(landings1) < nrow(landings)){
-        landings2Plus <- filter(landings, size > 1) %>% 
-          sf::st_sample(geometry, type = "random", size = .$size) 
+        landings2Plus <- filter(landings, .data$size > 1)
+        landings2Plus <- sf::st_sample(landings2Plus$geometry, type = "random",
+                                       size = landings2Plus$size)
         
         landings <- c(landings1$lands, landings2Plus)
       } else {
@@ -232,7 +234,7 @@ getLandingsFromTargetRast<-function(inputPatches,
       nPts <- landingDens * extArea
       
       landingPts <- raster::sampleRegular(remL, size = nPts, xy = TRUE)
-      landingPts <- dplyr::filter(as.data.frame(landingPts), !is.na(layer))
+      landingPts <- dplyr::filter(as.data.frame(landingPts), !is.na(.data$layer))
     }
     
     #add centroids to ensure all patches are included

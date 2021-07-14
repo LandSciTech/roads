@@ -48,40 +48,38 @@ pathsToLines <- function(sim){
         if(er[v[1]] == 0){
           if(er[v[length(v)]] == 1){
             # first cell is not existing road and last cell is existing road
-            run_lengths_mat <- run_lengths %>% cumsum() %>% {c(1, .)} %>% 
-              .[-length(.)] %>% 
+            run_lengths_mat <- run_lengths %>% cumsum() 
+            run_lengths_mat <- c(1, run_lengths_mat)
+            run_lengths_mat <- run_lengths_mat[-length(run_lengths_mat)] %>% 
               matrix(ncol = 2, byrow = T) %>% 
               as.data.frame() %>% 
               `names<-`(c("start", "end")) %>% 
-              mutate(end = end + 1)
+              mutate(end = .data$end + 1)
           } else {
             # first cell is not existing road and last cell is not existing road
-            run_lengths_mat <- run_lengths %>% cumsum() %>% {c(1, .)} %>% 
-              #.[-length(.)] %>% 
+            run_lengths_mat <- run_lengths %>% cumsum()
+            run_lengths_mat <- c(1, run_lengths_mat) %>% 
               matrix(ncol = 2, byrow = T) %>% 
               as.data.frame() %>% 
               `names<-`(c("start", "end")) %>% 
-              mutate(end = end + 1)
+              mutate(end = .data$end + 1)
           }
         } else {
           if(er[v[length(v)]] == 1) {
             # first cell is existing road and last cell is existing road
-            run_lengths_mat <- run_lengths %>% cumsum() %>% 
-              #{c(1, .)} %>% 
-              .[-length(.)] %>% 
+            run_lengths_mat <- run_lengths %>% cumsum() 
+            run_lengths_mat <- run_lengths_mat[-length(run_lengths_mat)] %>% 
               matrix(ncol = 2, byrow = T) %>% 
               as.data.frame() %>% 
               `names<-`(c("start", "end")) %>% 
-              mutate(end = end + 1)
+              mutate(end = .data$end + 1)
           } else {
             # first cell is existing road and last cell is not existing road
             run_lengths_mat <- run_lengths %>% cumsum() %>% 
-              #{c(1, .)} %>% 
-              #.[-length(.)] %>% 
               matrix(ncol = 2, byrow = T) %>% 
               as.data.frame() %>% 
               `names<-`(c("start", "end")) %>% 
-              mutate(end = end + 1)
+              mutate(end = .data$end + 1)
           }
         }
         if(nrow(run_lengths_mat) == 1){
@@ -131,7 +129,7 @@ pathsToLines <- function(sim){
   linelist <- linelist[vapply(linelist,function(x) !is.null(x), c(TRUE))]
   
   outLines <- do.call(c, linelist) %>% 
-    sf::st_union() %>% 
-    {sf::st_sf(geometry = .)}
+    sf::st_union()
+  outLines <- sf::st_sf(geometry = outLines)
   return(sf::st_set_crs(outLines, sf::st_crs(sim$roads)))
 }

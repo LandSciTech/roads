@@ -52,8 +52,9 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
       clumpedRast <- raster::clump(landings, gaps = F) 
       
       clumps <- clumpedRast %>% 
-        raster::freq(useNA = "no") %>% 
-        .[,2] %>% max() > 1
+        raster::freq(useNA = "no")
+      
+      clumps <- clumps[,2] %>% max() > 1
       
       if(clumps){
         landings <- sf::st_as_sf(raster::rasterToPolygons(clumpedRast, 

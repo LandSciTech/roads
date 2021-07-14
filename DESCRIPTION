@@ -6,6 +6,10 @@ Authors@R:
            family = "Hughes",
            role = c("aut", "cre"),
            email = "josie.hughes@canada.ca"),
+           person(given = "Sarah",
+           family = "Endicott", 
+           role = "aut", 
+           email = "sarah.endicott@canada.ca"),
     person(given = "Kyle",
            family = "Lochhead",
            role = c("aut"),
@@ -44,9 +48,9 @@ RoxygenNote: 7.1.1
 Suggests: 
     testthat (>= 2.1.0),
     colorRamps,
-    colorspace,
     knitr,
-    rmarkdown
+    rmarkdown,
+    viridis
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
 Collate: 

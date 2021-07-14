@@ -14,31 +14,32 @@ rasterToLineSegments <- function(rast){
   # finds line between all points and keep shortest
   nearLn <- sf::st_nearest_points(pts, pts) %>%
     sf::st_as_sf() %>%
-    mutate(len = sf::st_length(x), ID = 1:n())
+    mutate(len = sf::st_length(.data$x), ID = 1:n())
 
   # speeds things up because filtering is slow on sf (as is [])
   nearLn2 <- nearLn %>% sf::st_drop_geometry() %>%
-    filter(len > 0) %>%
-    filter(len == min(len))
+    filter(.data$len > 0) %>%
+    filter(.data$len == min(.data$len))
 
   nearLn <- semi_join(nearLn, nearLn2, by = "ID")
 
   # remove duplicate lines
   coords <- sf::st_coordinates(nearLn) %>%
     as.data.frame() %>%
-    group_by(L1) %>%
+    group_by(.data$L1) %>%
     slice(1)
 
   nearLn2 <- nearLn %>% sf::st_drop_geometry() %>%
-    mutate(coordX = pull(coords, X),
-           coordY = pull(coords, Y)) %>%
+    mutate(coordX = pull(coords, .data$X),
+           coordY = pull(coords, .data$Y)) %>%
     group_by(.data$coordX, .data$coordY) %>%
     slice(1:2)
 
   nearLn <- semi_join(nearLn, nearLn2, by = "ID") %>%
     sf::st_geometry() %>%
-    sf::st_union() %>%
-    {sf::st_sf(geometry = .)}
+    sf::st_union()
+  
+  nearLn <- sf::st_sf(geometry = nearLn)
 
   return(nearLn)
 

@@ -33,18 +33,18 @@ Get landing points inside harvest blocks
 # Get centroid
 outCent <- getLandingsFromTarget(demoScen[[1]]$landings.poly)
 raster::plot(demoScen[[1]]$landings.poly)
-plot(outCent, col = "red", add = T)
+plot(outCent, col = "red", add = TRUE)
 
 # Get random sample with density 0.1 pts per unit area
 outRand <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "random")
 
 raster::plot(demoScen[[1]]$landings.poly)
-plot(outRand, col = "red", add = T)
+plot(outRand, col = "red", add = TRUE)
 
 # Get regular sample with density 0.1 pts per unit area
 outReg <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "regular")
 
 raster::plot(demoScen[[1]]$landings.poly)
-plot(outReg, col = "red", add = T)
+plot(outReg, col = "red", add = TRUE)
 
 }

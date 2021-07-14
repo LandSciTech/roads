@@ -107,16 +107,6 @@ pr <- projectRoads(landings, scen$cost.rast, scen$cost.rast == 0,
                    roadMethod = 'mst')
 visualize(scen$cost.rast, landings, pr, main = 'Scenario 2: Polygonal landings')
 
-# demonstration scenario 3
-scen <- demoScen[[3]] 
-# visualize just the cost raster and existing roads network
-visualize(scen$cost.rast)
-# use landing sets 1 to 4 of the landings RasterStack for multi-temporal roads
-# projection
-landings <- scen$landings.stack[[1:4]]
-# project roads and visualize
-pr <- projectRoads(landings, scen$cost.rast, scen$cost.rast == 0,
-                   roadMethod = 'mst')
 # visualize results
 visualize(scen$cost.rast, landings, pr) 
 # zoom in on the lower left corner
