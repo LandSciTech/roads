@@ -35,10 +35,10 @@
 #' @examples
 #' scen <- demoScen[[1]] # demonstration scenario 1
 #' # use landing sets 1 to 3
-#' landings <- scen$landings.points[scen$landings.points$set %in% 1:3,] 
+#' landings <- scen$landings.points[scen$landings.points$set %in% 1:3,]
 #' # visualize just the input scenario
-#' visualize(scen$cost.rast, landings) 
-#' 
+#' visualize(scen$cost.rast, landings)
+#'  
 #' # project roads
 #' pr <- projectRoads(landings, scen$cost.rast, scen$cost.rast == 0,
 #'                    roadMethod = 'mst')
@@ -90,7 +90,9 @@
 #'@importFrom graphics box mtext strwidth
 #'@export
 #'
-visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main='',xlim=NA,ylim=NA,height=15,out.file=NA){
+visualize <- function(costRast, landings = NA, projRoadsResults = NA, 
+                      col.cost = NA, main = '', xlim = NA, ylim = NA, 
+                      height = 15, out.file = NA){
   grDevices::graphics.off()
   #########################
   ### CHECK AND ADJUST INPUTS
@@ -116,78 +118,92 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   }
   ## check and adjust (if necessary) out.file
   if(!is.na(out.file)){
-    splitpath <- base::strsplit(out.file,'/|\\\\')[[1]]
-    if (length(splitpath)==1){
+    splitpath <- strsplit(out.file, '/|\\\\')[[1]]
+    if (length(splitpath) == 1){
       # if just a filename specified, use the current working directory
-      out.file <- paste0(getwd(),'/',out.file)
+      out.file <- paste0(getwd(), '/', out.file)
     }else{
-      # otherwise, ensure that the specified directory exists. If not, stop and notify user.
-      dir <- paste(utils::head(strsplit(out.file,'/|\\\\')[[1]],-1),collapse='/')
+      # otherwise, ensure that the specified directory exists. If not, stop and
+      # notify user.
+      dir <- paste(utils::head(strsplit(out.file, '/|\\\\')[[1]], -1),
+                   collapse = '/')
       if(!dir.exists(dir)){
-        stop('Could not find directory for output image file:\n             ',dir)
+        stop('Could not find directory for output image file:\n             ',
+             dir)
       }
     }
   }
-  spatialSubsetting <- FALSE # indicates whether spatial subsetting of the extent will occur for display
+  # indicates whether spatial subsetting of the extent will occur for display
+  spatialSubsetting <- FALSE 
   ## prepare and check xlim and ylim
   if (any(is.na(xlim))){
-    xlim<-c(costRast@extent@xmin,costRast@extent@xmax)
+    xlim<-c(costRast@extent@xmin, costRast@extent@xmax)
   }else{
-    if (length(xlim)!=2){
+    if (length(xlim) != 2){
       stop('xlim should be NA, or a numerical vector of length 2.')
     }
-    if(xlim[1]>costRast@extent@xmin | xlim[1]<costRast@extent@xmin){
-      spatialSubsetting <- TRUE # spatial subsetting of the extent will occur for display
+    if(xlim[1] > costRast@extent@xmin | xlim[1] < costRast@extent@xmin){
+      # spatial subsetting of the extent will occur for display
+      spatialSubsetting <- TRUE 
     }
-    if(xlim[1]<costRast@extent@xmin){
-      xlim[1]<-costRast@extent@xmin
+    if(xlim[1] < costRast@extent@xmin){
+      xlim[1] <- costRast@extent@xmin
       }
-    if(xlim[2]>costRast@extent@xmax){
-      xlim[2]<-costRast@extent@xmax
+    if(xlim[2] > costRast@extent@xmax){
+      xlim[2] <- costRast@extent@xmax
       }
   }
   if (any(is.na(ylim))){
-    ylim<-c(costRast@extent@ymin,costRast@extent@ymax)
+    ylim <- c(costRast@extent@ymin, costRast@extent@ymax)
   }else{
-    if (length(ylim)!=2){
+    if (length(ylim) != 2){
       stop('ylim should be NA, or a numerical vector of length 2.')
     }
-    if(ylim[1]>costRast@extent@ymin | ylim[2]<costRast@extent@ymax){
+    if(ylim[1] > costRast@extent@ymin | ylim[2] < costRast@extent@ymax){
       spatialSubsetting <- TRUE # spatial subsetting of the extent will occur for display
     }
-    if(ylim[1]<costRast@extent@ymin){
-      ylim[1]<-costRast@extent@ymin
+    if(ylim[1] < costRast@extent@ymin){
+      ylim[1] <- costRast@extent@ymin
       }
-    if(ylim[2]>costRast@extent@ymax){
-      ylim[2]<-costRast@extent@ymax
+    if(ylim[2] > costRast@extent@ymax){
+      ylim[2] <- costRast@extent@ymax
       }
   }
   ## landings prep (prepped landings called 'land')
-  if (is(landings,'SpatialPointsDataFrame')){
+  if (is(landings, 'SpatialPointsDataFrame')){
     ## if landings are already SpatialPointsDataFrame, keep as is
     land <- landings
-  }else if (is(landings,'SpatialPoints') & !is(landings,'SpatialPointsDataFrame')){
+  }else if (is(landings, 'SpatialPoints') & !is(landings, 'SpatialPointsDataFrame')){
     ## if landings are SpatialPoints but not SpatialPointsDataFrame, convert to
     ## SpatialPointsDataFrame with no 'set' column
-    land <- sp::SpatialPointsDataFrame(landings,data=data.frame(z=rep(1,length(landings))))
-  }else if ( is(landings,'RasterStack') | is(landings,'RasterBrick') ){
+    land <- sp::SpatialPointsDataFrame(landings,
+                                       data = data.frame(z = rep(1, length(landings))))
+  }else if ( is(landings, 'RasterStack') | is(landings, 'RasterBrick') ){
     ## if landings are a RasterStack or RasterBrick, convert to SpatialPointsDataFrame with 'set'
     ## representing the layer number
-    land <- do.call(rbind,lapply(1:raster::nlayers(landings),FUN=function(r){
-      pnts<-raster::rasterToPoints(landings[[r]],fun=function(x){x>=1},spatial=TRUE)
-      names(pnts@data)<-'set'
-      pnts$set<-r
-      return(pnts)
-    }))
-  }else if (is(landings,'RasterLayer')){
+    land <- do.call(
+      rbind,
+      lapply(1:raster::nlayers(landings),
+             FUN = function(r){
+               pnts<-raster::rasterToPoints(landings[[r]],
+                                            fun = function(x) {x >= 1},
+                                            spatial = TRUE)
+               names(pnts@data) <- 'set'
+               pnts$set <- r
+               return(pnts)
+             })
+    )
+  }else if (is(landings, 'RasterLayer')){
     ## if landings are a single RasterLayer, convert to SpatialPointsDataFrame with no 'set' column
-    land <- raster::rasterToPoints(landings,fun=function(x){x>=1},spatial=TRUE)
-  }else if (is(landings,'SpatialPolygonsDataFrame')){
+    land <- raster::rasterToPoints(landings, fun = function(x){x >= 1},
+                                   spatial = TRUE)
+  }else if (is(landings, 'SpatialPolygonsDataFrame')){
     land <- landings
-  }else if ( is(landings,'SpatialPolygons') & !is(landings,'SpatialPolygonsDataFrame') ){
-    ## if landings are SpatialPolygons but not SpatialPolygonsDataFrame, convert to
-    ## SpatialPolygonsDataFrame with no 'set' column
-    land <- sp::SpatialPolygonsDataFrame(landings,data=data.frame(z=rep(1,length(landings))))
+    # seems to be repeat of above
+  # }else if (is(landings,'SpatialPolygons') & !is(landings,'SpatialPolygonsDataFrame') ){
+  #   ## if landings are SpatialPolygons but not SpatialPolygonsDataFrame, convert to
+  #   ## SpatialPolygonsDataFrame with no 'set' column
+  #   land <- sp::SpatialPolygonsDataFrame(landings,data=data.frame(z=rep(1,length(landings))))
   }else{
     land <- NA
   }
@@ -195,14 +211,19 @@ visualize <- function(costRast,landings=NA,projRoadsResults=NA,col.cost=NA,main=
   ### TEXT SIZE / SYMBOLS / SPACING ADJUSTMENT
   ## text size and symmbol settings
   ## graphics display height (in cm). Will be multiplied by 2.5 if plotting to out.file
-  dev.height.in <- height*0.393701
-  dev.height.ratio <- dev.height.in/10
-  cex.main <- 2*dev.height.ratio      ## text size magnification for the main title
-  cex.rast.axis <- 1*dev.height.ratio*1.5 ## text size magnification for raster axes labels
-  cex.leg.mainlabels <- 2*dev.height.ratio ## text size magnification for labels in the legend
-  col.roads.original <- 'black'  ## colour for original roads
-  col.newRoad.single <- 'grey50' ## colour for new roads, when there is a single time point
-  if (is(projRoadsResults,'RasterBrick')){
+  dev.height.in <- height * 0.393701
+  dev.height.ratio <- dev.height.in / 10
+  ## text size magnification for the main title
+  cex.main <- 2 * dev.height.ratio    
+  ## text size magnification for raster axes labels
+  cex.rast.axis <- 1*dev.height.ratio*1.5 
+  ## text size magnification for labels in the legend
+  cex.leg.mainlabels <- 2*dev.height.ratio 
+  ## colour for original roads
+  col.roads.original <- 'black' 
+  ## colour for new roads, when there is a single time point
+  col.newRoad.single <- 'grey50' 
+  if (is(projRoadsResults, 'RasterBrick')){
     nlayers <- raster::nlayers(projRoadsResults)
     ## colour for new roads, when there is a multi-temporal roads projection
     col.newRoad.multi <- grDevices::grey.colors(nlayers+1)[2:nlayers]

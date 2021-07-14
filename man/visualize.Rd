@@ -65,10 +65,10 @@ some details...
 \examples{
 scen <- demoScen[[1]] # demonstration scenario 1
 # use landing sets 1 to 3
-landings <- scen$landings.points[scen$landings.points$set \%in\% 1:3,] 
+landings <- scen$landings.points[scen$landings.points$set \%in\% 1:3,]
 # visualize just the input scenario
-visualize(scen$cost.rast, landings) 
-
+visualize(scen$cost.rast, landings)
+ 
 # project roads
 pr <- projectRoads(landings, scen$cost.rast, scen$cost.rast == 0,
                    roadMethod = 'mst')
