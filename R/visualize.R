@@ -88,7 +88,7 @@
 #'@rdname visualize
 #'@importFrom grDevices dev.off graphics.off
 #'@importFrom graphics box mtext strwidth
-#'@export
+# does not work with current output where roads can be lines @export
 #'
 visualize <- function(costRast, landings = NA, projRoadsResults = NA, 
                       col.cost = NA, main = '', xlim = NA, ylim = NA, 
