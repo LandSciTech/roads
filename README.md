@@ -58,6 +58,10 @@ cost path but independent of other landings and snapping (`roadMethod =
 "snap"`) which ignores both cost and other landings and simply connects
 each landing to the nearest road “as the crow flies”
 
+For more details on how to use the package see the vignette
+
+    vignette("roads-vignette", package = "roads")
+
 # License
 
 Copyright (C) 2021 Her Majesty the Queen in Right of Canada, as

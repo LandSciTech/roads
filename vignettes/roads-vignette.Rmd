@@ -211,7 +211,7 @@ if(requireNamespace("viridis", quietly = TRUE)){
 }
 
 ## scenario 
-scen <- roads::demoScen[[1]]
+scen <- demoScen[[1]]
 ## landing sets 1 to 4 of this scenario 
 land.pnts <- scen$landings.points[scen$landings.points$set%in%c(1:4),]
 ## plot the cost raster and landings
