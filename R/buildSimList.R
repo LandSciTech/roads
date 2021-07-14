@@ -16,6 +16,10 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
   } 
   if(0 %in% raster::unique(cost)){
     message("0s detected in cost raster, these will be considered as existing roads")
+  } else {
+    message("No 0s detected in cost raster. If existing roads have not been ",
+            "included in the cost raster set roadsInCost = FALSE to have them ",
+            "burned in")
   }
   
   # Burn roads into raster if not already for raster roads before converting 
