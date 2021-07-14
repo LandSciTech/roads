@@ -21,11 +21,11 @@ doPlot <- interactive()
 test_that("cost and road options work", {
   
   # 0/1 raster
-  projectRoads(scen$landings.points.sf, scen$cost.rast,
+  out <- projectRoads(scen$landings.points.sf, scen$cost.rast,
                scen$road.rast, plotRoads = doPlot)
   
-  # output as 
-
+  expect_s4_class(out$roads, "RasterLayer")
+  
   # 0< raster 
   roadInt <- scen$road.rast
   suppressWarnings(roadInt[roadInt == 1] <- 1:100)
@@ -42,8 +42,9 @@ test_that("cost and road options work", {
                  "No 0s detected")
   
   # sp lines
-  projectRoads(scen$landings.points.sf, scen$cost.rast,
+  out2 <- projectRoads(scen$landings.points.sf, scen$cost.rast,
                scen$road.line, plotRoads = doPlot)
+  expect_s3_class(out2$roads, "sf")
   
   # sf lines
   projectRoads(scen$landings.points.sf, scen$cost.rast,
@@ -85,4 +86,28 @@ test_that("landings options work", {
   # sf polygons
   projectRoads(scen$landings.poly.sf, scen$cost.rast,
                scen$road.line, plotRoads = doPlot)
+  
+  # matrix
+  projectRoads(sf::st_coordinates(scen$landings.poly.sf), scen$cost.rast,
+               scen$road.line, plotRoads = doPlot)
+})
+
+test_that("sim list input works", {
+  simList <- projectRoads(scen$landings.poly.sf, scen$cost.rast,
+                          scen$road.line, plotRoads = doPlot)
+  lnd2 <- scen$landings.points.sf %>% filter(set == 2)
+  
+  projectRoads(sim = simList, landings = lnd2, plotRoads = TRUE)
+})
+
+test_that("input types are tested", {
+  expect_error(projectRoads("string", scen$cost.rast,
+               scen$road.line, plotRoads = doPlot),
+               "must be either")
+  expect_error(projectRoads(scen$landings.points, "sting",
+                            scen$road.line, plotRoads = doPlot),
+               "must be .* Raster Layer")
+  expect_error(projectRoads(scen$landings.points, scen$cost.rast,
+                            "string", plotRoads = doPlot),
+               "must be either")
 })

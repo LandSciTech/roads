@@ -16,9 +16,9 @@ NULL
 #' based on the cost surface} }
 #'
 #' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
-#'   SpatialPoints*, matrix, or RasterStack containing features to be connected
+#'   SpatialPoints*, matrix, containing features to be connected
 #'   to the road network. Matrix should contain columns x, y with coordinates,
-#'   all columns will be ignored. If RasterStack assume an ordered time-series.
+#'   all columns will be ignored.
 #' @param cost RasterLayer. Cost surface where existing roads must be the only
 #'   cells with a cost of 0. If existing roads do not have 0 cost set
 #'   \code{roadsInCost = FALSE} and they will be burned in.

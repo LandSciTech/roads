@@ -40,6 +40,9 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
                                       spatial = TRUE) %>% 
         sf::st_as_sf() %>% 
         sf::st_set_agr("constant")
+    }else {
+      stop("roads must be either RasterLayer, sf object, or SpatialLines*",
+           call. = FALSE)
     }
   }
   
@@ -77,11 +80,20 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
       
 
     } else if(is(landings, "matrix")){
+      xyind <- which(colnames(landings) %in% c("x", "X", "y", "Y"))
+      if(length(xyind) == 0){
+        stop("landings matrix must have column name in c('x', 'X', 'y', 'Y')",
+             call. = FALSE)
+      }
       landings <- sf::st_sf(
-        geometry = sf::st_as_sfc(list(sf::st_multipoint(landings[, c("x", "y")])))
+        geometry = sf::st_as_sfc(list(sf::st_multipoint(landings[, xyind])))
         ) %>%
         sf::st_cast("POINT") %>% 
         sf::st_set_agr("constant")
+    }else {
+      stop("landings must be either RasterLayer, sf object, SpatialPoints*, ",
+           "or SpatialPolygons*",
+           call. = FALSE)
     }
   }
   

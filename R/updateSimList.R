@@ -33,10 +33,19 @@ updateSimList <- function(sim, landings){
       
       
     } else if(is(landings, "matrix")){
+      xyind <- which(colnames(landings) %in% c("x", "X", "y", "Y"))
+      if(length(xyind) == 0){
+        stop("landings matrix must have column name in c('x', 'X', 'y', 'Y')",
+             call. = FALSE)
+      }
       landings <- sf::st_sf(
-        geometry = sf::st_as_sfc(list(sf::st_multipoint(landings[, c("x", "y")])))
+        geometry = sf::st_as_sfc(list(sf::st_multipoint(landings[, xyind])))
       ) %>%
         sf::st_cast("POINT")
+    } else {
+      stop("landings must be either RasterLayer, sf object, SpatialPoints*, ",
+           "or SpatialPolygons*",
+           call. = FALSE)
     }
   }
   
