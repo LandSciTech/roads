@@ -16,7 +16,7 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
   } 
   if(0 %in% raster::unique(cost)){
     message("0s detected in cost raster, these will be considered as existing roads")
-  } else {
+  } else if(roadsInCost){
     message("No 0s detected in cost raster. If existing roads have not been ",
             "included in the cost raster set roadsInCost = FALSE to have them ",
             "burned in")
@@ -101,7 +101,9 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
     cost_st <- stars::st_as_stars(cost)
     
     # The crs is checked above but stars requires that they be identical
-    roads <- st_transform(roads, st_crs(cost_st))
+    if(!is.na(st_crs(roads))){
+      roads <- st_transform(roads, st_crs(cost_st))
+    }
     
     # rasterize roads to template
     tmplt <- stars::st_as_stars(sf::st_bbox(cost_st), nx = raster::ncol(cost),
