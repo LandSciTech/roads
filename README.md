@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/LandSciTech/roads/workflows/R-CMD-check/badge.svg)](https://github.com/LandSciTech/roads/actions)
 <!-- badges: end -->
 
 The goal of roads is to simulate road development under resource
