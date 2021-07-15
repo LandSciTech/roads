@@ -82,7 +82,13 @@ The roads network included in the `CLUSexample` data-set is a raster but is conv
 existingRoadsRast <- roads::CLUSexample$roads
 
 # Note rasterToLineSegments only works for simple road networks
-roadsLine <- roads::CLUSexample$roads %>% rasterToLineSegments()
+# roadsLine <- roads::CLUSexample$roads %>% rasterToLineSegments()
+# Road must not be flat b/c weird issue in sf package #1730
+roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
+  matrix(c(0.5, 4.5, 4.5, 4.51),
+         ncol = 2, byrow = T) 
+)) %>%
+  sf::st_as_sf()
 ```
 
 ## 3. Landings layer(s)

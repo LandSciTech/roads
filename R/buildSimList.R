@@ -138,11 +138,23 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
   }
   
   # crop landings and roads to bbox of cost raster
+  nrland <- nrow(landings)
+  nrroads <- nrow(roads)
+  
   ext <- sf::st_bbox(cost) %>% as.numeric() %>% 
     `names<-`(c("xmin", "ymin", "xmax", "ymax"))
   landings <- sf::st_crop(landings, ext)
   roads <- sf::st_crop(roads, ext)
   
+  if(nrland != nrow(landings)){
+    stop(nrland - nrow(landings), " landings are outside the cost surface. ",
+         "The cost surface must cover the extent of landings", call. = FALSE)
+  }
+  
+  if(nrroads != nrow(roads)){
+    stop(nrroads - nrow(roads), " roads are outside the cost surface. ",
+         "The cost surface must cover the extent of roads", call. = FALSE)
+  }
 
   sim <- list(roads = roads, costSurface = cost, 
               roadMethod = roadMethod, 
