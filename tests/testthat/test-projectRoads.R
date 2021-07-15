@@ -1,4 +1,4 @@
-# test projectRoads works for all the various input and output options
+context("test projectRoads works for all the various input and output options")
 
 # options:
 ## ROADS
@@ -96,8 +96,9 @@ test_that("sim list input works", {
   simList <- projectRoads(scen$landings.poly.sf, scen$cost.rast,
                           scen$road.line, plotRoads = doPlot)
   lnd2 <- scen$landings.points.sf %>% filter(set == 2)
+  expect_type(projectRoads(sim = simList, landings = lnd2, plotRoads = doPlot), 
+              "list")
   
-  projectRoads(sim = simList, landings = lnd2, plotRoads = TRUE)
 })
 
 test_that("input types are tested", {
@@ -106,7 +107,7 @@ test_that("input types are tested", {
                "must be either")
   expect_error(projectRoads(scen$landings.points, "sting",
                             scen$road.line, plotRoads = doPlot),
-               "must be .* Raster Layer")
+               "must be .* RasterLayer")
   expect_error(projectRoads(scen$landings.points, scen$cost.rast,
                             "string", plotRoads = doPlot),
                "must be either")
