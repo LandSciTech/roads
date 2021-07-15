@@ -1,6 +1,3 @@
-#' @include AAAClassDefinitions.R
-NULL
-
 #' Project road network
 #'
 #' Project road locations based on existing roads, planned landings, and a cost
@@ -109,12 +106,13 @@ NULL
 #' prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
 #' @import dplyr
-#' @importFrom methods is as slotNames
+#' @importFrom methods is as
 #' @importFrom stats end na.omit
-#' @importFrom graphics plot title
-#' @importFrom sf st_crs st_transform
 #' @importFrom rlang .data
-#'
+#' @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell plot
+#' @importFrom sp SpatialPoints Line Lines SpatialLines CRS
+#' @importFrom data.table data.table := .N setDT setnames
+#' 
 #' @export
 #' 
 setGeneric('projectRoads', function(landings = NULL,
@@ -269,7 +267,9 @@ setMethod(
 
     # add landings to sim list. Should involve all the same checks as before
     sim <- updateSimList(sim, landings)
-
+    
+    sim$landingsIn <- sim$landings
+    
     # make sure the name of the sf_column is "geometry"
     geoColInL <- attr(sim$landings, "sf_column")
     if(geoColInL != "geometry"){
@@ -304,7 +304,7 @@ setMethod(
     )
 
     if(plotRoads){
-      print({raster::plot(sim$costSurface)
+      raster::plot(sim$costSurface)
         plot(sf::st_geometry(sim$roads), add = TRUE)
         plot(sf::st_geometry(sim$landings), add = TRUE)
         if(is(landings, "SpatialPolygons")){
@@ -314,7 +314,7 @@ setMethod(
                   c("POLYGON", "MULTIPOLYGON")){
           plot(sf::st_geometry(landings), add = TRUE)
         }
-        title(main = mainTitle, sub = paste0("Method: ", sim$roadMethod))})
+        title(main = mainTitle, sub = paste0("Method: ", sim$roadMethod))
     }
 
     # put back original geometry column names

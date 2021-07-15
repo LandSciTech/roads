@@ -117,8 +117,8 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
     cost_st <- stars::st_as_stars(cost)
     
     # The crs is checked above but stars requires that they be identical
-    if(!is.na(st_crs(roads))){
-      roads <- st_transform(roads, st_crs(cost_st))
+    if(!is.na(sf::st_crs(roads))){
+      roads <- sf::st_transform(roads, sf::st_crs(cost_st))
     }
     
     # rasterize roads to template

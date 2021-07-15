@@ -253,7 +253,6 @@ getLandingsFromTargetRast<-function(inputPatches,
 #'
 #' @param withIDs logical
 #'
-#' @export
 getCentroids<-function(newLandings, withIDs = TRUE){
   cRes = raster::res(newLandings)
   
