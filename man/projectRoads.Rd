@@ -49,7 +49,7 @@ projectRoads(
 \item{landings}{sf polygons or points, RasterLayer, SpatialPolygons*,
 SpatialPoints*, matrix, containing features to be connected
 to the road network. Matrix should contain columns x, y with coordinates,
-all columns will be ignored.}
+all other columns will be ignored.}
 
 \item{cost}{RasterLayer. Cost surface where existing roads must be the only
 cells with a cost of 0. If existing roads do not have 0 cost set
@@ -84,6 +84,20 @@ are sf if the input is sf or Spatial* and raster if the input was a raster.}
 is assumed to include existing roads as 0 in its cost surface. If FALSE
 then the roads will be "burned in" to the cost raster with a cost of 0.}
 }
+\value{
+a list with components:
+\itemize{
+\item{roads: }{the projected road network, including new and input roads.}
+\item{costSurface: }{the input cost surface, this is not updated to reflect 
+      the new roads that were added.}
+\item{roadMethod: }{the road simulation method used.}
+\item{landings: }{the landings used in the simulation.}
+\item{g: }{the graph that describes the cost of paths between each cell in the
+      cost raster. This is updated based on the new roads so that vertices 
+      were connected by new roads now have a cost of 0. This can be used to 
+      avoid recomputing the graph in a simulation with multiple time steps.}
+}
+}
 \description{
 Project road locations based on existing roads, planned landings, and a cost
 surface that defines the cost of building roads.
@@ -100,14 +114,14 @@ based on the cost surface} }
 }
 \examples{
 doPlots <- interactive()
-### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")
+### using:  scenario 1 / sf landings / least-cost path ("lcp")
 # demo scenario 1
 scen <- demoScen[[1]]
 
 # landing set 1 of scenario 1:
-land.pnts <- scen$landings.points[scen$landings.points$set==1,]
+land.pnts <- scen$landings.points.sf[scen$landings.points.sf$set==1,]
 
-prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.rast, "lcp",
+prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line.sf, "lcp",
                          plotRoads = doPlots, mainTitle = "Scen 1: SPDF-LCP")
 
 ### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
@@ -117,11 +131,11 @@ scen <- demoScen[[1]]
 # the RasterLayer version of landing set 1 of scenario 1:
 land.rLyr <- scen$landings.stack[[1]]
 
-prRes <- projectRoads(land.rLyr, scen$cost.rast, scen$road.rast, "mst",
+prRes <- projectRoads(land.rLyr, scen$cost.rast, scen$road.line.sf, "mst",
                          plotRoads = doPlots, mainTitle = "Scen 1: Raster-MST")
 
 
-### using: scenario 2 / matrix landings / snapping ("snap")
+### using: scenario 2 / matrix landings raster roads / snapping ("snap")
 # demo scenario 2
 scen <- demoScen[[2]]
 
@@ -130,19 +144,7 @@ land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
 
 prRes <- projectRoads(land.mat, scen$cost.rast, scen$road.rast, "snap",
                          plotRoads = doPlots, mainTitle = "Scen 2: Matrix-Snap")
-
-# TODO: Make this and a list of sf objects, (or maybe a year column?) work
-# ### using: scenario 3 / RasterStack landings / minimum spanning tree ("mst")
-# # demo scenario 3
-# scen <- demoScen[[3]]
-#
-# # landing sets 1 to 4 of scenario 3, as RasterStack:
-# land.rstack <- scen$landings.stack[[1:4]]
-#
-# prRes <- projectRoads(land.rstack, scen$cost.rast, scen$road.rast ,"mst",
-#                          plotRoads = doPlots, mainTitle = "Scen 3: RasterStack-MST")
-
-
+                         
 ### using: scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
 # demo scenario 7
 scen <- demoScen[[7]]

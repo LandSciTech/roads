@@ -1,9 +1,18 @@
 #' Convert raster to lines
-#' 
-#' Doesn't work perfectly
-#' 
-#' @param rast raster with lines
-#' 
+#'
+#' Converts rasters that represent lines into an sf object. Raster is first
+#' converted to points and then lines are drawn between the nearest points.
+#' If there area two differet ways to connect the points that have the same 
+#' distance both are kept which can cause doubled lines. USE WITH CAUTION.
+#'
+#' @param rast raster representing lines all values > 0 are assumed to be lines
+#'
+#' @examples
+#' roadRast <- demoScen[[1]]$road.rast
+#' # Note this is imperfect because the line is doubled where the two roads
+#' # intersect
+#' roadLine <- rasterToLineSegments(roadRast)
+#'
 #' @export
 
 rasterToLineSegments <- function(rast){

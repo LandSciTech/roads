@@ -37,7 +37,7 @@ test_that("cost and road options work", {
                roadInt, plotRoads = doPlot)
   
   # try with no 0 in cost in case that compensated for roads
-  expect_message(projectRoads(scen$landings.points.sf, costNo0,
+  expect_warning(projectRoads(scen$landings.points.sf, costNo0,
                               roadInt, plotRoads = doPlot),
                  "No 0s detected")
   

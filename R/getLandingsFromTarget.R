@@ -1,5 +1,17 @@
 #' Get landing points inside harvest blocks
 #'
+#' Generate landing points inside polygons representing harvested area. There
+#' are three different sampling types available: "centroid" is the default and
+#' will return the centroid or a point that is inside the polygon if the
+#' centroid is not (see \code{\link[sf:geos_unary]{st_point_on_surface}}); "random" takes a
+#' random sample based on the given \code{landingDens} see
+#' (\code{\link[sf]{st_sample}}); "regular" intersects the polygons with a
+#' regular grid with cellsize \code{sqrt(1/landingDens)}, if a polygon does not
+#' intersect with the grid its centroid is used.
+#'
+#' Note that the \code{landingDens} is in points per unit area where the unit of
+#' area is determined by the CRS. For projected CRS this should likely be a very
+#' small number ie < 0.001.
 #'
 #' @param harvest sf, SpatialPolygons or RasterLayer object with harvested
 #'   areas. If it is a RasterLayer with more than one unique value other than 0

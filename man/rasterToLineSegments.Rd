@@ -7,8 +7,18 @@
 rasterToLineSegments(rast)
 }
 \arguments{
-\item{rast}{raster with lines}
+\item{rast}{raster representing lines all values > 0 are assumed to be lines}
 }
 \description{
-Doesn't work perfectly
+Converts rasters that represent lines into an sf object. Raster is first
+converted to points and then lines are drawn between the nearest points.
+If there area two differet ways to connect the points that have the same 
+distance both are kept which can cause doubled lines. USE WITH CAUTION.
+}
+\examples{
+roadRast <- demoScen[[1]]$road.rast
+# Note this is imperfect because the line is doubled where the two roads
+# intersect
+roadLine <- rasterToLineSegments(roadRast)
+
 }
