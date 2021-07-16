@@ -1,7 +1,10 @@
 ## Test environments
-* local R installation, R 3.6.2
-* ubuntu 16.04 (on travis-ci), R 3.6.2
-* win-builder (devel)
+* local windows R installation, R 3.6.2
+* window-latest (release)
+* macOS-latest (release)
+* ubuntu-20.04 (release)
+* ubuntu-20.04 (devel)
+
 
 ## R CMD check results
 

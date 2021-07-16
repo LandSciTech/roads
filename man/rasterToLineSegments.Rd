@@ -9,6 +9,9 @@ rasterToLineSegments(rast)
 \arguments{
 \item{rast}{raster representing lines all values > 0 are assumed to be lines}
 }
+\value{
+an sf simple feature collection
+}
 \description{
 Converts rasters that represent lines into an sf object. Raster is first
 converted to points and then lines are drawn between the nearest points.

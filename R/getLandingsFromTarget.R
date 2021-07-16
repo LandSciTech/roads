@@ -29,6 +29,8 @@
 #'   \code{landingDens}. If \code{harvest} is a raster the centroid is always
 #'   returned as one of the landings to ensure all harvest areas get at least
 #'   one landing.
+#'   
+#' @return an sf simple feature collection with an ID column and POINT geometry
 #'
 #' @examples
 #' # Get centroid

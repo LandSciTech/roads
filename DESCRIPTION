@@ -31,16 +31,11 @@ LazyData: true
 Imports:
     raster,
     dplyr,
-    rgeos,
     igraph,
     sp,
-    gdistance,
     data.table,
     SpaDES.tools,
-    latticeExtra,
     sf,
-    fasterize,
-    spdep,
     stars,
     units,
     rlang,
@@ -49,7 +44,6 @@ Imports:
 RoxygenNote: 7.1.1
 Suggests: 
     testthat (>= 2.1.0),
-    colorRamps,
     knitr,
     rmarkdown,
     viridis

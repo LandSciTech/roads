@@ -26,6 +26,9 @@ where the number is determined by the area of the polygons and
 returned as one of the landings to ensure all harvest areas get at least
 one landing.}
 }
+\value{
+an sf simple feature collection with an ID column and POINT geometry
+}
 \description{
 Generate landing points inside polygons representing harvested area. There
 are three different sampling types available: "centroid" is the default and
