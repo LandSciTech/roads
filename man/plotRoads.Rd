@@ -21,3 +21,14 @@ Creates a plot using base graphics
 \description{
 Plot the results of \code{\link{projectRoads}}
 }
+\examples{
+# demo scenario 1
+scen <- demoScen[[1]]
+
+# landing set 1 of scenario 1:
+land.pnts <- scen$landings.points.sf[scen$landings.points.sf$set==1,]
+
+prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line.sf, "lcp")
+plotRoads(prRes, "Title")
+
+}

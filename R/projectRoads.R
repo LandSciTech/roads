@@ -97,7 +97,8 @@
 #' prRes <- projectRoads(land.poly, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 7: SpPoly-MST")
 #'
-#'
+#'# don't run to avoid examples being too long
+#'\dontrun{
 #' ## using scenario 7 / Polygon landings raster / minimum spanning tree
 #' # demo scenario 7
 #' scen <- demoScen[[7]]
@@ -106,6 +107,7 @@
 #'
 #' prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
+#' }
 #' @import dplyr
 #' @importFrom methods is as
 #' @importFrom stats end na.omit
