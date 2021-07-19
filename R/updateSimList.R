@@ -72,23 +72,8 @@ updateSimList <- function(sim, landings){
     
   } else {
     message("Burning in roads to cost raster from sf")
-    # use stars package because raster::rasterize and raster::mask are slow
-    cost_st <- stars::st_as_stars(sim$costSurface)
-    
-    # rasterize roads to template
-    tmplt <- stars::st_as_stars(sf::st_bbox(cost_st), nx = raster::ncol(sim$costSurface),
-                                ny = raster::nrow(sim$costSurface), values = 1)
-    
-    # road raster is 1 where there are no roads and 0 where there are roads
-    roads_st <- stars::st_rasterize(sim$roads %>% select(), template = tmplt,
-                                    options = "ALL_TOUCHED=TRUE") == 1
-    
-    cost_st <- cost_st * roads_st
-    
-    # convert back to Raster from stars
-    sim$costSurface <- as(cost_st, "Raster")
-    
-    rm(cost_st, roads_st, tmplt)
+    roadsRast <- rasterizeLine(roads, cost, 0) == 0
+    cost <- cost * roadsRast
   }
   
   sim$landings <- landings

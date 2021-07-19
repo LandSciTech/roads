@@ -65,4 +65,5 @@ Collate:
     'shortestPaths.R'
     'updateSimList.R'
     'plotRoads.R'
+    'rasterizeLine.R'
 BugReports: https://github.com/LandSciTech/roads/issues

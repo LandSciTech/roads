@@ -211,12 +211,7 @@ setMethod(
 
     if(roadsOut == "raster"){
       # rasterize roads to template
-      tmplt <- stars::st_as_stars(sf::st_bbox(sim$cost), nx = raster::ncol(sim$cost),
-                                  ny = raster::nrow(sim$cost), values = 0)
-
-      sim$roads <- (stars::st_rasterize(sim$roads, template = tmplt,
-                                       options = "ALL_TOUCHED=TRUE") > 0) %>%
-        as("Raster")
+      sim$roads <- rasterizeLine(sim$roads, sim$cost, 0) > 0
     }
     
     # reset landings to include all input landings

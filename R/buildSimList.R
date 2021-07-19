@@ -113,28 +113,16 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
   # burn in roads to have 0 cost 
   if(!roadsInCost){
     message("Burning in roads to cost raster from sf")
-    # use stars package because raster::rasterize and raster::mask are slow
-    cost_st <- stars::st_as_stars(cost)
-    
+
     # The crs is checked above but stars requires that they be identical
     if(!is.na(sf::st_crs(roads))){
-      roads <- sf::st_transform(roads, sf::st_crs(cost_st))
+      roads <- sf::st_transform(roads, sf::st_crs(cost))
     }
     
-    # rasterize roads to template
-    tmplt <- stars::st_as_stars(sf::st_bbox(cost_st), nx = raster::ncol(cost),
-                                ny = raster::nrow(cost), values = 1)
+    roadsRast <- rasterizeLine(roads, cost, 0) == 0
+    cost <- cost * roadsRast
     
-    # road raster is 1 where there are no roads and 0 where there are roads
-    roads_st <- stars::st_rasterize(roads %>% select(), template = tmplt,
-                                    options = "ALL_TOUCHED=TRUE") == 1
-   
-    cost_st <- cost_st * roads_st
-    
-    # convert back to Raster from stars
-    cost <- as(cost_st, "Raster")
-
-    rm(cost_st, roads_st, tmplt)
+    rm(roadsRast)
   }
   
   # crop landings and roads to bbox of cost raster
