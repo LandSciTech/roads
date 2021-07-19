@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-This vignette provides a tutorial on the use of the `roads` package for the spatial simulation of future roads development under a given resource development scenario.  This tutorial, which borrows heavily from a demonstration written by Kyle Lochhead and Tyler Muhly in 2018, will focus primarily on the `projectRoads` function of the `roads` package, as it is responsible for performing the simulation. Example data sets from Kyle Lochhead and Tyler Muhly's **CLUS road simulation example** are included in the package as `CLUSexample` and will used within this documentation.
+This vignette provides a tutorial on the use of the `roads` package for the spatial simulation of future roads development under a given resource development scenario.  This tutorial, which borrows heavily from a demonstration written by Kyle Lochhead and Tyler Muhly in 2018, will focus primarily on the `projectRoads` function of the `roads` package, as it is responsible for performing the simulation. Example data sets used below are included in the package as `CLUSexample` and `demoScen`. 
 
 In the context of this package, resource development scenarios are represented by three components:
 
@@ -305,7 +305,7 @@ par(mar = par('mar')/2)
   plot(scen$road.line, col = 'grey30', add = TRUE, legend = FALSE)
   
 for (i in 1:length(multiTime_sim)){
-  plot(scen$cost.rast, col = rastColours2, 
+  plot(multiTime_sim[[i]]$costSurface, col = rastColours2, 
        main = paste0('Roads at time t = ', i), legend = FALSE)
   plot(multiTime_sim[[i]]$roads, col = 'grey30', add = TRUE, legend = FALSE)
   plot(land.pnts[land.pnts$set == i, ], add = TRUE, pch = 21, 

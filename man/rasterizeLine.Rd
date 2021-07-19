@@ -23,11 +23,10 @@ rasterize is slow
 }
 \examples{
 
-roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
+roadsLine <- sf::st_sf(geometry = sf::st_sfc(sf::st_linestring(
 matrix(c(0.5, 4.5, 4.5, 4.51),
-       ncol = 2, byrow = T) 
-)) \%>\%
-  sf::st_as_sf()
+       ncol = 2, byrow = TRUE) 
+)))
 
 rasterizeLine(roadsLine, CLUSexample$cost, 0)   
 

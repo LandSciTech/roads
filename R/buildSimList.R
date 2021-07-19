@@ -9,8 +9,10 @@
 #' @param roadMethod method of road projection
 #' @param landings landings input
 #' @param roadsInCost Whether the roads have already been burned into cost
+#' @param sim A sim list to update rather than building new.
 
-buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
+buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost, 
+                         sim = NULL){
   if(!is(cost, "RasterLayer")){
     stop("cost must be provided as a RasterLayer", call. = FALSE)
   } 
@@ -144,7 +146,16 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost){
          "The cost surface must cover the extent of roads", call. = FALSE)
   }
 
-  sim <- list(roads = roads, costSurface = cost, 
-              roadMethod = roadMethod, 
-              landings = landings)
+  if(is.null(sim)){
+    sim <- list(roads = roads, costSurface = cost, 
+                roadMethod = roadMethod, 
+                landings = landings)
+  } else {
+    sim$roads <- roads
+    sim$landings <- landings
+    sim$costSurface <- cost
+    sim$roadMethod <- roadMethod
+  }
+  return(sim)
+
 }

@@ -1,4 +1,6 @@
 #' Data from the CLUS example
+#' 
+#' From Kyle Lochhead and Tyler Muhly's CLUS road simulation example
 #'
 #' @docType data
 #'

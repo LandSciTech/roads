@@ -4,7 +4,7 @@
 \alias{buildSimList}
 \title{Build sim list object}
 \usage{
-buildSimList(roads, cost, roadMethod, landings, roadsInCost)
+buildSimList(roads, cost, roadMethod, landings, roadsInCost, sim = NULL)
 }
 \arguments{
 \item{roads}{roads input}
@@ -16,6 +16,8 @@ buildSimList(roads, cost, roadMethod, landings, roadsInCost)
 \item{landings}{landings input}
 
 \item{roadsInCost}{Whether the roads have already been burned into cost}
+
+\item{sim}{A sim list to update rather than building new.}
 }
 \description{
 Build a sim list object to be used in the rest of the functions and returned

@@ -254,7 +254,8 @@ setMethod(
     }
 
     # add landings to sim list. Should involve all the same checks as before
-    sim <- updateSimList(sim, landings)
+    sim <- buildSimList(sim$roads, sim$cost, sim$roadMethod, landings, 
+                        roadsInCost = FALSE, sim = sim)
     
     sim$landingsIn <- sim$landings
     
