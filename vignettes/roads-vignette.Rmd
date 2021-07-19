@@ -96,9 +96,9 @@ roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
 Landings, or resource development locations, that are to be connected to the existing road network can be specified to the `projectRoads` method in a variety of forms.  These include specification as:
 
 * A logical `RasterLayer` object with cell values of `TRUE` for landings,
-* A `SpatialPoints` or `SpatialPointsDataFrame` {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} object with points representing landings,
+* A `SpatialPoints` or `SpatialPointsDataFrame` {[`sp`](https://CRAN.R-project.org/package=sp)} object with points representing landings,
 * A matrix with at least two columns, with columns 1 and 2 representing x any y coordinates of landing locations respectively, 
-* A `SpatialPolygons`or `SpatialPolygonsDataFrame` {[`sp`](https://cran.r-project.org/web/packages/sp/index.html)} object with polygons representing landings, 
+* A `SpatialPolygons`or `SpatialPolygonsDataFrame` {[`sp`](https://CRAN.R-project.org/package=sp)} object with polygons representing landings, 
 * A sf {[`sf`](https://r-spatial.github.io/sf/)} object with geometry type "POINTS" or "POLYGONs"
 
 If the landings are polygons then the centroid is used as the destination for new roads. For more control or to have more than one landing per polygon see Multiple landings per harvest block below.
@@ -155,9 +155,9 @@ This means this approach, while simple to implement, would over estimate the amo
 
 ### 2. Least Cost Paths (LCP)
 
-This approach builds upon the snapping approach by assuming a 'cost directed' path (i.e., "as the wolf runs") for each landing to the existing road network.  This approach requires that a cost surface be provided and used to build a mathematical [graph](https://en.wikipedia.org/wiki/Graph_theory) using [igraph](http://igraph.org/r/) and takes considerably longer to compute.
+This approach builds upon the snapping approach by assuming a 'cost directed' path (i.e., "as the wolf runs") for each landing to the existing road network.  This approach requires that a cost surface be provided and used to build a mathematical [graph](https://en.wikipedia.org/wiki/Graph_theory) using [igraph](https://igraph.org/r/) and takes considerably longer to compute.
 
-Once the graph is built, the least cost path between any two vertices is determined using [Dijkstra’s algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), which is implemented in the [shortest_paths](http://igraph.org/r/doc/distances.html) function in igraph. The graph can be easily updated to simulate the change in the cost surface from dynamically developing roads during the simulation. Note, that this dynamic behaviour would not be possible in a pre-solve of the road network. To implement a pre-solve approach the igraph function [all_shortest_paths](http://igraph.org/r/doc/distances.html) can be used to calculate all shortest paths between pairs of vertices; however, this is not included here.
+Once the graph is built, the least cost path between any two vertices is determined using [Dijkstra’s algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), which is implemented in the [shortest_paths](https://igraph.org/r/doc/distances.html) function in igraph. The graph can be easily updated to simulate the change in the cost surface from dynamically developing roads during the simulation. Note, that this dynamic behaviour would not be possible in a pre-solve of the road network. To implement a pre-solve approach the igraph function [all_shortest_paths](https://igraph.org/r/doc/distances.html) can be used to calculate all shortest paths between pairs of vertices; however, this is not included here.
 
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
 ## project new roads using the 'LCP' approach
