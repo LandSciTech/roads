@@ -4,7 +4,8 @@
 \name{demoScen}
 \alias{demoScen}
 \title{Demonstration set of 10 input scenarios}
-\format{A list of sub-lists, with each sub-list representing an input scenario. The scenarios (sub-lists) each contain the following components:
+\format{
+A list of sub-lists, with each sub-list representing an input scenario. The scenarios (sub-lists) each contain the following components:
 \describe{
   \item{scen.number}{An integer value representing the scenario number (generated scenarios are numbered incrementally from 1).}
   \item{road.rast}{A logical RasterLayer representing existing roads.  TRUE is existing road. FALSE is not existing road.}
@@ -19,7 +20,8 @@
   one landings set. Values of TRUE are a landing in the given set. Values of FALSE are not.}
   \item{landings.poly}{A SpatialPolygonsDataFrame representing a single set of polygonal landings.}
   \item{landings.poly.sf}{A sf object representing a single set of polygonal landings.}
-}}
+}
+}
 \usage{
 data(demoScen)
 }
