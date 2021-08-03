@@ -107,6 +107,7 @@ rasterToLineSegments <- function(rast){
 
 # demoScen[[1]]$road.rast %>% plot()
 # rast <- demoScen[[1]]$road.rast
+#' @export
 rasterToLineSegments2 <- function(rast){
   lnds <- raster::rasterToPoints(rast, fun = function(x){x==1},
                                  spatial = TRUE) %>%
