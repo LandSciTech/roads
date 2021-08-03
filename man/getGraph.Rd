@@ -9,8 +9,9 @@ getGraph(sim, neighbourhood)
 \arguments{
 \item{sim}{a sim list}
 
-\item{neighbourhood}{neighbour hood type}
+\item{neighbourhood}{neighbourhood type}
 }
 \description{
-Creates a graph in inititation phase which can be updated and solved for paths
+Creates a graph in initiation phase which can be updated and solved for
+paths
 }

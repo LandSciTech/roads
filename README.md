@@ -6,6 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/LandSciTech/roads/workflows/R-CMD-check/badge.svg)](https://github.com/LandSciTech/roads/actions)
+
 <!-- badges: end -->
 
 The goal of roads is to simulate road development under resource
@@ -50,14 +51,14 @@ prRoads <- projectRoads(landings = scen$landings.points,
 
 <img src="man/figures/README-example-1.png" width="100%" />
 
-By default `projectRoads` uses a minimum spaning tree with least cost
+By default `projectRoads` uses a minimum spanning tree with least cost
 paths algorithm (`roadMethod = "mst"`) to connect all landings to the
 nearest existing road or other landing following the path with the
-lowest cost. Other methods avaiable are least cost path (`roadMethod =
-"lcp"`) which connects each landing to the nearest road via the least
-cost path but independent of other landings and snapping (`roadMethod =
-"snap"`) which ignores both cost and other landings and simply connects
-each landing to the nearest road “as the crow flies”
+lowest cost. Other methods available are least cost path
+(`roadMethod = "lcp"`) which connects each landing to the nearest road
+via the least cost path but independent of other landings and snapping
+(`roadMethod = "snap"`) which ignores both cost and other landings and
+simply connects each landing to the nearest road “as the crow flies”
 
 For more details on how to use the package see the vignette
 

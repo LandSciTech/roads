@@ -21,7 +21,7 @@
 #'   \code{roadsInCost = FALSE} and they will be burned in.
 #' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
 #' @param roadMethod Character. Options are "mst", "lcp", "snap".
-#' @param plotRoads Boolean. Should the resulting road network be ploted.
+#' @param plotRoads Boolean. Should the resulting road network be plotted.
 #'   Default FALSE.
 #' @param mainTitle Character. A title for the plot
 #' @param neighbourhood Character. 'rook','queen', or 'octagon'. The cells that

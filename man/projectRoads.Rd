@@ -59,7 +59,7 @@ cells with a cost of 0. If existing roads do not have 0 cost set
 
 \item{roadMethod}{Character. Options are "mst", "lcp", "snap".}
 
-\item{plotRoads}{Boolean. Should the resulting road network be ploted.
+\item{plotRoads}{Boolean. Should the resulting road network be plotted.
 Default FALSE.}
 
 \item{mainTitle}{Character. A title for the plot}

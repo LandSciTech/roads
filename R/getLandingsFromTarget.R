@@ -21,7 +21,7 @@
 #'   same units as the crs of the harvest. Note that 0.001 pts per m2 is > 1000
 #'   pts per km2 so this number is usually very small for projected crs.
 #' @param sampleType character. "centroid" (default), "regular" or "random".
-#'   Centroid returns one landing per harvest block, which is gauranteed to be
+#'   Centroid returns one landing per harvest block, which is guaranteed to be
 #'   in the harvest block for sf objects but not for rasters. Regular returns
 #'   points from a grid with density \code{landingDens} that overlap the
 #'   harvested areas. Random returns a random set of points from each polygon
@@ -164,7 +164,7 @@ getLandingsFromTarget <- function(harvest,
 #'   same units as the crs of the harvest. Note that 0.001 pts per m2 is > 1000
 #'   pts per km2 so this number is usually very small for projected crs.
 #' @param sampleType character. "centroid" (default), "regular" or "random".
-#'   Centroid returns one landing per harvest block, which is not gauranteed to
+#'   Centroid returns one landing per harvest block, which is not guaranteed to
 #'   be in the harvest block. Regular returns points from a grid with density
 #'   \code{landingDens} that overlap the harvested areas. Random returns a
 #'   random set of points from each polygon where the number is determined by
