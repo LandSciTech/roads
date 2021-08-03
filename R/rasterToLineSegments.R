@@ -101,3 +101,24 @@ rasterToLineSegments <- function(rast){
 #   cLines=sp::SpatialLines(l,proj4string =raster::crs(cMap))
 #   return(cLines)
 # }
+
+# another idea is to use 0/1 road raster as cost and use project roads to make
+# lines
+
+# demoScen[[1]]$road.rast %>% plot()
+# rast <- demoScen[[1]]$road.rast
+rasterToLineSegments2 <- function(rast){
+  lnds <- raster::rasterToPoints(rast, fun = function(x){x==1},
+                                 spatial = TRUE) %>%
+    sf::st_as_sf()
+  
+  cst <- rast == 0
+  
+  cst <- raster::reclassify(cst, matrix(c(0, 0.001, 1, 1), ncol = 2,
+                                        byrow = TRUE))
+  
+  prRes <- projectRoads(landings = lnds, cst, roads = lnds[1,])
+  lines <- prRes$roads %>% sf::st_collection_extract("LINESTRING")
+}
+
+#rasterToLineSegments2(rast)
