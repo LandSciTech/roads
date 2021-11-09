@@ -69,6 +69,10 @@ For more details on how to use the package see the vignette
 Copyright (C) 2021 Her Majesty the Queen in Right of Canada, as
 represented by the Minister of Environment and Climate Change.
 
+And
+
+Copyright 2018 Province of British Columbia
+
 Licensed under the Apache License, Version 2.0 (the “License”); you may
 not use this file except in compliance with the License. You may obtain
 a copy of the License at
