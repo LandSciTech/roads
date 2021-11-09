@@ -2,11 +2,7 @@ Package: roads
 Title: Road Network Projection
 Version: 0.1.0
 Authors@R: 
-    c(person(given = "Josie",
-           family = "Hughes",
-           role = c("aut"),
-           email = "josie.hughes@ec.gc.ca"),
-    person(given = "Sarah",
+    c(person(given = "Sarah",
            family = "Endicott", 
            role = c("aut", "cre"), 
            email = "sarah.endicott@ec.gc.ca",
@@ -15,6 +11,10 @@ Authors@R:
            family = "Lochhead",
            role = c("aut"),
            email = "Kyle.Lochhead@gov.bc.ca"),
+    person(given = "Josie",
+           family = "Hughes",
+           role = c("aut"),
+           email = "josie.hughes@ec.gc.ca"),
     person(given = "Patrick",
            family = "Kirby",
            role = c("aut")),
