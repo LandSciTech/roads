@@ -20,6 +20,7 @@
 #'
 #' @param sim a sim list
 #' @param neighbourhood neighbourhood type
+#' @noRd
 
 getGraph<- function(sim, neighbourhood){
   # define global varaiables to avoid NOTEs on R CMD check
