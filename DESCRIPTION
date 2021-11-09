@@ -24,7 +24,8 @@ Authors@R:
     person(given = "Province of British Columbia", role = c("cph"), 
            comment = "Copyright holder for included functions getGraph, lcpList, mstList, shortestPaths, getClosestRoad, buildSnapRoads"))    
 Date: 2021-11-16
-URL: https://github.com/LandSciTech/roads
+URL: https://github.com/LandSciTech/roads,
+     https://landscitech.github.io/roads
 Description: Road network projection methods for use with land cover change
     projection models. Road development is projected based on an existing road 
     network, target locations to be connected by roads and a cost surface. Road 
