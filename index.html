@@ -117,8 +117,7 @@
                         plotRoads <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </code></pre></div>
 <p><img src="reference/figures/README-example-1.png" width="100%"></p>
 <p>By default <code>projectRoads</code> uses a minimum spanning tree with least cost paths algorithm (<code>roadMethod = "mst"</code>) to connect all landings to the nearest existing road or other landing following the path with the lowest cost. Other methods available are least cost path (<code>roadMethod = "lcp"</code>) which connects each landing to the nearest road via the least cost path but independent of other landings and snapping (<code>roadMethod = "snap"</code>) which ignores both cost and other landings and simply connects each landing to the nearest road “as the crow flies”</p>
-<p>For more details on how to use the package see the vignette</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">vignette</span>(<span class="st">"roads-vignette"</span>, <span class="dt">package =</span> <span class="st">"roads"</span>)</span></code></pre></div>
+<p>For more details on how to use the package see the vignette <code><a href="articles/roads-vignette.html">vignette("roads-vignette", package = "roads")</a></code></p>
 </div>
 </div>
 <div id="license" class="section level1">
