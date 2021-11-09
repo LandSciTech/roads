@@ -1,0 +1,10 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  roads-vignette: roads-vignette.html
+last_built: 2021-11-09T18:27Z
+urls:
+  reference: https://landscitech.github.io/roads/reference
+  article: https://landscitech.github.io/roads/articles
+
