@@ -61,8 +61,7 @@ via the least cost path but independent of other landings and snapping
 simply connects each landing to the nearest road “as the crow flies”
 
 For more details on how to use the package see the vignette
-
-    vignette("roads-vignette", package = "roads")
+`vignette("roads-vignette", package = "roads")`
 
 # License
 

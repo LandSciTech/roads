@@ -190,7 +190,8 @@ getLandingsFromTarget <- function(harvest,
 #'   one landing.
 #' @param omitCentroidsOutOfPolygons Logical. Default is FALSE in which case
 #'   some points may be outside the borders of the harvested patch
-#'   
+#'
+#' @noRd   
 getLandingsFromTargetRast<-function(inputPatches,
                                     landingDens,
                                     sampleType = "regular",
@@ -283,7 +284,7 @@ getLandingsFromTargetRast<-function(inputPatches,
 #' @param newLandings raster landings
 #'
 #' @param withIDs logical
-#'
+#' @noRd
 getCentroids<-function(newLandings, withIDs = TRUE){
   cRes = raster::res(newLandings)
   
