@@ -46,7 +46,7 @@ jobs:
       - name: Install GDAL/ Mac OS
         if: runner.os == 'macOS'
         run: |
-          brew install pkg-config/
+          brew install pkg-config
           brew install gdal proj geos
 
       - name: Query dependencies
