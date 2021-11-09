@@ -1,178 +1,341 @@
-#' Project road network.
+# Copyright © Her Majesty the Queen in Right of Canada as represented by the
+# Minister of the Environment 2021/© Sa Majesté la Reine du chef du Canada
+# représentée par le ministre de l'Environnement 2021.
+# 
+#     Licensed under the Apache License, Version 2.0 (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+#     Unless required by applicable law or agreed to in writing, software
+#     distributed under the License is distributed on an "AS IS" BASIS,
+#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#     See the License for the specific language governing permissions and
+#     limitations under the License.
+
+
+#' Project road network
 #'
-#' @details
-#' some details...
+#' Project road locations based on existing roads, planned landings, and a cost
+#' surface that defines the cost of building roads.
 #'
-#' @param landings RasterLayer, SpatialPolygons*, SpatialPointsDataFrame*, matrix, or RasterStack. Features to be connected to the road network. matrix should contain x,y,v columns, as returned by rasterToPoints etc. If RasterStack assume an ordered time-series.
-#' @param cost RasterLayer. Cost surface.
-#' @param roads RasterLayer. Existing road network.
+#' Three different methods for projecting road networks have been implemented:
+#' \itemize{ \item{"snap":} {Connects each landing directly to the closest road
+#' without reference to the cost or other landings} \item{"lcp":} {Least Cost
+#' Path connects each landing to the closest point on the road by determining
+#' the least cost path based on the cost surface provided, it does not consider
+#' other landings} \item{"mst":} {Minimum Spanning Tree connects all landings to
+#' the road by determining the least cost path to the road or other landings
+#' based on the cost surface} }
+#'
+#' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
+#'   SpatialPoints*, matrix, containing features to be connected
+#'   to the road network. Matrix should contain columns x, y with coordinates,
+#'   all other columns will be ignored.
+#' @param cost RasterLayer. Cost surface where existing roads must be the only
+#'   cells with a cost of 0. If existing roads do not have 0 cost set
+#'   \code{roadsInCost = FALSE} and they will be burned in.
+#' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
 #' @param roadMethod Character. Options are "mst", "lcp", "snap".
-#' @param plotRoads Boolean. Set FALSE to save time if output road rasters are not required. Default TRUE
-#' @param neighbourhood Character. 'rook','queen', or 'octagon'. 'octagon' option is a modified version of the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x higher than horizontal/vertical weights.
-#' @param sim Sim list. Returned from a previous iteration of projectRoads. cost, roads, and roadMethod are ignored if a sim list is provided.
+#' @param plotRoads Boolean. Should the resulting road network be plotted.
+#'   Default FALSE.
+#' @param mainTitle Character. A title for the plot
+#' @param neighbourhood Character. 'rook','queen', or 'octagon'. The cells that
+#'   should be considered adjacent. 'octagon' option is a modified version of
+#'   the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
+#'   higher than horizontal/vertical weights.
+#' @param sim Sim list. Returned from a previous iteration of projectRoads.
+#'   cost, roads, and roadMethod are ignored if a sim list is provided.
+#' @param roadsOut Character. Either "raster", "sf" or NULL. If "raster" roads
+#'   are returned as a raster in the sim list. If "sf" the roads are returned as
+#'   an sf object which will contain lines if the roads input was sf lines but a
+#'   geometry collection of lines and points if the roads input was a raster.
+#'   The points in the geometry collection represent the existing roads while
+#'   new roads are created as lines. If NULL (default) then the returned roads
+#'   are sf if the input is sf or Spatial* and raster if the input was a raster.
+#' @param roadsInCost Logical. The default is TRUE which means the cost raster
+#'   is assumed to include existing roads as 0 in its cost surface. If FALSE
+#'   then the roads will be "burned in" to the cost raster with a cost of 0.
+#'
+#' @return 
+#' a list with components:
+#' \itemize{
+#' \item{roads: }{the projected road network, including new and input roads.}
+#' \item{costSurface: }{the input cost surface, this is not updated to reflect 
+#'       the new roads that were added.}
+#' \item{roadMethod: }{the road simulation method used.}
+#' \item{landings: }{the landings used in the simulation.}
+#' \item{g: }{the graph that describes the cost of paths between each cell in the
+#'       cost raster. This is updated based on the new roads so that vertices 
+#'       were connected by new roads now have a cost of 0. This can be used to 
+#'       avoid recomputing the graph in a simulation with multiple time steps.}
+#' }
 #' @examples
+#' doPlots <- interactive()
+#' ### using:  scenario 1 / sf landings / least-cost path ("lcp")
+#' # demo scenario 1
+#' scen <- demoScen[[1]]
 #'
-#' ## visualize function's height parameter represents graphics window height in cm.
-#' ## Increase it for larger visualizations.
-#'
-#' ### using:  scenario 1 / SpatialPointsDataFrame landings / least-cost path ("lcp")
-#' scen <- demoScen[[1]] # demo scenario 1
 #' # landing set 1 of scenario 1:
-#' land.pnts <- scen$landings.points[scen$landings.points$set==1,]
-#' prRes <- projectRoads(land.pnts,scen$cost.rast,scen$road.rast,"lcp")
-#' visualize(scen$cost.rast,land.pnts,prRes,height=15)
+#' land.pnts <- scen$landings.points.sf[scen$landings.points.sf$set==1,]
+#'
+#' prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line.sf, "lcp",
+#'                          plotRoads = doPlots, mainTitle = "Scen 1: SPDF-LCP")
 #'
 #' ### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
-#' scen <- demoScen[[1]] # demo scenario 1
+#' # demo scenario 1
+#' scen <- demoScen[[1]]
+#'
 #' # the RasterLayer version of landing set 1 of scenario 1:
 #' land.rLyr <- scen$landings.stack[[1]]
-#' prRes <- projectRoads(land.rLyr,scen$cost.rast,scen$road.rast,"mst")
-#' visualize(scen$cost.rast,land.rLyr,prRes)
 #'
-#' ### using: scenario 2 / matrix landings / snapping ("snap")
-#' scen <- demoScen[[2]] # demo scenario 2
+#' prRes <- projectRoads(land.rLyr, scen$cost.rast, scen$road.line.sf, "mst",
+#'                          plotRoads = doPlots, mainTitle = "Scen 1: Raster-MST")
+#'
+#'
+#' ### using: scenario 2 / matrix landings raster roads / snapping ("snap")
+#' # demo scenario 2
+#' scen <- demoScen[[2]]
+#'
 #' # landing set 5 of scenario 2, as matrix:
 #' land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
-#' prRes <- projectRoads(land.mat,scen$cost.rast,scen$road.rast,"snap")
-#' visualize(scen$cost.rast,land.mat,prRes,height=15)
 #'
-#' ### using: scenario 3 / RasterStack landings / minimum spanning tree ("mst")
-#' scen <- demoScen[[3]] # demo scenario 3
-#' # landing sets 1 to 4 of scenario 3, as RasterStack:
-#' land.rstack <- scen$landings.stack[[1:4]]
-#' prRes <- projectRoads(land.rstack,scen$cost.rast,scen$road.rast,"mst")
-#' visualize(scen$cost.rast,land.rstack,prRes,height=15)
-#'
+#' prRes <- projectRoads(land.mat, scen$cost.rast, scen$road.rast, "snap",
+#'                          plotRoads = doPlots, mainTitle = "Scen 2: Matrix-Snap")
+#'                          
 #' ### using: scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
-#' scen <- demoScen[[7]] # demo scenario 7
+#' # demo scenario 7
+#' scen <- demoScen[[7]]
+#'
 #' # polygonal landings of demo scenario 7:
 #' land.poly <- scen$landings.poly
-#' prRes <- projectRoads(land.poly,scen$cost.rast,cen$road.rast,mst")
-#' visualize(scen$cost.rast,land.poly,prRes,height=15)
+#'
+#' prRes <- projectRoads(land.poly, scen$cost.rast, scen$road.rast, "mst",
+#'                          plotRoads = doPlots, mainTitle = "Scen 7: SpPoly-MST")
+#'
+#'# don't run to avoid examples being too long
+#'\dontrun{
+#' ## using scenario 7 / Polygon landings raster / minimum spanning tree
+#' # demo scenario 7
+#' scen <- demoScen[[7]]
+#' # rasterize polygonal landings of demo scenario 7:
+#' land.polyR <- raster::rasterize(scen$landings.poly, scen$cost.rast)
+#'
+#' prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
+#'                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
+#' }
+#' @import dplyr
+#' @importFrom methods is as
+#' @importFrom stats end na.omit
+#' @importFrom rlang .data
+#' @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell plot
+#' @importFrom sp SpatialPoints Line Lines SpatialLines CRS
+#' @importFrom data.table data.table := .N setDT setnames
+#' 
 #' @export
-setGeneric('projectRoads',function(landings,cost=NULL,roads=NULL,roadMethod="mst",plotRoads=T,neighbourhood="octagon",sim=list()) standardGeneric('projectRoads'))
+#' 
+setGeneric('projectRoads', function(landings = NULL,
+                                       cost = NULL,
+                                       roads = NULL,
+                                       roadMethod = "mst",
+                                       plotRoads = FALSE,
+                                       mainTitle = NULL,
+                                       neighbourhood = "octagon",
+                                       sim = NULL,
+                                       roadsOut = NULL,
+                                       roadsInCost = TRUE)
+  standardGeneric('projectRoads'))
 
-#' @return  sim list.
 #' @rdname projectRoads
-setMethod('projectRoads', signature(landings="matrix"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
-  #x=newLandingCentroids;roadMethod="mst";cost=cCost;roads=cRoadsRaster[[ym]];
-  #sim=list();roadMethod="lcp"
-  recognizedRoadMethods = c("mst","lcp","snap")
+setMethod(
+  'projectRoads', signature(sim = "missing"),
+  function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
+           neighbourhood, sim, roadsOut, roadsInCost) {
+    #landings=outObj$landings;cost=outObj$cost;roads=outObj$roads;roadMethod="mst";roadsOut = "raster"
+    #mainTitle = NULL;neighbourhood = "queen";sim = NULL;roadsInCost = TRUE
 
-  if (length(sim)>0){ #ignore cost, roads, roadMethod
-    expectBits = c("roads","costSurface","roadMethod")
-    missingNames = setdiff(expectBits,names(sim))
-    if(length(missingNames)>0){
-      stop("sim list missing expected elements: ",paste(missingNames, collapse=","))
+    # check required args
+    missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings),
+                                      is.null)))
+    if(length(missingNames) > 0){
+      stop("Argument(s): ", paste0(missingNames, collapse = ", "),
+           " are required if sim is not supplied")
     }
-  }else{
+
+    recognizedRoadMethods = c("mst", "lcp", "snap")
+
     if(!is.element(roadMethod,recognizedRoadMethods)){
-      stop("Invalid road method ",roadMethod,". Options are:",paste(recognizedRoadMethods,collapse=','))
+      stop("Invalid road method ", roadMethod, ". Options are:",
+           paste(recognizedRoadMethods, collapse=','))
     }
-    #set up sim list
-    roads=roads>0
-    sim$roads=roads
-    sim$costSurface=cost
-    sim$roadMethod = roadMethod
-  }
 
-  sim$landings=landings
-  if(!is.element("g",names(sim))){
-    sim <- roadCLUS.getGraph(sim,neighbourhood)
-  }
+    # If roads in are raster return as raster
+    if(is(roads, "Raster") && is.null(roadsOut) ){
+      roadsOut <- "raster"
+    } else if(is.null(roadsOut)) {
+      roadsOut <- "sf"
+    }
 
-  if(!is.null(sim$landings)){
-    switch(sim$roadMethod,
-           snap= {
-             sim <- roadCLUS.getClosestRoad(sim)
-             sim <- roadCLUS.buildSnapRoads(sim)
-           } ,
-           lcp ={
-             sim <- roadCLUS.getClosestRoad(sim)
-             sim <- roadCLUS.lcpList(sim)
-             sim <- roadCLUS.shortestPaths(sim)# includes update graph
-           },
-           mst ={
-             sim <- roadCLUS.getClosestRoad(sim)
-             sim <- roadCLUS.mstList(sim)# will take more time than lcpList given the construction of a mst
-             sim <- roadCLUS.shortestPaths(sim)# update graph is within the shortestPaths function
-           }
+    # set up sim list
+    sim <- buildSimList(roads = roads, cost = cost,
+                        roadMethod = roadMethod,
+                        landings = landings,
+                        roadsInCost = roadsInCost)
+    
+    sim$landingsIn <- sim$landings
+
+    # make sure the name of the sf_column is "geometry"
+    geoColInL <- attr(sim$landings, "sf_column")
+    if(geoColInL != "geometry"){
+      sim$landings <- rename(sim$landings, geometry = tidyselect::all_of(geoColInL))
+    }
+
+    #library(dplyr);library(sf)
+    geoColInR <- attr(sim$roads, "sf_column")
+    sim$roads <- select(sim$roads, geometry = tidyselect::all_of(geoColInR))
+
+    sim <- getGraph(sim, neighbourhood)
+
+    sim <- switch(sim$roadMethod,
+                  snap= {
+                    sim <- buildSnapRoads(sim)
+                  } ,
+                  lcp ={
+                    sim <- getClosestRoad(sim)
+
+                    sim <- lcpList(sim)
+
+                    # includes update graph
+                    sim <- shortestPaths(sim)
+                  },
+                  mst ={
+                    sim <- getClosestRoad(sim)
+
+                    # will take more time than lcpList given the construction of
+                    # a mst
+                    sim <- mstList(sim)
+
+                    # update graph is within the shortestPaths function
+                    sim <- shortestPaths(sim)
+                  }
     )
+
+    # put back original geometry column names
+    if(geoColInR != attr(sim$roads, "sf_column")){
+      sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
+    }
+
+    if(roadsOut == "raster"){
+      # rasterize roads to template
+      sim$roads <- rasterizeLine(sim$roads, sim$cost, 0) > 0
+    }
+    
+    # reset landings to include all input landings
+    sim$landings <- sim$landingsIn
+    sim$landingsIn <- NULL
+    
     if(plotRoads){
-      sim <- roadCLUS.analysis(sim)
-
+      plotRoads(sim, mainTitle)
     }
-  }
-  return(sim)
-})
+    
+    return(sim)
+  })
 
-#' @return  sim list.
 #' @rdname projectRoads
-setMethod('projectRoads', signature(landings="RasterLayer"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
-  landings = getCentroids(landings,withIDs=T)
-  landings = raster::rasterToPoints(landings,fun=function(landings){landings>0})
-  return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim))
-})
+setMethod(
+  'projectRoads', signature(sim = "list"),
+  function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
+           neighbourhood, sim, roadsOut, roadsInCost) {
 
-#' @return  sim list.
-#' @rdname projectRoads
-setMethod('projectRoads', signature(landings="SpatialPolygons"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
-  landings = raster::rasterize(landings,cost)
-  return(projectRoads(landings=landings,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim))
-})
+    # # check required args
+    # missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings),
+    #                                   is.null)))
+    # if(length(missingNames) > 0){
+    #   stop("Argument(s): ", paste0(missingNames, collapse = ", "),
+    #        " are required if sim is not supplied")
+    # }
+    #
+    # recognizedRoadMethods = c("mst", "lcp", "snap")
+    #
+    # if(!is.element(roadMethod,recognizedRoadMethods)){
+    #   stop("Invalid road method ", roadMethod, ". Options are:",
+    #        paste(recognizedRoadMethods, collapse=','))
+    # }
 
-#' @return  sim list.
-#' @rdname projectRoads
-setMethod('projectRoads', signature(landings="SpatialPoints"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
-    #landings=sC
-    #landings = raster::subset(raster::rasterize(landings,cost),1)
-    cco = landings@coords
-    if(is.element("data",slotNames(landings))){
-      cco=cbind(cco,landings@data$ID)
-    }else{
-      cco = cbind(cco,seq(1,nrow(cco)))
+    # If roads in are raster return as raster
+    if(is(sim$roads, "Raster")){
+      roadsOut <- "raster"
+    } else {
+      roadsOut <- "sf"
     }
-    dimnames(cco)[[2]][3]="layer"
-    return(projectRoads(landings=cco,cost=cost,roads=roads,roadMethod=roadMethod,plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim))
-})
 
-#' @return  RasterBrick. Road network over time.
-#' @rdname projectRoads
-setMethod('projectRoads', signature(landings="RasterStack"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
-  return(projectRoads(raster::brick(landings),cost,roads,roadMethod,plotRoads,neighbourhood,sim))
-})
-
-#' @return  RasterBrick. Road network over time.
-#' @rdname projectRoads
-setMethod('projectRoads', signature(landings="RasterBrick"), function(landings,cost,roads,roadMethod,plotRoads,neighbourhood,sim) {
-  checkAllign = raster::compareRaster(cost,roads)
-  if(!checkAllign){
-    stop("Problem with roads. All rasters must have the same same extent, number of rows and columns,
-         projection, resolution, and origin.")
-  }
-  checkAllign = raster::compareRaster(cost,landings)
-  if(!checkAllign){
-    stop("Problem with landings. All rasters must have the same same extent, number of rows and columns,
-         projection, resolution, and origin.")
-  }
-  landings[landings>0] = 1
-  doYrs = names(landings)
-  cRoadsRaster = raster::brick(roads)
-  ym="t0"; names(cRoadsRaster)=ym
-  cRoadsRaster@history <- list(t0=NA)
-  sim=list()
-  #NOTE: looping over years here to speed calculations. The graph is g is only constructed once.
-  for (cm in doYrs){
-    print(paste("building roads year",cm))
-    if(length(sim)==0){
-      sim = projectRoads(landings[[cm]],cost,cRoadsRaster[[ym]],roadMethod=roadMethod,neighbourhood=neighbourhood,plotRoads=plotRoads)
-    }else{
-      #TO DO: how to preferentially route roads through cutblocks after the first iteration?
-      sim = projectRoads(landings[[cm]],plotRoads=plotRoads,neighbourhood=neighbourhood,sim=sim)
+    # add landings to sim list. Should involve all the same checks as before
+    sim <- buildSimList(sim$roads, sim$cost, sim$roadMethod, landings, 
+                        roadsInCost = FALSE, sim = sim)
+    
+    sim$landingsIn <- sim$landings
+    
+    # make sure the name of the sf_column is "geometry"
+    geoColInL <- attr(sim$landings, "sf_column")
+    if(geoColInL != "geometry"){
+      sim$landings <- rename(sim$landings, geometry = tidyselect::all_of(geoColInL))
     }
-    cRoadsRaster[[cm]] = sim$roads>0 #ignoring values for now.
-    cRoadsRaster@history[[length(cRoadsRaster@history)+1]] = sim$newRoads.lines
-    names(cRoadsRaster@history)[-1] = cm
-  }
-  return(cRoadsRaster)
-})
+
+    geoColInR <- attr(sim$roads, "sf_column")
+    sim$roads <- select(sim$roads, geometry = tidyselect::all_of(geoColInR))
+
+    sim <- switch(sim$roadMethod,
+                  snap= {
+                    sim <- buildSnapRoads(sim)
+                  } ,
+                  lcp ={
+                    sim <- getClosestRoad(sim)
+
+                    sim <- lcpList(sim)
+
+                    # includes update graph
+                    sim <- shortestPaths(sim)
+                  },
+                  mst ={
+                    sim <- getClosestRoad(sim)
+
+                    # will take more time than lcpList given the construction of
+                    # a mst
+                    sim <- mstList(sim)
+
+                    # update graph is within the shortestPaths function
+                    sim <- shortestPaths(sim)
+                  }
+    )
+
+    # put back original geometry column names
+    if(geoColInL != attr(sim$landings, "sf_column")){
+      sim$landings <- rename(sim$landings, geoColInL = .data$geometry)
+    }
+
+    if(geoColInR != attr(sim$roads, "sf_column")){
+      sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
+    }
+
+    if(roadsOut == "raster"){
+      # rasterize roads to template
+      tmplt <- stars::st_as_stars(sf::st_bbox(sim$cost), nx = raster::ncol(sim$cost),
+                                  ny = raster::nrow(sim$cost), values = 0)
+
+      sim$roads <- (stars::st_rasterize(sim$roads, template = tmplt,
+                                        options = "ALL_TOUCHED=TRUE") > 0) %>%
+        as("Raster")
+    }
+    
+    # reset landings to include all input landings
+    sim$landings <- sim$landingsIn
+    sim$landingsIn <- NULL
+    
+    if(plotRoads){
+      plotRoads(sim, mainTitle)
+    }
+
+    return(sim)
+  })
+

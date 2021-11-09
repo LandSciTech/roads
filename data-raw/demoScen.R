@@ -1,3 +1,19 @@
+# Copyright © Her Majesty the Queen in Right of Canada as represented by the
+# Minister of the Environment 2021/© Sa Majesté la Reine du chef du Canada
+# représentée par le ministre de l'Environnement 2021.
+# 
+#     Licensed under the Apache License, Version 2.0 (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+#     Unless required by applicable law or agreed to in writing, software
+#     distributed under the License is distributed on an "AS IS" BASIS,
+#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#     See the License for the specific language governing permissions and
+#     limitations under the License.
+
 library(raster)
 library(colorRamps)
 library(rgeos)
@@ -10,6 +26,7 @@ library(geoR)
 #       - road.rast:   a logical RasterLayer representing existing roads.  TRUE is existing road. FALSE is not existing road.
 #                      - these roads are a rasterized versions of the road.line SpatialLines
 #       - road.line:   SpatialLines representing the existing roads
+#       - road.line.f:   sf object representing the existing roads
 #       - cost.rast:   RasterLayer representing the cost of developing new roads on a given cell
 #       - landings.points:  a SpatialPointsDataFrame representing landings sets and points
 #                           - data frame includes a field named "set" containing integer values representing the landings set that each point belongs to
@@ -18,6 +35,7 @@ library(geoR)
 #                            a landing in the set
 #       - landings.poly:  a SpatialPolygonsDataFrame representing a single set of polygonal landings
 #                         - will be NA if user set n.poly.landings argument to NA
+#       - landings.poly.sf: an sf object version of landings.poly
 #
 # n.scenarios: integer representing the number of scenarios that are to be generated
 # xy.size:     vector (length=2) of integers representing the number of columns and number of rows, respectively, for the output cost raster
@@ -177,10 +195,12 @@ prepInputScenarios <- function(n.scenarios=10,xy.size=c(100,100),spat.corr=T,cos
     }
     scen$road.rast  <- rast_withroads==0
     scen$road.line  <- roadlines
+    scen$road.line.sf <- sf::st_as_sf(roadlines)
     scen$cost.rast  <- rast_withroads
     scen$landings.points <- landings
     scen$landings.stack  <- land_stack
     scen$landings.poly <- polydf
+    scen$landings.poly.sp <- sf::st_as_sf(polydf)
     outlist[[i]] <- scen
   }
   return(outlist)

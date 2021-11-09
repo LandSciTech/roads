@@ -6,13 +6,13 @@
 \title{Data from the CLUS example}
 \format{
 A named list where: $cost is an object of class RasterLayer representing road cost
-                            $landings is an oject of class SpatialPoints representing landing locations
+                            $landings is an object of class SpatialPoints representing landing locations
                             $roads is an object of class RasterLayer representing existing roads
 }
 \usage{
 data(CLUSexample)
 }
 \description{
-Data from the CLUS example
+From Kyle Lochhead and Tyler Muhly's CLUS road simulation example
 }
 \keyword{datasets}

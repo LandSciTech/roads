@@ -2,115 +2,168 @@
 % Please edit documentation in R/projectRoads.R
 \name{projectRoads}
 \alias{projectRoads}
-\alias{projectRoads,matrix-method}
-\alias{projectRoads,RasterLayer-method}
-\alias{projectRoads,SpatialPolygons-method}
-\alias{projectRoads,SpatialPoints-method}
-\alias{projectRoads,RasterStack-method}
-\alias{projectRoads,RasterBrick-method}
-\title{Project road network.}
+\alias{projectRoads,ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing-method}
+\alias{projectRoads,ANY,ANY,ANY,ANY,ANY,ANY,ANY,list-method}
+\title{Project road network}
 \usage{
 projectRoads(
-  landings,
+  landings = NULL,
   cost = NULL,
   roads = NULL,
   roadMethod = "mst",
-  plotRoads = T,
+  plotRoads = FALSE,
+  mainTitle = NULL,
   neighbourhood = "octagon",
-  sim = list()
+  sim = NULL,
+  roadsOut = NULL,
+  roadsInCost = TRUE
 )
 
-\S4method{projectRoads}{matrix}(
-  landings,
+\S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing}(
+  landings = NULL,
   cost = NULL,
   roads = NULL,
   roadMethod = "mst",
-  plotRoads = T,
+  plotRoads = FALSE,
+  mainTitle = NULL,
   neighbourhood = "octagon",
-  sim = list()
+  sim = NULL,
+  roadsOut = NULL,
+  roadsInCost = TRUE
 )
 
-\S4method{projectRoads}{RasterLayer}(
-  landings,
+\S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,list}(
+  landings = NULL,
   cost = NULL,
   roads = NULL,
   roadMethod = "mst",
-  plotRoads = T,
+  plotRoads = FALSE,
+  mainTitle = NULL,
   neighbourhood = "octagon",
-  sim = list()
-)
-
-\S4method{projectRoads}{SpatialPolygons}(
-  landings,
-  cost = NULL,
-  roads = NULL,
-  roadMethod = "mst",
-  plotRoads = T,
-  neighbourhood = "octagon",
-  sim = list()
-)
-
-\S4method{projectRoads}{SpatialPoints}(
-  landings,
-  cost = NULL,
-  roads = NULL,
-  roadMethod = "mst",
-  plotRoads = T,
-  neighbourhood = "octagon",
-  sim = list()
-)
-
-\S4method{projectRoads}{RasterStack}(
-  landings,
-  cost = NULL,
-  roads = NULL,
-  roadMethod = "mst",
-  plotRoads = T,
-  neighbourhood = "octagon",
-  sim = list()
-)
-
-\S4method{projectRoads}{RasterBrick}(
-  landings,
-  cost = NULL,
-  roads = NULL,
-  roadMethod = "mst",
-  plotRoads = T,
-  neighbourhood = "octagon",
-  sim = list()
+  sim = NULL,
+  roadsOut = NULL,
+  roadsInCost = TRUE
 )
 }
 \arguments{
-\item{landings}{RasterLayer, SpatialPolygons*, SpatialPointsDataFrame*, matrix, or RasterStack. Features to be connected to the road network. matrix should contain x,y,v columns, as returned by rasterToPoints etc. If RasterStack assume an ordered time-series.}
+\item{landings}{sf polygons or points, RasterLayer, SpatialPolygons*,
+SpatialPoints*, matrix, containing features to be connected
+to the road network. Matrix should contain columns x, y with coordinates,
+all other columns will be ignored.}
 
-\item{cost}{RasterLayer. Cost surface.}
+\item{cost}{RasterLayer. Cost surface where existing roads must be the only
+cells with a cost of 0. If existing roads do not have 0 cost set
+\code{roadsInCost = FALSE} and they will be burned in.}
 
-\item{roads}{RasterLayer. Existing road network.}
+\item{roads}{sf lines, SpatialLines*, RasterLayer. Existing road network.}
 
 \item{roadMethod}{Character. Options are "mst", "lcp", "snap".}
 
-\item{plotRoads}{Boolean. Set FALSE to save time if output road rasters are not required. Default TRUE}
+\item{plotRoads}{Boolean. Should the resulting road network be plotted.
+Default FALSE.}
 
-\item{neighbourhood}{Character. 'rook','queen', or 'octagon'. 'octagon' option is a modified version of the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x higher than horizontal/vertical weights.}
+\item{mainTitle}{Character. A title for the plot}
 
-\item{sim}{Sim list. Returned from a previous iteration of projectRoads. cost, roads, and roadMethod are ignored if a sim list is provided.}
+\item{neighbourhood}{Character. 'rook','queen', or 'octagon'. The cells that
+should be considered adjacent. 'octagon' option is a modified version of
+the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
+higher than horizontal/vertical weights.}
+
+\item{sim}{Sim list. Returned from a previous iteration of projectRoads.
+cost, roads, and roadMethod are ignored if a sim list is provided.}
+
+\item{roadsOut}{Character. Either "raster", "sf" or NULL. If "raster" roads
+are returned as a raster in the sim list. If "sf" the roads are returned as
+an sf object which will contain lines if the roads input was sf lines but a
+geometry collection of lines and points if the roads input was a raster.
+The points in the geometry collection represent the existing roads while
+new roads are created as lines. If NULL (default) then the returned roads
+are sf if the input is sf or Spatial* and raster if the input was a raster.}
+
+\item{roadsInCost}{Logical. The default is TRUE which means the cost raster
+is assumed to include existing roads as 0 in its cost surface. If FALSE
+then the roads will be "burned in" to the cost raster with a cost of 0.}
 }
 \value{
-sim list.
-
-sim list.
-
-sim list.
-
-sim list.
-
-RasterBrick. Road network over time.
-
-RasterBrick. Road network over time.
+a list with components:
+\itemize{
+\item{roads: }{the projected road network, including new and input roads.}
+\item{costSurface: }{the input cost surface, this is not updated to reflect 
+      the new roads that were added.}
+\item{roadMethod: }{the road simulation method used.}
+\item{landings: }{the landings used in the simulation.}
+\item{g: }{the graph that describes the cost of paths between each cell in the
+      cost raster. This is updated based on the new roads so that vertices 
+      were connected by new roads now have a cost of 0. This can be used to 
+      avoid recomputing the graph in a simulation with multiple time steps.}
+}
 }
 \description{
-Project road network.
+Project road locations based on existing roads, planned landings, and a cost
+surface that defines the cost of building roads.
 }
 \details{
-some details...
+Three different methods for projecting road networks have been implemented:
+\itemize{ \item{"snap":} {Connects each landing directly to the closest road
+without reference to the cost or other landings} \item{"lcp":} {Least Cost
+Path connects each landing to the closest point on the road by determining
+the least cost path based on the cost surface provided, it does not consider
+other landings} \item{"mst":} {Minimum Spanning Tree connects all landings to
+the road by determining the least cost path to the road or other landings
+based on the cost surface} }
+}
+\examples{
+doPlots <- interactive()
+### using:  scenario 1 / sf landings / least-cost path ("lcp")
+# demo scenario 1
+scen <- demoScen[[1]]
+
+# landing set 1 of scenario 1:
+land.pnts <- scen$landings.points.sf[scen$landings.points.sf$set==1,]
+
+prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line.sf, "lcp",
+                         plotRoads = doPlots, mainTitle = "Scen 1: SPDF-LCP")
+
+### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
+# demo scenario 1
+scen <- demoScen[[1]]
+
+# the RasterLayer version of landing set 1 of scenario 1:
+land.rLyr <- scen$landings.stack[[1]]
+
+prRes <- projectRoads(land.rLyr, scen$cost.rast, scen$road.line.sf, "mst",
+                         plotRoads = doPlots, mainTitle = "Scen 1: Raster-MST")
+
+
+### using: scenario 2 / matrix landings raster roads / snapping ("snap")
+# demo scenario 2
+scen <- demoScen[[2]]
+
+# landing set 5 of scenario 2, as matrix:
+land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
+
+prRes <- projectRoads(land.mat, scen$cost.rast, scen$road.rast, "snap",
+                         plotRoads = doPlots, mainTitle = "Scen 2: Matrix-Snap")
+                         
+### using: scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
+# demo scenario 7
+scen <- demoScen[[7]]
+
+# polygonal landings of demo scenario 7:
+land.poly <- scen$landings.poly
+
+prRes <- projectRoads(land.poly, scen$cost.rast, scen$road.rast, "mst",
+                         plotRoads = doPlots, mainTitle = "Scen 7: SpPoly-MST")
+
+# don't run to avoid examples being too long
+\dontrun{
+## using scenario 7 / Polygon landings raster / minimum spanning tree
+# demo scenario 7
+scen <- demoScen[[7]]
+# rasterize polygonal landings of demo scenario 7:
+land.polyR <- raster::rasterize(scen$landings.poly, scen$cost.rast)
+
+prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
+                         plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
+}
 }
