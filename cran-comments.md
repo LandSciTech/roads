@@ -1,20 +1,23 @@
 ## Test environments
-* local windows R installation, R 3.6.2
-* window-latest (release)
-* macOS-latest (release)
-* ubuntu-20.04 (release)
-* ubuntu-20.04 (devel)
-- R-hub ubuntu-gcc-release (r-release)
 - R-hub windows-x86_64-devel (r-devel)
-
+- R-hub ubuntu-gcc-release (r-release)
+- R-hub fedora-clang-devel (r-devel)
 
 ## R CMD check results
-> On ubuntu-gcc-release (r-release), windows-x86_64-devel (r-devel)
+> On windows-x86_64-devel (r-devel), ubuntu-gcc-release (r-release), fedora-clang-devel (r-devel)
   checking CRAN incoming feasibility ... NOTE
-  Maintainer: ‘Sarah Endicott <sarah.endicott@canada.ca>’
+  Maintainer: 'Sarah Endicott <sarah.endicott@ec.gc.ca>'
   
   New submission
 
-0 errors √ | 0 warnings √ | 1 note x
+> On fedora-clang-devel (r-devel)
+  checking examples ... NOTE
+  Examples with CPU (user + system) or elapsed time > 5s
+                user system elapsed
+  projectRoads 9.622  0.235   1.776
+
+0 errors √ | 0 warnings √ | 2 notes x
 
 * This is a new release.
+
+* I can not reproduce the long example times for fedora and I don't know how to go about fixing it or if it is necessary to. It only takes 1.68 seconds on windows. 
