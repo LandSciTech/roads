@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,23 +33,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">roads</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -58,10 +54,13 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/LandSciTech/roads/">
+  <a href="https://github.com/LandSciTech/roads/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -81,18 +80,18 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>roads Package</h1>
             
-            <h4 class="date">2021-11-09</h4>
+            <h4 data-toc-skip class="date">2022-03-11</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/LandSciTech/roads/blob/master/vignettes/roads-vignette.Rmd"><code>vignettes/roads-vignette.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/LandSciTech/roads/blob/HEAD/vignettes/roads-vignette.Rmd" class="external-link"><code>vignettes/roads-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>roads-vignette.Rmd</code></div>
 
     </div>
 
     
     
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>This vignette provides a tutorial on the use of the <code>roads</code> package for the spatial simulation of future roads development under a given resource development scenario. This tutorial, which borrows heavily from a demonstration written by Kyle Lochhead and Tyler Muhly in 2018, will focus primarily on the <code>projectRoads</code> function of the <code>roads</code> package, as it is responsible for performing the simulation. Example data sets used below are included in the package as <code>CLUSexample</code> and <code>demoScen</code>.</p>
 <p>In the context of this package, resource development scenarios are represented by three components:</p>
 <ol style="list-style-type: decimal">
@@ -122,30 +121,30 @@
 <li>
 <strong>g</strong> the graph that describes the cost of paths between each cell in the cost raster. This is updated based on the new roads so that vertices were connected by new roads now have a cost of 0. This can be used to avoid recomputing the graph in a simulation with multiple time steps.</li>
 </ol>
-<div id="setup" class="section level3">
-<h3 class="hasAnchor">
-<a href="#setup" class="anchor"></a>Setup</h3>
+<div class="section level4">
+<h4 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
+</h4>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads">roads</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 
 <span class="co">## colours for displaying cost raster </span>
-<span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"viridis"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+<span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"viridis"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
   <span class="co"># Use colour blind friendly palette if available</span>
-  <span class="va">rastColours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">viridis</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">rastColours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-  <span class="va">rastColours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">terrain.colors</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">rastColours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">terrain.colors</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 </div>
 </div>
-<div id="resource-development-scenario" class="section level1">
-<h1 class="hasAnchor">
-<a href="#resource-development-scenario" class="anchor"></a>Resource development scenario</h1>
-<div id="cost-layer" class="section level3">
-<h3 class="hasAnchor">
-<a href="#cost-layer" class="anchor"></a>1. Cost layer</h3>
-<p>The cost of new roads development within a landscape must be provided as a single, numeric <a href="https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class"><code>RasterLayer</code></a> object. Each cell of this raster represents the cost of new road development (the definition of which is up to the user) through it. The total cost of the development of a new road segment is considered to be the sum of the cost raster cells that it traverses.</p>
+<div class="section level2">
+<h2 id="resource-development-scenario">Resource development scenario<a class="anchor" aria-label="anchor" href="#resource-development-scenario"></a>
+</h2>
+<div class="section level4">
+<h4 id="cost-layer">1. Cost layer<a class="anchor" aria-label="anchor" href="#cost-layer"></a>
+</h4>
+<p>The cost of new roads development within a landscape must be provided as a single, numeric <a href="https://www.rdocumentation.org/packages/raster/versions/2.9-5/topics/Raster-class" class="external-link"><code>RasterLayer</code></a> object. Each cell of this raster represents the cost of new road development (the definition of which is up to the user) through it. The total cost of the development of a new road segment is considered to be the sum of the cost raster cells that it traverses.</p>
 <ul>
 <li>The traversal cost of existing road segments is assumed to be zero. If existing roads are not 0 in the cost layer they can be “burned in” by setting <code>roadsInCost = FALSE</code>.</li>
 <li>The extent of the landscape of interest is assumed to match the extent of the specified cost raster layer.</li>
@@ -156,9 +155,9 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">costRaster</span> <span class="op">&lt;-</span> <span class="va">CLUSexample</span><span class="op">$</span><span class="va">cost</span></code></pre></div>
 </div>
-<div id="existing-road-network-layer" class="section level3">
-<h3 class="hasAnchor">
-<a href="#existing-road-network-layer" class="anchor"></a>2. Existing road network layer</h3>
+<div class="section level4">
+<h4 id="existing-road-network-layer">2. Existing road network layer<a class="anchor" aria-label="anchor" href="#existing-road-network-layer"></a>
+</h4>
 <p>The state of the existing roads network must be specified to the <code>projectRoads</code> method. This specification is made in the form of a sf object with geometry type “LINES”, a SpatialLines object, or a RasterLayer.</p>
 <p>The roads network included in the <code>CLUSexample</code> data-set is a raster but is converted to a line to make plotting easier.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -168,22 +167,22 @@
 <span class="co"># Note rasterToLineSegments only works for simple road networks</span>
 <span class="co"># roadsLine &lt;- roads::CLUSexample$roads %&gt;% rasterToLineSegments()</span>
 <span class="co"># Road must not be flat b/c weird issue in sf package #1730</span>
-<span class="va">roadsLine</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html">st_sfc</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st.html">st_linestring</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">4.51</span><span class="op">)</span>,
+<span class="va">roadsLine</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">st_sfc</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st.html" class="external-link">st_linestring</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">4.51</span><span class="op">)</span>,
          ncol <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> 
-<span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="landings-layers" class="section level2">
-<h2 class="hasAnchor">
-<a href="#landings-layers" class="anchor"></a>3. Landings layer(s)</h2>
+<div class="section level3">
+<h3 id="landings-layers">3. Landings layer(s)<a class="anchor" aria-label="anchor" href="#landings-layers"></a>
+</h3>
 <p>Landings, or resource development locations, that are to be connected to the existing road network can be specified to the <code>projectRoads</code> method in a variety of forms. These include specification as:</p>
 <ul>
 <li>A logical <code>RasterLayer</code> object with cell values of <code>TRUE</code> for landings,</li>
-<li>A <code>SpatialPoints</code> or <code>SpatialPointsDataFrame</code> {<a href="https://CRAN.R-project.org/package=sp"><code>sp</code></a>} object with points representing landings,</li>
+<li>A <code>SpatialPoints</code> or <code>SpatialPointsDataFrame</code> {<a href="https://CRAN.R-project.org/package=sp" class="external-link"><code>sp</code></a>} object with points representing landings,</li>
 <li>A matrix with at least two columns, with columns 1 and 2 representing x any y coordinates of landing locations respectively,</li>
-<li>A <code>SpatialPolygons</code>or <code>SpatialPolygonsDataFrame</code> {<a href="https://CRAN.R-project.org/package=sp"><code>sp</code></a>} object with polygons representing landings,</li>
-<li>A sf {<a href="https://r-spatial.github.io/sf/"><code>sf</code></a>} object with geometry type “POINTS” or “POLYGONs”</li>
+<li>A <code>SpatialPolygons</code>or <code>SpatialPolygonsDataFrame</code> {<a href="https://CRAN.R-project.org/package=sp" class="external-link"><code>sp</code></a>} object with polygons representing landings,</li>
+<li>A sf {<a href="https://r-spatial.github.io/sf/" class="external-link"><code>sf</code></a>} object with geometry type “POINTS” or “POLYGONs”</li>
 </ul>
 <p>If the landings are polygons then the centroid is used as the destination for new roads. For more control or to have more than one landing per polygon see Multiple landings per harvest block below.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -191,26 +190,26 @@
 <span class="va">landings</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="va"><a href="../reference/CLUSexample.html">CLUSexample</a></span><span class="op">$</span><span class="va">landings</span>
 
 <span class="co">## plot example scenario</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">'Example Scenario'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">roadsLine</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">landings</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">5.6</span>,y<span class="op">=</span><span class="fl">4.5</span>,pch<span class="op">=</span><span class="fl">19</span>,xpd<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html">text</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">5.8</span>,y<span class="op">=</span><span class="fl">4.5</span>,labels<span class="op">=</span><span class="st">'landing'</span>,adj<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.4</span><span class="op">)</span>,xpd<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5.3</span>,<span class="fl">5.6</span><span class="op">)</span>,y<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4.2</span>,<span class="fl">4.2</span><span class="op">)</span>,lwd<span class="op">=</span><span class="fl">2</span>,xpd<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html">text</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">5.75</span>,y<span class="op">=</span><span class="fl">4.2</span>,labels<span class="op">=</span><span class="st">'roads'</span>,adj<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.3</span><span class="op">)</span>,xpd<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">'Example Scenario'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">roadsLine</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">landings</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">5.6</span>,y<span class="op">=</span><span class="fl">4.5</span>,pch<span class="op">=</span><span class="fl">19</span>,xpd<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html" class="external-link">text</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">5.8</span>,y<span class="op">=</span><span class="fl">4.5</span>,labels<span class="op">=</span><span class="st">'landing'</span>,adj<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.4</span><span class="op">)</span>,xpd<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5.3</span>,<span class="fl">5.6</span><span class="op">)</span>,y<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.2</span>,<span class="fl">4.2</span><span class="op">)</span>,lwd<span class="op">=</span><span class="fl">2</span>,xpd<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html" class="external-link">text</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">5.75</span>,y<span class="op">=</span><span class="fl">4.2</span>,labels<span class="op">=</span><span class="st">'roads'</span>,adj<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.3</span><span class="op">)</span>,xpd<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-3-1.png" width="480"></p>
 <p>Notice that the top row of the raster has a cost of zero. This row is where, in this scenario, an existing road traverses the landscape.</p>
 </div>
 </div>
-<div id="simulation-of-new-roads-development" class="section level1">
-<h1 class="hasAnchor">
-<a href="#simulation-of-new-roads-development" class="anchor"></a>Simulation of new roads development</h1>
-<div id="simulation-methods" class="section level2">
-<h2 class="hasAnchor">
-<a href="#simulation-methods" class="anchor"></a>Simulation methods</h2>
-<div id="snapping" class="section level3">
-<h3 class="hasAnchor">
-<a href="#snapping" class="anchor"></a>1. Snapping</h3>
+<div class="section level2">
+<h2 id="simulation-of-new-roads-development">Simulation of new roads development<a class="anchor" aria-label="anchor" href="#simulation-of-new-roads-development"></a>
+</h2>
+<div class="section level3">
+<h3 id="simulation-methods">Simulation methods<a class="anchor" aria-label="anchor" href="#simulation-methods"></a>
+</h3>
+<div class="section level4">
+<h4 id="snapping">1. Snapping<a class="anchor" aria-label="anchor" href="#snapping"></a>
+</h4>
 <p>This approach simply ‘snaps’ a landing to the nearest existing road segment. Since the snapping is done for each landing it is also called an independent path method.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## project new roads using the 'snap' approach</span>
@@ -219,15 +218,15 @@
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
 
 <span class="co">## plot the cost raster, landings, and roads segments to the landings</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'Snapped' roads"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">projRoads_snap</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> 
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'Snapped' roads"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">projRoads_snap</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> 
 
 <span class="co">## update legend</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.5</span>, y <span class="op">=</span> <span class="fl">4.8</span>, pch <span class="op">=</span> <span class="fl">19</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.7</span>, y <span class="op">=</span> <span class="fl">4.8</span>, labels <span class="op">=</span> <span class="st">'landing'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.4</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5.3</span>, <span class="fl">5.6</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4.2</span>, <span class="fl">4.2</span><span class="op">)</span>, lwd <span class="op">=</span> <span class="fl">2</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.75</span>, y <span class="op">=</span> <span class="fl">4.2</span>, labels <span class="op">=</span> <span class="st">'roads'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.5</span>, y <span class="op">=</span> <span class="fl">4.8</span>, pch <span class="op">=</span> <span class="fl">19</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.7</span>, y <span class="op">=</span> <span class="fl">4.8</span>, labels <span class="op">=</span> <span class="st">'landing'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.4</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5.3</span>, <span class="fl">5.6</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.2</span>, <span class="fl">4.2</span><span class="op">)</span>, lwd <span class="op">=</span> <span class="fl">2</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.75</span>, y <span class="op">=</span> <span class="fl">4.2</span>, labels <span class="op">=</span> <span class="st">'roads'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-4-1.png" width="480"></p>
 <p>Using this approach, a few issues would arise:</p>
 <ol style="list-style-type: decimal">
@@ -236,11 +235,11 @@
 </ol>
 <p>This means this approach, while simple to implement, would over estimate the amount of simulated roads.</p>
 </div>
-<div id="least-cost-paths-lcp" class="section level3">
-<h3 class="hasAnchor">
-<a href="#least-cost-paths-lcp" class="anchor"></a>2. Least Cost Paths (LCP)</h3>
-<p>This approach builds upon the snapping approach by assuming a ‘cost directed’ path (i.e., “as the wolf runs”) for each landing to the existing road network. This approach requires that a cost surface be provided and used to build a mathematical <a href="https://en.wikipedia.org/wiki/Graph_theory">graph</a> using <a href="https://igraph.org/r/"><code>igraph</code></a> and takes considerably longer to compute.</p>
-<p>Once the graph is built, the least cost path between any two vertices is determined using <a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">Dijkstra’s algorithm</a>, which is implemented in the <a href="https://igraph.org/r/doc/distances.html">shortest_paths</a> function in <code>igraph</code>. The graph can be easily updated to simulate the change in the cost surface from dynamically developing roads during the simulation. Note, that this dynamic behaviour would not be possible in a pre-solve of the road network. To implement a pre-solve approach the igraph function <a href="https://igraph.org/r/doc/distances.html">all_shortest_paths</a> can be used to calculate all shortest paths between pairs of vertices; however, this is not included here.</p>
+<div class="section level4">
+<h4 id="least-cost-paths-lcp">2. Least Cost Paths (LCP)<a class="anchor" aria-label="anchor" href="#least-cost-paths-lcp"></a>
+</h4>
+<p>This approach builds upon the snapping approach by assuming a ‘cost directed’ path (i.e., “as the wolf runs”) for each landing to the existing road network. This approach requires that a cost surface be provided and used to build a mathematical <a href="https://en.wikipedia.org/wiki/Graph_theory" class="external-link">graph</a> using <a href="https://igraph.org/r/" class="external-link"><code>igraph</code></a> and takes considerably longer to compute.</p>
+<p>Once the graph is built, the least cost path between any two vertices is determined using <a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm" class="external-link">Dijkstra’s algorithm</a>, which is implemented in the <a href="https://igraph.org/r/doc/distances.html" class="external-link">shortest_paths</a> function in <code>igraph</code>. The graph can be easily updated to simulate the change in the cost surface from dynamically developing roads during the simulation. Note, that this dynamic behaviour would not be possible in a pre-solve of the road network. To implement a pre-solve approach the igraph function <a href="https://igraph.org/r/doc/distances.html" class="external-link">all_shortest_paths</a> can be used to calculate all shortest paths between pairs of vertices; however, this is not included here.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## project new roads using the 'LCP' approach</span>
 <span class="va">projRoads_lcp</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">landings</span>, 
@@ -250,20 +249,20 @@
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
 
 <span class="co">## plot the cost raster and overlay it with new roads</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'LCP' roads"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">projRoads_lcp</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  <span class="co">## landings points</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'LCP' roads"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">projRoads_lcp</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  <span class="co">## landings points</span>
 <span class="co">## legend</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.5</span>, y <span class="op">=</span> <span class="fl">4.8</span>, pch <span class="op">=</span> <span class="fl">19</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.7</span>, y <span class="op">=</span> <span class="fl">4.8</span>, labels <span class="op">=</span> <span class="st">'landing'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.4</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5.3</span>, <span class="fl">5.6</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4.2</span>, <span class="fl">4.2</span><span class="op">)</span>, lwd <span class="op">=</span> <span class="fl">2</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.75</span>, y <span class="op">=</span> <span class="fl">4.2</span>, labels <span class="op">=</span> <span class="st">'roads'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.5</span>, y <span class="op">=</span> <span class="fl">4.8</span>, pch <span class="op">=</span> <span class="fl">19</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.7</span>, y <span class="op">=</span> <span class="fl">4.8</span>, labels <span class="op">=</span> <span class="st">'landing'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.4</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5.3</span>, <span class="fl">5.6</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.2</span>, <span class="fl">4.2</span><span class="op">)</span>, lwd <span class="op">=</span> <span class="fl">2</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.75</span>, y <span class="op">=</span> <span class="fl">4.2</span>, labels <span class="op">=</span> <span class="st">'roads'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-5-1.png" width="480"></p>
 <p>The main disadvantage of this approach is that roads are developed independently. The least cost path may produce parallel or redundant roads since a path is made for each target to the corresponding closest point. This may mimic road development since road tenures give licensees the right to limit other industrial users from using their road (i.e., gated roads); thereby forcing the other industrial user to consider building a nearly parallel road. In some cases there will be branching, where two roads connecting two landings to an existing road network will use the same least cost path; however, this will be conditional on the spatial configuration of the local cost surface and the existing road network. Thus, the amount of road being developed from the LCP is dependent on the local cost surface and may be either higher or lower than the corresponding snap approach.</p>
 </div>
-<div id="minimum-spanning-tree-mst-with-least-cost-paths-lcp" class="section level3">
-<h3 class="hasAnchor">
-<a href="#minimum-spanning-tree-mst-with-least-cost-paths-lcp" class="anchor"></a>3. Minimum Spanning Tree (MST) with Least Cost Paths (LCP)</h3>
+<div class="section level4">
+<h4 id="minimum-spanning-tree-mst-with-least-cost-paths-lcp">3. Minimum Spanning Tree (MST) with Least Cost Paths (LCP)<a class="anchor" aria-label="anchor" href="#minimum-spanning-tree-mst-with-least-cost-paths-lcp"></a>
+</h4>
 <p>The MST approach builds upon the LCP approach by determining if landings should be connected to one another before being connected to the existing road network. In the MST approach, LCPs are estimated both between the landings and between landings and the existing road network. These distances are then used as nodes for solving a minimum spanning tree. The sequence of vertices from the LCPs are then constructed following the solution to the MST.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## project new roads using the 'MST' approach</span>
@@ -274,99 +273,95 @@
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
 
 <span class="co">## plot the cost raster and overlay it with new roads</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'MST' roads"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">projRoads_mst</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  <span class="co">## landings points</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'MST' roads"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">projRoads_mst</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  <span class="co">## landings points</span>
 <span class="co">## legend</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.5</span>, y <span class="op">=</span> <span class="fl">4.8</span>, pch <span class="op">=</span> <span class="fl">19</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.7</span>, y <span class="op">=</span> <span class="fl">4.8</span>, labels <span class="op">=</span> <span class="st">'landing'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.4</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5.3</span>, <span class="fl">5.6</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4.2</span>, <span class="fl">4.2</span><span class="op">)</span>, lwd <span class="op">=</span> <span class="fl">2</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.75</span>, y <span class="op">=</span> <span class="fl">4.2</span>, labels <span class="op">=</span> <span class="st">'roads'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.5</span>, y <span class="op">=</span> <span class="fl">4.8</span>, pch <span class="op">=</span> <span class="fl">19</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.7</span>, y <span class="op">=</span> <span class="fl">4.8</span>, labels <span class="op">=</span> <span class="st">'landing'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.4</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5.3</span>, <span class="fl">5.6</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.2</span>, <span class="fl">4.2</span><span class="op">)</span>, lwd <span class="op">=</span> <span class="fl">2</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html" class="external-link">text</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5.75</span>, y <span class="op">=</span> <span class="fl">4.2</span>, labels <span class="op">=</span> <span class="st">'roads'</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span><span class="op">)</span>, xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-6-1.png" width="480"></p>
 <p>The MST approach will produce the least amount of roads (relative to the other approaches), given targets are allowed to connect to other target locations. This approach simulates a realistic view of road branching relative to the other two approaches. However, given the need to get LCP distances, solve a MST and then construct the LCPs, it will likely be the most costly in terms of computation time.</p>
 </div>
 </div>
-<div id="one-time-versus-multi-temporal-simulation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#one-time-versus-multi-temporal-simulation" class="anchor"></a>One-time versus multi-temporal simulation</h2>
+<div class="section level3">
+<h3 id="one-time-versus-multi-temporal-simulation">One-time versus multi-temporal simulation<a class="anchor" aria-label="anchor" href="#one-time-versus-multi-temporal-simulation"></a>
+</h3>
 <p>Roads development simulation can be performed either for a single time step (one-time) or for multiple time steps. This section will use a demonstration scenario <code>demoScen</code> data-set that is included with the roads package. There are four different sets of landings.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## colours for displaying cost raster</span>
-<span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"viridis"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+<span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"viridis"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
   <span class="co"># Use colour blind friendly palette if available</span>
-  <span class="va">rastColours2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">viridis</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">rastColours2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-  <span class="va">rastColours2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">terrain.colors</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">rastColours2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">terrain.colors</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="co">## scenario </span>
 <span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
 <span class="co">## landing sets 1 to 4 of this scenario </span>
-<span class="va">land.pnts</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span><span class="op"><a href="https://rdrr.io/pkg/raster/man/match.html">%in%</a></span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>,<span class="op">]</span>
+<span class="va">land.pnts</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span><span class="op"><a href="https://rdrr.io/pkg/raster/man/match.html" class="external-link">%in%</a></span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>,<span class="op">]</span>
 <span class="co">## plot the cost raster and landings</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, main <span class="op">=</span> <span class="st">'Cost and landings (by set)'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">land.pnts</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">2</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html">text</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">@</span><span class="va">coords</span>, labels <span class="op">=</span> <span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span>, cex <span class="op">=</span> <span class="fl">0.6</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span><span class="op">)</span>,
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, main <span class="op">=</span> <span class="st">'Cost and landings (by set)'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">2</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/text.html" class="external-link">text</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">@</span><span class="va">coords</span>, labels <span class="op">=</span> <span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span>, cex <span class="op">=</span> <span class="fl">0.6</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span><span class="op">)</span>,
      xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
-<div id="one-time-simulation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#one-time-simulation" class="anchor"></a>One-time simulation</h3>
+<div class="section level4">
+<h4 id="one-time-simulation">One-time simulation<a class="anchor" aria-label="anchor" href="#one-time-simulation"></a>
+</h4>
 <p>If landings, costs, and roads are all specified to <code>projectRoads</code>, then a one-time road simulation will be performed that returns a list object holding the projected roads and related information. This can be repeated multiple times for different road building scenarios but each simulation will be independent of previous simulations. This would be appropriate if each landing set represented alternate scenarios for development.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## project roads for landing sets 1 to 4, with independent one-time simulations</span>
-<span class="va">oneTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span> <span class="co">## empty list </span>
+<span class="va">oneTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span> <span class="co">## empty list </span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">{</span>
-  <span class="va">oneTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">oneTime_sim</span>,
+  <span class="va">oneTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">oneTime_sim</span>,
                        <span class="fu">roads</span><span class="fu">::</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span><span class="op">==</span><span class="va">i</span>,<span class="op">]</span>,
                                               <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>,
                                               <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span><span class="op">==</span><span class="fl">0</span>,
                                               roadMethod<span class="op">=</span><span class="st">'mst'</span><span class="op">)</span><span class="op">$</span><span class="va">roads</span><span class="op">)</span>
 <span class="op">}</span>
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
-<span class="co">#&gt; Registered S3 methods overwritten by 'stars':</span>
-<span class="co">#&gt;   method             from</span>
-<span class="co">#&gt;   st_bbox.SpatRaster sf  </span>
-<span class="co">#&gt;   st_crs.SpatRaster  sf</span>
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
 
 <span class="co">## plot</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">{</span>
   <span class="va">oneTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="op">!</span><span class="va">oneTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, 
-       main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">'Landings set '</span>, <span class="va">i</span><span class="op">)</span>,
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, 
+       main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Landings set '</span>, <span class="va">i</span><span class="op">)</span>,
        legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">oneTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"grey50"</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="va">i</span>, <span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>,
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oneTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"grey50"</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="va">i</span>, <span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>,
        pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-8-1.png" width="672"></p>
 <p>While the results of these one-time simulations may be fine when looking at each landings scenario/set independently (e.g. each representing a possible scenario for time t=1), they are likely not appropriate for cases where all landings sets follow a temporal development sequence (e.g. set 1 is development at time t=1, set 2 is development at time t=2, and so on). Independent one-time simulations do not take into account the fact that, for a given time step, existing roads for a given simulation should be the union of existing roads at time t=0 and all roads simulation results leading up to the current step. For example, existing roads input into simulation at time t=2 (landings set 2), would be the union of existing roads at time t=0 and projected roads at time t=1 (landings set 1).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## raster representing the union of completely independent simulations for multiple sets</span>
-<span class="va">oneTime_sim</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span><span class="op">(</span><span class="va">oneTime_sim</span><span class="op">)</span>
-<span class="va">independent</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="va">oneTime_sim</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>
+<span class="va">oneTime_sim</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">oneTime_sim</span><span class="op">)</span>
+<span class="va">independent</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="va">oneTime_sim</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>
 <span class="co">## set non-road to NA for display purposes</span>
 <span class="va">independent</span><span class="op">[</span><span class="op">!</span><span class="va">independent</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span> 
 
 <span class="co">## plot </span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours2</span>,
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours2</span>,
      main <span class="op">=</span> <span class="st">'Union of independent sim results'</span>,
      legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">independent</span>, col <span class="op">=</span> <span class="st">'grey30'</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">independent</span>, col <span class="op">=</span> <span class="st">'grey30'</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">land.pnts</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-9-1.png" width="480"></p>
 </div>
-<div id="multi-temporal-simulation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#multi-temporal-simulation" class="anchor"></a>Multi-temporal simulation</h3>
+<div class="section level4">
+<h4 id="multi-temporal-simulation">Multi-temporal simulation<a class="anchor" aria-label="anchor" href="#multi-temporal-simulation"></a>
+</h4>
 <p>Multi-temporal (multiple time steps) roads projections can be performed by <code>projectRoads</code>, by providing the list produced by a previous simulation run (sim list) to the <code>sim</code> argument and the landings for the current time period. The function uses the sim list as a starting point and does not need to recompute the graph used to determine the least cost path. This can be implemented in a loop.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## continuing on with demo scenario 1</span>
@@ -374,15 +369,15 @@
 <span class="va">land.stack</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.stack</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>
 
 <span class="co"># initialize sim list with first landings set</span>
-<span class="va">multiTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.stack</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, 
+<span class="va">multiTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.stack</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, 
                                                <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
 
 <span class="co"># iterate over landings sets using the sim list from the previous run as input</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/nlayers.html">nlayers</a></span><span class="op">(</span><span class="va">land.stack</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">multiTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/nlayers.html" class="external-link">nlayers</a></span><span class="op">(</span><span class="va">land.stack</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">multiTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
     <span class="va">multiTime_sim</span>,
-    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span>sim <span class="op">=</span>  <span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, landings <span class="op">=</span> <span class="va">land.stack</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span>sim <span class="op">=</span>  <span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, landings <span class="op">=</span> <span class="va">land.stack</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
   <span class="op">)</span> 
 <span class="op">}</span>
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
@@ -392,37 +387,37 @@
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
 <span class="co">#&gt; Burning in roads to cost raster from sf</span>
 
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, main <span class="op">=</span> <span class="st">'Roads at time t = 0'</span>, 
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, main <span class="op">=</span> <span class="st">'Roads at time t = 0'</span>, 
        legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, col <span class="op">=</span> <span class="st">'grey30'</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, col <span class="op">=</span> <span class="st">'grey30'</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
   
-<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">costSurface</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, 
-       main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">'Roads at time t = '</span>, <span class="va">i</span><span class="op">)</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span>, col <span class="op">=</span> <span class="st">'grey30'</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="va">i</span>, <span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, 
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">costSurface</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, 
+       main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Roads at time t = '</span>, <span class="va">i</span><span class="op">)</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span>, col <span class="op">=</span> <span class="st">'grey30'</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="va">i</span>, <span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, 
          cex <span class="op">=</span> <span class="fl">1.5</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span>
   <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">&gt;=</span> <span class="fl">2</span><span class="op">)</span><span class="op">{</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">&lt;</span> <span class="va">i</span>, <span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">1</span>, cex <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="va">i</span>, <span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, 
+    <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">&lt;</span> <span class="va">i</span>, <span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">1</span>, cex <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="va">i</span>, <span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, 
          cex <span class="op">=</span> <span class="fl">1.5</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span>
   <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
 </div>
 </div>
-<div id="multiple-landings-per-harvest-block" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multiple-landings-per-harvest-block" class="anchor"></a>Multiple landings per harvest block</h2>
+<div class="section level3">
+<h3 id="multiple-landings-per-harvest-block">Multiple landings per harvest block<a class="anchor" aria-label="anchor" href="#multiple-landings-per-harvest-block"></a>
+</h3>
 <p>Often harvest information is available as polygons showing the cutover area but the point locations of landings are not known. The roads package includes the <code>getLandingsFromTarget</code> function to address these situations. By default <code>getLandingsFromTarget</code> will use the centroid of a polygon as the landing but you can also specify a <code>sampleType</code> of “random” or “regular” and a <code>landingDens</code> in landings per unit area to generate multiple landing points with in the harvest block.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">harvPoly</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">landings.poly</span>
 
 <span class="va">outCent</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getLandingsFromTarget.html">getLandingsFromTarget</a></span><span class="op">(</span><span class="va">harvPoly</span><span class="op">)</span>
-<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">harvPoly</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">outCent</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">harvPoly</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outCent</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-11-1.png" width="576"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
@@ -431,11 +426,11 @@
 <span class="va">prRand</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">outRand</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span>
 <span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, main <span class="op">=</span> <span class="st">"Random Landings in Harvest Blocks"</span>,
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, main <span class="op">=</span> <span class="st">"Random Landings in Harvest Blocks"</span>,
      col <span class="op">=</span> <span class="va">rastColours2</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">harvPoly</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">prRand</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span>,  col <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">outRand</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">harvPoly</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">prRand</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span>,  col <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outRand</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-11-2.png" width="576"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
@@ -447,19 +442,19 @@
 <span class="co">#&gt; geometries</span>
 
 
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, main <span class="op">=</span> <span class="st">"Regular Landings in Harvest Blocks"</span>,
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, main <span class="op">=</span> <span class="st">"Regular Landings in Harvest Blocks"</span>,
      col <span class="op">=</span> <span class="va">rastColours2</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">harvPoly</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">prReg</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">outReg</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">harvPoly</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">prReg</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outReg</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-11-3.png" width="576"></p>
 <p>The regular sampling method may be the most realistic since it ensures that landings are spaced apart from each other.</p>
 </div>
 </div>
-<div id="note" class="section level1">
-<h1 class="hasAnchor">
-<a href="#note" class="anchor"></a>Note</h1>
-<p>This vignette is partially copied from Kyle Lochhead &amp; Tyler Muhly’s <a href="https://github.com/bcgov/clus/blob/master/reports/roads/draft-CLUS-roads.md">2018 CLUS example</a></p>
+<div class="section level2">
+<h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a>
+</h2>
+<p>This vignette is partially copied from Kyle Lochhead &amp; Tyler Muhly’s <a href="https://github.com/bcgov/clus/blob/master/reports/roads/draft-CLUS-roads.md" class="external-link">2018 CLUS example</a></p>
 </div>
   </div>
 
@@ -474,11 +469,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Sarah Endicott, Kyle Lochhead, Josie Hughes, Patrick Kirby.</p>
+  <p></p>
+<p>Developed by Sarah Endicott, Kyle Lochhead, Josie Hughes, Patrick Kirby.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -486,6 +483,8 @@
 
   
 
+
+  
 
   </body>
 </html>
