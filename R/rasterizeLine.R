@@ -16,7 +16,7 @@
 
 #' Faster rasterize for lines
 #'
-#' Rasterize a line using stars because fasterize doesn't work on lines and
+#' Rasterize a line using \code{stars} because \code{fasterize} doesn't work on lines and
 #' rasterize is slow
 #'
 #' @param sfLine an sf object to be rasterized

@@ -20,8 +20,8 @@
 #'
 #' @param sim sim list result from \code{projectRoads}
 #' @param mainTitle A title for the plot
-#' @param subTitle A sub title for the plot, by default the roadMethod is used
-#' @param ... Other arguments passed to raster plot call for the costSurface
+#' @param subTitle A sub title for the plot, by default the \code{roadMethod} is used
+#' @param ... Other arguments passed to raster plot call for the \code{costSurface}
 #' 
 #' @return Creates a plot using base graphics
 #' 
