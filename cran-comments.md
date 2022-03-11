@@ -20,4 +20,4 @@
 
 * This is a new release.
 
-* I can not reproduce the long example times for fedora and I don't know how to go about fixing it or if it is necessary to. It only takes 1.68 seconds on windows. 
+* I can not reproduce the long example times for fedora and I don't know how to go about fixing it or if it is necessary to. It only takes 1.68 seconds on windows. Any feedback would be appreciated
