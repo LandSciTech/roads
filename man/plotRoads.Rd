@@ -11,9 +11,9 @@ plotRoads(sim, mainTitle, subTitle = paste0("Method: ", sim$roadMethod), ...)
 
 \item{mainTitle}{A title for the plot}
 
-\item{subTitle}{A sub title for the plot, by default the roadMethod is used}
+\item{subTitle}{A sub title for the plot, by default the \code{roadMethod} is used}
 
-\item{...}{Other arguments passed to raster plot call for the costSurface}
+\item{...}{Other arguments passed to raster plot call for the \code{costSurface}}
 }
 \value{
 Creates a plot using base graphics
