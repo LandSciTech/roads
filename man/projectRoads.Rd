@@ -69,11 +69,11 @@ should be considered adjacent. 'octagon' option is a modified version of
 the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
 higher than horizontal/vertical weights.}
 
-\item{sim}{Sim list. Returned from a previous iteration of projectRoads.
-cost, roads, and roadMethod are ignored if a sim list is provided.}
+\item{sim}{list. Returned from a previous iteration of \code{projectRoads}.
+cost, roads, and \code{roadMethod} are ignored if a \code{sim} list is provided.}
 
 \item{roadsOut}{Character. Either "raster", "sf" or NULL. If "raster" roads
-are returned as a raster in the sim list. If "sf" the roads are returned as
+are returned as a raster in the \code{sim} list. If "sf" the roads are returned as
 an sf object which will contain lines if the roads input was sf lines but a
 geometry collection of lines and points if the roads input was a raster.
 The points in the geometry collection represent the existing roads while

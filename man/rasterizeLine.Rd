@@ -18,7 +18,7 @@ a RasterLayer where the value of cells that touch the line will be
   the row index of the line in the sf
 }
 \description{
-Rasterize a line using stars because fasterize doesn't work on lines and
+Rasterize a line using \code{stars} because \code{fasterize} doesn't work on lines and
 rasterize is slow
 }
 \examples{
