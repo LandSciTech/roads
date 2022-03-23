@@ -46,7 +46,8 @@ Imports:
     units,
     rlang,
     methods,
-    tidyselect
+    tidyselect,
+    terra
 RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 2.1.0),
