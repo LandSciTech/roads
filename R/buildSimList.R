@@ -150,7 +150,20 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
       roads <- sf::st_transform(roads, sf::st_crs(cost))
     }
     
-    roadsRast <- terra::rasterize(terra::vect(roads), cost, background = 0) == 0
+    if(sf::st_geometry_type(roads, by_geometry = FALSE) == "GEOMETRY"){
+      geom_types <- c("POINT", "LINESTRING")
+      
+      rasts <- lapply(geom_types, function(x, rds, cst){
+        geom_roads <- sf::st_collection_extract(rds, type = x)
+        geom_rast <- terra::rasterize(terra::vect(geom_roads), cst,
+                                      background = 0) > 0
+      }, rds = roads, cst = cost)
+      
+      roadsRast <- rasts[[1]]|rasts[[2]]
+    } else {
+      roadsRast <- terra::rasterize(terra::vect(roads), cost, background = 0) == 0 
+    }
+    
     cost <- cost * roadsRast
     
     rm(roadsRast)
