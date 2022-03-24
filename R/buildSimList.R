@@ -63,7 +63,7 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
       
     } else if(is(roads, "SpatRaster")){
      # roads <- rasterToLineSegments(roads)
-      roads <- terra::classify(roads, rcl = matrix(c(0, NA), nrow = 1)) %>% 
+      roads <- terra::subst(roads, from = 0, to = NA) %>% 
         terra::as.points() %>% 
         sf::st_as_sf() %>% 
         sf::st_set_agr("constant") 
@@ -103,7 +103,7 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
                                                           dissolve = TRUE)) %>% 
           sf::st_set_agr("constant")
       } else {
-        landings <- terra::classify(landings, rcl = matrix(c(0, NA), nrow = 1)) %>% 
+        landings <- terra::subst(landings, from = 0, to = NA)%>% 
           terra::as.points() %>% 
           sf::st_as_sf() %>% 
           sf::st_set_agr("constant")

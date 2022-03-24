@@ -29,7 +29,7 @@ getGraph<- function(sim, neighbourhood){
   sim$paths.v <- NULL
   # prepare the cost surface raster #===========
   # get cost as data.table from raster
-  weight <- data.table(weight = raster::getValues(sim$costSurface))
+  weight <- data.table(weight = terra::values(sim$costSurface, mat = FALSE))
 
   # get the id for ther verticies which is used to merge with the edge list from
   # adj
@@ -41,8 +41,8 @@ getGraph<- function(sim, neighbourhood){
     stop("neighbourhood type not recognized")
   }
 
-  nc <- raster::ncol(sim$costSurface)
-  ncel <- raster::ncell(sim$costSurface) %>% as.integer()
+  nc <- terra::ncol(sim$costSurface)
+  ncel <- terra::ncell(sim$costSurface) %>% as.integer()
 
   edges <- SpaDES.tools::adj(
       returnDT = TRUE,

@@ -68,7 +68,7 @@ test_that("raster no clumps input works",{
 })
 
 test_that("raster with clumps input works no ID",{
-  rast <- demoScen[[1]]$landings.poly %>% raster::rasterize(demoScen[[1]]$cost.rast)
+  rast <- demoScen[[1]]$landings.poly %>% terra::rasterize(demoScen[[1]]$cost.rast)
   
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
@@ -81,6 +81,9 @@ test_that("raster with clumps input works no ID",{
                                       sampleType = "random")
   outRastReg <- getLandingsFromTarget(rast > 0, landingDens = 0.1, 
                                       sampleType = "regular")
+  
+  expect_type(outRastCent, "list")
+  
   if(interactive()){
     raster::plot(rast)
     plot(outRastCent, col = "red", add = T)
@@ -94,7 +97,7 @@ test_that("raster with clumps input works no ID",{
 })
 
 test_that("raster with clumps input works with ID",{
-  rast <- demoScen[[1]]$landings.poly %>% raster::rasterize(demoScen[[1]]$cost.rast)
+  rast <- demoScen[[1]]$landings.poly %>% terra::rasterize(demoScen[[1]]$cost.rast)
   
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
@@ -107,6 +110,9 @@ test_that("raster with clumps input works with ID",{
                                        sampleType = "random")
   outRastReg <- getLandingsFromTarget(rast, landingDens = 0.1, 
                                       sampleType = "regular")
+  
+  expect_type(outRastCent, "list")
+  
   if(interactive()){
     raster::plot(rast)
     plot(outRastCent, col = "red", add = T)
