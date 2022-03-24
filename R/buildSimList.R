@@ -42,7 +42,7 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
   } else if(roadsInCost){
     warning("No 0s detected in cost raster. If existing roads have not been ",
             "included in the cost raster set roadsInCost = FALSE to have them ",
-            "burned in")
+            "burned in", call. = FALSE)
   }
   
   if(is(roads, "Raster")){

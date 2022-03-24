@@ -228,8 +228,21 @@ setMethod(
 
     if(roadsOut == "raster"){
       # rasterize roads to template
-      sim$roads <- terra::rasterize(terra::vect(sim$roads), sim$cost,
-                                    background = 0) > 0
+      # terra::vect loses points so convert separately
+      if(sf::st_geometry_type(sim$roads, by_geometry = FALSE) == "GEOMETRY"){
+        geom_types <- c("POINT", "LINESTRING")
+        
+        rasts <- lapply(geom_types, function(x, rds, cst){
+          geom_roads <- sf::st_collection_extract(rds, type = x)
+          geom_rast <- terra::rasterize(terra::vect(geom_roads), cst,
+                           background = 0) > 0
+        }, rds = sim$roads, cst = sim$costSurface)
+        
+        sim$roads <- rasts[[1]]|rasts[[2]]
+      } else {
+        sim$roads <- terra::rasterize(terra::vect(sim$roads), sim$cost,
+                                      background = 0) > 0
+      }
     }
     
     # reset landings to include all input landings

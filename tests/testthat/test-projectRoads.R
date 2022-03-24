@@ -39,6 +39,14 @@ test_that("cost and road options work", {
                               roadInt, plotRoads = doPlot),
                  "No 0s detected")
   
+  # all input roads should be included in output
+  out2 <- projectRoads(scen$landings.points.sf, costNo0,
+               roadInt, plotRoads = doPlot, roadsInCost = FALSE)
+  
+  inrd <- terra::cells(terra::rast(roadInt), 1:100)
+  
+  expect_true(all(terra::extract(out2$roads, inrd[[1]])[1] == 1))
+  
   # sp lines
   out2 <- projectRoads(scen$landings.points.sf, scen$cost.rast,
                scen$road.line, plotRoads = doPlot)
