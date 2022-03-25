@@ -70,7 +70,7 @@ test_that("raster no clumps input works",{
 test_that("raster with clumps input works no ID",{
   rast <- demoScen[[1]]$landings.poly %>% terra::rasterize(demoScen[[1]]$cost.rast)
   
-  # make sure that a single celled havest block will work with clumps
+  # make sure that a single celled harvest block will work with clumps
   rast[10,10] <- 6
 
   # Show effect of ID
@@ -97,7 +97,8 @@ test_that("raster with clumps input works no ID",{
 })
 
 test_that("raster with clumps input works with ID",{
-  rast <- demoScen[[1]]$landings.poly %>% terra::rasterize(demoScen[[1]]$cost.rast)
+  rast <- demoScen[[1]]$landings.poly %>% terra::vect() %>%
+    terra::rasterize(terra::rast(demoScen[[1]]$cost.rast), field = "ID")
   
   # make sure that a single celled havest block will work with clumps
   rast[10,10] <- 6
