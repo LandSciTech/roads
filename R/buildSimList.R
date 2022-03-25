@@ -150,7 +150,8 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
       roads <- sf::st_transform(roads, sf::st_crs(cost))
     }
     
-    if(sf::st_geometry_type(roads, by_geometry = FALSE) == "GEOMETRY"){
+    if(any(grepl("POINT", sf::st_geometry_type(roads, by_geometry = TRUE))) &&
+       any(grepl("LINESTRING", sf::st_geometry_type(roads, by_geometry = TRUE)))){
       geom_types <- c("POINT", "LINESTRING")
       
       rasts <- lapply(geom_types, function(x, rds, cst){
