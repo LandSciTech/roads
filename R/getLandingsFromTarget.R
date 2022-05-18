@@ -216,9 +216,17 @@ getLandingsFromTargetRast<-function(inputPatches,
   
   inputPatches[inputPatches == 0] <- NA
   
-  landPts = matrix(0,0,3)
-  colnames(landPts)=c("x","y","layer")
-  for(i in seq_along(terra::unique(inputPatches, na.rm = T)[[1]])){
+  clumpVals <- terra::unique(inputPatches)[[1]]
+  landPts <- sf::st_sf(integer(), 
+                       geometry = sf::st_sfc(), 
+                       crs = sf::st_crs(inputPatches))
+  
+  # landPts = matrix(0,0,3)
+  # colnames(landPts)=c("x","y","ID")
+  # landPts <- sf::st_as_sf(as.data.frame(landPts), coords = c("x", "y"), 
+  #                         crs = sf::st_crs(inputPatches))
+  
+  for(i in seq_along(clumpVals)){
     
     nl <- ifelse(is.null(landingDens), 0, landingDens)
     
@@ -238,9 +246,8 @@ getLandingsFromTargetRast<-function(inputPatches,
       sf::st_as_sf() %>% 
       sf::st_set_agr("constant")
     
-    landPts <- rbind(landPts, landC)
-    
     if(sampleType == "centroid"){
+      landPts <- rbind(landPts, landC)
       next
     }
     
@@ -254,6 +261,7 @@ getLandingsFromTargetRast<-function(inputPatches,
                             prod(terra::res(remL)))
       if(is.na(numSamples) || numSamples < 1){
         # use just the centroids
+        landPts <- rbind(landPts, landC)
         next
       }
       
@@ -264,9 +272,11 @@ getLandingsFromTargetRast<-function(inputPatches,
           terra::as.points() %>% 
           sf::st_as_sf() %>% 
           sf::st_set_agr("constant")
-        landPts <- landingPts
+        landPts <- rbind(landPts, landingPts)
         
       } else {
+        remL <- terra::trim(remL, padding = 1)
+        
         landingPts <- terra::spatSample(remL, size = numSamples, 
                                         method = "random", na.rm = TRUE,
                                         as.points = TRUE, warn = FALSE)%>% 
@@ -284,7 +294,7 @@ getLandingsFromTargetRast<-function(inputPatches,
     }
     
     #add centroids to ensure all patches are included
-    landPts = rbind(landPts,landingPts)
+    landPts = rbind(landPts, landC, landingPts)
   }
   # make sf object
   landPts <- landPts %>%
