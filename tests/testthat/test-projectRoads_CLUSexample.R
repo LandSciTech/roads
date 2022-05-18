@@ -38,15 +38,15 @@ pR_mst <- projectRoads(landings = landingsC,
 
 getRoadCells <- function(rast, roads, method){
   if(method == "snap"){
-    raster::extract(rast, 
+    terra::extract(rast, 
                     roads %>% 
-                      sf::st_segmentize(dfMaxLength = raster::xres(costC)) %>% 
+                      sf::st_segmentize(dfMaxLength = terra::xres(costC)) %>% 
                       sf::st_cast("MULTIPOINT") %>%
                       sf::st_cast("POINT"), 
                     cellnumbers = T) %>% 
       .[,1] %>% unique() %>% sort()
   } else {
-    raster::extract(rast, 
+    terra::extract(rast, 
                     roads %>% 
                       sf::st_cast("MULTIPOINT") %>%
                       sf::st_cast("POINT"), 

@@ -30,8 +30,8 @@
 #' area is determined by the CRS. For projected CRS this should likely be a very
 #' small number i.e. < 0.001.
 #'
-#' @param harvest sf, SpatialPolygons or RasterLayer object with harvested
-#'   areas. If it is a RasterLayer with more than one unique value other than 0
+#' @param harvest sf, SpatialPolygons, SpatRaster or RasterLayer object with harvested
+#'   areas. If it is a raster with more than one unique value other than 0
 #'   each value will be run separately which will produce different results from
 #'   a 0/1 raster but will be much slower.
 #' @param landingDens number of landings per unit area. This should be in the
@@ -52,19 +52,19 @@
 #' @examples
 #' # Get centroid
 #' outCent <- getLandingsFromTarget(demoScen[[1]]$landings.poly)
-#' raster::plot(demoScen[[1]]$landings.poly)
+#' terra::plot(demoScen[[1]]$landings.poly)
 #' plot(outCent, col = "red", add = TRUE)
 #'
 #' # Get random sample with density 0.1 points per unit area
 #' outRand <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "random")
 #'
-#' raster::plot(demoScen[[1]]$landings.poly)
+#' terra::plot(demoScen[[1]]$landings.poly)
 #' plot(outRand, col = "red", add = TRUE)
 #'
 #' # Get regular sample with density 0.1 points per unit area
 #' outReg <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "regular")
 #'
-#' raster::plot(demoScen[[1]]$landings.poly)
+#' terra::plot(demoScen[[1]]$landings.poly)
 #' plot(outReg, col = "red", add = TRUE)
 #'
 #' @export
@@ -180,7 +180,7 @@ getLandingsFromTarget <- function(harvest,
 
 #' Select random landing locations within patches.
 #'
-#' @param inputPatches A RasterLayer. Harvested patches should have values
+#' @param inputPatches A Raster. Harvested patches should have values
 #'   greater than 0
 #' @param landingDens number of landings per unit area. This should be in the
 #'   same units as the CRS of the harvest. Note that 0.001 points per m2 is > 1000
@@ -253,7 +253,6 @@ getLandingsFromTargetRast<-function(inputPatches,
     
     if(sampleType == "random"){
       #select additional points so total number is equal to small alternative
-      #numSamples = nl - raster::cellStats(landC > 0, "sum")
       remL_sum <- terra::global(remL, "sum", na.rm = TRUE)[1,1] 
       
       numSamples <- round(remL_sum * 

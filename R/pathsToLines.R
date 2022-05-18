@@ -49,7 +49,7 @@ pathsToLines <- function(sim){
     ## index of where new road connects to existing road
     conn <- which(er_v == 1)
     
-    # outLine1 <- sf::st_linestring(raster::xyFromCell(sim$costSurface, v))
+    # outLine1 <- sf::st_linestring(terra::xyFromCell(sim$costSurface, v))
     
     ## remove portions that run along existing road, if applicable. If there are
     ## multiple sections of new road with sections of old road in between we
@@ -129,12 +129,12 @@ pathsToLines <- function(sim){
     }
     
     
-    # strt_end <-raster::xyFromCell(sim$costSurface, sim$paths.list[[i]]) %>% 
+    # strt_end <-terra::xyFromCell(sim$costSurface, sim$paths.list[[i]]) %>% 
     #   as.data.frame %>% 
     #   st_as_sf(coords = c("x", "y"))
     # 
     # plot(outLine1, col = "blue")
-    # #raster::plot(sim$costSurface, add = TRUE)
+    # #terra::plot(sim$costSurface, add = TRUE)
     # plot(sim$landings %>% st_geometry(), add = T)
     # plot(sim$roads %>% st_geometry(), add = T)
     # plot(outLine1, col = "blue", add = T)
