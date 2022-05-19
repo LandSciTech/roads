@@ -7,8 +7,8 @@
 getLandingsFromTarget(harvest, landingDens = NULL, sampleType = "centroid")
 }
 \arguments{
-\item{harvest}{sf, SpatialPolygons or RasterLayer object with harvested
-areas. If it is a RasterLayer with more than one unique value other than 0
+\item{harvest}{sf, SpatialPolygons, SpatRaster or RasterLayer object with harvested
+areas. If it is a raster with more than one unique value other than 0
 each value will be run separately which will produce different results from
 a 0/1 raster but will be much slower.}
 
@@ -47,19 +47,19 @@ small number i.e. < 0.001.
 \examples{
 # Get centroid
 outCent <- getLandingsFromTarget(demoScen[[1]]$landings.poly)
-raster::plot(demoScen[[1]]$landings.poly)
+terra::plot(demoScen[[1]]$landings.poly)
 plot(outCent, col = "red", add = TRUE)
 
 # Get random sample with density 0.1 points per unit area
 outRand <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "random")
 
-raster::plot(demoScen[[1]]$landings.poly)
+terra::plot(demoScen[[1]]$landings.poly)
 plot(outRand, col = "red", add = TRUE)
 
 # Get regular sample with density 0.1 points per unit area
 outReg <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "regular")
 
-raster::plot(demoScen[[1]]$landings.poly)
+terra::plot(demoScen[[1]]$landings.poly)
 plot(outReg, col = "red", add = TRUE)
 
 }
