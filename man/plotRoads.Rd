@@ -28,7 +28,9 @@ scen <- demoScen[[1]]
 # landing set 1 of scenario 1:
 land.pnts <- scen$landings.points.sf[scen$landings.points.sf$set==1,]
 
-prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line.sf, "lcp")
+prRes <- projectRoads(landings = land.pnts, cost = scen$cost.rast, 
+                      roads = scen$road.line.sf, roadMethod = "lcp")
 plotRoads(prRes, "Title")
+
 
 }

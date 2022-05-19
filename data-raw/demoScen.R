@@ -212,4 +212,17 @@ save(demoScen,file="data/demoScen.rda",compress="xz")
 #################################################
 
 
+# Turns out using SpatRasters breaks things because they have to be wrap()ed
+# before being stored in a .rda and then they need to be unpacked after
+# # change to SpatRasters because using terra now
+# chngRast <- function(x){
+#   if(is(x, "Raster")){
+#     return(terra::rast(x))
+#   } else {
+#     return(x)
+#   }
+# }
+# 
+# demoScen <- purrr::map(demoScen, ~purrr::map(.x, chngRast))
+
 

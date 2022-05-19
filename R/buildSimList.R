@@ -146,9 +146,10 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
     message("Burning in roads to cost raster from sf")
 
     # The crs is checked above but stars requires that they be identical
-    if(!is.na(sf::st_crs(roads))){
-      roads <- sf::st_transform(roads, sf::st_crs(cost))
-    }
+    # No longer use stars but keep in case have same problem
+    # if(!is.na(sf::st_crs(roads))){
+    #   roads <- sf::st_transform(roads, sf::st_crs(cost))
+    # }
     
     if(any(grepl("POINT", sf::st_geometry_type(roads, by_geometry = TRUE))) &&
        any(grepl("LINESTRING", sf::st_geometry_type(roads, by_geometry = TRUE)))){
