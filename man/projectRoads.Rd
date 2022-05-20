@@ -12,7 +12,7 @@ projectRoads(
   roads = NULL,
   roadMethod = "mst",
   plotRoads = FALSE,
-  mainTitle = "",
+  mainTitle = NULL,
   neighbourhood = "octagon",
   sim = NULL,
   roadsOut = NULL,
@@ -25,7 +25,7 @@ projectRoads(
   roads = NULL,
   roadMethod = "mst",
   plotRoads = FALSE,
-  mainTitle = "",
+  mainTitle = NULL,
   neighbourhood = "octagon",
   sim = NULL,
   roadsOut = NULL,
@@ -38,7 +38,7 @@ projectRoads(
   roads = NULL,
   roadMethod = "mst",
   plotRoads = FALSE,
-  mainTitle = "",
+  mainTitle = NULL,
   neighbourhood = "octagon",
   sim = NULL,
   roadsOut = NULL,
@@ -46,16 +46,16 @@ projectRoads(
 )
 }
 \arguments{
-\item{landings}{sf polygons or points, SpatRaster, RasterLayer, SpatialPolygons*,
+\item{landings}{sf polygons or points, RasterLayer, SpatialPolygons*,
 SpatialPoints*, matrix, containing features to be connected
 to the road network. Matrix should contain columns x, y with coordinates,
 all other columns will be ignored.}
 
-\item{cost}{SpatRaster or RasterLayer. Cost surface where existing roads must be the only
+\item{cost}{RasterLayer. Cost surface where existing roads must be the only
 cells with a cost of 0. If existing roads do not have 0 cost set
 \code{roadsInCost = FALSE} and they will be burned in.}
 
-\item{roads}{sf lines, SpatialLines*, SpatRaster, RasterLayer. Existing road network.}
+\item{roads}{sf lines, SpatialLines*, RasterLayer. Existing road network.}
 
 \item{roadMethod}{Character. Options are "mst", "lcp", "snap".}
 
@@ -161,7 +161,7 @@ prRes <- projectRoads(land.poly, scen$cost.rast, scen$road.rast, "mst",
 # demo scenario 7
 scen <- demoScen[[7]]
 # rasterize polygonal landings of demo scenario 7:
-land.polyR <- terra::rasterize(scen$landings.poly, scen$cost.rast)
+land.polyR <- raster::rasterize(scen$landings.poly, scen$cost.rast)
 
 prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")

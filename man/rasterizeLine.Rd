@@ -19,7 +19,7 @@ a RasterLayer where the value of cells that touch the line will be
 }
 \description{
 Rasterize a line using \code{stars} because \code{fasterize} doesn't work on lines and
-rasterize is slow. Deprecated use \code{terra::rasterize}
+rasterize is slow
 }
 \examples{
 
@@ -28,8 +28,7 @@ matrix(c(0.5, 4.5, 4.5, 4.51),
        ncol = 2, byrow = TRUE) 
 )))
 
-# Deprecated rasterizeLine(roadsLine, CLUSexample$cost, 0)   
-# Use terra::rasterize
-terra::rasterize(roadsLine, CLUSexample$cost, background = 0)
+rasterizeLine(roadsLine, CLUSexample$cost, 0)   
+
 
 }
