@@ -45,6 +45,7 @@ The output of `projectRoads` is a list of simulation results referred to as a "s
 library(roads)
 library(terra)
 library(dplyr)
+library(raster)
 
 ## colours for displaying cost raster 
 if(requireNamespace("viridis", quietly = TRUE)){
@@ -261,7 +262,7 @@ While the results of these one-time simulations may be fine when looking at each
 
 ```{r, fig.show='hold', fig.width=5,fig.height=4.85}
 ## raster representing the union of completely independent simulations for multiple sets
-oneTime_sim <- raster::stack(oneTime_sim)
+oneTime_sim <- rast(oneTime_sim)
 independent <- any(oneTime_sim == 1)
 ## set non-road to NA for display purposes
 independent[!independent] <- NA 
