@@ -283,14 +283,14 @@ Multi-temporal (multiple time steps) roads projections can be performed by `proj
 ```{r, fig.show='hold', fig.width=7, fig.height=9.97}
 ## continuing on with demo scenario 1
 ## landing sets 1 to 4 of this scenario as a raster stack
-land.stack <- rast(scen$landings.stack[[1:4]])
+land.stack <- scen$landings.stack[[1:4]]
 
 # initialize sim list with first landings set
 multiTime_sim <- list(projectRoads(land.stack[[1]], scen$cost.rast, 
                                                scen$road.line))
 
 # iterate over landings sets using the sim list from the previous run as input
-for (i in 2:terra::nlyr(land.stack)) {
+for (i in 2:raster::nlayers(land.stack)) {
   multiTime_sim <- c(
     multiTime_sim,
     list(projectRoads(sim =  multiTime_sim[[i-1]], landings = land.stack[[i]]))
@@ -326,7 +326,7 @@ Often harvest information is available as polygons showing the cutover area but 
 harvPoly <- demoScen[[1]]$landings.poly
 
 outCent <- getLandingsFromTarget(harvPoly)
-terra::plot(harvPoly)
+raster::plot(harvPoly)
 plot(outCent, col = "red", add = TRUE)
 
 # Get random sample with density 0.02 pts per unit area

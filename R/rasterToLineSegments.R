@@ -36,13 +36,9 @@
 
 rasterToLineSegments <- function(rast){
   #rast=roads
-  if(is(rast, "Raster")){
-    rast <- terra::rast(rast)
-  }
-  pts <- terra::subst(rast, from = 0, to = NA) %>% 
-    terra::as.points() %>% 
-    sf::st_as_sf() %>% 
-    sf::st_set_agr("constant") 
+  pts <- sf::st_as_sf(raster::rasterToPoints(rast,
+                                             fun = function(x){x > 0},
+                                             spatial = TRUE))
   # finds line between all points and keep shortest
   nearLn <- sf::st_nearest_points(pts, pts) %>%
     sf::st_as_sf() %>%

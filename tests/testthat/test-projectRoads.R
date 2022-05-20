@@ -73,7 +73,7 @@ test_that("landings options work", {
                "single layer")
   
   # clumped raster
-  projectRoads(terra::rasterize(scen$landings.poly, scen$cost.rast), 
+  projectRoads(raster::rasterize(scen$landings.poly, scen$cost.rast), 
                scen$cost.rast,
                scen$road.line, plotRoads = doPlot)
   

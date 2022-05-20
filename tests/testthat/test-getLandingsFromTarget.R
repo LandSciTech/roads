@@ -49,7 +49,7 @@ test_that("sp polygon input works for centroid",{
   expect_type(outCent, "list")
   
   if(interactive()){
-    terra::plot(demoScen[[1]]$landings.poly)
+    raster::plot(demoScen[[1]]$landings.poly)
     plot(outCent, col = "red", add = T)
   }
   
@@ -62,7 +62,7 @@ test_that("raster no clumps input works",{
                                       sampleType = "regular"),
                 "landingDens is ignored")
  if(interactive()){
-   terra::plot(demoScen[[1]]$landings.stack[[1]])
+   raster::plot(demoScen[[1]]$landings.stack[[1]])
    plot(outRast1, col = "red", add = T)
  }
 })
@@ -118,13 +118,13 @@ test_that("raster with clumps input works with ID",{
   expect_type(outRastCent, "list")
   
   if(interactive()){
-    terra::plot(rast)
+    raster::plot(rast)
     plot(outRastCent, col = "red", add = T)
     
-    terra::plot(rast)
+    raster::plot(rast)
     plot(outRastRand, col = "red", add = T)
     
-    terra::plot(rast)
+    raster::plot(rast)
     plot(outRastReg, col = "red", add = T)
   }
 })
