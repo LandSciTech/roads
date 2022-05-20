@@ -32,10 +32,8 @@
 #' # landing set 1 of scenario 1:
 #' land.pnts <- scen$landings.points.sf[scen$landings.points.sf$set==1,]
 #' 
-#' prRes <- projectRoads(landings = land.pnts, cost = scen$cost.rast, 
-#'                       roads = scen$road.line.sf, roadMethod = "lcp")
+#' prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line.sf, "lcp")
 #' plotRoads(prRes, "Title")
-#' 
 #' 
 #' @export
 #'
@@ -55,8 +53,8 @@ plotRoads <- function(sim, mainTitle,
   if(is(sim$landings, "SpatialPolygons")){
     sp::plot(sim$landings, add = TRUE)
   } else if(is(sim$landings, "sf") &&
-     sf::st_geometry_type(sim$landings, by_geometry = FALSE) %in%
-     c("POLYGON", "MULTIPOLYGON")){
+            sf::st_geometry_type(sim$landings, by_geometry = FALSE) %in%
+            c("POLYGON", "MULTIPOLYGON")){
     plot(sf::st_geometry(sim$landings), add = TRUE)
   }
 }

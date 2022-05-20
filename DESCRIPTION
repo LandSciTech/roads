@@ -42,6 +42,7 @@ Imports:
     data.table,
     SpaDES.tools,
     sf,
+    stars,
     units,
     rlang,
     methods,

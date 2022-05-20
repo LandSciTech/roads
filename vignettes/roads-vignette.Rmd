@@ -43,10 +43,8 @@ The output of `projectRoads` is a list of simulation results referred to as a "s
 
 ```{r setup, results='hide', warning=FALSE, message=FALSE}
 library(roads)
-library(raster) # needed for managing RasterLayer inputs
 library(terra)
 library(dplyr)
-
 
 ## colours for displaying cost raster 
 if(requireNamespace("viridis", quietly = TRUE)){
@@ -103,7 +101,7 @@ If the landings are polygons then the centroid is used as the destination for ne
 
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
 ## landings as spatial points
-landings <- CLUSexample$landings
+landings <- roads::CLUSexample$landings
 
 ## plot example scenario
 plot(costRaster, col = rastColours, main = 'Example Scenario')
@@ -238,10 +236,10 @@ If landings, costs, and roads are all specified to `projectRoads`, then a one-ti
 oneTime_sim <- list() ## empty list 
 for (i in 1:4){
   oneTime_sim <- c(oneTime_sim,
-                   projectRoads(land.pnts[land.pnts$set==i,],
-                                scen$cost.rast,
-                                scen$cost.rast==0,
-                                roadMethod='mst')$roads)
+                       roads::projectRoads(land.pnts[land.pnts$set==i,],
+                                              scen$cost.rast,
+                                              scen$cost.rast==0,
+                                              roadMethod='mst')$roads)
 }
 
 ## plot
@@ -263,7 +261,7 @@ While the results of these one-time simulations may be fine when looking at each
 
 ```{r, fig.show='hold', fig.width=5,fig.height=4.85}
 ## raster representing the union of completely independent simulations for multiple sets
-oneTime_sim <- rast(oneTime_sim)
+oneTime_sim <- raster::stack(oneTime_sim)
 independent <- any(oneTime_sim == 1)
 ## set non-road to NA for display purposes
 independent[!independent] <- NA 
@@ -292,7 +290,7 @@ multiTime_sim <- list(projectRoads(land.stack[[1]], scen$cost.rast,
                                                scen$road.line))
 
 # iterate over landings sets using the sim list from the previous run as input
-for (i in 2:nlyr(land.stack)) {
+for (i in 2:terra::nlyr(land.stack)) {
   multiTime_sim <- c(
     multiTime_sim,
     list(projectRoads(sim =  multiTime_sim[[i-1]], landings = land.stack[[i]]))
@@ -328,7 +326,7 @@ Often harvest information is available as polygons showing the cutover area but 
 harvPoly <- demoScen[[1]]$landings.poly
 
 outCent <- getLandingsFromTarget(harvPoly)
-plot(harvPoly)
+terra::plot(harvPoly)
 plot(outCent, col = "red", add = TRUE)
 
 # Get random sample with density 0.02 pts per unit area
