@@ -1,27 +1,31 @@
 Package: roads
 Title: Road Network Projection
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: 
-    c(person(given = "Josie",
-           family = "Hughes",
-           role = c("aut"),
-           email = "josie.hughes@canada.ca"),
-    person(given = "Sarah",
+    c(person(given = "Sarah",
            family = "Endicott", 
-           role = c("aut", "cre"), 
-           email = "sarah.endicott@canada.ca",
+           role = c("aut"), 
+           email = "sarah.endicott@ec.gc.ca",
            comment = c(ORCID = "0000-0001-9644-5343")),
     person(given = "Kyle",
            family = "Lochhead",
            role = c("aut"),
            email = "Kyle.Lochhead@gov.bc.ca"),
+    person(given = "Josie",
+           family = "Hughes",
+           role = c("aut", "cre"),
+           email = "josie.hughes@ec.gc.ca"),
     person(given = "Patrick",
            family = "Kirby",
            role = c("aut")),
-    person(given="Her Majesty the Queen in Right of Canada, as represented by the Minister of Environment and Climate Change",
-           role = c("cph")))    
-Date: 2021-07-16
-URL: https://github.com/LandSciTech/roads
+    person(given="Her Majesty the Queen in Right of Canada as represented by the Minister of the Environment",
+           role = c("cph"),
+           comment = "Copyright holder for included functions buildSimList, getLandingsFromTarget, pathsToLines, plotRoads, projectRoads, rasterizeLine, rasterToLineSegments"),
+    person(given = "Province of British Columbia", role = c("cph"), 
+           comment = "Copyright holder for included functions getGraph, lcpList, mstList, shortestPaths, getClosestRoad, buildSnapRoads"))    
+Date: 2023-03-11
+URL: https://github.com/LandSciTech/roads,
+     https://landscitech.github.io/roads/
 Description: Road network projection methods for use with land cover change
     projection models. Road development is projected based on an existing road 
     network, target locations to be connected by roads and a cost surface. Road 
@@ -43,7 +47,7 @@ Imports:
     rlang,
     methods,
     tidyselect
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 2.1.0),
     knitr,

@@ -1,3 +1,20 @@
+# Copyright © Her Majesty the Queen in Right of Canada as represented by the
+# Minister of the Environment 2021/© Sa Majesté la Reine du chef du Canada
+# représentée par le ministre de l'Environnement 2021.
+# 
+#     Licensed under the Apache License, Version 2.0 (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+#     Unless required by applicable law or agreed to in writing, software
+#     distributed under the License is distributed on an "AS IS" BASIS,
+#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#     See the License for the specific language governing permissions and
+#     limitations under the License.
+
+
 #' Get landing points inside harvest blocks
 #'
 #' Generate landing points inside polygons representing harvested area. There
@@ -6,22 +23,22 @@
 #' centroid is not (see \code{\link[sf:geos_unary]{st_point_on_surface}}); "random" takes a
 #' random sample based on the given \code{landingDens} see
 #' (\code{\link[sf]{st_sample}}); "regular" intersects the polygons with a
-#' regular grid with cellsize \code{sqrt(1/landingDens)}, if a polygon does not
+#' regular grid with cell size \code{sqrt(1/landingDens)}, if a polygon does not
 #' intersect with the grid its centroid is used.
 #'
 #' Note that the \code{landingDens} is in points per unit area where the unit of
 #' area is determined by the CRS. For projected CRS this should likely be a very
-#' small number ie < 0.001.
+#' small number i.e. < 0.001.
 #'
 #' @param harvest sf, SpatialPolygons or RasterLayer object with harvested
 #'   areas. If it is a RasterLayer with more than one unique value other than 0
 #'   each value will be run separately which will produce different results from
 #'   a 0/1 raster but will be much slower.
 #' @param landingDens number of landings per unit area. This should be in the
-#'   same units as the crs of the harvest. Note that 0.001 pts per m2 is > 1000
-#'   pts per km2 so this number is usually very small for projected crs.
+#'   same units as the CRS of the harvest. Note that 0.001 points per m2 is > 1000
+#'   points per km2 so this number is usually very small for projected CRS.
 #' @param sampleType character. "centroid" (default), "regular" or "random".
-#'   Centroid returns one landing per harvest block, which is gauranteed to be
+#'   Centroid returns one landing per harvest block, which is guaranteed to be
 #'   in the harvest block for sf objects but not for rasters. Regular returns
 #'   points from a grid with density \code{landingDens} that overlap the
 #'   harvested areas. Random returns a random set of points from each polygon
@@ -38,13 +55,13 @@
 #' raster::plot(demoScen[[1]]$landings.poly)
 #' plot(outCent, col = "red", add = TRUE)
 #'
-#' # Get random sample with density 0.1 pts per unit area
+#' # Get random sample with density 0.1 points per unit area
 #' outRand <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "random")
 #'
 #' raster::plot(demoScen[[1]]$landings.poly)
 #' plot(outRand, col = "red", add = TRUE)
 #'
-#' # Get regular sample with density 0.1 pts per unit area
+#' # Get regular sample with density 0.1 points per unit area
 #' outReg <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "regular")
 #'
 #' raster::plot(demoScen[[1]]$landings.poly)
@@ -161,10 +178,10 @@ getLandingsFromTarget <- function(harvest,
 #' @param inputPatches A RasterLayer. Harvested patches should have values
 #'   greater than 0
 #' @param landingDens number of landings per unit area. This should be in the
-#'   same units as the crs of the harvest. Note that 0.001 pts per m2 is > 1000
-#'   pts per km2 so this number is usually very small for projected crs.
+#'   same units as the CRS of the harvest. Note that 0.001 points per m2 is > 1000
+#'   points per km2 so this number is usually very small for projected CRS.
 #' @param sampleType character. "centroid" (default), "regular" or "random".
-#'   Centroid returns one landing per harvest block, which is not gauranteed to
+#'   Centroid returns one landing per harvest block, which is not guaranteed to
 #'   be in the harvest block. Regular returns points from a grid with density
 #'   \code{landingDens} that overlap the harvested areas. Random returns a
 #'   random set of points from each polygon where the number is determined by
@@ -173,7 +190,8 @@ getLandingsFromTarget <- function(harvest,
 #'   one landing.
 #' @param omitCentroidsOutOfPolygons Logical. Default is FALSE in which case
 #'   some points may be outside the borders of the harvested patch
-#'   
+#'
+#' @noRd   
 getLandingsFromTargetRast<-function(inputPatches,
                                     landingDens,
                                     sampleType = "regular",
@@ -266,7 +284,7 @@ getLandingsFromTargetRast<-function(inputPatches,
 #' @param newLandings raster landings
 #'
 #' @param withIDs logical
-#'
+#' @noRd
 getCentroids<-function(newLandings, withIDs = TRUE){
   cRes = raster::res(newLandings)
   

@@ -1,3 +1,20 @@
+# Copyright © Her Majesty the Queen in Right of Canada as represented by the
+# Minister of the Environment 2021/© Sa Majesté la Reine du chef du Canada
+# représentée par le ministre de l'Environnement 2021.
+# 
+#     Licensed under the Apache License, Version 2.0 (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+#     Unless required by applicable law or agreed to in writing, software
+#     distributed under the License is distributed on an "AS IS" BASIS,
+#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#     See the License for the specific language governing permissions and
+#     limitations under the License.
+
+
 #' Project road network
 #'
 #' Project road locations based on existing roads, planned landings, and a cost
@@ -21,17 +38,17 @@
 #'   \code{roadsInCost = FALSE} and they will be burned in.
 #' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
 #' @param roadMethod Character. Options are "mst", "lcp", "snap".
-#' @param plotRoads Boolean. Should the resulting road network be ploted.
+#' @param plotRoads Boolean. Should the resulting road network be plotted.
 #'   Default FALSE.
 #' @param mainTitle Character. A title for the plot
 #' @param neighbourhood Character. 'rook','queen', or 'octagon'. The cells that
 #'   should be considered adjacent. 'octagon' option is a modified version of
 #'   the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
 #'   higher than horizontal/vertical weights.
-#' @param sim Sim list. Returned from a previous iteration of projectRoads.
-#'   cost, roads, and roadMethod are ignored if a sim list is provided.
+#' @param sim list. Returned from a previous iteration of \code{projectRoads}.
+#'   cost, roads, and \code{roadMethod} are ignored if a \code{sim} list is provided.
 #' @param roadsOut Character. Either "raster", "sf" or NULL. If "raster" roads
-#'   are returned as a raster in the sim list. If "sf" the roads are returned as
+#'   are returned as a raster in the \code{sim} list. If "sf" the roads are returned as
 #'   an sf object which will contain lines if the roads input was sf lines but a
 #'   geometry collection of lines and points if the roads input was a raster.
 #'   The points in the geometry collection represent the existing roads while

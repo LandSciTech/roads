@@ -1,11 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# roads
+# roads <a href="https://landscitech.github.io/roads"><img src="man/figures/logo.png" align="right" height="139" /></a>
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/LandSciTech/roads/workflows/R-CMD-check/badge.svg)](https://github.com/LandSciTech/roads/actions)
+
 <!-- badges: end -->
 
 The goal of roads is to simulate road development under resource
@@ -33,11 +34,13 @@ devtools::install_github("LandSciTech/roads")
 To simulate the development of roads three inputs are needed: the
 current road network (roads), the locations that should be connected to
 the road network (landings) and the cost of building roads across the
-landscape (cost). Typically the roads and landings are sf objects or sp
-Spatial\* objects and the cost is a raster.
+landscape (cost). Typically the roads and landings are `sf` objects or
+`sp` Spatial\* objects and the cost is a raster.
 
 ``` r
 library(roads)
+#> Warning: multiple methods tables found for 'direction'
+#> Warning: multiple methods tables found for 'gridDistance'
 
 # data set installed with roads package
 scen <- demoScen[[1]]
@@ -50,23 +53,26 @@ prRoads <- projectRoads(landings = scen$landings.points,
 
 <img src="man/figures/README-example-1.png" width="100%" />
 
-By default `projectRoads` uses a minimum spaning tree with least cost
+By default `projectRoads` uses a minimum spanning tree with least cost
 paths algorithm (`roadMethod = "mst"`) to connect all landings to the
 nearest existing road or other landing following the path with the
-lowest cost. Other methods avaiable are least cost path (`roadMethod =
-"lcp"`) which connects each landing to the nearest road via the least
-cost path but independent of other landings and snapping (`roadMethod =
-"snap"`) which ignores both cost and other landings and simply connects
-each landing to the nearest road “as the crow flies”
+lowest cost. Other methods available are least cost path
+(`roadMethod = "lcp"`) which connects each landing to the nearest road
+via the least cost path but independent of other landings and snapping
+(`roadMethod = "snap"`) which ignores both cost and other landings and
+simply connects each landing to the nearest road “as the crow flies”
 
 For more details on how to use the package see the vignette
-
-    vignette("roads-vignette", package = "roads")
+`vignette("roads-vignette", package = "roads")`
 
 # License
 
 Copyright (C) 2021 Her Majesty the Queen in Right of Canada, as
 represented by the Minister of Environment and Climate Change.
+
+And
+
+Copyright 2018 Province of British Columbia
 
 Licensed under the Apache License, Version 2.0 (the “License”); you may
 not use this file except in compliance with the License. You may obtain
