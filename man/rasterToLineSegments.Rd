@@ -4,19 +4,29 @@
 \alias{rasterToLineSegments}
 \title{Convert raster to lines}
 \usage{
-rasterToLineSegments(rast)
+rasterToLineSegments(rast, method = "mst")
 }
 \arguments{
 \item{rast}{raster representing lines all values > 0 are assumed to be lines}
+
+\item{method}{method of building lines. See Details}
 }
 \value{
 an sf simple feature collection
 }
 \description{
-Converts rasters that represent lines into an sf object. Raster is first
-converted to points and then lines are drawn between the nearest points.
-If there are two different ways to connect the points that have the same 
-distance both are kept which can cause doubled lines. USE WITH CAUTION.
+Converts rasters that represent lines into an sf object.
+}
+\details{
+For \code{method = "nearest} raster is first converted to points and then
+lines are drawn between the nearest points. If there are two different ways
+to connect the points that have the same distance both are kept which can
+cause doubled lines. USE WITH CAUTION. \code{method = "mst"} converts the
+raster to points, reclassifies the raster so roads are 0 and other cells are
+1 and then uses \code{projectRoads} to connect all the points with a minimum
+spanning tree. This will always connect all raster cells and is slower but
+will not double lines as often. Neither method is likely to work for very
+large rasters
 }
 \examples{
 roadRast <- demoScen[[1]]$road.rast
