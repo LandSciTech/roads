@@ -18,15 +18,7 @@
 #0,1,2, etc, but there is considerable computational cost associated with the
 #higher accuracy.
 # 
-#devtools::install_github("LandSciTech/pfocal")
-library(raster)
-library(pfocal)
-dataDir = "../RoadPaper/analysis/data/raw_data/"
-maxDist=10000 #in units of res
-src = raster(paste0(dataDir,"/subsetBinary.tif"))
-src=trim(src)
 
-src <- roadsExist_rast
 
 getDistKernelFromMax <- function(kdim) {
   # kdim=2
@@ -51,46 +43,66 @@ uniformKernel <- function(dmax, cellDim = 1, useAveDist = F) {
   return(weights)
 }
 
-getDistFromSource <- function(src,maxDist,kwidth=3,dissag=F){
-  if(dissag){
-    mwidth=res(src)[1]
-    src=disaggregate(src,fact=kwidth)
-  }else{
-    mwidth=res(src)[1]*kwidth
+getDistFromSource <- function(src, maxDist, kwidth = 3, dissag = F) {
+  src[src > 0] <- 1
+  if (dissag) {
+    mwidth <- terra::res(src)[1]
+    dd <- terra::disagg(src, fact = kwidth)
+  } else {
+    mwidth <- terra::res(src)[1] * kwidth
+    dd <- src
   }
-  src[src>0]=1
-  mm = uniformKernel(kwidth,useAveDist=F)
-  nSteps=ceiling(maxDist/mwidth)
-  dd = src;dd=1-dd;dd[dd!=0]=NA
-  cPop = src;cPop[is.na(cPop)]=0
-  for(s in 1:nSteps){
-    ssO2 = pfocal(as.matrix(cPop),mm,reduce_function="SUM", transform_function="MULTIPLY")
-    ssD2 = cPop
-    values(ssD2)=ssO2
-    dd[is.na(dd)&(ssD2>0)]=s*mwidth
-    cPop=ssD2;cPop[cPop>0]=1
+  mm <- uniformKernel(kwidth, useAveDist = F)
+  nSteps <- ceiling(maxDist / mwidth)
+  cPop <- dd
+  cPop[is.na(cPop)] <- 0
+  dd <- 1 - dd
+  dd[dd != 0] <- NA
+  for (s in 1:nSteps) {
+    print(paste(s, "of", nSteps))
+    ssO2 <- pfocal::pfocal(as.matrix(cPop), mm, reduce_function = "SUM",
+                           transform_function = "MULTIPLY")
+    ssD2 <- cPop
+    terra::values(ssD2) <- ssO2
+    dd[is.na(dd) & (ssD2 > 0)] <- s * mwidth
+    cPop <- ssD2
+    cPop[cPop > 0] <- 1
   }
-  if(dissag){
-    dd=aggregate(dd,fact=kwidth)
+  if (dissag) {
+    dd <- terra::aggregate(dd, fact = kwidth)
   }
-  dd[is.na(src)]=NA
+  dd[is.na(src)] <- NA
   return(dd)
 }
 
-fastRough=getDistFromSource(src,maxDist,kwidth=3,dissag=F)
-slowFine=getDistFromSource(as(src,"Raster"),maxDist,kwidth=3,dissag=T)
-
-square=getDistFromSource(src,maxDist,kwidth=1,dissag=F)
-smootherCircle=getDistFromSource(src,maxDist,kwidth=5,dissag=F)
-
-res = c(fastRough,terra::rast(slowFine),square,smootherCircle)
-names(res)=c("fastRough","slowFine","square","smootherCircle")
-plot(res)
-
-srcBig = raster(paste0(dataDir,"/revelstokeTSA_Binary_nonAggregated.tif"))
-srcBig=trim(srcBig)
-
-ptm <- proc.time()
-big=getDistFromSource(srcBig,maxDist,kwidth=3,dissag=F)
-proc.time() - ptm
-plot(stack(srcBig,big))
+getDistFromSource2 <- function(src, maxDist, kwidth = 3, dissag = F) {
+  src[src > 0] <- 1
+  if (dissag) {
+    mwidth <- terra::res(src)[1]
+    dd <- terra::disagg(src, fact = kwidth)
+  } else {
+    mwidth <- terra::res(src)[1] * kwidth
+    dd <- src
+  }
+  mm <- uniformKernel(kwidth, useAveDist = F)
+  nSteps <- ceiling(maxDist / mwidth)
+  cPop <- dd
+  cPop <- terra::mask(cPop, cPop, maskvalue = NA, updatevalue = 0)
+  dd <- 1 - dd
+  dd <- terra::mask(dd, dd, maskvalue = 0, updatevalue = NA, inverse = TRUE)
+  for (s in 1:nSteps) {
+    print(paste(s, "of", nSteps))
+    ssD2 <- terra::focal(cPop, w = mm, fun = "sum")
+    # ssD2 <- terra::init(cPop, fun = ssO2)
+    
+    ssD2 <- terra::mask(ssD2, dd, inverse = TRUE, updatevalue = 0)
+    dd <- terra::mask(dd, ssD2 > 0, maskvalue = 1, updatevalue = s * mwidth)
+    cPop <- ssD2
+    cPop <- terra::mask(cPop, cPop > 0, maskvalue = 1, updatevalue = 1)
+  }
+  if (dissag) {
+    dd <- terra::aggregate(dd, fact = kwidth)
+  }
+  dd <- terra::mask(dd, src)
+  return(dd)
+}
