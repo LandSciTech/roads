@@ -84,3 +84,18 @@ test_that("distance works", {
   names(res) <- c("fastRough", "slowFine", "square", "smootherCircle")
   plot(res)
 })
+
+test_that("distance to roads has expected values", {
+  src <- demoScen[[1]]$road.rast
+  maxDist <- 100
+  fastRough <- getDistFromSource(src, maxDist, kwidth = 3, dissag = F)
+  slowFine <- getDistFromSource(src, maxDist, kwidth = 3, dissag = T)
+  square <- getDistFromSource(src, maxDist, kwidth = 1, dissag = F)
+  smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, dissag = F)
+  
+  res <- c(fastRough, slowFine, square, smootherCircle)
+  names(res) <- c("kwidth = 3, dissag = F", "kwidth = 3, dissag = T",
+                  "kwidth = 1, dissag = F", "kwidth = 5, dissag = F")
+  plot(res)
+  
+})
