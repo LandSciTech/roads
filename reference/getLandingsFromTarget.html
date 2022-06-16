@@ -24,7 +24,7 @@ intersect with the grid its centroid is used.'><meta property="og:image" content
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">roads</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -87,10 +87,14 @@ intersect with the grid its centroid is used.</p>
 areas. If it is a RasterLayer with more than one unique value other than 0
 each value will be run separately which will produce different results from
 a 0/1 raster but will be much slower.</p></dd>
+
+
 <dt>landingDens</dt>
 <dd><p>number of landings per unit area. This should be in the
 same units as the CRS of the harvest. Note that 0.001 points per m2 is &gt; 1000
 points per km2 so this number is usually very small for projected CRS.</p></dd>
+
+
 <dt>sampleType</dt>
 <dd><p>character. "centroid" (default), "regular" or "random".
 Centroid returns one landing per harvest block, which is guaranteed to be
@@ -101,10 +105,13 @@ where the number is determined by the area of the polygons and
 <code>landingDens</code>. If <code>harvest</code> is a raster the centroid is always
 returned as one of the landings to ensure all harvest areas get at least
 one landing.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>an sf simple feature collection with an ID column and POINT geometry</p>
+    
+
+<p>an sf simple feature collection with an ID column and POINT geometry</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -118,21 +125,21 @@ small number i.e. &lt; 0.001.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Get centroid</span></span>
 <span class="r-in"><span class="va">outCent</span> <span class="op">&lt;-</span> <span class="fu">getLandingsFromTarget</span><span class="op">(</span><span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">landings.poly</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">landings.poly</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outCent</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outCent</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="getLandingsFromTarget-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Get random sample with density 0.1 points per unit area</span></span>
 <span class="r-in"><span class="va">outRand</span> <span class="op">&lt;-</span> <span class="fu">getLandingsFromTarget</span><span class="op">(</span><span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">landings.poly</span>, <span class="fl">0.1</span>, sampleType <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">landings.poly</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outRand</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outRand</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="getLandingsFromTarget-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Get regular sample with density 0.1 points per unit area</span></span>
 <span class="r-in"><span class="va">outReg</span> <span class="op">&lt;-</span> <span class="fu">getLandingsFromTarget</span><span class="op">(</span><span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">landings.poly</span>, <span class="fl">0.1</span>, sampleType <span class="op">=</span> <span class="st">"regular"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">landings.poly</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outReg</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outReg</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="getLandingsFromTarget-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
 </code></pre></div>
@@ -149,7 +156,7 @@ small number i.e. &lt; 0.001.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

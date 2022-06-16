@@ -18,7 +18,7 @@ surface that defines the cost of building roads."><meta property="og:image" cont
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">roads</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -114,27 +114,43 @@ surface that defines the cost of building roads.</p>
 SpatialPoints*, matrix, containing features to be connected
 to the road network. Matrix should contain columns x, y with coordinates,
 all other columns will be ignored.</p></dd>
+
+
 <dt>cost</dt>
 <dd><p>RasterLayer. Cost surface where existing roads must be the only
 cells with a cost of 0. If existing roads do not have 0 cost set
 <code>roadsInCost = FALSE</code> and they will be burned in.</p></dd>
+
+
 <dt>roads</dt>
 <dd><p>sf lines, SpatialLines*, RasterLayer. Existing road network.</p></dd>
+
+
 <dt>roadMethod</dt>
 <dd><p>Character. Options are "mst", "lcp", "snap".</p></dd>
+
+
 <dt>plotRoads</dt>
 <dd><p>Boolean. Should the resulting road network be plotted.
 Default FALSE.</p></dd>
+
+
 <dt>mainTitle</dt>
 <dd><p>Character. A title for the plot</p></dd>
+
+
 <dt>neighbourhood</dt>
 <dd><p>Character. 'rook','queen', or 'octagon'. The cells that
 should be considered adjacent. 'octagon' option is a modified version of
 the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
 higher than horizontal/vertical weights.</p></dd>
+
+
 <dt>sim</dt>
 <dd><p>list. Returned from a previous iteration of <code>projectRoads</code>.
 cost, roads, and <code>roadMethod</code> are ignored if a <code>sim</code> list is provided.</p></dd>
+
+
 <dt>roadsOut</dt>
 <dd><p>Character. Either "raster", "sf" or NULL. If "raster" roads
 are returned as a raster in the <code>sim</code> list. If "sf" the roads are returned as
@@ -143,14 +159,19 @@ geometry collection of lines and points if the roads input was a raster.
 The points in the geometry collection represent the existing roads while
 new roads are created as lines. If NULL (default) then the returned roads
 are sf if the input is sf or Spatial* and raster if the input was a raster.</p></dd>
+
+
 <dt>roadsInCost</dt>
 <dd><p>Logical. The default is TRUE which means the cost raster
 is assumed to include existing roads as 0 in its cost surface. If FALSE
 then the roads will be "burned in" to the cost raster with a cost of 0.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a list with components:</p><ul><li><p>roads: the projected road network, including new and input roads.</p></li>
+    
+
+<p>a list with components:</p><ul><li><p>roads: the projected road network, including new and input roads.</p></li>
 <li><p>costSurface: the input cost surface, this is not updated to reflect 
       the new roads that were added.</p></li>
 <li><p>roadMethod: the road simulation method used.</p></li>
@@ -246,7 +267,7 @@ based on the cost surface</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
