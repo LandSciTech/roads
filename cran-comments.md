@@ -31,3 +31,5 @@ ubuntu-20.04 (devel)
 ## Resubmission
 
 * Fixed the error in one of the tests and confirmed it worked by running rhub::check_on_debian()
+
+* Re-built after a delay in confirming the submission
