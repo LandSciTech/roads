@@ -91,11 +91,12 @@ test_that("distance to roads has expected values", {
   fastRough <- getDistFromSource(src, maxDist, kwidth = 3, dissag = F)
   slowFine <- getDistFromSource(src, maxDist, kwidth = 3, dissag = T)
   square <- getDistFromSource(src, maxDist, kwidth = 1, dissag = F)
-  smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, dissag = F)
-  
-  res <- c(fastRough, slowFine, square, smootherCircle)
+  wideCircle <- getDistFromSource(src, maxDist, kwidth = 5, dissag = F)
+  smootherCircle <- getDistFromSource(src, maxDist, kwidth = 10, dissag = T)
+  res <- c(fastRough, slowFine, square, wideCircle, smootherCircle)
   names(res) <- c("kwidth = 3, dissag = F", "kwidth = 3, dissag = T",
-                  "kwidth = 1, dissag = F", "kwidth = 5, dissag = F")
-  plot(res)
+                  "kwidth = 1, dissag = F", "kwidth = 5, dissag = F", 
+                  "kwidth = 10, dissag = T")
+  tmap::qtm(res %>% terra::`crs<-`(value = "EPSG:5070"), raster.style = "cont")
   
 })

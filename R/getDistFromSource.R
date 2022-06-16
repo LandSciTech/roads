@@ -14,21 +14,20 @@
 
 
 #' Moving window approach to get distance from roads
-#' 
-#' There is a tradeoff between speed and accuracy in this method, controlled by
-#' the parameters kwidth and dissag. kwidth is the radius of the moving window in
-#' number of cells. For very small values (e.g. 1,2) we get grid artefacts in the
-#' results. Larger moving windows are more circular which reduces the grid
-#' artefacts. If dissag is false, the resulting distance map will have values of
-#' 0, 1kwidth, 2kwidth, etc. If dissag is true the algorithm disaggregates the
-#' raster to a finer resolution, so the resulting distance map will have values of
-#' 0,1,2, etc, but there is considerable computational cost associated with the
-#' higher accuracy.
 #'
-#' @param src 
-#' @param maxDist 
-#' @param kwidth 
-#' @param dissag 
+#' There is a tradeoff between speed and accuracy in this method, controlled by
+#' the parameters kwidth and dissag. kwidth is the radius of the moving window
+#' in number of cells. Smaller values will provide a smoother gradient while
+#' larger values will give a blockier result. If dissag is false, the resulting
+#' distance map will have values of 0, 1kwidth, 2kwidth, etc. If dissag is true
+#' the algorithm disaggregates the raster to a finer resolution, so the
+#' resulting distance map will have values of 0,1,2, etc. Setting dissag = TRUE
+#' or a low value for kwidth will increase the computation time. 
+#'
+#' @param src
+#' @param maxDist
+#' @param kwidth
+#' @param dissag
 #'
 #' @return
 #' @export
