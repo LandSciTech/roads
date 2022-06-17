@@ -244,8 +244,7 @@ for (i in 1:4){
 }
 
 ## plot
-par(mfrow = c(2, 2))
-par(mar = par('mar')/2)
+oldpar <- par(mfrow = c(2, 2), mar = par('mar')/2)
 for (i in 1:4){
   oneTime_sim[[i]][!oneTime_sim[[i]]] <- NA 
   plot(scen$cost.rast, col = rastColours2, 
@@ -351,6 +350,9 @@ plot(harvPoly, add = TRUE)
 plot(prReg$roads, add = TRUE, col = "grey50")
 plot(outReg, col = "red", add = TRUE)
 
+
+# clean up 
+par(oldpar)
 ```
 
 The regular sampling method may be the most realistic since it ensures that landings are spaced apart from each other.

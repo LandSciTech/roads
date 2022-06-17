@@ -26,11 +26,11 @@ Authors@R:
 Date: 2023-03-11
 URL: https://github.com/LandSciTech/roads,
      https://landscitech.github.io/roads/
-Description: Road network projection methods for use with land cover change
-    projection models. Road development is projected based on an existing road 
+Description: Project road network development based on an existing road 
     network, target locations to be connected by roads and a cost surface. Road 
     projection methods include minimum spanning tree with least cost path, least
-    cost path or snapping. 
+    cost path or snapping. These road network projection methods are ideal for
+    use with land cover change projection models.
 License: Apache License (>= 2)
 Encoding: UTF-8
 LazyData: true
