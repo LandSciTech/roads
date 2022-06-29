@@ -174,6 +174,10 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
   nrland <- nrow(landings)
   nrroads <- nrow(roads)
   
+  if(nrroads == 0){
+    stop("nrow(roads) is 0. Please supply at least one existing road", call. = FALSE)
+  }
+  
   ext <- sf::st_bbox(cost) %>% as.numeric() %>% 
     `names<-`(c("xmin", "ymin", "xmax", "ymax"))
   landings <- sf::st_crop(landings, ext)
