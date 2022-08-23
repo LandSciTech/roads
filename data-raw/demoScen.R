@@ -26,7 +26,7 @@ library(geoR)
 #       - road.rast:   a logical RasterLayer representing existing roads.  TRUE is existing road. FALSE is not existing road.
 #                      - these roads are a rasterized versions of the road.line SpatialLines
 #       - road.line:   SpatialLines representing the existing roads
-#       - road.line.f:   sf object representing the existing roads
+#       - road.line.sf:   sf object representing the existing roads
 #       - cost.rast:   RasterLayer representing the cost of developing new roads on a given cell
 #       - landings.points:  a SpatialPointsDataFrame representing landings sets and points
 #                           - data frame includes a field named "set" containing integer values representing the landings set that each point belongs to
@@ -200,7 +200,7 @@ prepInputScenarios <- function(n.scenarios=10,xy.size=c(100,100),spat.corr=T,cos
     scen$landings.points <- landings
     scen$landings.stack  <- land_stack
     scen$landings.poly <- polydf
-    scen$landings.poly.sp <- sf::st_as_sf(polydf)
+    scen$landings.poly.sf <- sf::st_as_sf(polydf)
     outlist[[i]] <- scen
   }
   return(outlist)

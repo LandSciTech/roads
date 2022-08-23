@@ -129,7 +129,7 @@
 #' @importFrom methods is as
 #' @importFrom stats end na.omit
 #' @importFrom rlang .data
-#' @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell plot
+# @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell plot
 #' @importFrom sp SpatialPoints Line Lines SpatialLines CRS
 #' @importFrom data.table data.table := .N setDT setnames
 #' 
@@ -140,7 +140,7 @@ setGeneric('projectRoads', function(landings = NULL,
                                        roads = NULL,
                                        roadMethod = "mst",
                                        plotRoads = FALSE,
-                                       mainTitle = NULL,
+                                       mainTitle = "",
                                        neighbourhood = "octagon",
                                        sim = NULL,
                                        roadsOut = NULL,
@@ -171,7 +171,7 @@ setMethod(
     }
 
     # If roads in are raster return as raster
-    if(is(roads, "Raster") && is.null(roadsOut) ){
+    if((is(roads, "Raster") || is(roads, "SpatRaster")) && is.null(roadsOut) ){
       roadsOut <- "raster"
     } else if(is.null(roadsOut)) {
       roadsOut <- "sf"
@@ -228,7 +228,21 @@ setMethod(
 
     if(roadsOut == "raster"){
       # rasterize roads to template
-      sim$roads <- rasterizeLine(sim$roads, sim$cost, 0) > 0
+      # terra::vect loses points so convert separately
+      if(sf::st_geometry_type(sim$roads, by_geometry = FALSE) == "GEOMETRY"){
+        geom_types <- c("POINT", "LINESTRING")
+        
+        rasts <- lapply(geom_types, function(x, rds, cst){
+          geom_roads <- sf::st_collection_extract(rds, type = x)
+          geom_rast <- terra::rasterize(terra::vect(geom_roads), cst,
+                           background = 0) > 0
+        }, rds = sim$roads, cst = sim$costSurface)
+        
+        sim$roads <- rasts[[1]]|rasts[[2]]
+      } else {
+        sim$roads <- terra::rasterize(terra::vect(sim$roads), sim$cost,
+                                      background = 0) > 0
+      }
     }
     
     # reset landings to include all input landings
@@ -264,7 +278,7 @@ setMethod(
     # }
 
     # If roads in are raster return as raster
-    if(is(sim$roads, "Raster")){
+    if(is(sim$roads, "Raster") || is(roads, "SpatRaster")){
       roadsOut <- "raster"
     } else {
       roadsOut <- "sf"
@@ -320,12 +334,7 @@ setMethod(
 
     if(roadsOut == "raster"){
       # rasterize roads to template
-      tmplt <- stars::st_as_stars(sf::st_bbox(sim$cost), nx = raster::ncol(sim$cost),
-                                  ny = raster::nrow(sim$cost), values = 0)
-
-      sim$roads <- (stars::st_rasterize(sim$roads, template = tmplt,
-                                        options = "ALL_TOUCHED=TRUE") > 0) %>%
-        as("Raster")
+      sim$roads <- terra::rasterize(terra::vect(sim$roads), sim$cost, background = 0)
     }
     
     # reset landings to include all input landings

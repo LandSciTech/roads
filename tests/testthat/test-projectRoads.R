@@ -1,5 +1,3 @@
-context("test projectRoads works for all the various input and output options")
-
 # options:
 ## ROADS
 # 0/1 raster
@@ -24,7 +22,7 @@ test_that("cost and road options work", {
   out <- projectRoads(scen$landings.points.sf, scen$cost.rast,
                scen$road.rast, plotRoads = doPlot)
   
-  expect_s4_class(out$roads, "RasterLayer")
+  expect_s4_class(out$roads, "SpatRaster")
   
   # 0< raster 
   roadInt <- scen$road.rast
@@ -40,6 +38,14 @@ test_that("cost and road options work", {
   expect_warning(projectRoads(scen$landings.points.sf, costNo0,
                               roadInt, plotRoads = doPlot),
                  "No 0s detected")
+  
+  # all input roads should be included in output
+  out2 <- projectRoads(scen$landings.points.sf, costNo0,
+               roadInt, plotRoads = doPlot, roadsInCost = FALSE)
+  
+  inrd <- terra::cells(terra::rast(roadInt), 1:100)
+  
+  expect_true(all(terra::extract(out2$roads, inrd[[1]])[1] == 1))
   
   # sp lines
   out2 <- projectRoads(scen$landings.points.sf, scen$cost.rast,
@@ -64,7 +70,7 @@ test_that("landings options work", {
   
   expect_error(projectRoads(scen$landings.stack, scen$cost.rast,
                             scen$road.line, plotRoads = doPlot),
-               "landings cannot be a RasterStack")
+               "single layer")
   
   # clumped raster
   projectRoads(raster::rasterize(scen$landings.poly, scen$cost.rast), 
