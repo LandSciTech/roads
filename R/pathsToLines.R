@@ -26,7 +26,7 @@ pathsToLines <- function(sim){
   er <- sim$costSurface == 0 
   
   linelist <- lapply(1:length(sim$paths.list), function(i){
-    
+   
     # finds first match for start and end cells in paths
     inds <- match(sim$paths.list[[i]], sim$paths.v$V1)
     
@@ -106,7 +106,8 @@ pathsToLines <- function(sim){
           keep <- list(seq(from = run_lengths_mat$start, 
                        to = run_lengths_mat$end))
         } else {
-          keep <- apply(run_lengths_mat, 1, function(x) seq(from = x[1], to = x[2]))
+          keep <- apply(run_lengths_mat, 1, function(x) seq(from = x[1], to = x[2]), 
+                        simplify = FALSE)
         } 
       }
       
