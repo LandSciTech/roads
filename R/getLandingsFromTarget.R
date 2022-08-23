@@ -217,7 +217,7 @@ getLandingsFromTargetRast<-function(inputPatches,
   
   inputPatches[inputPatches == 0] <- NA
   
-  clumpVals <- terra::unique(inputPatches)[[1]]
+  clumpVals <- terra::unique(inputPatches, na.rm = TRUE)[[1]]
   landPts <- sf::st_sf(integer(), 
                        geometry = sf::st_sfc(), 
                        crs = sf::st_crs(inputPatches))

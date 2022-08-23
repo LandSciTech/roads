@@ -37,7 +37,7 @@ test_that("sf input polygons work for random", {
   expect_type(outsRand, "list")
   
   if(interactive()){
-    plot(lndPoly %>% st_geometry())
+    plot(lndPoly %>% sf::st_geometry())
     plot(outsRand[[1]][[4]], col = "red", add = T)
   }
   
