@@ -102,28 +102,28 @@
 </h2>
 <p>You can install the released version of roads from <a href="https://CRAN.R-project.org" class="external-link">CRAN</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"roads"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"roads"</span><span class="op">)</span></span></code></pre></div>
 <p>And the development version from <a href="https://github.com/LandSciTech/roads" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"LandSciTech/roads"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"LandSciTech/roads"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>To simulate the development of roads three inputs are needed: the current road network (roads), the locations that should be connected to the road network (landings) and the cost of building roads across the landscape (cost). Typically the roads and landings are <code>sf</code> objects or <code>sp</code> Spatial* objects and the cost is a raster.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'raster' was built under R version 4.1.3</span>
-
-<span class="co"># data set installed with roads package</span>
-<span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
-
-<span class="va">prRoads</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/projectRoads.html">projectRoads</a></span><span class="op">(</span>landings <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span>, 
-                        cost <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>,
-                        roads <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, 
-                        plotRoads <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'raster' was built under R version 4.1.3</span></span>
+<span></span>
+<span><span class="co"># data set installed with roads package</span></span>
+<span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">prRoads</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/projectRoads.html">projectRoads</a></span><span class="op">(</span>landings <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span>, </span>
+<span>                        cost <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>,</span>
+<span>                        roads <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, </span>
+<span>                        plotRoads <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="reference/figures/README-example-1.png" width="100%"></p>
 <p>By default <code>projectRoads</code> uses a minimum spanning tree with least cost paths algorithm (<code>roadMethod = "mst"</code>) to connect all landings to the nearest existing road or other landing following the path with the lowest cost. Other methods available are least cost path (<code>roadMethod = "lcp"</code>) which connects each landing to the nearest road via the least cost path but independent of other landings and snapping (<code>roadMethod = "snap"</code>) which ignores both cost and other landings and simply connects each landing to the nearest road “as the crow flies”</p>
 <p>For more details on how to use the package see the vignette <code><a href="articles/roads-vignette.html">vignette("roads-vignette", package = "roads")</a></code></p>
@@ -146,6 +146,7 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=roads" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/LandSciTech/roads/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/LandSciTech/roads/issues" class="external-link">Report a bug</a></li>
 </ul>
@@ -196,7 +197,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
