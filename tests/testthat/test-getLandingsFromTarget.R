@@ -79,8 +79,8 @@ test_that("raster with clumps input works no ID",{
   rast[78:88, 4:5] <- 7
   
   outRastCent <- getLandingsFromTarget(rast > 0)
-  expect_warning(outRastRand <- getLandingsFromTarget(rast > 0, landingDens = 0.1, 
-                                      sampleType = "random"))
+  outRastRand <- getLandingsFromTarget(rast > 0, landingDens = 0.1, 
+                                      sampleType = "random")
   outRastReg <- getLandingsFromTarget(rast > 0, landingDens = 0.1, 
                                       sampleType = "regular")
   
