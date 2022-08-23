@@ -154,16 +154,17 @@ getLandingsFromTarget <- function(harvest,
     } else if (sampleType == "random"){
       
       landings <- harvest %>% mutate(id = 1:n()) %>% 
-        mutate(size = round(landingDens * sf::st_area(.data$geometry)) %>%
+        mutate(size = round(landingDens * 
+                              sf::st_area(.data[[attr(harvest, "sf_column")]])) %>%
                  units::set_units(NULL)) %>% 
         mutate(size = ifelse(.data$size == 0, 1, .data$size))
       
       landings1 <- filter(landings, .data$size == 1) %>% 
-        mutate(lands = sf::st_point_on_surface(.data$geometry))
+        mutate(lands = sf::st_point_on_surface(.data[[attr(harvest, "sf_column")]]))
       
       if(nrow(landings1) < nrow(landings)){
         landings2Plus <- filter(landings, .data$size > 1)
-        landings2Plus <- sf::st_sample(landings2Plus$geometry, type = "random",
+        landings2Plus <- sf::st_sample(landings2Plus[[attr(landings2Plus, "sf_column")]], type = "random",
                                        size = landings2Plus$size)
         
         landings <- c(landings1$lands, landings2Plus)
