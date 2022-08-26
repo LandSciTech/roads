@@ -2,23 +2,70 @@
 % Please edit documentation in R/getDistFromSource.R
 \name{getDistFromSource}
 \alias{getDistFromSource}
-\title{Moving window approach to get distance from roads}
+\title{Moving window approach to get distance from source}
 \usage{
-getDistFromSource(src, maxDist, kwidth = 3, dissag = F)
+getDistFromSource(src, maxDist, kwidth = 3, method = "terra")
 }
 \arguments{
-\item{dissag}{}
+\item{src}{SpatRaster or RasterLayer, where all values > 0 are treated as
+source locations. NA values are treated as 0s.}
+
+\item{maxDist}{Numeric, maximum distance that should be calculated in units
+of the CRS.}
+
+\item{kwidth}{Integer, for the "pfocal" and "terra" methods the width of the
+moving window. For the "pfocal2" method the aggregation factor.}
 }
 \value{
-
+A SpatRaster
 }
 \description{
-There is a tradeoff between speed and accuracy in this method, controlled by
-the parameters kwidth and dissag. kwidth is the radius of the moving window
-in number of cells. Smaller values will provide a smoother gradient while
-larger values will give a blockier result. If dissag is false, the resulting
-distance map will have values of 0, 1kwidth, 2kwidth, etc. If dissag is true
-the algorithm disaggregates the raster to a finer resolution, so the
-resulting distance map will have values of 0,1,2, etc. Setting dissag = TRUE
-or a low value for kwidth will increase the computation time.
+This function provides three different methods for calculating the distance
+of all points on a landscape from "source" locations. This is a
+computationally intensive process so the function arguments can be used to
+balance the tradeoffs between speed and accuracy.
+}
+\details{
+The "terra" and "pfocal" methods use an iterative moving window approach and
+assign each cell a distance based on the number of times the moving window is
+repeated before it is included. This means that the moving window function is
+run many times but for a small window relative to the size of the raster. The
+`maxDist` argument determines the maximum distance calculated and affects the
+number of iterations of the moving window that are needed. `kwidth` is the
+radius of the moving window in number of cells, with larger values reducing
+the number of iterations needed but also reducing the granularity of the
+distances produced. The resulting distances will be in increments of `kwidth`
+* the resolution of the raster. The total number of iterations is `maxDist`/
+`kwidth` * resolution. The only difference in these methods is the underlying
+package used to do the moving window. The `terra` package has methods for
+handling large rasters by writing them to disk, while the `pfocal` package
+requires that the raster can be held in memory as a matrix.
+
+The third method "pfocal2" uses a global moving window to calculate the
+distance to the source. This means that the moving window only needs to be
+applied once but the window size can be very large. In this case `maxDist`
+determines the total size of the window. `kwidth` can be used to reduce the
+number of cells included in the moving window by aggregating the source
+raster by a factor of `kwidth`. This will increase the speed of computation
+but will produce results with artefacts of the larger grid and which may be
+less accurate since the output raster is disaggregated using bilinear
+interpolation.
+}
+\examples{
+library(sf)
+library(terra)
+
+#make example roads from scratch
+rds <- data.frame(x = 1:1000/100, y = cos(1:1000/100)) \%>\% 
+  st_as_sf(coords = c("x", "y")) \%>\% 
+  st_union() \%>\% 
+  st_cast("LINESTRING")
+
+rds_rast <- rasterize(vect(rds), 
+                      rast(nrows = 50, ncols = 50, 
+                           xmin = 0, xmax = 10, 
+                           ymin = -5, ymax = 5),
+                      touches = TRUE)
+
+getDistFromSource(rds_rast, 5, 2)
 }

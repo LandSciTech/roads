@@ -18,7 +18,7 @@ an sf simple feature collection
 Converts rasters that represent lines into an sf object.
 }
 \details{
-For \code{method = "nearest} raster is first converted to points and then
+For \code{method = "nearest"} raster is first converted to points and then
 lines are drawn between the nearest points. If there are two different ways
 to connect the points that have the same distance both are kept which can
 cause doubled lines. USE WITH CAUTION. \code{method = "mst"} converts the
