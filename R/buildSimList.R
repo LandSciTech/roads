@@ -18,7 +18,7 @@
 #'
 #' Build a sim list object to be used in the rest of the functions and returned
 #' by \code{projectRoads}. It will convert other types of spatial objects to sf
-#' or raster.
+#' or terra objects.
 #' 
 #' @param roads roads input
 #' @param cost cost input
@@ -30,19 +30,27 @@
 
 buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost, 
                          sim = NULL){
-  if(!is(cost, "RasterLayer")){
-    stop("cost must be provided as a RasterLayer", call. = FALSE)
+  if(!is(cost, "SpatRaster")){
+    if(is(cost, "RasterLayer")){
+      cost <- terra::rast(cost)
+    } else {
+      stop("cost must be provided as a SpatRaster or RasterLayer", call. = FALSE)
+    }
   } 
-  if(0 %in% raster::unique(cost)){
+  if(terra::minmax(cost)[1] == 0 || 0 %in% terra::unique(cost)[[1]]){
     message("0s detected in cost raster, these will be considered as existing roads")
   } else if(roadsInCost){
     warning("No 0s detected in cost raster. If existing roads have not been ",
             "included in the cost raster set roadsInCost = FALSE to have them ",
-            "burned in")
+            "burned in", call. = FALSE)
+  }
+  
+  if(is(roads, "Raster")){
+    roads <- terra::rast(roads)
   }
   
   # Burn roads into raster if not already for raster roads before converting 
-  if(!roadsInCost && is(roads, "Raster")){
+  if(!roadsInCost && is(roads, "SpatRaster")){
     message("Burning in roads to cost raster from road raster")
     cost <- cost * (roads == 0)
     roadsInCost <- TRUE
@@ -53,14 +61,14 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
       roads <- sf::st_as_sf(roads) %>% 
         sf::st_set_agr("constant")
       
-    } else if(is(roads, "Raster")){
+    } else if(is(roads, "SpatRaster")){
      # roads <- rasterToLineSegments(roads)
-      roads <- raster::rasterToPoints(roads, fun = function(x){x > 0}, 
-                                      spatial = TRUE) %>% 
+      roads <- terra::subst(roads, from = 0, to = NA) %>% 
+        terra::as.points() %>% 
         sf::st_as_sf() %>% 
-        sf::st_set_agr("constant")
+        sf::st_set_agr("constant") 
     }else {
-      stop("roads must be either RasterLayer, sf object, or SpatialLines*",
+      stop("roads must be either SpatRaster, RasterLayer, sf object, or SpatialLines*",
            call. = FALSE)
     }
   }
@@ -72,28 +80,32 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
       landings <- sf::st_as_sf(landings) %>% 
         sf::st_set_agr("constant")
       
-    } else if(is(landings, "Raster")){
-      if(is(landings, "RasterStack")|| is(landings, "RasterBrick")){
-        stop("landings cannot be a RasterStack or Brick please supply",
-             " a single RasterLayer", call. = FALSE)
+    } else if(is(landings, "Raster") || is(landings, "SpatRaster")){
+      if(is(landings, "Raster")){
+        landings <- terra::rast(landings)
       }
+      
+      if(terra::nlyr(landings) > 1){
+        stop("landings should be a single layer SpatRaster")
+      }
+      
       # check if landings are clumps of cells (ie polygons) or single cells
       # (ie points) and if clumps take centroid
-      clumpedRast <- raster::clump(landings, gaps = F) 
+      clumpedRast <- terra::patches(landings, allowGaps = FALSE, zeroAsNA = TRUE) 
       
       clumps <- clumpedRast %>% 
-        raster::freq(useNA = "no")
+        terra::freq()
       
       clumps <- clumps[,2] %>% max() > 1
       
       if(clumps){
-        landings <- sf::st_as_sf(raster::rasterToPolygons(clumpedRast, 
+        landings <- sf::st_as_sf(terra::as.polygons(clumpedRast, 
                                                           dissolve = TRUE)) %>% 
           sf::st_set_agr("constant")
       } else {
-        landings <- sf::st_as_sf(raster::rasterToPoints(landings, 
-                                                        fun = function(x){x > 0}, 
-                                                        spatial = TRUE)) %>% 
+        landings <- terra::subst(landings, from = 0, to = NA)%>% 
+          terra::as.points() %>% 
+          sf::st_as_sf() %>% 
           sf::st_set_agr("constant")
       }
       
@@ -101,7 +113,7 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
     } else if(is(landings, "matrix")){
       xyind <- which(colnames(landings) %in% c("x", "X", "y", "Y"))
       if(length(xyind) == 0){
-        stop("landings matrix must have column name in c('x', 'X', 'y', 'Y')",
+        stop("landings matrix must have column names in c('x', 'X', 'y', 'Y')",
              call. = FALSE)
       }
       landings <- sf::st_sf(
@@ -110,7 +122,7 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
         sf::st_cast("POINT") %>% 
         sf::st_set_agr("constant")
     }else {
-      stop("landings must be either RasterLayer, sf object, SpatialPoints*, ",
+      stop("landings must be either SpatRaster, RasterLayer, sf object, SpatialPoints*, ",
            "or SpatialPolygons*",
            call. = FALSE)
     }
@@ -124,8 +136,8 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
   }
   
   # check crs error if different
-  if(!all(raster::compareCRS(raster::crs(roads), raster::crs(landings)),
-          raster::compareCRS(raster::crs(roads), raster::crs(cost)))){
+  if(!all(sf::st_crs(roads) == sf::st_crs(landings),
+          sf::st_crs(roads) == sf::st_crs(cost))){
     stop("the crs of roads, landings and cost must match", call. = FALSE)
   }
   
@@ -138,7 +150,21 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
       roads <- sf::st_transform(roads, sf::st_crs(cost))
     }
     
-    roadsRast <- rasterizeLine(roads, cost, 0) == 0
+    if(any(grepl("POINT", sf::st_geometry_type(roads, by_geometry = TRUE))) &&
+       any(grepl("LINESTRING", sf::st_geometry_type(roads, by_geometry = TRUE)))){
+      geom_types <- c("POINT", "LINESTRING")
+      
+      rasts <- lapply(geom_types, function(x, rds, cst){
+        geom_roads <- sf::st_collection_extract(rds, type = x)
+        geom_rast <- terra::rasterize(terra::vect(geom_roads), cst,
+                                      background = 0) > 0
+      }, rds = roads, cst = cost)
+      
+      roadsRast <- rasts[[1]]|rasts[[2]]
+    } else {
+      roadsRast <- terra::rasterize(terra::vect(roads), cost, background = 0) == 0 
+    }
+    
     cost <- cost * roadsRast
     
     rm(roadsRast)
@@ -147,6 +173,10 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
   # crop landings and roads to bbox of cost raster
   nrland <- nrow(landings)
   nrroads <- nrow(roads)
+  
+  if(nrroads == 0){
+    stop("nrow(roads) is 0. Please supply at least one existing road", call. = FALSE)
+  }
   
   ext <- sf::st_bbox(cost) %>% as.numeric() %>% 
     `names<-`(c("xmin", "ymin", "xmax", "ymax"))

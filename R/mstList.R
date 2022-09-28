@@ -25,9 +25,9 @@ mstList<- function(sim){
     return(invisible(sim))
   }
   # get cell indexs for new road start and end
-  mst.v <- rbind(raster::cellFromXY(sim$costSurface, 
+  mst.v <- rbind(terra::cellFromXY(sim$costSurface, 
                                               sf::st_coordinates(sim$landings)),
-                           raster::cellFromXY(sim$costSurface,
+                           terra::cellFromXY(sim$costSurface,
                                               sim$roads.close.XY))
   mst.v <- as.vector(mst.v)
   paths.matrix <- unique(mst.v) 

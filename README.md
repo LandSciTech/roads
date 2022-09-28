@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# roads <a href="https://landscitech.github.io/roads"><img src="man/figures/logo.png" align="right" height="139" /></a>
+# roads <a href="https://landscitech.github.io/roads/"><img src="man/figures/logo.png" align="right" height="139" /></a>
 
 <!-- badges: start -->
 
@@ -39,8 +39,8 @@ landscape (cost). Typically the roads and landings are `sf` objects or
 
 ``` r
 library(roads)
-#> Warning: multiple methods tables found for 'direction'
-#> Warning: multiple methods tables found for 'gridDistance'
+library(raster)
+#> Warning: package 'raster' was built under R version 4.1.3
 
 # data set installed with roads package
 scen <- demoScen[[1]]

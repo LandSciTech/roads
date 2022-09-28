@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# roads <a href="https://landscitech.github.io/roads"><img src="man/figures/logo.png" align="right" height="139" /></a>
+# roads <a href="https://landscitech.github.io/roads/"><img src="man/figures/logo.png" align="right" height="139" /></a>
 
 
 <!-- badges: start -->
@@ -55,6 +55,7 @@ Spatial\* objects and the cost is a raster.
 
 ```{r example, message=FALSE}
 library(roads)
+library(raster)
 
 # data set installed with roads package
 scen <- demoScen[[1]]

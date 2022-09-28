@@ -99,22 +99,27 @@ getLandingsFromTarget <- function(harvest,
 
       harvest <- sf::st_as_sf(harvest) %>% sf::st_set_agr("constant")
 
-    } else if(is(harvest, "Raster")){
+    } else if(is(harvest, "Raster") || is(harvest, "SpatRaster")){
+      if(is(harvest, "Raster")){
+        harvest <- terra::rast(harvest)
+      }
 
       # check if harvest are clumps of cells (ie polygons) or single cells
       # (ie points) and if clumps take centroid
-      clumpedRast <- raster::clump(harvest, gaps = F)
+      clumpedRast <- terra::patches(harvest, allowGaps = FALSE, zeroAsNA = TRUE)
       
       clumps <- clumpedRast %>%
-        raster::freq(useNA = "no") 
-      clumps <- max(clumps[,2])  > 1
+        terra::freq() 
+      clumps <- max(clumps[,3])  > 1
       
       if(clumps){
         landings <- getLandingsFromTargetRast(harvest, landingDens, sampleType)
       } else {
-        landings <- sf::st_as_sf(raster::rasterToPoints(harvest,
-                                                        fun = function(x){x > 0},
-                                                        spatial = TRUE))
+        landings <- terra::subst(harvest, from = 0, to = NA)%>% 
+          terra::as.points() %>% 
+          sf::st_as_sf() %>% 
+          sf::st_set_agr("constant")
+        
         if(sampleType != "centroid"){
           warning("raster has only single cell havest blocks so",
                   " landingDens is ignored and cells > 0 converted to points",
@@ -149,16 +154,17 @@ getLandingsFromTarget <- function(harvest,
     } else if (sampleType == "random"){
       
       landings <- harvest %>% mutate(id = 1:n()) %>% 
-        mutate(size = round(landingDens * sf::st_area(.data$geometry)) %>%
+        mutate(size = round(landingDens * 
+                              sf::st_area(.data[[attr(harvest, "sf_column")]])) %>%
                  units::set_units(NULL)) %>% 
         mutate(size = ifelse(.data$size == 0, 1, .data$size))
       
       landings1 <- filter(landings, .data$size == 1) %>% 
-        mutate(lands = sf::st_point_on_surface(.data$geometry))
+        mutate(lands = sf::st_point_on_surface(.data[[attr(harvest, "sf_column")]]))
       
       if(nrow(landings1) < nrow(landings)){
         landings2Plus <- filter(landings, .data$size > 1)
-        landings2Plus <- sf::st_sample(landings2Plus$geometry, type = "random",
+        landings2Plus <- sf::st_sample(landings2Plus[[attr(landings2Plus, "sf_column")]], type = "random",
                                        size = landings2Plus$size)
         
         landings <- c(landings1$lands, landings2Plus)
@@ -211,9 +217,17 @@ getLandingsFromTargetRast<-function(inputPatches,
   
   inputPatches[inputPatches == 0] <- NA
   
-  landPts = matrix(0,0,3)
-  colnames(landPts)=c("x","y","layer")
-  for(i in raster::unique(inputPatches)){
+  clumpVals <- terra::unique(inputPatches, na.rm = TRUE)[[1]]
+  landPts <- sf::st_sf(integer(), 
+                       geometry = sf::st_sfc(), 
+                       crs = sf::st_crs(inputPatches))
+  
+  # landPts = matrix(0,0,3)
+  # colnames(landPts)=c("x","y","ID")
+  # landPts <- sf::st_as_sf(as.data.frame(landPts), coords = c("x", "y"), 
+  #                         crs = sf::st_crs(inputPatches))
+  
+  for(i in seq_along(clumpVals)){
     
     nl <- ifelse(is.null(landingDens), 0, landingDens)
     
@@ -228,53 +242,64 @@ getLandingsFromTargetRast<-function(inputPatches,
     remL <- ip
     remL[landC > 0] <- NA
     
-    landC <- raster::rasterToPoints(landC, fun = function(x){x > 0})
-    
-    landPts <- rbind(landPts, landC)
+    landC <- terra::subst(landC, from = 0, to = NA)%>% 
+      terra::as.points() %>% 
+      sf::st_as_sf() %>% 
+      sf::st_set_agr("constant")
     
     if(sampleType == "centroid"){
+      landPts <- rbind(landPts, landC)
       next
     }
     
     if(sampleType == "random"){
       #select additional points so total number is equal to small alternative
       #numSamples = nl - raster::cellStats(landC > 0, "sum")
+      remL_sum <- terra::global(remL, "sum", na.rm = TRUE)[1,1] 
       
-      numSamples <- round(raster::cellStats(remL, "sum") * 
+      numSamples <- round(remL_sum * 
                             landingDens * 
-                            prod(raster::res(remL)))
-      if(numSamples < 1){
+                            prod(terra::res(remL)))
+      if(is.na(numSamples) || numSamples < 1){
         # use just the centroids
+        landPts <- rbind(landPts, landC)
         next
       }
       
-      if(numSamples >= raster::cellStats(remL, "sum")){
+      if(numSamples >= remL_sum){
         
         # If more samples than cells return 1 pt per cell and ignore centroid
-        landingPts <- raster::rasterToPoints(ip,fun=function(landings){landings>0})
-        landPts <- landingPts
-        colnames(landPts)=c("x","y","layer")
+        landingPts <- terra::subst(ip, from = 0, to = NA)%>% 
+          terra::as.points() %>% 
+          sf::st_as_sf() %>% 
+          sf::st_set_agr("constant")
+        landPts <- rbind(landPts, landingPts)
         
       } else {
+        remL <- terra::trim(remL, padding = 1)
         
-        landingPts <- raster::sampleStratified(remL, size = numSamples, xy = TRUE)
-        landingPts <-  landingPts[, 2:4]
+        landingPts <- terra::spatSample(remL, size = numSamples, 
+                                        method = "random", na.rm = TRUE,
+                                        as.points = TRUE, warn = FALSE)%>% 
+          sf::st_as_sf()
       }
     }
     if(sampleType == "regular"){
-      extArea <- prod(raster::res(remL))*raster::ncell(remL)
+      extArea <- prod(terra::res(remL))*terra::ncell(remL)
       nPts <- landingDens * extArea
       
-      landingPts <- raster::sampleRegular(remL, size = nPts, xy = TRUE)
-      landingPts <- dplyr::filter(as.data.frame(landingPts), !is.na(.data$layer))
+      landingPts <- terra::spatSample(remL, size = nPts, method = "regular",
+                                       as.points = TRUE, warn = FALSE) %>% 
+        sf::st_as_sf()
+      landingPts <- landingPts[!is.na(landingPts[[1]]), ]
     }
     
     #add centroids to ensure all patches are included
-    landPts = rbind(landPts,landingPts)
+    landPts = rbind(landPts, landC, landingPts)
   }
   # make sf object
-  landPts <- as.data.frame(landPts) %>%
-    sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(inputPatches))
+  landPts <- landPts %>%
+    sf::st_set_crs(sf::st_crs(inputPatches))
 
   return(landPts)
 }
@@ -286,23 +311,24 @@ getLandingsFromTargetRast<-function(inputPatches,
 #' @param withIDs logical
 #' @noRd
 getCentroids<-function(newLandings, withIDs = TRUE){
-  cRes = raster::res(newLandings)
+  cRes = terra::res(newLandings)
   
-  p = raster::as.data.frame(raster::clump(newLandings, gaps = F), xy = TRUE)
-  p = p[!is.na(p$clumps), ]
+  p = terra::as.data.frame(terra::patches(newLandings, zeroAsNA = TRUE, 
+                                          allowGaps = FALSE), xy = TRUE)
+  p = p[!is.na(p$patches), ]
   
-  pointLocs = p %>% dplyr::group_by(.data$clumps) %>%
+  pointLocs = p %>% dplyr::group_by(.data$patches) %>%
     dplyr::summarize(x = mean(.data$x), y = mean(.data$y))
   
-  pointLocs = as.data.frame(subset(pointLocs, select = c('x', 'y', 'clumps')))
+  pointLocs = as.data.frame(subset(pointLocs, select = c('x', 'y', 'patches')))
   
   newLandingCentroids = newLandings
   newLandingCentroids[!is.na(newLandingCentroids)] = NA
   
-  cells = raster::cellFromXY(newLandingCentroids, pointLocs[, 1:2])
+  cells = terra::cellFromXY(newLandingCentroids, pointLocs[, 1:2])
   
   if (withIDs) {
-    newLandingCentroids[cells] = pointLocs$clumps
+    newLandingCentroids[cells] = pointLocs$patches
   } else{
     newLandingCentroids[cells] = 1
   }
