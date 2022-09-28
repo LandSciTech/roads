@@ -48,9 +48,9 @@ Imports:
     units,
     rlang,
     methods,
-    tidyselect,
+    tidyselect
     terra
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
@@ -64,6 +64,7 @@ Collate:
     'buildSnapRoads.R'
     'demoScen.R'
     'getClosestRoad.R'
+    'getDistFromSource.R'
     'getGraph.R'
     'getLandingsFromTarget.R'
     'lcpList.R'
