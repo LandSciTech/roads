@@ -2,6 +2,8 @@ context("simple example test case - compare to results from kylesCLUSExample.Rmd
 
 library(dplyr)
 library(sf)
+
+doPlot <- interactive()
 ###########################################
 # basic test case from kylesCLUSExample.Rmd
 #   - 5 by 5 raster representing cost, populated with uniform random numbers based on seed value 1
@@ -59,20 +61,20 @@ getRoadCells <- function(rast, roads, method){
 }
 ###############################################
 # perform tests
-testthat::test_that("Projected roads results match CLUS example results for the 'snap' method",{
-  testthat::expect_equal(getRoadCells(costC, pR_snap$roads, "snap"), CLUS.snap.roads)
+test_that("Projected roads results match CLUS example results for the 'snap' method",{
+  expect_equal(getRoadCells(costC, pR_snap$roads, "snap"), CLUS.snap.roads)
 })
-testthat::test_that("Projected roads results match CLUS example results for the 'lcp' method",{
-  testthat::expect_equal(getRoadCells(costC, pR_lcp$roads, "lcp"), CLUS.lcp.roads)
+test_that("Projected roads results match CLUS example results for the 'lcp' method",{
+  expect_equal(getRoadCells(costC, pR_lcp$roads, "lcp"), CLUS.lcp.roads)
 })
-testthat::test_that("Projected roads results match CLUS example results for the 'mst' method",{
-  testthat::expect_equal(getRoadCells(costC, pR_mst$roads, "mst"), CLUS.mst.roads)
+test_that("Projected roads results match CLUS example results for the 'mst' method",{
+  expect_equal(getRoadCells(costC, pR_mst$roads, "mst"), CLUS.mst.roads)
 })
 
 test_that("Dynamic LCP works",{
   # by iterating works but should be possible to make much faster
   land.pnts2 <- landingsC %>% st_as_sf() %>% 
-    mutate(ID = c(1, 2,3,4)) %>% st_set_agr("constant")
+    mutate(ID = c(1:4)) %>% st_set_agr("constant")
   
   iterLands_sim <- list(projectRoads(land.pnts2[land.pnts2$ID==1,],
                                      costC,
@@ -86,8 +88,36 @@ test_that("Dynamic LCP works",{
   }
   
   ## plot
-  plotRoads(iterLands_sim[[4]])
-  plot(land.pnts2, add = TRUE, pch = letters[land.pnts2$ID], cex = 1.5, col = 'black')
+  if(doPlot){
+    plotRoads(iterLands_sim[[4]])
+    plot(land.pnts2, add = TRUE, pch = letters[land.pnts2$ID], cex = 1.5, col = 'black')
+  }
+
+  
+  # with dynamic LCP
+  
+  # add a landing that is touching the road for testing
+  land.pnts3 <- land.pnts2 %>% 
+    bind_rows(land.pnts2 %>% slice(1) %>% 
+                mutate(geometry = geometry + c(0,1.5))) %>% 
+    mutate(ID = 1:5) %>% arrange(ID) %>% st_set_agr("constant")
+  
+  dyLCP <- projectRoads(land.pnts3,
+               costC,
+               costC==0,
+               roadMethod='dlcp', roadsOut = "sf")
+  if(doPlot){
+    plotRoads(dyLCP)
+  }
+
+  expect_identical(dyLCP$roads %>% filter(st_geometry_type(geometry) == "MULTILINESTRING") %>% 
+                     st_geometry() %>% st_coordinates() %>% as.data.frame() %>% 
+                     select(1:2) %>%  distinct() %>% arrange(1,2), 
+                   iterLands_sim[[4]]$roads %>% 
+                     filter(st_geometry_type(geometry) == "LINESTRING") %>%
+                     st_union() %>% st_coordinates() %>% as.data.frame() %>% 
+                     select(1:2) %>%  distinct() %>% arrange(1,2))
+  
 })
 ###############################################
 # end of tests

@@ -136,22 +136,23 @@
 #' @export
 #' 
 setGeneric('projectRoads', function(landings = NULL,
-                                       cost = NULL,
-                                       roads = NULL,
-                                       roadMethod = "mst",
-                                       plotRoads = FALSE,
-                                       mainTitle = "",
-                                       neighbourhood = "octagon",
-                                       sim = NULL,
-                                       roadsOut = NULL,
-                                       roadsInCost = TRUE)
+                                    cost = NULL,
+                                    roads = NULL,
+                                    roadMethod = "mst",
+                                    plotRoads = FALSE,
+                                    mainTitle = "",
+                                    neighbourhood = "octagon",
+                                    sim = NULL,
+                                    roadsOut = NULL,
+                                    roadsInCost = TRUE, 
+                                    ordering = "none")
   standardGeneric('projectRoads'))
 
 #' @rdname projectRoads
 setMethod(
   'projectRoads', signature(sim = "missing"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, sim, roadsOut, roadsInCost) {
+           neighbourhood, sim, roadsOut, roadsInCost, ordering) {
     #landings=outObj$landings;cost=outObj$cost;roads=outObj$roads;roadMethod="mst";roadsOut = "raster"
     #mainTitle = NULL;neighbourhood = "queen";sim = NULL;roadsInCost = TRUE
 
@@ -163,11 +164,16 @@ setMethod(
            " are required if sim is not supplied")
     }
 
-    recognizedRoadMethods = c("mst", "lcp", "snap")
+    recognizedRoadMethods = c("mst", "lcp", "dlcp", "snap")
 
     if(!is.element(roadMethod,recognizedRoadMethods)){
       stop("Invalid road method ", roadMethod, ". Options are:",
            paste(recognizedRoadMethods, collapse=','))
+    }
+    
+    # if method is dlcp must have ordering
+    if(ordering == "none"){
+      ordering <- "closest"
     }
 
     # If roads in are raster return as raster
@@ -202,15 +208,23 @@ setMethod(
                     sim <- buildSnapRoads(sim)
                   } ,
                   lcp ={
-                    sim <- getClosestRoad(sim)
+                    sim <- getClosestRoad(sim, ordering)
 
                     sim <- lcpList(sim)
 
                     # includes update graph
                     sim <- shortestPaths(sim)
                   },
+                  dlcp ={
+                    sim <- getClosestRoad(sim, ordering)
+                    
+                    sim <- lcpList(sim)
+                    
+                    # includes dynamic update graph
+                    sim <- dynamicShortestPaths(sim)
+                  },
                   mst ={
-                    sim <- getClosestRoad(sim)
+                    sim <- getClosestRoad(sim, ordering)
 
                     # will take more time than lcpList given the construction of
                     # a mst
@@ -245,7 +259,7 @@ setMethod(
 setMethod(
   'projectRoads', signature(sim = "list"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, sim, roadsOut, roadsInCost) {
+           neighbourhood, sim, roadsOut, roadsInCost, ordering) {
 
     # # check required args
     # missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings),
@@ -289,7 +303,7 @@ setMethod(
                     sim <- buildSnapRoads(sim)
                   } ,
                   lcp ={
-                    sim <- getClosestRoad(sim)
+                    sim <- getClosestRoad(sim, ordering)
 
                     sim <- lcpList(sim)
 
@@ -297,7 +311,7 @@ setMethod(
                     sim <- shortestPaths(sim)
                   },
                   mst ={
-                    sim <- getClosestRoad(sim)
+                    sim <- getClosestRoad(sim, ordering)
 
                     # will take more time than lcpList given the construction of
                     # a mst
