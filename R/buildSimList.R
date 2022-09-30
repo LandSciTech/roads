@@ -160,7 +160,7 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
                                       background = 0) > 0
       }, rds = roads, cst = cost)
       
-      roadsRast <- rasts[[1]]|rasts[[2]]
+      roadsRast <- !(rasts[[1]]|rasts[[2]])
     } else {
       roadsRast <- terra::rasterize(terra::vect(roads), cost, background = 0) == 0 
     }
