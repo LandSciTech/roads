@@ -1,5 +1,7 @@
 context("simple example test case - compare to results from kylesCLUSExample.Rmd")
 
+library(dplyr)
+library(sf)
 ###########################################
 # basic test case from kylesCLUSExample.Rmd
 #   - 5 by 5 raster representing cost, populated with uniform random numbers based on seed value 1
@@ -65,6 +67,27 @@ testthat::test_that("Projected roads results match CLUS example results for the 
 })
 testthat::test_that("Projected roads results match CLUS example results for the 'mst' method",{
   testthat::expect_equal(getRoadCells(costC, pR_mst$roads, "mst"), CLUS.mst.roads)
+})
+
+test_that("Dynamic LCP works",{
+  # by iterating works but should be possible to make much faster
+  land.pnts2 <- landingsC %>% st_as_sf() %>% 
+    mutate(ID = c(1, 2,3,4)) %>% st_set_agr("constant")
+  
+  iterLands_sim <- list(projectRoads(land.pnts2[land.pnts2$ID==1,],
+                                     costC,
+                                     costC==0,
+                                     roadMethod='lcp', roadsOut = "sf")) 
+  for (i in 2:max(land.pnts2$ID)){
+    iterLands_sim <- c(iterLands_sim,
+                       list(projectRoads(sim = iterLands_sim[[i-1]], 
+                                         landings = land.pnts2[land.pnts2$ID==i,], 
+                                         roadsOut = "sf")))
+  }
+  
+  ## plot
+  plotRoads(iterLands_sim[[4]])
+  plot(land.pnts2, add = TRUE, pch = letters[land.pnts2$ID], cex = 1.5, col = 'black')
 })
 ###############################################
 # end of tests
