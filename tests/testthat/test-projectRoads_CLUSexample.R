@@ -72,7 +72,7 @@ testthat::test_that("Projected roads results match CLUS example results for the 
 test_that("Dynamic LCP works",{
   # by iterating works but should be possible to make much faster
   land.pnts2 <- landingsC %>% st_as_sf() %>% 
-    mutate(ID = c(1, 2,3,4)) %>% st_set_agr("constant")
+    mutate(ID = c(1:4)) %>% st_set_agr("constant")
   
   iterLands_sim <- list(projectRoads(land.pnts2[land.pnts2$ID==1,],
                                      costC,
@@ -88,6 +88,28 @@ test_that("Dynamic LCP works",{
   ## plot
   plotRoads(iterLands_sim[[4]])
   plot(land.pnts2, add = TRUE, pch = letters[land.pnts2$ID], cex = 1.5, col = 'black')
+  
+  # with method = dynamLCP
+  
+  # add a landing that is touching the road for testing
+  land.pnts3 <- land.pnts2 %>% bind_rows(land.pnts2 %>% slice(1) %>% 
+                                           mutate(geometry = geometry + c(0,1.5))) %>% 
+    mutate(ID = 1:5) %>% arrange(ID)
+  
+  dyLCP <- projectRoads(land.pnts3,
+               costC,
+               costC==0,
+               roadMethod='dlcp', roadsOut = "sf")
+  plotRoads(dyLCP)
+  
+  expect_identical(dyLCP$roads %>% filter(st_geometry_type(geometry) == "MULTILINESTRING") %>% 
+                     st_geometry() %>% st_coordinates() %>% as.data.frame() %>% 
+                     select(1:2) %>%  distinct() %>% arrange(1,2), 
+                   iterLands_sim[[4]]$roads %>% 
+                     filter(st_geometry_type(geometry) == "LINESTRING") %>%
+                     st_union() %>% st_coordinates() %>% as.data.frame() %>% 
+                     select(1:2) %>%  distinct() %>% arrange(1,2))
+  
 })
 ###############################################
 # end of tests

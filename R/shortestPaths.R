@@ -56,3 +56,44 @@ shortestPaths<- function(sim){
   }
   return(invisible(sim))
 }
+
+#' Get shortest path between points in list updating cost after each
+#' 
+#' @param sim sim list
+#' @noRd
+dynamicShortestPaths<- function(sim){
+  # finds the least cost paths between a list of two points
+  if(!length(sim$paths.list) == 0){
+    #create a list of shortest paths
+    path.vs <- vector("list", length = length(sim$paths.list))
+    
+    for (i in seq_along(sim$paths.list)) {
+      path.list <- sim$paths.list[[i]]
+      path <- igraph::get.shortest.paths(sim$g, path.list[1], path.list[2], out = "both")
+      
+      path <- unlist(path)
+      
+      # update the cost(weight) associated with the edge that became a road
+      igraph::edge_attr(sim$g, 
+                        index = igraph::E(sim$g)[igraph::E(sim$g) %in% path[grepl("epath", names(path))]],
+                        name = "weight") <- 0.00001 
+      
+      # get verticies
+      path.vs[[i]] <- data.table::data.table(path[grepl("vpath", names(path))] )
+    }
+    
+    sim$paths.v <- rbind(sim$paths.v, do.call(rbind, path.vs))
+    
+    # make new roads
+    new_roads <- pathsToLines(sim)
+    # add new roads to existing
+    sim$roads <- rbind(sim$roads, new_roads)
+    
+    # remove no longer needed parts of list that aren't be used for update
+    sim$roads.close.XY <- NULL
+    sim$paths.v <- NULL
+    sim$paths.list <- NULL
+    
+  }
+  return(invisible(sim))
+}

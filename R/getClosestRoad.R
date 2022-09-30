@@ -23,16 +23,24 @@
 
 
 # Ideally use this one
-getClosestRoad <- function(sim){
+getClosestRoad <- function(sim, ordering = NULL){
   # union roads to one feature
   roads.pts <- sf::st_union(sim$roads)
   
   # find nearest point between road feature and landings, returns a line between
   # the points
   closest.roads.pts <- sf::st_nearest_points(sim$landings, roads.pts)
-
+  
+  distToRoad <- units::set_units(sf::st_length(closest.roads.pts), NULL)
+  
+  if(ordering == "closest"){
+    closest.roads.pts <- closest.roads.pts[order(distToRoad)]
+    sim$landings <- sim$landings[order(distToRoad),]
+    distToRoad <- distToRoad[order(distToRoad)]
+  }
+  
   # find landings that are within the space of one raster cell from the road
-  touching_road <- which(units::set_units(sf::st_length(closest.roads.pts), NULL) < 
+  touching_road <- which(distToRoad < 
                            terra::res(sim$costSurface)[1])
   
   if(length(touching_road) > 0){
