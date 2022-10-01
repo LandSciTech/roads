@@ -23,7 +23,7 @@
 #' @return sim list
 #' @noRd
 
-buildSnapRoads <- function(sim){
+buildSnapRoads <- function(sim, roadsOut){
   # union roads to one feature
   roads.pts <- summarise(sim$roads)
   
@@ -36,8 +36,14 @@ buildSnapRoads <- function(sim){
   #                            geometry = sf::st_cast(geometry, "MULTIPOINT"))
   
   # add to existing roads
-
   sim$roads <- rbind(sim$roads, snap_roads_lines)
+  
+  # burn into cost as 0
+  sim$cost <- burnRoadsInCost(sim$roads, sim$costSurface)
+  
+  if(roadsOut == "raster"){
+    sim$roads <- sim$cost == 0
+  }
   
   return(invisible(sim))
 }

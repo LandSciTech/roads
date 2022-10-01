@@ -205,7 +205,7 @@ setMethod(
 
     sim <- switch(sim$roadMethod,
                   snap= {
-                    sim <- buildSnapRoads(sim)
+                    sim <- buildSnapRoads(sim, roadsOut)
                   } ,
                   lcp ={
                     sim <- getClosestRoad(sim, ordering)
@@ -222,6 +222,8 @@ setMethod(
                     
                     # includes dynamic update graph
                     sim <- dynamicShortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
                   },
                   mst ={
                     sim <- getClosestRoad(sim, ordering)
@@ -232,6 +234,8 @@ setMethod(
 
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
                   }
     )
 
@@ -240,10 +244,7 @@ setMethod(
       sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
     }
 
-    if(roadsOut == "raster"){
-      sim <- rasterizeRoads(sim)
-    }
-    
+
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
     sim$landingsIn <- NULL
@@ -285,7 +286,7 @@ setMethod(
 
     # add landings to sim list. Should involve all the same checks as before
     sim <- buildSimList(sim$roads, sim$cost, sim$roadMethod, landings, 
-                        roadsInCost = FALSE, sim = sim)
+                        roadsInCost = TRUE, sim = sim)
     
     sim$landingsIn <- sim$landings
     
@@ -300,7 +301,7 @@ setMethod(
 
     sim <- switch(sim$roadMethod,
                   snap= {
-                    sim <- buildSnapRoads(sim)
+                    sim <- buildSnapRoads(sim, roadsOut)
                   } ,
                   lcp ={
                     sim <- getClosestRoad(sim, ordering)
@@ -309,6 +310,8 @@ setMethod(
 
                     # includes update graph
                     sim <- shortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
                   },
                   mst ={
                     sim <- getClosestRoad(sim, ordering)
@@ -319,6 +322,8 @@ setMethod(
 
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
                   }
     )
 
@@ -331,11 +336,6 @@ setMethod(
       sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
     }
 
-    if(roadsOut == "raster"){
-      # rasterize roads to template
-      sim <- rasterizeRoads(sim)
-    }
-    
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
     sim$landingsIn <- NULL
@@ -347,24 +347,23 @@ setMethod(
     return(sim)
   })
 
-# rasterize roads to template
-# terra::vect loses points so convert separately
-rasterizeRoads <- function(sim){
-  if(sf::st_geometry_type(sim$roads, by_geometry = FALSE) == "GEOMETRY"){
-    geom_types <- c("POINT", "LINESTRING")
-    
-    rasts <- lapply(geom_types, function(x, rds, cst){
-      geom_roads <- sf::st_collection_extract(rds, type = x)
-      geom_rast <- terra::rasterize(terra::vect(geom_roads), cst,
-                                    background = 0) > 0
-    }, rds = sim$roads, cst = sim$costSurface)
-    
-    sim$roads <- rasts[[1]]|rasts[[2]]
+outputRoads <- function(sim, roadsOut){
+  if(roadsOut == "raster"){
+    sim$roads <- sim$costSurfaceNew == 0
   } else {
-    sim$roads <- terra::rasterize(terra::vect(sim$roads), sim$cost,
-                                  background = 0) > 0
+    # make new roads
+    new_roads <- pathsToLines(sim)
+    # add new roads to existing
+    sim$roads <- rbind(sim$roads, new_roads)
   }
+  
+  sim$costSurface <- sim$costSurfaceNew
+  sim$costSurfaceNew <- NULL
+  
+  # remove no longer needed parts of list that aren't being used for update
+  sim$roads.close.XY <- NULL
+  sim$paths.v <- NULL
+  sim$paths.list <- NULL
   
   return(sim)
 }
-

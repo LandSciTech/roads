@@ -27,9 +27,16 @@ shortestPaths<- function(sim){
                                                         x[2], out = "both") 
                            } ))
     
-    # save the verticies for mapping
-    sim$paths.v <- rbind(data.table::data.table(paths[grepl("vpath", names(paths))] ), 
+    paths.v <- paths[grepl("vpath", names(paths))] 
+    
+    # save the vertices for mapping
+    sim$paths.v <- rbind(data.table::data.table(paths.v), 
                          sim$paths.v) 
+    
+    # use vertices to update cost raster to 0 at new roads need copy so old cost
+    # available in pathsToLines
+    sim$costSurfaceNew <- sim$costSurface
+    sim$costSurfaceNew[unique(paths.v)] <- 0
     
     # get edges for updating graph
     paths.e <- paths[grepl("epath", names(paths))]
@@ -42,16 +49,6 @@ shortestPaths<- function(sim){
                       name = "weight") <- 0.00001 
     
     rm(paths.e)
-    
-    # make new roads
-    new_roads <- pathsToLines(sim)
-    # add new roads to existing
-    sim$roads <- rbind(sim$roads, new_roads)
-    
-    # remove no longer needed parts of list that aren't be used for update
-    sim$roads.close.XY <- NULL
-    sim$paths.v <- NULL
-    sim$paths.list <- NULL
 
   }
   return(invisible(sim))
@@ -78,21 +75,17 @@ dynamicShortestPaths<- function(sim){
                         index = igraph::E(sim$g)[igraph::E(sim$g) %in% path[grepl("epath", names(path))]],
                         name = "weight") <- 0.00001 
       
-      # get verticies
+      # get vertices
       path.vs[[i]] <- data.table::data.table(path[grepl("vpath", names(path))] )
     }
+    paths.v <-  do.call(rbind, path.vs)
     
-    sim$paths.v <- rbind(sim$paths.v, do.call(rbind, path.vs))
+    # use vertices to update cost raster to 0 at new roads need copy so old cost
+    # available in pathsToLines
+    sim$costSurfaceNew <- sim$costSurface
+    sim$costSurfaceNew[unique(paths.v)$V1] <- 0
     
-    # make new roads
-    new_roads <- pathsToLines(sim)
-    # add new roads to existing
-    sim$roads <- rbind(sim$roads, new_roads)
-    
-    # remove no longer needed parts of list that aren't be used for update
-    sim$roads.close.XY <- NULL
-    sim$paths.v <- NULL
-    sim$paths.list <- NULL
+    sim$paths.v <- rbind(sim$paths.v, paths.v)
     
   }
   return(invisible(sim))

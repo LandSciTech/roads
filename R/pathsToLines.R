@@ -28,7 +28,7 @@ pathsToLines <- function(sim){
   linelist <- lapply(1:length(sim$paths.list), function(i){
    
     # finds first match for start and end cells in paths
-    inds <- match(sim$paths.list[[i]], sim$paths.v$V1)
+    inds <- match(sim$paths.list[[i]], sim$paths.v[[1]])
     
     if(any(is.na(inds))){
       stop("NA values in cost raster along paths, check raster", call. = FALSE)
@@ -38,7 +38,7 @@ pathsToLines <- function(sim){
       return(NULL)
     }
     # cell indicies for vertices on line
-    v <- sim$paths.v$V1[inds[1]:inds[2]]
+    v <- sim$paths.v[[1]][inds[1]:inds[2]]
     
     # remove vertices in this line from sim object in parent environment
     sim$paths.v <<- sim$paths.v[-(inds[1]:inds[2]), ]
@@ -148,6 +148,10 @@ pathsToLines <- function(sim){
   
   # remove NULLs
   linelist <- linelist[vapply(linelist,function(x) !is.null(x), c(TRUE))]
+  
+  if(length(linelist) == 0){
+    return(slice(sim$roads, 0))
+  }
   
   outLines <- do.call(c, linelist) %>% 
     sf::st_union()
