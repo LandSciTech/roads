@@ -101,11 +101,12 @@ test_that("Dynamic LCP works",{
     bind_rows(land.pnts2 %>% slice(1) %>% 
                 mutate(geometry = geometry + c(0,1.5))) %>% 
     mutate(ID = 1:5) %>% arrange(ID) %>% st_set_agr("constant")
-  
+
   dyLCP <- projectRoads(land.pnts3,
                costC,
                costC==0,
                roadMethod='dlcp', roadsOut = "sf")
+
   if(doPlot){
     plotRoads(dyLCP)
   }
