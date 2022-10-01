@@ -23,9 +23,11 @@ test_that("distance to roads has expected values", {
   res <- c(fastRough, slowFine, wideCircle, smootherCircle)
   names(res) <- c("kwidth = 1, terra", "kwidth = 1, pfocal2", "kwidth = 5, terra", 
                   "kwidth = 5, pfocal2")
-  tmap::qtm(res %>% terra::`crs<-`(value = "EPSG:5070"), raster.style = "cont")
-  
-  expect_gt(length(unique(fastRough)[[1]]), length(unique(wideCircle)[[1]]))
+  if(interactive()){
+    tmap::qtm(res %>% terra::`crs<-`(value = "EPSG:5070"), raster.style = "cont")
+  }
+
+  expect_gt(length(terra::unique(fastRough)[[1]]), length(terra::unique(wideCircle)[[1]]))
   
 })
 

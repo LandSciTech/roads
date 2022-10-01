@@ -3,7 +3,7 @@ test_that("inspect line segments", {
   # Note this is imperfect because the line is doubled where the two roads
   # intersect
   roadLine <- rasterToLineSegments(roadRast)
-  roadLine2 <- rasterToLineSegments2(roadRast)
+  roadLine2 <- rasterToLineSegments(roadRast, method = "nearest")
   
   expect_s3_class(roadLine, "sf")
   expect_s3_class(roadLine2, "sf")
