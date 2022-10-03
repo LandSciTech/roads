@@ -62,8 +62,8 @@
 #' a list with components:
 #' \itemize{
 #' \item{roads: }{the projected road network, including new and input roads.}
-#' \item{costSurface: }{the input cost surface, this is not updated to reflect 
-#'       the new roads that were added.}
+#' \item{costSurface: }{the cost surface, updated to have 0 for new roads that
+#'       were added.}
 #' \item{roadMethod: }{the road simulation method used.}
 #' \item{landings: }{the landings used in the simulation.}
 #' \item{g: }{the graph that describes the cost of paths between each cell in the
@@ -214,6 +214,8 @@ setMethod(
 
                     # includes update graph
                     sim <- shortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
                   },
                   dlcp ={
                     sim <- getClosestRoad(sim, ordering)
@@ -240,10 +242,11 @@ setMethod(
     )
 
     # put back original geometry column names
-    if(geoColInR != attr(sim$roads, "sf_column")){
-      sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
+    if(is(sim$roads, "sf")){
+      if(geoColInR != attr(sim$roads, "sf_column")){
+        sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
+      }
     }
-
 
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
@@ -310,6 +313,16 @@ setMethod(
 
                     # includes update graph
                     sim <- shortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
+                  },
+                  dlcp ={
+                    sim <- getClosestRoad(sim, ordering)
+                    
+                    sim <- lcpList(sim)
+                    
+                    # includes dynamic update graph
+                    sim <- dynamicShortestPaths(sim)
                     
                     sim <- outputRoads(sim, roadsOut)
                   },

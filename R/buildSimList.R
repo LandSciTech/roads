@@ -147,7 +147,6 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
     
     cost <- burnRoadsInCost(roads, cost)
     
-    rm(roadsRast)
   }
   
   # crop landings and roads to bbox of cost raster
