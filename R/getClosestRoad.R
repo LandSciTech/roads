@@ -23,7 +23,7 @@
 
 
 # Ideally use this one
-getClosestRoad <- function(sim, ordering = NULL){
+getClosestRoad <- function(sim, ordering = "closest"){
   # union roads to one feature
   roads.pts <- sf::st_union(sim$roads)
   

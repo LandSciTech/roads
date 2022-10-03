@@ -20,15 +20,23 @@
 #' Project road locations based on existing roads, planned landings, and a cost
 #' surface that defines the cost of building roads.
 #'
-#' Three different methods for projecting road networks have been implemented:
-#' \itemize{ \item{"snap":} {Connects each landing directly to the closest road
-#' without reference to the cost or other landings} \item{"lcp":} {Least Cost
-#' Path connects each landing to the closest point on the road by determining
-#' the least cost path based on the cost surface provided, it does not consider
-#' other landings} \item{"mst":} {Minimum Spanning Tree connects all landings to
-#' the road by determining the least cost path to the road or other landings
-#' based on the cost surface} }
-#'
+#' Four different methods for projecting road networks have been implemented:
+#' \itemize{
+#'   \item{"snap":} {Connects each landing directly to the closest road without
+#'   reference to the cost or other landings}
+#'   \item{"lcp":} {Least Cost Path connects each landing to the closest point
+#'   on the road by determining the least cost path based on the cost surface
+#'   provided, it does not consider other landings}
+#'   \item{"dlcp":} {Dynamic Least Cost Path, same as "lcp" but it builds each
+#'   path sequentially so that later roads will use earlier roads. The sequence
+#'   of landings is determined by `ordering` and is "closest" by default, the
+#'   other option is "none" which will use the order that landings are supplied
+#'   in.}
+#'   \item{"mst":} {Minimum Spanning Tree connects all landings to the road by
+#'   determining the least cost path to the road or other landings based on the
+#'   cost surface}
+#' }
+#' 
 #' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
 #'   SpatialPoints*, matrix, containing features to be connected
 #'   to the road network. Matrix should contain columns x, y with coordinates,
@@ -37,7 +45,7 @@
 #'   cells with a cost of 0. If existing roads do not have 0 cost set
 #'   \code{roadsInCost = FALSE} and they will be burned in.
 #' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
-#' @param roadMethod Character. Options are "mst", "lcp", "snap".
+#' @param roadMethod Character. Options are "mst", "dlcp", "lcp", "snap".
 #' @param plotRoads Boolean. Should the resulting road network be plotted.
 #'   Default FALSE.
 #' @param mainTitle Character. A title for the plot
@@ -57,6 +65,10 @@
 #' @param roadsInCost Logical. The default is TRUE which means the cost raster
 #'   is assumed to include existing roads as 0 in its cost surface. If FALSE
 #'   then the roads will be "burned in" to the cost raster with a cost of 0.
+#' @param ordering character. The order in which roads should be built to
+#'   landings when `roadMethod = "dlcp"`. Options are "closest" (default) where
+#'   landings closest to existing roads are accessed first, or "none" where
+#'   landings are accessed in the order they are provided in.
 #'
 #' @return 
 #' a list with components:
@@ -145,7 +157,7 @@ setGeneric('projectRoads', function(landings = NULL,
                                     sim = NULL,
                                     roadsOut = NULL,
                                     roadsInCost = TRUE, 
-                                    ordering = "none")
+                                    ordering = "closest")
   standardGeneric('projectRoads'))
 
 #' @rdname projectRoads
@@ -171,9 +183,9 @@ setMethod(
            paste(recognizedRoadMethods, collapse=','))
     }
     
-    # if method is dlcp must have ordering
-    if(ordering == "none"){
-      ordering <- "closest"
+    # if method is not dlcp ignore ordering
+    if(roadMethod != "dlcp"){
+      ordering <- "none"
     }
 
     # If roads in are raster return as raster
@@ -264,21 +276,6 @@ setMethod(
   'projectRoads', signature(sim = "list"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
            neighbourhood, sim, roadsOut, roadsInCost, ordering) {
-
-    # # check required args
-    # missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings),
-    #                                   is.null)))
-    # if(length(missingNames) > 0){
-    #   stop("Argument(s): ", paste0(missingNames, collapse = ", "),
-    #        " are required if sim is not supplied")
-    # }
-    #
-    # recognizedRoadMethods = c("mst", "lcp", "snap")
-    #
-    # if(!is.element(roadMethod,recognizedRoadMethods)){
-    #   stop("Invalid road method ", roadMethod, ". Options are:",
-    #        paste(recognizedRoadMethods, collapse=','))
-    # }
 
     # If roads in are raster return as raster
     if((is(sim$roads, "Raster") || is(sim$roads, "SpatRaster")) && is.null(roadsOut) ){
