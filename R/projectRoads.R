@@ -211,7 +211,7 @@ setMethod(
 
     #library(dplyr);library(sf)
     geoColInR <- attr(sim$roads, "sf_column")
-    sim$roads <- select(sim$roads, geometry = tidyselect::all_of(geoColInR))
+    sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
 
     sim <- getGraph(sim, neighbourhood)
 
@@ -297,8 +297,8 @@ setMethod(
     }
 
     geoColInR <- attr(sim$roads, "sf_column")
-    sim$roads <- select(sim$roads, geometry = tidyselect::all_of(geoColInR))
-
+    sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
+    
     sim <- switch(sim$roadMethod,
                   snap= {
                     sim <- buildSnapRoads(sim, roadsOut)
@@ -364,7 +364,7 @@ outputRoads <- function(sim, roadsOut){
     # make new roads
     new_roads <- pathsToLines(sim)
     # add new roads to existing
-    sim$roads <- rbind(sim$roads, new_roads)
+    sim$roads <- bind_rows(sim$roads, new_roads)
   }
   
   sim$costSurface <- sim$costSurfaceNew

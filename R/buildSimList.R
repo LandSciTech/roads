@@ -187,6 +187,18 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
 }
 
 
+
+#' Burn roads in to cost
+#'
+#' Use sf roads object to convert cost to 0 where roads already exist. This is
+#' an internal function and does not contain many checks. Use at own risk.
+#'
+#' @param roads sf object with road lines
+#' @param cost SpatRaster with cost of road development
+#'
+#' @return SpatRaster of cost with 0 for roads.
+#' 
+#' @noRd
 burnRoadsInCost <- function(roads, cost){
   # The crs is checked above but stars requires that they be identical
   if(!is.na(sf::st_crs(roads))){

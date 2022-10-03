@@ -36,7 +36,7 @@ buildSnapRoads <- function(sim, roadsOut){
   #                            geometry = sf::st_cast(geometry, "MULTIPOINT"))
   
   # add to existing roads
-  sim$roads <- rbind(sim$roads, snap_roads_lines)
+  sim$roads <- bind_rows(sim$roads, snap_roads_lines)
   
   # burn into cost as 0
   sim$cost <- burnRoadsInCost(sim$roads, sim$costSurface)
