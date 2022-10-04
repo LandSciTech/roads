@@ -15,6 +15,9 @@ of the CRS.}
 
 \item{kwidth}{Integer, for the "pfocal" and "terra" methods the width of the
 moving window. For the "pfocal2" method the aggregation factor.}
+
+\item{method}{Character, the method to use, one of "terra", "pfocal" or
+"pfocal2". See below for details.}
 }
 \value{
 A SpatRaster

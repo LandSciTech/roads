@@ -1,18 +1,3 @@
-
-#Using fast parallel moving window approach to get distance from roads Note that
-#pfocal package requires R version 4 or higher. Will consider with Sarah putting
-#this function in the roads package. For now, here it is.
-
-#The function uses pfocal, which is a fast parallel moving window function we
-#have been developing for another project. In order to install the pfocal
-#package, you will need to make sure you have a current version of R installed.
-#If you run into problems installing (and you may) let us know. Now is a good
-#time for us to find and fix problems with that package.
-
-
-# 
-
-
 #' Moving window approach to get distance from source
 #'
 #' This function provides three different methods for calculating the distance
@@ -50,7 +35,9 @@
 #' @param maxDist Numeric, maximum distance that should be calculated in units
 #'   of the CRS.
 #' @param kwidth Integer, for the "pfocal" and "terra" methods the width of the
-#'   moving window. For the "pfocal2" method the aggregation factor. 
+#' moving window. For the "pfocal2" method the aggregation factor.
+#' @param method Character, the method to use, one of "terra", "pfocal" or
+#'   "pfocal2". See below for details.
 #'
 #' @return A SpatRaster
 #' @export
