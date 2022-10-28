@@ -42,7 +42,6 @@ Imports:
     igraph,
     sp,
     data.table,
-    SpaDES.tools,
     sf,
     units,
     rlang,
