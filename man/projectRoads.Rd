@@ -16,7 +16,8 @@ projectRoads(
   neighbourhood = "octagon",
   sim = NULL,
   roadsOut = NULL,
-  roadsInCost = TRUE
+  roadsInCost = TRUE,
+  ordering = "closest"
 )
 
 \S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing}(
@@ -29,7 +30,8 @@ projectRoads(
   neighbourhood = "octagon",
   sim = NULL,
   roadsOut = NULL,
-  roadsInCost = TRUE
+  roadsInCost = TRUE,
+  ordering = "closest"
 )
 
 \S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,list}(
@@ -42,7 +44,8 @@ projectRoads(
   neighbourhood = "octagon",
   sim = NULL,
   roadsOut = NULL,
-  roadsInCost = TRUE
+  roadsInCost = TRUE,
+  ordering = "closest"
 )
 }
 \arguments{
@@ -57,7 +60,7 @@ cells with a cost of 0. If existing roads do not have 0 cost set
 
 \item{roads}{sf lines, SpatialLines*, RasterLayer. Existing road network.}
 
-\item{roadMethod}{Character. Options are "mst", "lcp", "snap".}
+\item{roadMethod}{Character. Options are "mst", "dlcp", "lcp", "snap".}
 
 \item{plotRoads}{Boolean. Should the resulting road network be plotted.
 Default FALSE.}
@@ -83,13 +86,18 @@ are sf if the input is sf or Spatial* and raster if the input was a raster.}
 \item{roadsInCost}{Logical. The default is TRUE which means the cost raster
 is assumed to include existing roads as 0 in its cost surface. If FALSE
 then the roads will be "burned in" to the cost raster with a cost of 0.}
+
+\item{ordering}{character. The order in which roads should be built to
+landings when `roadMethod = "dlcp"`. Options are "closest" (default) where
+landings closest to existing roads are accessed first, or "none" where
+landings are accessed in the order they are provided in.}
 }
 \value{
 a list with components:
 \itemize{
 \item{roads: }{the projected road network, including new and input roads.}
-\item{costSurface: }{the input cost surface, this is not updated to reflect 
-      the new roads that were added.}
+\item{costSurface: }{the cost surface, updated to have 0 for new roads that
+      were added.}
 \item{roadMethod: }{the road simulation method used.}
 \item{landings: }{the landings used in the simulation.}
 \item{g: }{the graph that describes the cost of paths between each cell in the
@@ -103,14 +111,22 @@ Project road locations based on existing roads, planned landings, and a cost
 surface that defines the cost of building roads.
 }
 \details{
-Three different methods for projecting road networks have been implemented:
-\itemize{ \item{"snap":} {Connects each landing directly to the closest road
-without reference to the cost or other landings} \item{"lcp":} {Least Cost
-Path connects each landing to the closest point on the road by determining
-the least cost path based on the cost surface provided, it does not consider
-other landings} \item{"mst":} {Minimum Spanning Tree connects all landings to
-the road by determining the least cost path to the road or other landings
-based on the cost surface} }
+Four different methods for projecting road networks have been implemented:
+\itemize{
+  \item{"snap":} {Connects each landing directly to the closest road without
+  reference to the cost or other landings}
+  \item{"lcp":} {Least Cost Path connects each landing to the closest point
+  on the road by determining the least cost path based on the cost surface
+  provided, it does not consider other landings}
+  \item{"dlcp":} {Dynamic Least Cost Path, same as "lcp" but it builds each
+  path sequentially so that later roads will use earlier roads. The sequence
+  of landings is determined by `ordering` and is "closest" by default, the
+  other option is "none" which will use the order that landings are supplied
+  in.}
+  \item{"mst":} {Minimum Spanning Tree connects all landings to the road by
+  determining the least cost path to the road or other landings based on the
+  cost surface}
+}
 }
 \examples{
 doPlots <- interactive()

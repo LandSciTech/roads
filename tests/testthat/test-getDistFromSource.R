@@ -17,15 +17,20 @@ test_that("distance to roads has expected values", {
   src <- rds_rast
   maxDist <- 5
   fastRough <- getDistFromSource(src, maxDist, kwidth = 1)
-  slowFine <- getDistFromSource(src, maxDist, kwidth = 1, method = "pfocal2")
   wideCircle <- getDistFromSource(src, maxDist, kwidth = 5)
-  smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, method = "pfocal2")
-  res <- c(fastRough, slowFine, wideCircle, smootherCircle)
-  names(res) <- c("kwidth = 1, terra", "kwidth = 1, pfocal2", "kwidth = 5, terra", 
-                  "kwidth = 5, pfocal2")
-  tmap::qtm(res %>% terra::`crs<-`(value = "EPSG:5070"), raster.style = "cont")
-  
-  expect_gt(length(unique(fastRough)[[1]]), length(unique(wideCircle)[[1]]))
+  if(requireNamespace("pfocal", quietly = TRUE)){
+    slowFine <- getDistFromSource(src, maxDist, kwidth = 1, method = "pfocal2")
+    smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, method = "pfocal2")
+  }
+
+  if(interactive()){
+    res <- c(fastRough, slowFine, wideCircle, smootherCircle)
+    names(res) <- c("kwidth = 1, terra", "kwidth = 1, pfocal2", "kwidth = 5, terra", 
+                    "kwidth = 5, pfocal2")
+    tmap::qtm(res %>% terra::`crs<-`(value = "EPSG:5070"), raster.style = "cont")
+  }
+
+  expect_gt(length(terra::unique(fastRough)[[1]]), length(terra::unique(wideCircle)[[1]]))
   
 })
 

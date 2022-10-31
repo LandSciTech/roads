@@ -42,9 +42,7 @@ Imports:
     igraph,
     sp,
     data.table,
-    SpaDES.tools,
     sf,
-    stars,
     units,
     rlang,
     methods,
@@ -55,7 +53,8 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown,
-    viridis
+    viridis,
+    tmap
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
 Collate: 

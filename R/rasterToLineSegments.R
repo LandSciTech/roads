@@ -46,7 +46,7 @@ rasterToLineSegments <- function(rast, method = "mst"){
   if(method == "mst"){
     lnds <- raster::rasterToPoints(rast, fun = function(x){x > 0},
                                    spatial = TRUE) %>%
-      sf::st_as_sf()
+      sf::st_as_sf() %>% sf::st_set_agr("constant")
     
     cst <- rast == 0
     
@@ -64,7 +64,8 @@ rasterToLineSegments <- function(rast, method = "mst"){
     # finds line between all points and keep shortest
     nearLn <- sf::st_nearest_points(pts, pts) %>%
       sf::st_as_sf() %>%
-      mutate(len = sf::st_length(.data$x), ID = 1:n())
+      mutate(len = sf::st_length(.data$x), ID = 1:n()) %>%
+      sf::st_set_agr("constant")
     
     # speeds things up because filtering is slow on sf (as is [])
     nearLn2 <- nearLn %>% sf::st_drop_geometry() %>%

@@ -44,18 +44,9 @@ getGraph<- function(sim, neighbourhood){
   nc <- terra::ncol(sim$costSurface)
   ncel <- terra::ncell(sim$costSurface) %>% as.integer()
 
-  edges <- SpaDES.tools::adj(
-      returnDT = TRUE,
-      numCol = nc,
-      numCell = ncel,
-      directions = 4,
-      cells = 1:as.integer(ncel)
-    )
-
-  if(!is(edges, "data.table")){
-    # adj will return matrix even if returnDT = TRUE if small
-    edges <- data.table::as.data.table(edges)
-  }
+  edges <- terra::adjacent(sim$costSurface, cells = 1:as.integer(ncel),
+                           directions = "rook", pairs = TRUE) %>% 
+    data.table::as.data.table()
 
   # switch to and from where to > from so can remove duplicates
   edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]
@@ -90,18 +81,9 @@ getGraph<- function(sim, neighbourhood){
     } else {mW = 1}
     weight[, weight := weight*mW]
 
-    edges <- SpaDES.tools::adj(
-      returnDT = TRUE,
-      numCol = nc,
-      numCell = ncel,
-      directions = "bishop",
-      cells = 1:as.integer(ncel)
-    )
-
-    if(!is(edges, "data.table")){
-      # adj will return matrix even if returnDT = TRUE if small
-      edges <- data.table::as.data.table(edges)
-    }
+    edges <- terra::adjacent(sim$costSurface, cells = 1:as.integer(ncel),
+                             directions = "bishop", pairs = TRUE) %>% 
+      data.table::as.data.table()
 
     # edges[from < to, c("from", "to") := .(to, from)]
     edges[edges$from < edges$to, ] <- edges[edges$from < edges$to, c('to','from')]

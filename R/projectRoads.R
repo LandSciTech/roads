@@ -20,15 +20,23 @@
 #' Project road locations based on existing roads, planned landings, and a cost
 #' surface that defines the cost of building roads.
 #'
-#' Three different methods for projecting road networks have been implemented:
-#' \itemize{ \item{"snap":} {Connects each landing directly to the closest road
-#' without reference to the cost or other landings} \item{"lcp":} {Least Cost
-#' Path connects each landing to the closest point on the road by determining
-#' the least cost path based on the cost surface provided, it does not consider
-#' other landings} \item{"mst":} {Minimum Spanning Tree connects all landings to
-#' the road by determining the least cost path to the road or other landings
-#' based on the cost surface} }
-#'
+#' Four different methods for projecting road networks have been implemented:
+#' \itemize{
+#'   \item{"snap":} {Connects each landing directly to the closest road without
+#'   reference to the cost or other landings}
+#'   \item{"lcp":} {Least Cost Path connects each landing to the closest point
+#'   on the road by determining the least cost path based on the cost surface
+#'   provided, it does not consider other landings}
+#'   \item{"dlcp":} {Dynamic Least Cost Path, same as "lcp" but it builds each
+#'   path sequentially so that later roads will use earlier roads. The sequence
+#'   of landings is determined by `ordering` and is "closest" by default, the
+#'   other option is "none" which will use the order that landings are supplied
+#'   in.}
+#'   \item{"mst":} {Minimum Spanning Tree connects all landings to the road by
+#'   determining the least cost path to the road or other landings based on the
+#'   cost surface}
+#' }
+#' 
 #' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
 #'   SpatialPoints*, matrix, containing features to be connected
 #'   to the road network. Matrix should contain columns x, y with coordinates,
@@ -37,7 +45,7 @@
 #'   cells with a cost of 0. If existing roads do not have 0 cost set
 #'   \code{roadsInCost = FALSE} and they will be burned in.
 #' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
-#' @param roadMethod Character. Options are "mst", "lcp", "snap".
+#' @param roadMethod Character. Options are "mst", "dlcp", "lcp", "snap".
 #' @param plotRoads Boolean. Should the resulting road network be plotted.
 #'   Default FALSE.
 #' @param mainTitle Character. A title for the plot
@@ -57,13 +65,17 @@
 #' @param roadsInCost Logical. The default is TRUE which means the cost raster
 #'   is assumed to include existing roads as 0 in its cost surface. If FALSE
 #'   then the roads will be "burned in" to the cost raster with a cost of 0.
+#' @param ordering character. The order in which roads should be built to
+#'   landings when `roadMethod = "dlcp"`. Options are "closest" (default) where
+#'   landings closest to existing roads are accessed first, or "none" where
+#'   landings are accessed in the order they are provided in.
 #'
 #' @return 
 #' a list with components:
 #' \itemize{
 #' \item{roads: }{the projected road network, including new and input roads.}
-#' \item{costSurface: }{the input cost surface, this is not updated to reflect 
-#'       the new roads that were added.}
+#' \item{costSurface: }{the cost surface, updated to have 0 for new roads that
+#'       were added.}
 #' \item{roadMethod: }{the road simulation method used.}
 #' \item{landings: }{the landings used in the simulation.}
 #' \item{g: }{the graph that describes the cost of paths between each cell in the
@@ -136,22 +148,23 @@
 #' @export
 #' 
 setGeneric('projectRoads', function(landings = NULL,
-                                       cost = NULL,
-                                       roads = NULL,
-                                       roadMethod = "mst",
-                                       plotRoads = FALSE,
-                                       mainTitle = "",
-                                       neighbourhood = "octagon",
-                                       sim = NULL,
-                                       roadsOut = NULL,
-                                       roadsInCost = TRUE)
+                                    cost = NULL,
+                                    roads = NULL,
+                                    roadMethod = "mst",
+                                    plotRoads = FALSE,
+                                    mainTitle = "",
+                                    neighbourhood = "octagon",
+                                    sim = NULL,
+                                    roadsOut = NULL,
+                                    roadsInCost = TRUE, 
+                                    ordering = "closest")
   standardGeneric('projectRoads'))
 
 #' @rdname projectRoads
 setMethod(
   'projectRoads', signature(sim = "missing"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, sim, roadsOut, roadsInCost) {
+           neighbourhood, sim, roadsOut, roadsInCost, ordering) {
     #landings=outObj$landings;cost=outObj$cost;roads=outObj$roads;roadMethod="mst";roadsOut = "raster"
     #mainTitle = NULL;neighbourhood = "queen";sim = NULL;roadsInCost = TRUE
 
@@ -163,11 +176,16 @@ setMethod(
            " are required if sim is not supplied")
     }
 
-    recognizedRoadMethods = c("mst", "lcp", "snap")
+    recognizedRoadMethods = c("mst", "lcp", "dlcp", "snap")
 
     if(!is.element(roadMethod,recognizedRoadMethods)){
       stop("Invalid road method ", roadMethod, ". Options are:",
            paste(recognizedRoadMethods, collapse=','))
+    }
+    
+    # if method is not dlcp ignore ordering
+    if(roadMethod != "dlcp"){
+      ordering <- "none"
     }
 
     # If roads in are raster return as raster
@@ -193,24 +211,36 @@ setMethod(
 
     #library(dplyr);library(sf)
     geoColInR <- attr(sim$roads, "sf_column")
-    sim$roads <- select(sim$roads, geometry = tidyselect::all_of(geoColInR))
+    sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
 
     sim <- getGraph(sim, neighbourhood)
 
     sim <- switch(sim$roadMethod,
                   snap= {
-                    sim <- buildSnapRoads(sim)
+                    sim <- buildSnapRoads(sim, roadsOut)
                   } ,
                   lcp ={
-                    sim <- getClosestRoad(sim)
+                    sim <- getClosestRoad(sim, ordering)
 
                     sim <- lcpList(sim)
 
                     # includes update graph
                     sim <- shortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
+                  },
+                  dlcp ={
+                    sim <- getClosestRoad(sim, ordering)
+                    
+                    sim <- lcpList(sim)
+                    
+                    # includes dynamic update graph
+                    sim <- dynamicShortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
                   },
                   mst ={
-                    sim <- getClosestRoad(sim)
+                    sim <- getClosestRoad(sim, ordering)
 
                     # will take more time than lcpList given the construction of
                     # a mst
@@ -218,33 +248,18 @@ setMethod(
 
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
                   }
     )
 
     # put back original geometry column names
-    if(geoColInR != attr(sim$roads, "sf_column")){
-      sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
-    }
-
-    if(roadsOut == "raster"){
-      # rasterize roads to template
-      # terra::vect loses points so convert separately
-      if(sf::st_geometry_type(sim$roads, by_geometry = FALSE) == "GEOMETRY"){
-        geom_types <- c("POINT", "LINESTRING")
-        
-        rasts <- lapply(geom_types, function(x, rds, cst){
-          geom_roads <- sf::st_collection_extract(rds, type = x)
-          geom_rast <- terra::rasterize(terra::vect(geom_roads), cst,
-                           background = 0) > 0
-        }, rds = sim$roads, cst = sim$costSurface)
-        
-        sim$roads <- rasts[[1]]|rasts[[2]]
-      } else {
-        sim$roads <- terra::rasterize(terra::vect(sim$roads), sim$cost,
-                                      background = 0) > 0
+    if(is(sim$roads, "sf")){
+      if(geoColInR != attr(sim$roads, "sf_column")){
+        sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
       }
     }
-    
+
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
     sim$landingsIn <- NULL
@@ -260,33 +275,18 @@ setMethod(
 setMethod(
   'projectRoads', signature(sim = "list"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, sim, roadsOut, roadsInCost) {
-
-    # # check required args
-    # missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings),
-    #                                   is.null)))
-    # if(length(missingNames) > 0){
-    #   stop("Argument(s): ", paste0(missingNames, collapse = ", "),
-    #        " are required if sim is not supplied")
-    # }
-    #
-    # recognizedRoadMethods = c("mst", "lcp", "snap")
-    #
-    # if(!is.element(roadMethod,recognizedRoadMethods)){
-    #   stop("Invalid road method ", roadMethod, ". Options are:",
-    #        paste(recognizedRoadMethods, collapse=','))
-    # }
+           neighbourhood, sim, roadsOut, roadsInCost, ordering) {
 
     # If roads in are raster return as raster
-    if(is(sim$roads, "Raster") || is(roads, "SpatRaster")){
+    if((is(sim$roads, "Raster") || is(sim$roads, "SpatRaster")) && is.null(roadsOut) ){
       roadsOut <- "raster"
-    } else {
+    } else if(is.null(roadsOut)) {
       roadsOut <- "sf"
     }
 
     # add landings to sim list. Should involve all the same checks as before
     sim <- buildSimList(sim$roads, sim$cost, sim$roadMethod, landings, 
-                        roadsInCost = FALSE, sim = sim)
+                        roadsInCost = TRUE, sim = sim)
     
     sim$landingsIn <- sim$landings
     
@@ -297,22 +297,34 @@ setMethod(
     }
 
     geoColInR <- attr(sim$roads, "sf_column")
-    sim$roads <- select(sim$roads, geometry = tidyselect::all_of(geoColInR))
-
+    sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
+    
     sim <- switch(sim$roadMethod,
                   snap= {
-                    sim <- buildSnapRoads(sim)
+                    sim <- buildSnapRoads(sim, roadsOut)
                   } ,
                   lcp ={
-                    sim <- getClosestRoad(sim)
+                    sim <- getClosestRoad(sim, ordering)
 
                     sim <- lcpList(sim)
 
                     # includes update graph
                     sim <- shortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
+                  },
+                  dlcp ={
+                    sim <- getClosestRoad(sim, ordering)
+                    
+                    sim <- lcpList(sim)
+                    
+                    # includes dynamic update graph
+                    sim <- dynamicShortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
                   },
                   mst ={
-                    sim <- getClosestRoad(sim)
+                    sim <- getClosestRoad(sim, ordering)
 
                     # will take more time than lcpList given the construction of
                     # a mst
@@ -320,6 +332,8 @@ setMethod(
 
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)
+                    
+                    sim <- outputRoads(sim, roadsOut)
                   }
     )
 
@@ -332,11 +346,6 @@ setMethod(
       sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
     }
 
-    if(roadsOut == "raster"){
-      # rasterize roads to template
-      sim$roads <- terra::rasterize(terra::vect(sim$roads), sim$cost, background = 0)
-    }
-    
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
     sim$landingsIn <- NULL
@@ -348,3 +357,23 @@ setMethod(
     return(sim)
   })
 
+outputRoads <- function(sim, roadsOut){
+  if(roadsOut == "raster"){
+    sim$roads <- sim$costSurfaceNew == 0
+  } else {
+    # make new roads
+    new_roads <- pathsToLines(sim)
+    # add new roads to existing
+    sim$roads <- bind_rows(sim$roads, new_roads)
+  }
+  
+  sim$costSurface <- sim$costSurfaceNew
+  sim$costSurfaceNew <- NULL
+  
+  # remove no longer needed parts of list that aren't being used for update
+  sim$roads.close.XY <- NULL
+  sim$paths.v <- NULL
+  sim$paths.list <- NULL
+  
+  return(sim)
+}
