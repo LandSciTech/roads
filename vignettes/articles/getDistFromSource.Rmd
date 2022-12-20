@@ -63,13 +63,14 @@ doFun <- function(x){
 purrr::walk(1:nrow(param_grid), doFun)
 ```
 
-```{r make_plots, fig.height= 10, fig.width = 14}
+```{r make_plots, fig.height= 10, fig.width = 8}
 
 
 # all maps 
 all_maps <- purrr::map(1:nrow(param_grid), 
                        ~tmap::qtm(param_grid$result[[.x]], raster.style = "cont",
-                                  title = param_grid$nm[.x] , 
+                                  title = gsub(", ", "\\\n", param_grid$nm[.x]), 
+                                  raster.title = "",
                                   legend.outside = TRUE,
                                   layout.title.position = c("left", "TOP"),
                                   layout.title.snap.to.legend = FALSE))
