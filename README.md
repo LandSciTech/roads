@@ -40,7 +40,6 @@ landscape (cost). Typically the roads and landings are `sf` objects or
 ``` r
 library(roads)
 library(raster)
-#> Warning: package 'raster' was built under R version 4.1.3
 
 # data set installed with roads package
 scen <- demoScen[[1]]

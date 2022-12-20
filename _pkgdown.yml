@@ -1,2 +1,4 @@
-url: https://landscitech.github.io/roads
+url: https://landscitech.github.io/roads/
+template:
+  bootstrap: 5
 

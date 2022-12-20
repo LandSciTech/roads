@@ -25,7 +25,7 @@ Authors@R:
            comment = "Copyright holder for included functions getGraph, lcpList, mstList, shortestPaths, getClosestRoad, buildSnapRoads"))    
 Date: 2023-03-11
 URL: https://github.com/LandSciTech/roads,
-     https://landscitech.github.io/roads/
+    https://landscitech.github.io/roads/
 Description: Project road network development based on an existing road 
     network, target locations to be connected by roads and a cost surface. Road 
     projection methods include minimum spanning tree with least cost path 
