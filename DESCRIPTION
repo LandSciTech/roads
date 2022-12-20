@@ -54,7 +54,8 @@ Suggests:
     knitr,
     rmarkdown,
     viridis,
-    tmap
+    tmap,
+    bench
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
 Collate: 
