@@ -85,10 +85,10 @@ get_hist <- function(rast){
   dat <- data.frame(counts= f$counts,breaks = f$mids)
 }
 
-mutate(param_grid, 
-       hist_dat = purrr::map(result, get_hist)) %>% 
-  select(hist_dat, kwidth, maxDist, method, nm) %>% 
-  tidyr::unnest(cols = c(hist_dat)) %>% 
+
+purrr::map_dfr(1:nrow(param_grid),
+               ~get_hist(param_grid$result[[.x]]), .id = "row_id") %>% 
+  left_join(param_grid %>% mutate(row_id = as.character(1:n()))) %>% 
   ggplot(aes(x = breaks, y = counts)) + 
   geom_bar(stat = "identity",fill='blue',alpha = 0.8)+
   xlab("Distance")+ ylab("Frequency")+
