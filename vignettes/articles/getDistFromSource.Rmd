@@ -16,14 +16,13 @@ library(ggplot2)
 library(dplyr)
 ```
 
+`getDistFromSource` allows you to calculate the distance to the closest "source" location for all cells in a raster. A source is a raster cell with a value \> 0 in the input raster. In the case of this package the source is typically a road. `getDistFromSource` includes three slightly different methods that are all based on a moving window approach.
 
-`getDistFromSource` allows you to calculate the distance to the closest "source" location for all cells in a raster. A source is a raster cell with a value > 0 in the input raster. In the case of this package the source is typically a road. `getDistFromSource` includes three slightly different methods that are all based on a moving window approach. 
+The "terra" and "pfocal" methods use an iterative moving window approach and assign each cell a distance based on the number of times the moving window is repeated before it is included. This means that the moving window function is run many times but for a small window relative to the size of the raster. The `maxDist` argument determines the maximum distance calculated and affects the number of iterations of the moving window that are needed. `kwidth` is the radius of the moving window in number of cells, with larger values reducing the number of iterations needed but also reducing the granularity of the distances produced. The resulting distances will be in increments of `kwidth` \* the resolution of the raster. The total number of iterations is `maxDist`/ `kwidth` \* resolution. The only difference in these methods is the underlying package used to do the moving window. The `terra` package has methods for handling large rasters by writing them to disk, while the `pfocal` package requires that the raster can be held in memory as a matrix.
 
-The "terra" and "pfocal" methods use an iterative moving window approach and assign each cell a distance based on the number of times the moving window is repeated before it is included. This means that the moving window function is run many times but for a small window relative to the size of the raster. The `maxDist` argument determines the maximum distance calculated and affects the number of iterations of the moving window that are needed. `kwidth` is the radius of the moving window in number of cells, with larger values reducing the number of iterations needed but also reducing the granularity of the distances produced. The resulting distances will be in increments of `kwidth` * the resolution of the raster. The total number of iterations is `maxDist`/ `kwidth` * resolution. The only difference in these methods is the underlying package used to do the moving window. The `terra` package has methods for handling large rasters by writing them to disk, while the `pfocal` package requires that the raster can be held in memory as a matrix. 
+The third method "pfocal2" uses a global moving window to calculate the distance to the source. This means that the moving window only needs to be applied once but the window size can be very large. In this case `maxDist` determines the total size of the window. `kwidth` can be used to reduce the number of cells included in the moving window by aggregating the source raster by a factor of `kwidth`. This will increase the speed of computation but will produce results with artefacts of the larger grid and which may be less accurate since the output raster is disaggregated using bilinear interpolation.
 
-The third method "pfocal2" uses a global moving window to calculate the distance to the source. This means that the moving window only needs to be applied once but the window size can be very large. In this case `maxDist` determines the total size of the window. `kwidth` can be used to reduce the number of cells included in the moving window by aggregating the source raster by a factor of `kwidth`. This will increase the speed of computation but will produce results with artefacts of the larger grid and which may be less accurate since the output raster is disaggregated using bilinear interpolation.  
-
-Below we will explore different settings and how they affect the speed and memory usage as well as the resulting distance map. The code below creates a source raster showing a curving road and applies the `getDistToSource` function under different parameters.  
+Below we will explore different settings and how they affect the speed and memory usage as well as the resulting distance map. The code below creates a source raster showing a curving road and applies the `getDistToSource` function under different parameters.
 
 ```{r run_dist, cache=TRUE}
 #make example roads from scratch
@@ -99,7 +98,8 @@ mutate(param_grid,
 
 ```
 
-Looking at histograms of the raster values shows the larger steps between distance values as `kwidth` increases for the "terra" and "pfocal" methods. For the "pfocal2" method the frequency of distance values stays similar with higher values of `kwidth` but the maps above show that some spatial accuracy is lost due to the aggregation and disaggregation processes. 
+
+Looking at histograms of the raster values shows the larger steps between distance values as `kwidth` increases for the "terra" and "pfocal" methods. For the "pfocal2" method the frequency of distance values stays similar with higher values of `kwidth` but the maps above show that some spatial accuracy is lost due to the aggregation and disaggregation processes.
 
 ```{r make_plots3, fig.height= 7, fig.width = 10}
 param_grid %>% 
@@ -113,7 +113,6 @@ param_grid %>%
   facet_grid(kwidth~maxDist, labeller = label_both)
 ```
 
-The last two graphs show that the "pfocal2" method is fastest in all the cases shown, however for very high `maxDist` values this may not be the case. The "pfocal" method uses the most memory of all the methods but note that this is the total memory allocated and does not account for deallocated memory, meaning not all the memory allocated is used at once. 
+The last two graphs show that the "pfocal2" method is fastest in all the cases shown, however for very high `maxDist` values this may not be the case. The "pfocal" method uses the most memory of all the methods but note that this is the total memory allocated and does not account for deallocated memory, meaning not all the memory allocated is used at once.
 
 This vignette demonstrates the different trade offs that should be considered in choosing the correct method to calculate distance to a source.
-

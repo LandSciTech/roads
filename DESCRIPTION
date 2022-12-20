@@ -57,7 +57,7 @@ Suggests:
     tmap,
     bench,
     pfocal
-Additional_repositories: https://landscitech.github.io/drat
+Remotes: LandSciTech/pfocal
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
 Collate: 
