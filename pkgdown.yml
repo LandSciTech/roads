@@ -1,9 +1,11 @@
-pandoc: 2.7.3
-pkgdown: 2.0.6
+pandoc: 2.19.2
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
+  ReconstructRoadHistory: ReconstructRoadHistory.html
+  getDistFromSource: getDistFromSource.html
   roads-vignette: roads-vignette.html
-last_built: 2022-08-23T18:03Z
+last_built: 2022-12-20T20:47Z
 urls:
   reference: https://landscitech.github.io/roads/reference
   article: https://landscitech.github.io/roads/articles

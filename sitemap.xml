@@ -7,6 +7,12 @@
     <loc>https://landscitech.github.io/roads/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://landscitech.github.io/roads/articles/ReconstructRoadHistory.html</loc>
+  </url>
+  <url>
+    <loc>https://landscitech.github.io/roads/articles/getDistFromSource.html</loc>
+  </url>
+  <url>
     <loc>https://landscitech.github.io/roads/articles/index.html</loc>
   </url>
   <url>
@@ -26,6 +32,9 @@
   </url>
   <url>
     <loc>https://landscitech.github.io/roads/reference/demoScen.html</loc>
+  </url>
+  <url>
+    <loc>https://landscitech.github.io/roads/reference/getDistFromSource.html</loc>
   </url>
   <url>
     <loc>https://landscitech.github.io/roads/reference/getLandingsFromTarget.html</loc>
