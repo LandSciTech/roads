@@ -3,7 +3,8 @@
 #' This function provides three different methods for calculating the distance
 #' of all points on a landscape from "source" locations. This is a
 #' computationally intensive process so the function arguments can be used to
-#' balance the tradeoffs between speed and accuracy.
+#' balance the tradeoffs between speed and accuracy. Note the pfocal versions
+#' are only available in the development version of the package.
 #'
 #' The "terra" and "pfocal" methods use an iterative moving window approach and
 #' assign each cell a distance based on the number of times the moving window is
@@ -36,8 +37,8 @@
 #'   of the CRS.
 #' @param kwidth Integer, for the "pfocal" and "terra" methods the width of the
 #' moving window. For the "pfocal2" method the aggregation factor.
-#' @param method Character, the method to use, one of "terra", "pfocal" or
-#'   "pfocal2". See below for details.
+# #' @param method Character, the method to use, one of "terra", "pfocal" or
+# #'   "pfocal2". See below for details.
 #'
 #' @return A SpatRaster
 #' @export
@@ -68,33 +69,35 @@ getDistFromSource <- function(src, maxDist, kwidth = 3, method = "terra") {
     src <- terra::rast(src)
   }
   if(method == "pfocal2"){
-    src <- src > 0
-    
-    # aggregate based on kwidth in a way that matches the moving window version
-    if(kwidth > 1){
-      src <- terra::aggregate(src, kwidth, fun = "max", na.rm = TRUE)
-    }
-    # convert maxDist to ncells
-    maxDist <- maxDist/terra::res(src)[1]
-    
-    # make kernal for distance from center
-    kn <- pfocal::euclidean_distance_kernel(maxDist)
-    kn <- kn*terra::res(src)[1]
-    
-    
-    src2 <- terra::mask(src, src, maskvalues = 0, updatevalue = NA)
-    dist_src <- pfocal::pfocal(terra::as.matrix(src2, wide = TRUE), kernel = kn, edge_value = NA, na.rm = TRUE, 
-                               reduce_function = "min")
-    dist_src <- terra::rast(src, vals = dist_src)
-    # min when all NA is Inf so need to convert to NA
-    dist_src <- terra::mask(dist_src, dist_src > (maxDist * terra::res(src2)[1]),
-                            maskvalues = 1, updatevalue = NA)
-    
-    if(kwidth > 1){
-      dist_src <- terra::disagg(dist_src, fact = kwidth, method = "bilinear")
-    }
-    
-    return(dist_src)
+    stop("method pfocal2 is only available with the development version of roads.", 
+         call. = FALSE)
+    # src <- src > 0
+    # 
+    # # aggregate based on kwidth in a way that matches the moving window version
+    # if(kwidth > 1){
+    #   src <- terra::aggregate(src, kwidth, fun = "max", na.rm = TRUE)
+    # }
+    # # convert maxDist to ncells
+    # maxDist <- maxDist/terra::res(src)[1]
+    # 
+    # # make kernal for distance from center
+    # kn <- pfocal::euclidean_distance_kernel(maxDist)
+    # kn <- kn*terra::res(src)[1]
+    # 
+    # 
+    # src2 <- terra::mask(src, src, maskvalues = 0, updatevalue = NA)
+    # dist_src <- pfocal::pfocal(terra::as.matrix(src2, wide = TRUE), kernel = kn, edge_value = NA, na.rm = TRUE, 
+    #                            reduce_function = "min")
+    # dist_src <- terra::rast(src, vals = dist_src)
+    # # min when all NA is Inf so need to convert to NA
+    # dist_src <- terra::mask(dist_src, dist_src > (maxDist * terra::res(src2)[1]),
+    #                         maskvalues = 1, updatevalue = NA)
+    # 
+    # if(kwidth > 1){
+    #   dist_src <- terra::disagg(dist_src, fact = kwidth, method = "bilinear")
+    # }
+    # 
+    # return(dist_src)
   }
   src <- src > 0
   if (dissag) {
@@ -115,10 +118,12 @@ getDistFromSource <- function(src, maxDist, kwidth = 3, method = "terra") {
       ssD2 <- terra::focal(cPop, w = mm, fun = "sum", na.rm = TRUE)
       # ssD2 <- terra::init(cPop, fun = ssO2)
     } else if(method == "pfocal"){
-      ssO2 <- pfocal::pfocal(as.matrix(cPop, wide = TRUE), mm, reduce_function = "SUM",
-                             transform_function = "MULTIPLY")
-      ssD2 <- cPop
-      terra::values(ssD2) <- ssO2
+      stop("method pfocal is only available with the development version of roads.", 
+           call. = FALSE)
+      # ssO2 <- pfocal::pfocal(as.matrix(cPop, wide = TRUE), mm, reduce_function = "SUM",
+      #                        transform_function = "MULTIPLY")
+      # ssD2 <- cPop
+      # terra::values(ssD2) <- ssO2
     }
     # Add back 0s for existing roads
     ssD2 <- terra::mask(ssD2, dd, inverse = TRUE, updatevalue = 0)

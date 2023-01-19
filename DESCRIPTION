@@ -1,6 +1,6 @@
 Package: roads
 Title: Road Network Projection
-Version: 1.0.0.9000
+Version: 1.1.0
 Authors@R: 
     c(person(given = "Sarah",
            family = "Endicott", 
@@ -55,10 +55,7 @@ Suggests:
     rmarkdown,
     viridis,
     tmap,
-    bench,
-    pfocal
-Remotes: LandSciTech/pfocal
-Additional_repositories: https://LandSciTech.github.io/drat
+    bench
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
 Collate: 
