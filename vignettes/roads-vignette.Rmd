@@ -400,6 +400,6 @@ par(oldpar)
 The regular sampling method may be the most realistic since it ensures that landings are spaced apart from each other.
 
 # Note
-This vignette is partially copied from Kyle Lochhead & Tyler Muhly's [2018 CLUS example](https://github.com/bcgov/clus/blob/master/reports/roads/draft-CLUS-roads.md)
+This vignette is partially copied from Kyle Lochhead & Tyler Muhly's [2018 CLUS example](https://github.com/bcgov/castor/blob/main/reports/roads/draft-CLUS-roads.md)
 
 
