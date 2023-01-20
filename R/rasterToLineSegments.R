@@ -35,10 +35,22 @@
 #' @return an sf simple feature collection
 #'
 #' @examples
-#' roadRast <- demoScen[[1]]$road.rast
-#' # Note this is imperfect because the line is doubled where the two roads
-#' # intersect
-#' roadLine <- rasterToLineSegments(roadRast)
+#' 
+#' # works well for very simple roads
+#' roadLine1 <- rasterToLineSegments(CLUSexample$roads)
+#' 
+#' # longer running more realistic examples
+#' \donttest{
+#' # mst method works well in this case
+#' roadLine2 <- rasterToLineSegments(demoScen[[1]]$road.rast)
+#' 
+#' # nearest method has doubled line where the two roads meet
+#' roadLine3 <- rasterToLineSegments(demoScen[[1]]$road.rast, method = "nearest")
+#' 
+#' # The mst method can also produce odd results in some cases
+#' rasterToLineSegments(demoScen[[4]]$road.rast)
+#' 
+#' }
 #'
 #' @export
 
@@ -53,7 +65,7 @@ rasterToLineSegments <- function(rast, method = "mst"){
     cst <- raster::reclassify(cst, matrix(c(0, 0.001, 1, 1), ncol = 2,
                                           byrow = TRUE), right = NA)
     
-    prRes <- projectRoads(landings = lnds, cst, roads = lnds[1,])
+    prRes <- projectRoads(landings = lnds, cst, roads = lnds[1,], roadsInCost = TRUE)
     lines <- prRes$roads %>% sf::st_collection_extract("LINESTRING")
     return(lines)
     

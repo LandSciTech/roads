@@ -45,21 +45,31 @@ area is determined by the CRS. For projected CRS this should likely be a very
 small number i.e. < 0.001.
 }
 \examples{
+doPlots <- interactive()
+
+polys <- demoScen[[1]]$landings.poly[1:2,]
 # Get centroid
-outCent <- getLandingsFromTarget(demoScen[[1]]$landings.poly)
-raster::plot(demoScen[[1]]$landings.poly)
-plot(outCent, col = "red", add = TRUE)
+outCent <- getLandingsFromTarget(polys)
+
+if(doPlots){
+  raster::plot(polys)
+  plot(outCent, col = "red", add = TRUE)
+}
 
 # Get random sample with density 0.1 points per unit area
-outRand <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "random")
+outRand <- getLandingsFromTarget(polys, 0.1, sampleType = "random")
 
-raster::plot(demoScen[[1]]$landings.poly)
-plot(outRand, col = "red", add = TRUE)
+if(doPlots){
+  raster::plot(polys)
+  plot(outRand, col = "red", add = TRUE)
+}
 
 # Get regular sample with density 0.1 points per unit area
-outReg <- getLandingsFromTarget(demoScen[[1]]$landings.poly, 0.1, sampleType = "regular")
+outReg <- getLandingsFromTarget(polys, 0.1, sampleType = "regular")
 
-raster::plot(demoScen[[1]]$landings.poly)
-plot(outReg, col = "red", add = TRUE)
+if(doPlots){
+  raster::plot(polys)
+  plot(outReg, col = "red", add = TRUE)
+}
 
 }

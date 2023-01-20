@@ -4,7 +4,7 @@
 \alias{getDistFromSource}
 \title{Moving window approach to get distance from source}
 \usage{
-getDistFromSource(src, maxDist, kwidth = 3, method = "terra")
+getDistFromSource(src, maxDist, kwidth = 3)
 }
 \arguments{
 \item{src}{SpatRaster or RasterLayer, where all values > 0 are treated as
@@ -15,9 +15,6 @@ of the CRS.}
 
 \item{kwidth}{Integer, for the "pfocal" and "terra" methods the width of the
 moving window. For the "pfocal2" method the aggregation factor.}
-
-\item{method}{Character, the method to use, one of "terra", "pfocal" or
-"pfocal2". See below for details.}
 }
 \value{
 A SpatRaster
@@ -26,7 +23,8 @@ A SpatRaster
 This function provides three different methods for calculating the distance
 of all points on a landscape from "source" locations. This is a
 computationally intensive process so the function arguments can be used to
-balance the tradeoffs between speed and accuracy.
+balance the tradeoffs between speed and accuracy. Note the pfocal versions
+are only available in the development version of the package.
 }
 \details{
 The "terra" and "pfocal" methods use an iterative moving window approach and
@@ -55,20 +53,25 @@ less accurate since the output raster is disaggregated using bilinear
 interpolation.
 }
 \examples{
-library(sf)
-library(terra)
+
+getDistFromSource(CLUSexample$roads, 5, 2)
+
+\donttest{
+ library(sf)
+ library(terra)
 
 #make example roads from scratch
 rds <- data.frame(x = 1:1000/100, y = cos(1:1000/100)) \%>\% 
-  st_as_sf(coords = c("x", "y")) \%>\% 
-  st_union() \%>\% 
-  st_cast("LINESTRING")
+  sf::st_as_sf(coords = c("x", "y")) \%>\% 
+  sf::st_union() \%>\% 
+  sf::st_cast("LINESTRING")
 
-rds_rast <- rasterize(vect(rds), 
-                      rast(nrows = 50, ncols = 50, 
+rds_rast <- terra::rasterize(terra::vect(rds), 
+                      terra::rast(nrows = 50, ncols = 50, 
                            xmin = 0, xmax = 10, 
                            ymin = -5, ymax = 5),
                       touches = TRUE)
-
+                      
 getDistFromSource(rds_rast, 5, 2)
+}
 }

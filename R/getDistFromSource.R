@@ -44,26 +44,32 @@
 #' @export
 #'
 #' @examples
-#' library(sf)
-#' library(terra)
+#' 
+#' getDistFromSource(CLUSexample$roads, 5, 2)
+#' 
+#' \donttest{
+#'  library(sf)
+#'  library(terra)
 #' 
 #' #make example roads from scratch
 #' rds <- data.frame(x = 1:1000/100, y = cos(1:1000/100)) %>% 
-#'   st_as_sf(coords = c("x", "y")) %>% 
-#'   st_union() %>% 
-#'   st_cast("LINESTRING")
+#'   sf::st_as_sf(coords = c("x", "y")) %>% 
+#'   sf::st_union() %>% 
+#'   sf::st_cast("LINESTRING")
 #' 
-#' rds_rast <- rasterize(vect(rds), 
-#'                       rast(nrows = 50, ncols = 50, 
+#' rds_rast <- terra::rasterize(terra::vect(rds), 
+#'                       terra::rast(nrows = 50, ncols = 50, 
 #'                            xmin = 0, xmax = 10, 
 #'                            ymin = -5, ymax = 5),
 #'                       touches = TRUE)
-#' 
+#'                       
 #' getDistFromSource(rds_rast, 5, 2)
+#' }
 
-getDistFromSource <- function(src, maxDist, kwidth = 3, method = "terra") {
+getDistFromSource <- function(src, maxDist, kwidth = 3) {
   # Not currently using this parameter but could in the future
   dissag = F
+  method = "terra"
   
   if(is(src, "Raster")){
     src <- terra::rast(src)

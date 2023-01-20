@@ -129,7 +129,15 @@ Four different methods for projecting road networks have been implemented:
 }
 }
 \examples{
+
 doPlots <- interactive()
+
+projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
+             "lcp", plotRoads = doPlots, mainTitle = "CLUSexample")
+                         
+
+# More realistic examples that take longer to run
+\donttest{
 ### using:  scenario 1 / sf landings / least-cost path ("lcp")
 # demo scenario 1
 scen <- demoScen[[1]]
@@ -160,19 +168,7 @@ land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
 
 prRes <- projectRoads(land.mat, scen$cost.rast, scen$road.rast, "snap",
                          plotRoads = doPlots, mainTitle = "Scen 2: Matrix-Snap")
-                         
-### using: scenario 7 / SpatialPolygonsDataFrame landings / minimum spanning tree ("mst")
-# demo scenario 7
-scen <- demoScen[[7]]
 
-# polygonal landings of demo scenario 7:
-land.poly <- scen$landings.poly
-
-prRes <- projectRoads(land.poly, scen$cost.rast, scen$road.rast, "mst",
-                         plotRoads = doPlots, mainTitle = "Scen 7: SpPoly-MST")
-
-# don't run to avoid examples being too long
-\dontrun{
 ## using scenario 7 / Polygon landings raster / minimum spanning tree
 # demo scenario 7
 scen <- demoScen[[7]]
