@@ -55,7 +55,7 @@ text(land.pnts@coords, labels = land.pnts$set, cex = 0.6, adj = c(0.5, 0.3),
 ```
 
 
-Our scenario is that we have landings that were harvested over four years and a road network that links them. We will assign a year to each road segment by first setting the cost of building roads to 0 where our road network is and then projecting road development to landings in each year, assigning that year to the road segments as a maximum year of road construction. 
+Our scenario is that we have landings that were harvested over four years and a road network that links them. We will assign a year to each road segment by first setting the cost of building roads to very low where our road network is and then projecting road development to landings in each year, assigning that year to the road segments as a maximum year of road construction. 
 
 
 ```{r fig.width=6,fig.height=5}

@@ -91,13 +91,11 @@ get_hist <- function(rast){
 
 purrr::map_dfr(1:nrow(param_grid),
                ~get_hist(param_grid$result[[.x]]), .id = "row_id") %>% 
-  left_join(param_grid %>% mutate(row_id = as.character(1:n()))) %>% 
+  left_join(param_grid %>% mutate(row_id = as.character(1:n())), by = "row_id") %>% 
   ggplot(aes(x = breaks, y = counts)) + 
   geom_bar(stat = "identity",fill='blue',alpha = 0.8)+
   xlab("Distance")+ ylab("Frequency")+
   facet_grid(method +maxDist ~ kwidth, labeller = label_both)
-  # scale_x_continuous(breaks = seq(-1,1,0.25),  
-  #                  labels = seq(-1,1,0.25))
 
 ```
 
