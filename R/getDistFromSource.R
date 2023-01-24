@@ -47,7 +47,7 @@
 #' 
 #' getDistFromSource(CLUSexample$roads, 5, 2)
 #' 
-#' \donttest{
+#'\donttest{
 #'  library(sf)
 #'  library(terra)
 #' 
@@ -64,7 +64,7 @@
 #'                       touches = TRUE)
 #'                       
 #' getDistFromSource(rds_rast, 5, 2)
-#' }
+#'}
 
 getDistFromSource <- function(src, maxDist, kwidth = 3) {
   # Not currently using this parameter but could in the future
