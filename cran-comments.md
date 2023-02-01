@@ -9,27 +9,46 @@ macOS-latest (release)
 ubuntu-20.04 (release)
 ubuntu-20.04 (devel)
 
+
 ## R CMD check results
-> On windows-x86_64-devel (r-devel), ubuntu-gcc-release (r-release), fedora-clang-devel (r-devel)
-  checking CRAN incoming feasibility ... NOTE
+❯ On windows-x86_64-devel (r-devel), ubuntu-gcc-release (r-release, 
+  fedora-clang-devel (r-devel)
+  checking CRAN incoming feasibility ... [10s] NOTE
   Maintainer: 'Sarah Endicott <sarah.endicott@ec.gc.ca>'
   
   New submission
+  
+  Package was archived on CRAN
+  
+  Possibly misspelled words in DESCRIPTION:
+    Kruskal's (32:6)
+  
+  CRAN repository db overrides:
+    X-CRAN-Comment: Archived on 2022-11-09 as requires archived package
+      'Require'.
 
-> On fedora-clang-devel (r-devel)
-  checking examples ... NOTE
+❯ On windows-x86_64-devel (r-devel)
+  checking examples ... [14s] NOTE
   Examples with CPU (user + system) or elapsed time > 5s
-                user system elapsed
-  projectRoads 9.622  0.235   1.776
+                    user system elapsed
+  getDistFromSource 6.92   0.17    8.28
 
-0 errors √ | 0 warnings √ | 2 notes x
+❯ On ubuntu-gcc-release (r-release)
+  checking examples ... [14s/48s] NOTE
+  Examples with CPU (user + system) or elapsed time > 5s
+                     user system elapsed
+  getDistFromSource 7.781   0.13  28.545
 
-* This is a new release.
+❯ On fedora-clang-devel (r-devel)
+  checking examples ... [14s/56s] NOTE
+  Examples with CPU (user + system) or elapsed time > 5s
+                     user system elapsed
+  getDistFromSource 8.019  0.149  31.359
 
-* I can not reproduce the long example times for fedora and I don't know how to go about fixing it or if it is necessary to. It only takes 1.68 seconds on windows. Any feedback would be appreciated
+0 errors ✔ | 0 warnings ✔ | 4 notes ✖
 
-## Resubmission
+* I can not reproduce the long example times for the getDistFromSource function.
+  It is a tiny example with only 25 raster cells and takes 0.16 seconds on my 
+  computer. Examples were also fine with rhub::check_on_debian()   
 
-* Fixed the error in one of the tests and confirmed it worked by running rhub::check_on_debian()
-
-* Re-built after a delay in confirming the submission
+https://builder.r-hub.io/status/roads_1.1.0.tar.gz-1b545ba8da804b4fa31841d2711d2543
