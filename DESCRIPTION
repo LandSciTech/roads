@@ -55,7 +55,10 @@ Suggests:
     rmarkdown,
     viridis,
     tmap,
-    bench
+    bench,
+    pfocal
+Remotes: LandSciTech/pfocal
+Additional_repositories: https://LandSciTech.github.io/drat
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
 Collate: 
