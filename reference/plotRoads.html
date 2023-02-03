@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">roads</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,13 +89,8 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># demo scenario 1</span></span></span>
-<span class="r-in"><span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># landing set 1 of scenario 1:</span></span></span>
-<span class="r-in"><span><span class="va">land.pnts</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points.sf</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points.sf</span><span class="op">$</span><span class="va">set</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.pnts</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line.sf</span>, <span class="st">"lcp"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">CLUSexample</span><span class="op">$</span><span class="va">landings</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">cost</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">roads</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in cost raster, these will be considered as existing roads</span>
 <span class="r-in"><span><span class="fu">plotRoads</span><span class="op">(</span><span class="va">prRes</span>, <span class="st">"Title"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotRoads-1.png" alt="" width="700" height="433"></span>

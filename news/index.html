@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">roads</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,13 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="roads-development-version">roads (development version)<a class="anchor" aria-label="anchor" href="#roads-development-version"></a></h2>
 </div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.1.0" id="roads-110">roads 1.1.0<a class="anchor" aria-label="anchor" href="#roads-110"></a></h2><p class="text-muted">CRAN release: 2023-02-02</p>
+<ul><li>converted to using <code>terra</code> throughout the package. <code>raster</code> objects are still accepted but will be converted to <code>terra</code> formats.</li>
+<li>Added <code>getDistFromSource</code> function to use moving windows to quickly get a raster of the distance from the nearest source (e.g road).</li>
+<li>remove <code>SpaDES.tools</code> dependency because it is archived on CRAN and there is an equivalent method in <code>terra</code> now.</li>
+<li>The returned cost raster now includes the projected roads as having a cost of 0. This makes it easier to loop additional road building over time but is a change from the previous version where the input cost surface was returned.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="roads-100">roads 1.0.0<a class="anchor" aria-label="anchor" href="#roads-100"></a></h2><p class="text-muted">CRAN release: 2022-06-22</p>
 <ul><li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
