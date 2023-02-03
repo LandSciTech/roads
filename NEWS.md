@@ -1,3 +1,5 @@
+# roads (development version)
+
 # roads 1.1.0
 * converted to using `terra` throughout the package. `raster` objects are still accepted but will be converted to `terra` formats.
 * Added `getDistFromSource` function to use moving windows to quickly get a raster of the distance from the nearest source (e.g road).
