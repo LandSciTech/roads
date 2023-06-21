@@ -34,4 +34,4 @@ landings   <- sp::SpatialPoints(startCells)  # coerce startCells/landings to Spa
 ##############################################
 CLUSexample <- list(cost=cost,landings=landings,roads=(cost==0))
 ##############################################
-save(CLUSexample,file="data/CLUSexample.rda")
+usethis::use_data(CLUSexample, overwrite = TRUE)

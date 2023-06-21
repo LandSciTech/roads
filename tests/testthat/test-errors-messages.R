@@ -1,4 +1,3 @@
-context("Test errors, warnings, and messages")
 
 test_that("different CRS is error", {
   cost <- CLUSexample$cost
