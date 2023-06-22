@@ -78,4 +78,5 @@ Collate:
     'shortestPaths.R'
     'plotRoads.R'
     'rasterizeLine.R'
+    'prepExData.R'
 BugReports: https://github.com/LandSciTech/roads/issues

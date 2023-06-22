@@ -28,7 +28,7 @@
 #' @export
 #'
 #' @examples
-#' 
+#' CLUSexample <- prepExData(CLUSexample)
 #' roadsLine <- sf::st_sf(geometry = sf::st_sfc(sf::st_linestring(
 #' matrix(c(0.5, 4.5, 4.5, 4.51),
 #'        ncol = 2, byrow = TRUE) 

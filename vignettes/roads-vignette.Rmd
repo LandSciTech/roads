@@ -55,6 +55,9 @@ if(requireNamespace("viridis", quietly = TRUE)){
 } else {
   rastColours <- c('grey50', terrain.colors(20))
 }
+
+# terra objects need to be wrapped to be saved, this unwraps them
+CLUSexample <- prepExData(CLUSexample)
 ```
 
 
@@ -85,7 +88,7 @@ roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
   matrix(c(0.5, 4.5, 4.5, 4.5),
          ncol = 2, byrow = T) 
 )) %>%
-  sf::st_as_sf()
+  sf::st_as_sf(crs = sf::st_crs(costRaster))
 ```
 
 ### 3. Landings layer(s)

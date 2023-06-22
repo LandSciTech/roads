@@ -28,8 +28,11 @@ cost[]     <- c( 6.0446645996998996, 8.0703540930990130,11.8842139036860317,18.2
                  18.7593993910122663, 5.0307079043705016,13.3818015556316823, 3.3855468232650310, 6.0771927058231086 )
 cost[1:5]  <- 0   # cells 1 to 5 (first/top row) are existing roads, so set the cost of these cells to zero
 startCells <- terra::xyFromCell(cost, as.integer(c(11,13,22,25))) # define start cells/landings as cells 11,13,22,25
-landings   <- sf::st_as_sf(as.data.frame(startCells), coords = c("x", "y")) # coerce startCells/landings to SpatialPoints, sC
+landings   <- sf::st_as_sf(as.data.frame(startCells), coords = c("x", "y"), 
+                           crs = sf::st_crs(cost), agr = "constant") # coerce startCells/landings to SpatialPoints, sC
 ##############################################
-CLUSexample <- list(cost=cost,landings=landings,roads=(cost==0))
+# terra::writeRaster(cost, "inst/extData/CLUScost.tif")
+# terra::writeRaster(cost == 0, "inst/extData/CLUSroads.tif")
+CLUSexample <- list(cost=terra::wrap(cost),landings=landings,roads=terra::wrap(cost == 0))
 ##############################################
 usethis::use_data(CLUSexample, overwrite = TRUE)

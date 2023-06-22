@@ -129,7 +129,7 @@ Four different methods for projecting road networks have been implemented:
 }
 }
 \examples{
-
+CLUSexample <- prepExData(CLUSexample)
 doPlots <- interactive()
 
 projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,

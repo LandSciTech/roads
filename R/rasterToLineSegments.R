@@ -35,7 +35,7 @@
 #' @return an sf simple feature collection
 #'
 #' @examples
-#' 
+#' CLUSexample <- prepExData(CLUSexample)
 #' # works well for very simple roads
 #' roadLine1 <- rasterToLineSegments(CLUSexample$roads)
 #' 

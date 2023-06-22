@@ -84,7 +84,7 @@
 #'       avoid recomputing the graph in a simulation with multiple time steps.}
 #' }
 #' @examples
-#'
+#' CLUSexample <- prepExData(CLUSexample)
 #' doPlots <- interactive()
 #' 
 #' projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,

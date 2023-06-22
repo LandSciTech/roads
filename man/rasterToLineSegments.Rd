@@ -29,7 +29,7 @@ will not double lines as often. Neither method is likely to work for very
 large rasters
 }
 \examples{
-
+CLUSexample <- prepExData(CLUSexample)
 # works well for very simple roads
 roadLine1 <- rasterToLineSegments(CLUSexample$roads)
 
