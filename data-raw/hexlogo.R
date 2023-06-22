@@ -7,6 +7,7 @@ library(dplyr)
 # temp file
 temp_fn <- tempfile()
 
+demoScen <- prepExData(demoScen)
 scen <- demoScen[[2]]
 
 ext <- raster::extent(x = 19.35725,

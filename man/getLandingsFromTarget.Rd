@@ -46,13 +46,14 @@ small number i.e. < 0.001.
 }
 \examples{
 doPlots <- interactive()
+demoScen <- prepExData(demoScen)
 
 polys <- demoScen[[1]]$landings.poly[1:2,]
 # Get centroid
 outCent <- getLandingsFromTarget(polys)
 
 if(doPlots){
-  raster::plot(polys)
+  plot(polys \%>\% sf::st_geometry())
   plot(outCent, col = "red", add = TRUE)
 }
 
@@ -60,7 +61,7 @@ if(doPlots){
 outRand <- getLandingsFromTarget(polys, 0.1, sampleType = "random")
 
 if(doPlots){
-  raster::plot(polys)
+  plot(polys \%>\% sf::st_geometry())
   plot(outRand, col = "red", add = TRUE)
 }
 
@@ -68,7 +69,7 @@ if(doPlots){
 outReg <- getLandingsFromTarget(polys, 0.1, sampleType = "regular")
 
 if(doPlots){
-  raster::plot(polys)
+  plot(polys \%>\% sf::st_geometry())
   plot(outReg, col = "red", add = TRUE)
 }
 

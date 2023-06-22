@@ -1,4 +1,5 @@
 test_that("inspect line segments", {
+  demoScen <- prepExData(demoScen)
   roadRast <- demoScen[[8]]$road.rast
   # Note this is imperfect because the line is doubled where the two roads
   # intersect

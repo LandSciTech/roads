@@ -120,7 +120,10 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
         geometry = sf::st_as_sfc(list(sf::st_multipoint(landings[, xyind])))
         ) %>%
         sf::st_cast("POINT") %>% 
-        sf::st_set_agr("constant")
+        sf::st_set_agr("constant") %>% 
+        sf::st_set_crs(sf::st_crs(cost))
+      
+      message("CRS of landings supplied as a matrix is assumed to match the cost")
     }else {
       stop("landings must be either SpatRaster, RasterLayer, sf object, SpatialPoints*, ",
            "or SpatialPolygons*",
@@ -131,8 +134,12 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
   if(sf::st_geometry_type(landings, by_geometry = FALSE) %in% 
      c("POLYGON", "MULTIPOLYGON")){
     # Use point on surface not centroid to ensure point is inside irregular polygons
-    landings <- sf::st_point_on_surface(landings) %>% 
+    landings <- sf::st_point_on_surface(sf::st_set_agr(landings, "constant")) %>% 
       sf::st_set_agr("constant")
+  }
+  
+  if(nrow(landings) == 0){
+    stop("landings is empty, at least one landing must be provided", call. = FALSE)
   }
   
   # check crs error if different
@@ -159,8 +166,8 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
   
   ext <- sf::st_bbox(cost) %>% as.numeric() %>% 
     `names<-`(c("xmin", "ymin", "xmax", "ymax"))
-  landings <- sf::st_crop(landings, ext)
-  roads <- sf::st_crop(roads, ext)
+  landings <- sf::st_crop(sf::st_set_agr(landings, "constant"), ext) %>% sf::st_set_agr("constant")
+  roads <- sf::st_crop(sf::st_set_agr(roads, "constant"), ext) %>% sf::st_set_agr("constant")
   
   if(nrland != nrow(landings)){
     stop(nrland - nrow(landings), " landings are outside the cost surface. ",

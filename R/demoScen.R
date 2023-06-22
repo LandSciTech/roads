@@ -17,30 +17,33 @@
 #' Demonstration set of 10 input scenarios
 #'
 #' A demonstration set of scenarios that can be used as input to
-#' \code{\link{projectRoads}} method.
+#' \code{\link{projectRoads}} method. The data contains "SpatRaster" objects that
+#' must be wrapped to be stored. To unwrap them use [prepExData()]
 #'
 #' @docType data
 #'
 #' @usage data(demoScen)
 #'
-#' @format
-#' A list of sub-lists, with each sub-list representing an input scenario. The scenarios (sub-lists) each contain the following components:
-#' \describe{
+#' @format A list of sub-lists, with each sub-list representing an input
+#'   scenario. The scenarios (sub-lists) each contain the following components:
+#'  \describe{
 #'   \item{scen.number}{An integer value representing the scenario number (generated scenarios are numbered incrementally from 1).}
 #'   \item{road.rast}{A logical RasterLayer representing existing roads.  TRUE is existing road. FALSE is not existing road.}
-#'   \item{road.line}{A SpatialLines object representing existing roads.}
-#'   \item{road.line.sf}{A sf object representing existing roads.}
+#'   \item{road.line}{A sf object representing existing roads.}
 #'   \item{cost.rast}{A RasterLayer representing the cost of developing new roads on a given cell.}
-#'   \item{landings.points}{A SpatialPointsDataFrame representing landings sets and landing locations within each set. The data frame includes
+#'   \item{landings.points}{A sf object representing landings sets and landing locations within each set. The data frame includes
 #'   a field named 'set' which contains integer values representing the landings set that each point belongs to}
-#'   \item{landings.points.sf}{A sf object representing landings sets and landing locations within each set. The data frame includes
-#'   a field named 'set' which contains integer values representing the landings set that each point belongs to}
-#'   \item{landings.stack}{A RasterStack representing the landings and landings sets. Each logical RasterLayer in the RasterStack represents
+#'   \item{landings.stack}{A SpatRaster with multiple layers representing the landings and landings sets. Each logical layer represents
 #'   one landings set. Values of TRUE are a landing in the given set. Values of FALSE are not.}
-#'   \item{landings.poly}{A SpatialPolygonsDataFrame representing a single set of polygonal landings.}
-#'   \item{landings.poly.sf}{A sf object representing a single set of polygonal landings.}
+#'   \item{landings.poly}{A sf object representing a single set of polygonal landings.}
 #' }
+#' 
+#' @examples 
+#' library(terra)
+#' demoScen[[1]]
+#' demoScen <- prepExData(demoScen)
+#' demoScen[[1]]
 #'
-#'@seealso \code{\link{projectRoads}}
+#' @seealso \code{\link{projectRoads}}
 
 "demoScen"

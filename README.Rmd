@@ -58,6 +58,7 @@ library(roads)
 library(raster)
 
 # data set installed with roads package
+demoScen <- prepExData(demoScen)
 scen <- demoScen[[1]]
 
 prRoads <- projectRoads(landings = scen$landings.points, 

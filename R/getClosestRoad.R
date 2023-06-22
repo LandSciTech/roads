@@ -35,7 +35,7 @@ getClosestRoad <- function(sim, ordering = "closest"){
       sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(rd.lines)) %>% 
       sf::st_geometry()
     
-    roads.pts <- c(rd.lines.pts, st_collection_extract(roads.pts, type = "POINT")) %>% 
+    roads.pts <- c(rd.lines.pts, sf::st_collection_extract(roads.pts, type = "POINT")) %>% 
       sf::st_union()
   }
   

@@ -1,4 +1,5 @@
-context("test getLandingsFromTarget works for different scenarios")
+# test getLandingsFromTarget works for different scenarios
+demoScen <- prepExData(demoScen)
 
 
 lndsDenTest <- list(1, 0.5, 0.25, 0.1, 0.01, 0.001)

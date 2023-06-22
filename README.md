@@ -41,8 +41,10 @@ landscape (cost). Typically the roads and landings are `sf` objects or
 ``` r
 library(roads)
 library(raster)
+#> Warning: package 'sp' was built under R version 4.2.3
 
 # data set installed with roads package
+demoScen <- prepExData(demoScen)
 scen <- demoScen[[1]]
 
 prRoads <- projectRoads(landings = scen$landings.points, 
