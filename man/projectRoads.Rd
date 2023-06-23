@@ -182,4 +182,5 @@ land.polyR <- terra::rasterize(scen$landings.poly, scen$cost.rast)
 prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
 }
+
 }

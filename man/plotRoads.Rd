@@ -24,6 +24,9 @@ Plot the results of \code{\link{projectRoads}}
 \examples{
 CLUSexample <- prepExData(CLUSexample)
 prRes <- projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads)
-plotRoads(prRes, "Title")
+if(interactive()){
+  plotRoads(prRes, "Title")
+}
+
 
 }

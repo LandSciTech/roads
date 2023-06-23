@@ -49,6 +49,7 @@ doPlots <- interactive()
 demoScen <- prepExData(demoScen)
 
 polys <- demoScen[[1]]$landings.poly[1:2,]
+
 # Get centroid
 outCent <- getLandingsFromTarget(polys)
 

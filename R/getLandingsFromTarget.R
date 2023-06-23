@@ -54,6 +54,7 @@
 #' demoScen <- prepExData(demoScen)
 #' 
 #' polys <- demoScen[[1]]$landings.poly[1:2,]
+#' 
 #' # Get centroid
 #' outCent <- getLandingsFromTarget(polys)
 #'
@@ -192,7 +193,7 @@ getLandingsFromTarget <- function(harvest,
 
 #' Select random landing locations within patches.
 #'
-#' @param inputPatches A RasterLayer. Harvested patches should have values
+#' @param inputPatches A SpatRaster. Harvested patches should have values
 #'   greater than 0
 #' @param landingDens number of landings per unit area. This should be in the
 #'   same units as the CRS of the harvest. Note that 0.001 points per m2 is > 1000
