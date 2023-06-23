@@ -1,41 +1,35 @@
 # Copyright © Her Majesty the Queen in Right of Canada as represented by the
 # Minister of the Environment 2021/© Sa Majesté la Reine du chef du Canada
 # représentée par le ministre de l'Environnement 2021.
-# 
+#
 #     Licensed under the Apache License, Version 2.0 (the "License");
 #     you may not use this file except in compliance with the License.
 #     You may obtain a copy of the License at
-# 
+#
 #       http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #     Unless required by applicable law or agreed to in writing, software
 #     distributed under the License is distributed on an "AS IS" BASIS,
 #     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 
-library(raster)
-library(colorRamps)
-library(rgeos)
-library(geoR)
 ############################################################################
 # function for generating input scenarios for the roads::projectRoads method
+# changed to use terra spatRasters and sf lines
 #
 # returns a list of sub-lists, with each sub-list representing an input scenario. The scenarios (sub-lists) contain the following named elements:
 #       - scen.number: an integer value representing the scenario number (generated scenarios are numbered incrementally from 1 to n.scenarios)
 #       - road.rast:   a logical RasterLayer representing existing roads.  TRUE is existing road. FALSE is not existing road.
-#                      - these roads are a rasterized versions of the road.line SpatialLines
-#       - road.line:   SpatialLines representing the existing roads
-#       - road.line.sf:   sf object representing the existing roads
+#       - road.line:   sf object representing the existing roads
 #       - cost.rast:   RasterLayer representing the cost of developing new roads on a given cell
 #       - landings.points:  a SpatialPointsDataFrame representing landings sets and points
 #                           - data frame includes a field named "set" containing integer values representing the landings set that each point belongs to
-#       - landings.stack:  a RasterStack representing the landings and landings sets
-#                          - each layer in the stack represents an individual landings set as a logical RasterLayer where TRUE is a landing in that set and FALSE is not
+#       - landings.stack:  a SpatRaster representing the landings and landings sets
+#                          - each layer in the stack represents an individual landings set as a logical layers where TRUE is a landing in that set and FALSE is not
 #                            a landing in the set
-#       - landings.poly:  a SpatialPolygonsDataFrame representing a single set of polygonal landings
+#       - landings.poly: a single set of polygonal landings
 #                         - will be NA if user set n.poly.landings argument to NA
-#       - landings.poly.sf: an sf object version of landings.poly
 #
 # n.scenarios: integer representing the number of scenarios that are to be generated
 # xy.size:     vector (length=2) of integers representing the number of columns and number of rows, respectively, for the output cost raster
@@ -80,136 +74,229 @@ library(geoR)
 #                      polygonal landing, in # of cells
 # seed.value:  either NA (in which case the random seed will not be set) or a numeric value representing the seed value for generating the random scenarios
 #              - if seed.value is a numeric value, the random seed will be modified using the base::set.seed function
-prepInputScenarios <- function(n.scenarios=10,xy.size=c(100,100),spat.corr=T,cost.lim=10,std.dev=20,range=c(0.1,2),
-                               n.roads=c(1,4),n.landing.sets=10,n.landings=c(1,10),n.poly.landings=c(1,8),
-                               poly.landings.xdim=c(3,20),poly.landings.ydim=c(3,20),seed.value=NA){
-  if (!is.na(seed.value)){set.seed(seed.value)}
-  if (cost.lim<=1){stop("cost.mean expected to be > 1")}
-  outlist = list()
-  for (i in 1:n.scenarios){
-    scen <- list(scen.number=as.integer(i),
-                 road.rast=NA,
-                 road.line=NA,
-                 cost.rast=NA,
-                 landings.points=NA,
-                 landings.stack=NA,
-                 landings.poly=NA)
-    if (spat.corr){
-      if(length(range)==1){
-        rfield <- geoR::grf(nsim=1,grid="reg",nx=xy.size[1],ny=xy.size[2],cov.pars=c(std.dev,range),mean=cost.lim,messages=F)
-        rfield$data[rfield$data<1]<-1
-      }else{
-        rfield <- geoR::grf(nsim=1,grid="reg",nx=xy.size[1],ny=xy.size[2],cov.pars=c(std.dev,runif(1,range[1],range[2])),mean=cost.lim,messages=F)
-        rfield$data[rfield$data<1]<-1
+devtools::load_all(".")
+# borrowed from prioritizr
+simulate_data <- function(x, n = 1, scale = 0.5, intensity = 0, sd = 1, transform = identity) {
+
+  # create object for simulation
+  obj <- fields::circulantEmbeddingSetup(
+    grid = list(
+      # changed max to 20 fixed error
+      x = seq(0, 20, length.out = terra::nrow(x)),
+      y = seq(0, 20, length.out = terra::ncol(x))
+    ),
+    Covariance = "Exponential",
+    aRange = scale
+  )
+
+  # generate populate rasters with values
+  r <- terra::rast(lapply(seq_len(n), function(i) {
+    ## populate with simulated values
+    v <- c(t(fields::circulantEmbedding(obj)))
+    v <- transform(v + stats::rnorm(length(v), mean = intensity, sd = sd))
+    r <- terra::setValues(x[[1]], v[seq_len(terra::ncell(x))])
+    ## apply mask for consistency
+    r <- terra::mask(r, x[[1]])
+    ## return result
+    r
+  }))
+
+  # return result
+  r
+}
+
+prepInputScenarios <- function(n.scenarios = 10, xy.size = c(100, 100), spat.corr = T, cost.lim = 10, std.dev = 1, range = c(1, 3),
+                               n.roads = c(1, 4), n.landing.sets = 10, n.landings = c(1, 10), n.poly.landings = c(1, 8),
+                               poly.landings.xdim = c(3, 20), poly.landings.ydim = c(3, 20), seed.value = NA,
+                               use.crs = sf::st_crs("EPSG:5070")) {
+  if (!is.na(seed.value)) {
+    set.seed(seed.value)
+  }
+  if (cost.lim <= 1) {
+    stop("cost.mean expected to be > 1")
+  }
+  outlist <- list()
+  for (i in 1:n.scenarios) {
+    scen <- list(
+      scen.number = as.integer(i),
+      road.rast = NA,
+      road.line = NA,
+      cost.rast = NA,
+      landings.points = NA,
+      landings.stack = NA,
+      landings.poly = NA
+    )
+    r <- terra::rast(
+      ncols = xy.size[1], nrows = xy.size[2], vals = 0,
+      xmin = 0, ymin = 0, xmax = xy.size[1], ymax = xy.size[2]
+    )
+    if (spat.corr) {
+      if (length(range) == 1) {
+        rOut <- simulate_data(r, n = 1, sd = std.dev, intensity = cost.lim, scale = range)
+        rOut[rOut < 1] <- 1
+      } else {
+        rOut <- simulate_data(r,
+          n = 1, sd = std.dev, intensity = cost.lim,
+          scale = runif(1, range[1], range[2])
+        )
+        rOut[rOut < 1] <- 1
       }
-      mat <- matrix(rfield$data,nrow=xy.size[1],ncol=xy.size[2])
-      mat <- t(mat)
-      mat <- mat[nrow(mat):1,]
-      rast <- raster::raster(mat,xmn=0,ymn=0,xmx=xy.size[1],ymx=xy.size[2])
-    }else{
-      rast <- raster::raster(extent(0,xy.size[1],0,xy.size[2]),res=1,
-                             vals=runif(as.integer(prod(xy.size)),1,cost.lim))
+    } else {
+      rOut <- terra::rast(terra::ext(0, xy.size[1], 0, xy.size[2]),
+        res = 1,
+        vals = runif(as.integer(prod(xy.size)), 1, cost.lim)
+      )
     }
     ## prep roads
-    if (length(n.roads)>1){
-      road.num <- sample(n.roads[1]:n.roads[2],1)
-    }else{
+    if (length(n.roads) > 1) {
+      road.num <- sample(n.roads[1]:n.roads[2], 1)
+    } else {
       road.num <- n.roads
     }
     lineList <- list()
-    for (r in 1:road.num){
-      startside <- sample(1:4,1)
-      if (startside%in%c(1,2)){endside<-c(1,2)[c(1,2)!=startside]
-      }else if(startside%in%c(3,4)){endside<-c(3,4)[c(3,4)!=startside]}
+    for (j in 1:road.num) {
+      startside <- sample(1:4, 1)
+      if (startside %in% c(1, 2)) {
+        endside <- c(1, 2)[c(1, 2) != startside]
+      } else if (startside %in% c(3, 4)) {
+        endside <- c(3, 4)[c(3, 4) != startside]
+      }
       cellsToConnect <- c()
-      for(side in c(startside,endside)){
-        if (side==1){cells<-raster::cellFromRow(rast,1)
-        }else if (side==2){cells<-raster::cellFromRow(rast,dim(rast)[1])
-        }else if (side==3){cells<-raster::cellFromCol(rast,1)
-        }else if (side==4){cells<-raster::cellFromCol(rast,dim(rast)[2])}
-        cellsToConnect <- c(cellsToConnect,sample(cells[2:(length(cells)-1)],1))
+      for (side in c(startside, endside)) {
+        if (side == 1) {
+          cells <- terra::cellFromRowCol(rOut, row = 1, col = 1:terra::ncol(rOut))
+        } else if (side == 2) {
+          cells <- terra::cellFromRowCol(rOut, row = terra::nrow(rOut), col = 1:terra::ncol(rOut))
+        } else if (side == 3) {
+          cells <- terra::cellFromRowCol(rOut, row = 1:terra::nrow(rOut), col = 1)
+        } else if (side == 4) {
+          cells <- terra::cellFromRowCol(rOut, row = 1:terra::nrow(rOut), col = terra::ncol(rOut))
+        }
+        cellsToConnect <- c(cellsToConnect, sample(cells[2:(length(cells) - 1)], 1))
       }
-      lineList[[length(lineList)+1]]<-sp::Lines(list(sp::Line(xyFromCell(rast,cellsToConnect))),ID=r)
+      lineList[[length(lineList) + 1]] <- sf::st_sf(
+        ID = j,
+        geometry = sf::st_as_sfc(list(sf::st_linestring(terra::xyFromCell(rOut, cellsToConnect))))
+      )
     }
-    roadlines <- sp::SpatialLines(lineList)
-    roadcells <- as.data.frame(do.call(rbind,raster::extract(rast,roadlines,cellnumbers=T)))$cell
-    rast_withroads <- rast
-    rast_withroads[roadcells] <- 0
+    roadlines <- dplyr::bind_rows(lineList)
+    rast_withroads <- burnRoadsInCost(roadlines, rOut)
     ## landings
-    land_stack <- raster::stack()
+    land_stack <- terra::rast(rOut)
     toSample <- rast_withroads
-    toSample[toSample==0] <- NA
-    land_rast <- rast_withroads==0
-    for (li in 1:n.landing.sets){
+    toSample[toSample == 0] <- NA
+    land_rast <- rast_withroads == 0
+    for (li in 1:n.landing.sets) {
       land_rast[] <- FALSE
-      if (length(n.landings>1)){
-        n.land.samples<-sample(n.landings[1]:n.landings[2],1)
-      }else{
-        n.land.samples<-n.landings
+      if (length(n.landings > 1)) {
+        n.land.samples <- sample(n.landings[1]:n.landings[2], 1)
+      } else {
+        n.land.samples <- n.landings
       }
-      land <- raster::sampleRandom(toSample,size=n.land.samples,na.rm=T,sp=T)
+      land <- terra::spatSample(toSample, size = n.land.samples, na.rm = T, as.points = T)
       land$set <- li
-      land$ID  <- 1:length(land)
-      if (li==1){
+      land$ID <- 1:length(land)
+      if (li == 1) {
         landings <- land
-      }else{
-        landings <- rbind(landings,land)
+      } else {
+        landings <- rbind(landings, land)
       }
-      toSample[raster::cellFromXY(toSample,land@coords)] <- NA
-      land_rast[raster::cellFromXY(toSample,land@coords)] <- TRUE
-      land_stack <- raster::addLayer(land_stack,land_rast)
+      toSample[terra::cellFromXY(toSample, terra::crds(land))] <- NA
+      land_rast[terra::cellFromXY(toSample, terra::crds(land))] <- TRUE
+      if (li == 1) {
+        land_stack <- land_rast
+      } else {
+        land_stack <- c(land_stack, land_rast)
+      }
     }
+    landings <- sf::st_as_sf(landings)
     # polygonal landings
-    if (all(!is.na(n.poly.landings))){
-      if (all(n.poly.landings>0)){
+    if (all(!is.na(n.poly.landings))) {
+      if (all(n.poly.landings > 0)) {
         rast_valid <- rast_withroads
         continueAdding <- T
         n.try <- 100
-        for (li in 1:sample(n.poly.landings[1]:n.poly.landings[2],1)){
-          for (trynum in 1:n.try){
-            poly.size <- c(sample(poly.landings.xdim[1]:poly.landings.xdim[2],1),sample(poly.landings.ydim[1]:poly.landings.ydim[2],1))
-            topleft <- raster::sampleRandom(raster::raster(res=c(1,1),xmn=2,xmx=xy.size[1]-poly.size[1]-2,ymn=poly.size[2]+2,ymx=xy.size[2]-2,vals=0),size=1,xy=T)
-            tlbr <- rbind(topleft[,1:2],topleft[,1:2]+c(poly.size[1],-1*poly.size[2])) # top left and bottom right
-            tlbr.buff <- rbind(tlbr[1,]+c(-2,2),tlbr[2,]-c(-2,2))
-            poly.buff <- sp::Polygon(coords=rbind(tlbr.buff[1,],cbind(tlbr.buff[1,1],tlbr.buff[2,2]),tlbr.buff[2,],cbind(tlbr.buff[2,1],tlbr.buff[1,2])),hole=F)
-            poly.buff <- sp::SpatialPolygons(list(sp::Polygons(list(poly.buff),li)))
-            if(all(unlist(raster::extract(rast_valid,poly.buff))>0)){
-              poly <- sp::Polygon(coords=rbind(tlbr[1,],cbind(tlbr[1,1],tlbr[2,2]),tlbr[2,],cbind(tlbr[2,1],tlbr[1,2])),hole=F)
-              poly <- sp::SpatialPolygonsDataFrame(sp::SpatialPolygons(list(sp::Polygons(list(poly),li))),data=data.frame(ID=li,row.names=c(li)))
-              rast_valid[raster::extract(rast_valid,poly,cellnumber=T)[[1]][,1]]<-0
+        for (li in 1:sample(n.poly.landings[1]:n.poly.landings[2], 1)) {
+          for (trynum in 1:n.try) {
+            poly.size <- c(
+              sample(poly.landings.xdim[1]:poly.landings.xdim[2], 1),
+              sample(poly.landings.ydim[1]:poly.landings.ydim[2], 1)
+            )
+            topleft <- terra::spatSample(
+              terra::rast(
+                res = c(1, 1), xmin = 2,
+                xmax = xy.size[1] - poly.size[1] - 2,
+                ymin = poly.size[2] + 2,
+                ymax = xy.size[2] - 2, vals = 0
+              ),
+              size = 1, xy = T
+            )
+            topleft <- as.matrix(topleft)
+            tlbr <- rbind(topleft[, 1:2], topleft[, 1:2] + c(poly.size[1], -1 * poly.size[2])) # top left and bottom right
+            tlbr.buff <- rbind(tlbr[1, ] + c(-2, 2), tlbr[2, ] - c(-2, 2))
+
+            poly.buff <- sf::st_polygon(list(rbind(
+              tlbr.buff[1, ],
+              cbind(tlbr.buff[1, 1], tlbr.buff[2, 2]),
+              tlbr.buff[2, ],
+              cbind(tlbr.buff[2, 1], tlbr.buff[1, 2]),
+              tlbr.buff[1, ]
+            )))
+            poly.buff <- sf::st_sf(ID = li, geometry = sf::st_as_sfc(list(poly.buff)))
+            if (all(terra::extract(rast_valid, poly.buff)[, 1] > 0)) {
+              poly <- sf::st_polygon(list(rbind(
+                tlbr[1, ],
+                cbind(tlbr[1, 1], tlbr[2, 2]),
+                tlbr[2, ],
+                cbind(tlbr[2, 1], tlbr[1, 2]),
+                tlbr[1, ]
+              )))
+              poly <- sf::st_sf(ID = li, geometry = sf::st_as_sfc(list(poly)))
+              rast_valid[terra::extract(rast_valid, poly, cells = T)$cell] <- 0
               break
             }
-            if (trynum==n.try){
-              warning("Could not find valid spot for polygon ",li," in scenario ",i," with ",n.try," tries")
+            if (trynum == n.try) {
+              warning("Could not find valid spot for polygon ", li, " in scenario ",
+                      i, " with ", n.try, " tries")
               continueAdding <- F
             }
           }
-          if (!continueAdding){break}
-          if (li==1){
+          if (!continueAdding) {
+            break
+          }
+          if (li == 1) {
             polydf <- poly
-          }else{
-            polydf <- rbind(polydf,poly)
+          } else {
+            polydf <- rbind(polydf, poly)
           }
         }
       }
     }
-    scen$road.rast  <- rast_withroads==0
-    scen$road.line  <- roadlines
-    scen$road.line.sf <- sf::st_as_sf(roadlines)
-    scen$cost.rast  <- rast_withroads
-    scen$landings.points <- landings
-    scen$landings.stack  <- land_stack
-    scen$landings.poly <- polydf
-    scen$landings.poly.sf <- sf::st_as_sf(polydf)
+    terra::crs(rast_withroads) <- use.crs$wkt
+    terra::crs(land_stack) <- use.crs$wkt
+    scen$road.rast <- rast_withroads == 0
+    scen$road.line <- roadlines %>% sf::st_set_crs(use.crs)
+    scen$cost.rast <- rast_withroads
+    scen$landings.points <- landings %>% sf::st_set_crs(use.crs)
+    scen$landings.stack <- land_stack
+    scen$landings.poly <- polydf %>% sf::st_set_crs(use.crs)
     outlist[[i]] <- scen
   }
   return(outlist)
 } # end of prepInputScenarios function
 #################################################
 # generate 10 roads::projectRoads input scenarios
-demoScen <- prepInputScenarios(n.scenarios=10,seed.value=1)
-save(demoScen,file="data/demoScen.rda",compress="xz")
-#################################################
+demoScen <- prepInputScenarios(n.scenarios = 10, seed.value = 1)
 
+# wrap SpatRasters use prepExData to unwrap
+demoScen <- rapply(demoScen, f = terra::wrap, classes = "SpatRaster", how = "replace")
+
+# set sf objects to agr = "constant"
+demoScen <- rapply(demoScen, f = sf::st_set_agr, classes = "sf", how = "replace", value = "constant")
+
+usethis::use_data(demoScen, overwrite = TRUE)
+#################################################
+# view all cost rasters
+# demoScen %>% purrr::map("cost.rast") %>% terra::rast() %>% terra::plot()
 
 

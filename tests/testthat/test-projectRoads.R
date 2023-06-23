@@ -14,33 +14,34 @@
 # sp polygons
 # sf points
 # sf polygons
+demoScen <- prepExData(demoScen)
 scen <- demoScen[[1]]
 doPlot <- interactive()
 test_that("cost and road options work", {
   
   # 0/1 raster
-  out <- projectRoads(scen$landings.points.sf, scen$cost.rast,
+  out <- projectRoads(scen$landings.points, scen$cost.rast,
                scen$road.rast, plotRoads = doPlot)
   
   expect_s4_class(out$roads, "SpatRaster")
   
   # 0< raster 
   roadInt <- scen$road.rast
-  suppressWarnings(roadInt[roadInt == 1] <- 1:100)
+  roadInt[roadInt == 1] <- 1:nrow(roadInt[roadInt == 1])
   
   costNo0 <- scen$cost.rast
   costNo0[costNo0 == 0] <- 10
   
-  projectRoads(scen$landings.points.sf, scen$cost.rast,
+  projectRoads(scen$landings.points, scen$cost.rast,
                roadInt, plotRoads = doPlot)
   
   # try with no 0 in cost in case that compensated for roads
-  expect_warning(projectRoads(scen$landings.points.sf, costNo0,
+  expect_warning(projectRoads(scen$landings.points, costNo0,
                               roadInt, plotRoads = doPlot),
                  "No 0s detected")
   
   # all input roads should be included in output
-  out2 <- projectRoads(scen$landings.points.sf, costNo0,
+  out2 <- projectRoads(scen$landings.points, costNo0,
                roadInt, plotRoads = doPlot, roadsInCost = FALSE)
   
   inrd <- terra::cells(terra::rast(roadInt), 1:100)
@@ -48,16 +49,16 @@ test_that("cost and road options work", {
   expect_true(all(terra::extract(out2$roads, inrd[[1]])[1] == 1))
   
   # sp lines
-  out2 <- projectRoads(scen$landings.points.sf, scen$cost.rast,
-               scen$road.line, plotRoads = doPlot)
+  out2 <- projectRoads(scen$landings.points, scen$cost.rast,
+               scen$road.line %>% sf::as_Spatial(), plotRoads = doPlot)
   expect_s3_class(out2$roads, "sf")
   
   # sf lines
-  projectRoads(scen$landings.points.sf, scen$cost.rast,
-               scen$road.line.sf, plotRoads = doPlot)
+  projectRoads(scen$landings.points, scen$cost.rast,
+               scen$road.line, plotRoads = doPlot)
   
   # burn in roads as 0 when cost raster has no 0
-  expect_message(projectRoads(scen$landings.points.sf, costNo0,
+  expect_message(projectRoads(scen$landings.points, costNo0,
                               scen$road.line, plotRoads = doPlot, 
                               roadsInCost = FALSE),
                  "Burning in roads")
@@ -73,12 +74,12 @@ test_that("landings options work", {
                "single layer")
   
   # clumped raster
-  projectRoads(raster::rasterize(scen$landings.poly, scen$cost.rast), 
+  projectRoads(terra::rasterize(scen$landings.poly, scen$cost.rast), 
                scen$cost.rast,
                scen$road.line, plotRoads = doPlot)
   
   # sp points
-  projectRoads(scen$landings.points, scen$cost.rast,
+  projectRoads(scen$landings.points %>% sf::as_Spatial(), scen$cost.rast,
                scen$road.line, plotRoads = doPlot)
   
   # sp polygons
@@ -86,22 +87,22 @@ test_that("landings options work", {
                scen$road.line, plotRoads = doPlot)
 
   # sf points
-  projectRoads(scen$landings.points.sf, scen$cost.rast,
+  projectRoads(scen$landings.points, scen$cost.rast,
                scen$road.line, plotRoads = doPlot)
   
   # sf polygons
-  projectRoads(scen$landings.poly.sf, scen$cost.rast,
+  projectRoads(scen$landings.poly, scen$cost.rast,
                scen$road.line, plotRoads = doPlot)
   
   # matrix
-  projectRoads(sf::st_coordinates(scen$landings.poly.sf), scen$cost.rast,
+  projectRoads(sf::st_coordinates(scen$landings.poly), scen$cost.rast,
                scen$road.line, plotRoads = doPlot)
 })
 
 test_that("sim list input works", {
-  simList <- projectRoads(scen$landings.poly.sf, scen$cost.rast,
+  simList <- projectRoads(scen$landings.poly, scen$cost.rast,
                           scen$road.line, plotRoads = doPlot)
-  lnd2 <- scen$landings.points.sf %>% filter(set == 2)
+  lnd2 <- scen$landings.points %>% filter(set == 2)
   expect_type(projectRoads(sim = simList, landings = lnd2, plotRoads = doPlot), 
               "list")
   

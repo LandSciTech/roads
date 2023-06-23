@@ -1,4 +1,5 @@
-context("test getLandingsFromTarget works for different scenarios")
+# test getLandingsFromTarget works for different scenarios
+demoScen <- prepExData(demoScen)
 
 
 lndsDenTest <- list(1, 0.5, 0.25, 0.1, 0.01, 0.001)
@@ -49,7 +50,7 @@ test_that("sp polygon input works for centroid",{
   expect_type(outCent, "list")
   
   if(interactive()){
-    raster::plot(demoScen[[1]]$landings.poly)
+    plot(sf::st_geometry(demoScen[[1]]$landings.poly))
     plot(outCent, col = "red", add = T)
   }
   
@@ -62,7 +63,7 @@ test_that("raster no clumps input works",{
                                       sampleType = "regular"),
                 "landingDens is ignored")
  if(interactive()){
-   raster::plot(demoScen[[1]]$landings.stack[[1]])
+   plot(sf::st_geometry(demoScen[[1]]$landings.stack[[1]]))
    plot(outRast1, col = "red", add = T)
  }
 })
@@ -118,13 +119,13 @@ test_that("raster with clumps input works with ID",{
   expect_type(outRastCent, "list")
   
   if(interactive()){
-    raster::plot(rast)
+    terra::plot(rast)
     plot(outRastCent, col = "red", add = T)
     
-    raster::plot(rast)
+    terra::plot(rast)
     plot(outRastRand, col = "red", add = T)
     
-    raster::plot(rast)
+    terra::plot(rast)
     plot(outRastReg, col = "red", add = T)
   }
 })

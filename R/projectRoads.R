@@ -84,7 +84,7 @@
 #'       avoid recomputing the graph in a simulation with multiple time steps.}
 #' }
 #' @examples
-#'
+#' CLUSexample <- prepExData(CLUSexample)
 #' doPlots <- interactive()
 #' 
 #' projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
@@ -93,24 +93,27 @@
 #'
 #'# More realistic examples that take longer to run
 #'\donttest{
+#' 
+#' demoScen <- prepExData(demoScen)
+#' 
 #' ### using:  scenario 1 / sf landings / least-cost path ("lcp")
 #' # demo scenario 1
 #' scen <- demoScen[[1]]
 #'
 #' # landing set 1 of scenario 1:
-#' land.pnts <- scen$landings.points.sf[scen$landings.points.sf$set==1,]
+#' land.pnts <- scen$landings.points[scen$landings.points$set==1,]
 #'
-#' prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line.sf, "lcp",
+#' prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line, "lcp",
 #'                          plotRoads = doPlots, mainTitle = "Scen 1: SPDF-LCP")
 #'
-#' ### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")
+#' ### using: scenario 1 / SpatRaster landings / minimum spanning tree ("mst")
 #' # demo scenario 1
 #' scen <- demoScen[[1]]
 #'
 #' # the RasterLayer version of landing set 1 of scenario 1:
 #' land.rLyr <- scen$landings.stack[[1]]
 #'
-#' prRes <- projectRoads(land.rLyr, scen$cost.rast, scen$road.line.sf, "mst",
+#' prRes <- projectRoads(land.rLyr, scen$cost.rast, scen$road.line, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 1: Raster-MST")
 #'
 #'
@@ -119,27 +122,21 @@
 #' scen <- demoScen[[2]]
 #'
 #' # landing set 5 of scenario 2, as matrix:
-#' land.mat  <- scen$landings.points[scen$landings.points$set==5,]@coords
+#' land.mat  <- scen$landings.points[scen$landings.points$set==5,] |> 
+#'   sf::st_coordinates()
 #'
 #' prRes <- projectRoads(land.mat, scen$cost.rast, scen$road.rast, "snap",
-#'                          plotRoads = doPlots, mainTitle = "Scen 2: Matrix-Snap")
+#'                       plotRoads = doPlots, mainTitle = "Scen 2: Matrix-Snap")
 #'
 #' ## using scenario 7 / Polygon landings raster / minimum spanning tree
 #' # demo scenario 7
 #' scen <- demoScen[[7]]
 #' # rasterize polygonal landings of demo scenario 7:
-#' land.polyR <- raster::rasterize(scen$landings.poly, scen$cost.rast)
+#' land.polyR <- terra::rasterize(scen$landings.poly, scen$cost.rast)
 #'
 #' prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
 #' }
-#' @import dplyr
-#' @importFrom methods is as
-#' @importFrom stats end na.omit
-#' @importFrom rlang .data
-# @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell plot
-#' @importFrom sp SpatialPoints Line Lines SpatialLines CRS
-#' @importFrom data.table data.table := .N setDT setnames
 #' 
 #' @export
 #' 

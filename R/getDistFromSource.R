@@ -45,6 +45,7 @@
 #'
 #' @examples
 #' 
+#' CLUSexample <-  prepExData(CLUSexample)
 #' getDistFromSource(CLUSexample$roads, 5, 2)
 #' 
 #'\donttest{

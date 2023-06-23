@@ -27,6 +27,18 @@ getClosestRoad <- function(sim, ordering = "closest"){
   # union roads to one feature
   roads.pts <- sf::st_union(sim$roads)
   
+  # if roads contains both roads and lines has length 2 need only one so convert
+  # lines to points at raster centers
+  if(sf::st_geometry_type(roads.pts, by_geometry = FALSE) == "GEOMETRY"){
+    rd.lines <- sf::st_collection_extract(roads.pts, type = "LINESTRING")
+    rd.lines.pts <- terra::extract(sim$costSurface, terra::vect(rd.lines), xy = TRUE) %>% 
+      sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(rd.lines)) %>% 
+      sf::st_geometry()
+    
+    roads.pts <- c(rd.lines.pts, sf::st_collection_extract(roads.pts, type = "POINT")) %>% 
+      sf::st_union()
+  }
+  
   # find nearest point between road feature and landings, returns a line between
   # the points
   closest.roads.pts <- sf::st_nearest_points(sim$landings, roads.pts)

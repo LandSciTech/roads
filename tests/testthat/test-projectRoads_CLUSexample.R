@@ -1,4 +1,4 @@
-context("simple example test case - compare to results from kylesCLUSExample.Rmd")
+# simple example test case - compare to results from kylesCLUSExample.Rmd
 
 library(dplyr)
 library(sf)
@@ -19,6 +19,7 @@ CLUS.lcp.roads <- c(1:25)[-c(6,7,9,15,17,18,20,21,23,24)]
 CLUS.mst.roads <- c(1:25)[-c(6:9,15,17,18,20,21,23,24)] 
 ###############################################
 # generate the results from roads::projectRoads
+CLUSexample <- prepExData(CLUSexample)
 landingsC <- CLUSexample$landings
 costC     <- CLUSexample$cost
 roadsC    <- CLUSexample$roads
@@ -41,23 +42,13 @@ pR_mst <- projectRoads(landings = landingsC,
                           neighbourhood = "queen", roadsOut = "sf")
 
 getRoadCells <- function(rast, roads, method){
-  if(method == "snap"){
-    raster::extract(rast, 
-                    roads %>% 
-                      sf::st_segmentize(dfMaxLength = raster::xres(costC)) %>% 
-                      sf::st_cast("MULTIPOINT") %>%
-                      sf::st_cast("POINT"), 
-                    cellnumbers = T) %>% 
-      .[,1] %>% unique() %>% sort()
-  } else {
-    raster::extract(rast, 
-                    roads %>% 
-                      sf::st_cast("MULTIPOINT") %>%
-                      sf::st_cast("POINT"), 
-                    cellnumbers = T) %>% 
-      .[,1] %>% unique() %>% sort()
-  }
+  # browser()
+  ex_line <- terra::extract(rast, terra::vect(roads %>% sf::st_collection_extract("LINESTRING")), 
+                            cells = TRUE, touches = FALSE)  %>% pull(cell) 
+  ex_pt <- terra::extract(rast, terra::vect(roads %>% sf::st_collection_extract("POINT")), 
+                          cells = TRUE)  %>% pull(cell) 
   
+  union(ex_line, ex_pt) %>% sort()
 }
 ###############################################
 # perform tests
@@ -99,7 +90,8 @@ test_that("Dynamic LCP works",{
   # add a landing that is touching the road for testing
   land.pnts3 <- land.pnts2 %>% 
     bind_rows(land.pnts2 %>% slice(1) %>% 
-                mutate(geometry = geometry + c(0,1.5))) %>% 
+                mutate(geometry = geometry + c(0,1.5)) %>% 
+                sf::st_set_crs(sf::st_crs(land.pnts2))) %>% 
     mutate(ID = 1:5) %>% arrange(ID) %>% st_set_agr("constant")
 
   dyLCP <- projectRoads(land.pnts3,
@@ -111,13 +103,8 @@ test_that("Dynamic LCP works",{
     plotRoads(dyLCP)
   }
 
-  expect_identical(dyLCP$roads %>% filter(st_geometry_type(geometry) == "MULTILINESTRING") %>% 
-                     st_geometry() %>% st_coordinates() %>% as.data.frame() %>% 
-                     select(1:2) %>%  distinct() %>% arrange(1,2), 
-                   iterLands_sim[[4]]$roads %>% 
-                     filter(st_geometry_type(geometry) == "LINESTRING") %>%
-                     st_union() %>% st_coordinates() %>% as.data.frame() %>% 
-                     select(1:2) %>%  distinct() %>% arrange(1,2))
+  expect_identical(getRoadCells(costC, dyLCP$roads),
+                   getRoadCells(costC, iterLands_sim[[4]]$roads))
   
 })
 ###############################################

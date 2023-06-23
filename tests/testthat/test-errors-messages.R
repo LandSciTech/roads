@@ -1,10 +1,9 @@
-context("Test errors, warnings, and messages")
-
+CLUSexample <- prepExData(CLUSexample)
 test_that("different CRS is error", {
   cost <- CLUSexample$cost
-  raster::crs(cost) <-  "+proj=longlat"
+  terra::crs(cost) <-  "+proj=longlat"
   rds <- CLUSexample$roads
-  raster::crs(rds) <-  5070
+  terra::crs(rds) <-  "EPSG:5070"
   expect_error(projectRoads(CLUSexample$landings, cost, rds), "must match")
   
 

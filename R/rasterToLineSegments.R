@@ -35,12 +35,13 @@
 #' @return an sf simple feature collection
 #'
 #' @examples
-#' 
+#' CLUSexample <- prepExData(CLUSexample)
 #' # works well for very simple roads
 #' roadLine1 <- rasterToLineSegments(CLUSexample$roads)
 #' 
 #' # longer running more realistic examples
 #' \donttest{
+#' demoScen <- prepExData(demoScen)
 #' # mst method works well in this case
 #' roadLine2 <- rasterToLineSegments(demoScen[[1]]$road.rast)
 #' 
@@ -48,7 +49,7 @@
 #' roadLine3 <- rasterToLineSegments(demoScen[[1]]$road.rast, method = "nearest")
 #' 
 #' # The mst method can also produce odd results in some cases
-#' rasterToLineSegments(demoScen[[4]]$road.rast)
+#' roadLine4 <- rasterToLineSegments(demoScen[[4]]$road.rast)
 #' 
 #' }
 #'
@@ -56,13 +57,13 @@
 
 rasterToLineSegments <- function(rast, method = "mst"){
   if(method == "mst"){
-    lnds <- raster::rasterToPoints(rast, fun = function(x){x > 0},
-                                   spatial = TRUE) %>%
-      sf::st_as_sf() %>% sf::st_set_agr("constant")
+    lnds <- terra::as.points(rast) %>%
+      sf::st_as_sf() %>% sf::st_set_agr("constant") %>% 
+      filter(.data$lyr.1 > 0)
     
     cst <- rast == 0
     
-    cst <- raster::reclassify(cst, matrix(c(0, 0.001, 1, 1), ncol = 2,
+    cst <- terra::classify(cst, matrix(c(0, 0.001, 1, 1), ncol = 2,
                                           byrow = TRUE), right = NA)
     
     prRes <- projectRoads(landings = lnds, cst, roads = lnds[1,], roadsInCost = TRUE)
@@ -70,9 +71,9 @@ rasterToLineSegments <- function(rast, method = "mst"){
     return(lines)
     
   } else if(method == "nearest"){
-    pts <- sf::st_as_sf(raster::rasterToPoints(rast,
-                                               fun = function(x){x > 0},
-                                               spatial = TRUE))
+    pts <- terra::as.points(rast) %>%
+      sf::st_as_sf() %>% sf::st_set_agr("constant") %>% 
+      filter(.data$lyr.1 > 0)
     # finds line between all points and keep shortest
     nearLn <- sf::st_nearest_points(pts, pts) %>%
       sf::st_as_sf() %>%
@@ -81,6 +82,7 @@ rasterToLineSegments <- function(rast, method = "mst"){
     
     # speeds things up because filtering is slow on sf (as is [])
     nearLn2 <- nearLn %>% sf::st_drop_geometry() %>%
+      mutate(len = units::drop_units(.data$len)) %>% 
       filter(.data$len > 0) %>%
       filter(.data$len == min(.data$len))
     

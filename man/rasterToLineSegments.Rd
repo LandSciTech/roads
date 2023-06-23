@@ -29,12 +29,13 @@ will not double lines as often. Neither method is likely to work for very
 large rasters
 }
 \examples{
-
+CLUSexample <- prepExData(CLUSexample)
 # works well for very simple roads
 roadLine1 <- rasterToLineSegments(CLUSexample$roads)
 
 # longer running more realistic examples
 \donttest{
+demoScen <- prepExData(demoScen)
 # mst method works well in this case
 roadLine2 <- rasterToLineSegments(demoScen[[1]]$road.rast)
 
@@ -42,7 +43,7 @@ roadLine2 <- rasterToLineSegments(demoScen[[1]]$road.rast)
 roadLine3 <- rasterToLineSegments(demoScen[[1]]$road.rast, method = "nearest")
 
 # The mst method can also produce odd results in some cases
-rasterToLineSegments(demoScen[[4]]$road.rast)
+roadLine4 <- rasterToLineSegments(demoScen[[4]]$road.rast)
 
 }
 

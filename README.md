@@ -8,6 +8,7 @@
 [![R-CMD-check](https://github.com/LandSciTech/roads/workflows/R-CMD-check/badge.svg)](https://github.com/LandSciTech/roads/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/roads)](https://CRAN.R-project.org/package=roads)
+[![R-CMD-check](https://github.com/LandSciTech/roads/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/LandSciTech/roads/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of roads is to simulate road development under resource
@@ -41,8 +42,10 @@ landscape (cost). Typically the roads and landings are `sf` objects or
 ``` r
 library(roads)
 library(raster)
+#> Warning: package 'sp' was built under R version 4.2.3
 
 # data set installed with roads package
+demoScen <- prepExData(demoScen)
 scen <- demoScen[[1]]
 
 prRoads <- projectRoads(landings = scen$landings.points, 

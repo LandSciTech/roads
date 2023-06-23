@@ -15,14 +15,22 @@
 #     limitations under the License.
 
 #' Data from the CLUS example
-#' 
-#' From Kyle Lochhead and Tyler Muhly's CLUS road simulation example
+#'
+#' From Kyle Lochhead and Tyler Muhly's CLUS road simulation example. SpatRaster
+#' files created with the terra package must be saved with [terra::wrap()] and
+#' need to be unwrapped before they are used. [prepExData()] is provided to do
+#' this.
 #'
 #' @docType data
 #'
 #' @usage data(CLUSexample)
 #'
-#' @format A named list where: $cost is an object of class RasterLayer representing road cost
-#'                             $landings is an object of class SpatialPoints representing landing locations
-#'                             $roads is an object of class RasterLayer representing existing roads
+#' @format A named list where: $cost is an object of class PackedSpatRaster
+#'   representing road cost, $landings is an object of class sf representing
+#'   landing locations and $roads is an object of class PackedSpatRaster
+#'   representing existing roads
+#'   
+#' @examples 
+#' CLUSexample
+#' prepExData(CLUSexample)
 "CLUSexample"

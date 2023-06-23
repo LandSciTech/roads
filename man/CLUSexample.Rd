@@ -5,14 +5,22 @@
 \alias{CLUSexample}
 \title{Data from the CLUS example}
 \format{
-A named list where: $cost is an object of class RasterLayer representing road cost
-                            $landings is an object of class SpatialPoints representing landing locations
-                            $roads is an object of class RasterLayer representing existing roads
+A named list where: $cost is an object of class PackedSpatRaster
+  representing road cost, $landings is an object of class sf representing
+  landing locations and $roads is an object of class PackedSpatRaster
+  representing existing roads
 }
 \usage{
 data(CLUSexample)
 }
 \description{
-From Kyle Lochhead and Tyler Muhly's CLUS road simulation example
+From Kyle Lochhead and Tyler Muhly's CLUS road simulation example. SpatRaster
+files created with the terra package must be saved with [terra::wrap()] and
+need to be unwrapped before they are used. [prepExData()] is provided to do
+this.
+}
+\examples{
+CLUSexample
+prepExData(CLUSexample)
 }
 \keyword{datasets}
