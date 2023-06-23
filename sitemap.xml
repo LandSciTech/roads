@@ -46,6 +46,9 @@
     <loc>https://landscitech.github.io/roads/reference/plotRoads.html</loc>
   </url>
   <url>
+    <loc>https://landscitech.github.io/roads/reference/prepExData.html</loc>
+  </url>
+  <url>
     <loc>https://landscitech.github.io/roads/reference/projectRoads.html</loc>
   </url>
   <url>
@@ -53,5 +56,8 @@
   </url>
   <url>
     <loc>https://landscitech.github.io/roads/reference/rasterizeLine.html</loc>
+  </url>
+  <url>
+    <loc>https://landscitech.github.io/roads/reference/roads-package.html</loc>
   </url>
 </urlset>

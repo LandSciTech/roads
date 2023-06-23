@@ -90,9 +90,11 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/terra/" class="external-link">terra</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; terra 1.7.18</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; terra 1.7.37</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
@@ -105,13 +107,6 @@
 <span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: sp</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'raster'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:dplyr':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     select</span></span>
 <span></span>
 <span><span class="co">## colours for displaying cost raster </span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"viridis"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
@@ -122,6 +117,7 @@
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co">## using demo scenario 1</span></span>
+<span><span class="va">demoScen</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepExData.html">prepExData</a></span><span class="op">(</span><span class="va">demoScen</span><span class="op">)</span></span>
 <span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <p>Road construction times are not always known but they can be inferred
 from the harvest times of harvest blocks that they access. To do this we
@@ -133,14 +129,16 @@ creates a demonstration road data set.</p>
 <span><span class="co"># use all landings and build roads to closest first</span></span>
 <span><span class="va">land.pnts</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span> <span class="op"><a href="https://rdrr.io/pkg/terra/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>,<span class="op">]</span></span>
 <span></span>
-<span><span class="va">realRoads</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.pnts</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line.sf</span>,</span>
+<span><span class="va">realRoads</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.pnts</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>,</span>
 <span>                          roadMethod <span class="op">=</span> <span class="st">"dlcp"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">'Scenario'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">realRoads</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">2</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/text.html" class="external-link">text</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">@</span><span class="va">coords</span>, labels <span class="op">=</span> <span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span>, cex <span class="op">=</span> <span class="fl">0.6</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span><span class="op">)</span>,</span>
+<span><span class="co">#&gt; Warning in plot.sf(land.pnts, add = TRUE, pch = 21, cex = 2, bg = "white"):</span></span>
+<span><span class="co">#&gt; ignoring all but the first attribute</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/text.html" class="external-link">text</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span>, cex <span class="op">=</span> <span class="fl">0.6</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span><span class="op">)</span>,</span>
 <span>     xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ReconstructRoadHistory_files/figure-html/unnamed-chunk-2-1.png" width="576"></p>
 <p>Our scenario is that we have landings that were harvested over four
@@ -153,9 +151,6 @@ maximum year of road construction.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Use sequence of landings to assign sequence of roads built</span></span>
 <span></span>
-<span><span class="co"># convert cost to SpatRaster for faster rasterization</span></span>
-<span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># burn in realRoads to have cost of 0 so that projected roads will follow them.</span></span>
 <span><span class="va">roadsRast</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rasterize.html" class="external-link">rasterize</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">realRoads</span><span class="op">$</span><span class="va">roads</span><span class="op">)</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, </span>
 <span>                              background <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span></span>
@@ -165,14 +160,12 @@ maximum year of road construction.</p>
 <span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span> <span class="op">*</span> <span class="op">(</span><span class="va">roadsRast</span> <span class="op">+</span> <span class="fl">0.00001</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="co"># set pre-existing roads to year 0</span></span>
-<span><span class="va">scen</span><span class="op">$</span><span class="va">road.line.sf</span><span class="op">$</span><span class="va">Year</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span><span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">$</span><span class="va">Year</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span></span>
 <span><span class="co"># initialize sim list with first landings set </span></span>
 <span><span class="va">multiTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="fl">1</span>,<span class="op">]</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, </span>
-<span>                                               <span class="va">scen</span><span class="op">$</span><span class="va">road.line.sf</span><span class="op">)</span><span class="op">)</span></span>
+<span>                                               <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; Warning: attribute variables are assumed to be spatially constant throughout</span></span>
-<span><span class="co">#&gt; all geometries</span></span>
 <span></span>
 <span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span> <span class="op">&lt;-</span> <span class="va">multiTime_sim</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Year</span><span class="op">)</span>, <span class="fl">1</span>, <span class="va">Year</span><span class="op">)</span><span class="op">)</span></span>
@@ -190,14 +183,8 @@ maximum year of road construction.</p>
 <span>  <span class="op">)</span> </span>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; Warning: attribute variables are assumed to be spatially constant throughout</span></span>
-<span><span class="co">#&gt; all geometries</span></span>
 <span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; Warning: attribute variables are assumed to be spatially constant throughout</span></span>
-<span><span class="co">#&gt; all geometries</span></span>
 <span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; Warning: attribute variables are assumed to be spatially constant throughout</span></span>
-<span><span class="co">#&gt; all geometries</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span><span class="op">[</span><span class="st">"Year"</span><span class="op">]</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ReconstructRoadHistory_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>

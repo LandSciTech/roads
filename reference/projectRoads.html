@@ -207,7 +207,7 @@ landings are accessed in the order they are provided in.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">CLUSexample</span> <span class="op">&lt;-</span> <span class="fu"><a href="prepExData.html">prepExData</a></span><span class="op">(</span><span class="va">CLUSexample</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">doPlots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">projectRoads</span><span class="op">(</span><span class="va">CLUSexample</span><span class="op">$</span><span class="va">landings</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">cost</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">roads</span>,</span></span>
@@ -218,9 +218,9 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dimensions  : 5, 5, 1  (nrow, ncol, nlyr)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 1, 1  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. :  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> source(s)   : memory</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> name        : layer </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> name        : lyr.1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> min value   : FALSE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> max value   :  TRUE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -229,9 +229,9 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dimensions  : 5, 5, 1  (nrow, ncol, nlyr)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 1, 1  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. :  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> source(s)   : memory</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> name        :    layer </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> name        :    lyr.1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> min value   :  0.00000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> max value   : 19.84622 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -243,7 +243,7 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POINT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 0.5 ymin: 0.5 xmax: 4.5 ymax: 2.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CRS:           NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Geodetic CRS:  WGS 84</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          geometry</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 POINT (0.5 2.5)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 POINT (2.5 2.5)</span>
@@ -251,9 +251,9 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 POINT (4.5 0.5)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 408b8a7 U-W- 25 72 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 767e66b U-W- 25 72 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: weight (e/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 408b8a7:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 767e66b:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 6  2-- 3  2-- 7  3-- 4  3-- 8  4-- 5  4-- 9  5--10  6-- 7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11]  6--11  7-- 8  7--12  8-- 9  8--13  9--10  9--14 10--15 11--12 11--16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21] 12--13 12--17 13--14 13--18 14--15 14--19 15--20 16--17 16--21 17--18</span>
@@ -267,25 +267,28 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># More realistic examples that take longer to run</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">demoScen</span> <span class="op">&lt;-</span> <span class="fu"><a href="prepExData.html">prepExData</a></span><span class="op">(</span><span class="va">demoScen</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### using:  scenario 1 / sf landings / least-cost path ("lcp")</span></span></span>
 <span class="r-in"><span><span class="co"># demo scenario 1</span></span></span>
 <span class="r-in"><span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># landing set 1 of scenario 1:</span></span></span>
-<span class="r-in"><span><span class="va">land.pnts</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points.sf</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points.sf</span><span class="op">$</span><span class="va">set</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">land.pnts</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.pnts</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line.sf</span>, <span class="st">"lcp"</span>,</span></span>
+<span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.pnts</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, <span class="st">"lcp"</span>,</span></span>
 <span class="r-in"><span>                         plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"Scen 1: SPDF-LCP"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in cost raster, these will be considered as existing roads</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">### using: scenario 1 / RasterLayer landings / minimum spanning tree ("mst")</span></span></span>
+<span class="r-in"><span><span class="co">### using: scenario 1 / SpatRaster landings / minimum spanning tree ("mst")</span></span></span>
 <span class="r-in"><span><span class="co"># demo scenario 1</span></span></span>
 <span class="r-in"><span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the RasterLayer version of landing set 1 of scenario 1:</span></span></span>
 <span class="r-in"><span><span class="va">land.rLyr</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.stack</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.rLyr</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line.sf</span>, <span class="st">"mst"</span>,</span></span>
+<span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.rLyr</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, <span class="st">"mst"</span>,</span></span>
 <span class="r-in"><span>                         plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"Scen 1: Raster-MST"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in cost raster, these will be considered as existing roads</span>
 <span class="r-in"><span></span></span>
@@ -295,22 +298,25 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-in"><span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># landing set 5 of scenario 2, as matrix:</span></span></span>
-<span class="r-in"><span><span class="va">land.mat</span>  <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span><span class="op">==</span><span class="fl">5</span>,<span class="op">]</span><span class="op">@</span><span class="va">coords</span></span></span>
+<span class="r-in"><span><span class="va">land.mat</span>  <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span><span class="op">==</span><span class="fl">5</span>,<span class="op">]</span> <span class="op">|&gt;</span> </span></span>
+<span class="r-in"><span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.mat</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.rast</span>, <span class="st">"snap"</span>,</span></span>
-<span class="r-in"><span>                         plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"Scen 2: Matrix-Snap"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                      plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"Scen 2: Matrix-Snap"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in cost raster, these will be considered as existing roads</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CRS of landings supplied as a matrix is assumed to match the cost</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## using scenario 7 / Polygon landings raster / minimum spanning tree</span></span></span>
 <span class="r-in"><span><span class="co"># demo scenario 7</span></span></span>
 <span class="r-in"><span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">7</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="co"># rasterize polygonal landings of demo scenario 7:</span></span></span>
-<span class="r-in"><span><span class="va">land.polyR</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rasterize.html" class="external-link">rasterize</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.poly</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">land.polyR</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/rasterize.html" class="external-link">rasterize</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.poly</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.polyR</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.rast</span>, <span class="st">"mst"</span>,</span></span>
 <span class="r-in"><span>                         plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"Scen 7: PolyRast-MST"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in cost raster, these will be considered as existing roads</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
