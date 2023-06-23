@@ -37,10 +37,8 @@ License: Apache License (>= 2)
 Encoding: UTF-8
 LazyData: true
 Imports:
-    raster,
     dplyr,
     igraph,
-    sp,
     data.table,
     sf,
     units,

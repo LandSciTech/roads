@@ -142,8 +142,10 @@
 #' @importFrom stats end na.omit
 #' @importFrom rlang .data
 # @importFrom raster rasterToPoints as.data.frame clump rasterize cellFromXY merge as.matrix ncell plot
-#' @importFrom sp SpatialPoints Line Lines SpatialLines CRS
+# @importFrom sp SpatialPoints Line Lines SpatialLines CRS
 #' @importFrom data.table data.table := .N setDT setnames
+#' @importClassesFrom terra SpatRaster
+#' @importMethodsFrom terra plot
 #' 
 #' @export
 #' 

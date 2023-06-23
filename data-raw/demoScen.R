@@ -294,7 +294,7 @@ demoScen <- rapply(demoScen, f = terra::wrap, classes = "SpatRaster", how = "rep
 # set sf objects to agr = "constant"
 demoScen <- rapply(demoScen, f = sf::st_set_agr, classes = "sf", how = "replace", value = "constant")
 
-save(demoScen, file = "data/demoScen.rda", compress = "xz")
+usethis::use_data(demoScen, overwrite = TRUE)
 #################################################
 # view all cost rasters
 # demoScen %>% purrr::map("cost.rast") %>% terra::rast() %>% terra::plot()

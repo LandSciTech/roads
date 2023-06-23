@@ -372,7 +372,7 @@ Often harvest information is available as polygons showing the cutover area but 
 harvPoly <- demoScen[[1]]$landings.poly
 
 outCent <- getLandingsFromTarget(harvPoly)
-raster::plot(harvPoly)
+plot(sf::st_geometry(harvPoly))
 plot(outCent, col = "red", add = TRUE)
 
 # Get random sample with density 0.02 pts per unit area

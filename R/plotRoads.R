@@ -46,7 +46,7 @@ plotRoads <- function(sim, mainTitle,
   }
   plot(sf::st_geometry(sim$landings), add = TRUE)
   if(is(sim$landings, "SpatialPolygons")){
-    sp::plot(sim$landings, add = TRUE)
+    plot(sim$landings, add = TRUE)
   } else if(is(sim$landings, "sf") &&
             sf::st_geometry_type(sim$landings, by_geometry = FALSE) %in%
             c("POLYGON", "MULTIPOLYGON")){

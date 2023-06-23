@@ -58,7 +58,7 @@
 #' outCent <- getLandingsFromTarget(polys)
 #'
 #' if(doPlots){
-#'   plot(polys %>% sf::st_geometry())
+#'   plot(sf::st_geometry(polys))
 #'   plot(outCent, col = "red", add = TRUE)
 #' }
 #'
@@ -66,7 +66,7 @@
 #' outRand <- getLandingsFromTarget(polys, 0.1, sampleType = "random")
 #'
 #' if(doPlots){
-#'   plot(polys %>% sf::st_geometry())
+#'   plot(sf::st_geometry(polys))
 #'   plot(outRand, col = "red", add = TRUE)
 #' }
 #'
@@ -74,7 +74,7 @@
 #' outReg <- getLandingsFromTarget(polys, 0.1, sampleType = "regular")
 #'
 #' if(doPlots){
-#'   plot(polys %>% sf::st_geometry())
+#'   plot(sf::st_geometry(polys))
 #'   plot(outReg, col = "red", add = TRUE)
 #' }
 #'
