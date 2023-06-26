@@ -18,10 +18,10 @@ test_that("distance to roads has expected values", {
   maxDist <- 5
   fastRough <- getDistFromSource(src, maxDist, kwidth = 1)
   wideCircle <- getDistFromSource(src, maxDist, kwidth = 5)
-  # if(requireNamespace("pfocal", quietly = TRUE)){
-  #   slowFine <- getDistFromSource(src, maxDist, kwidth = 1, method = "pfocal2")
-  #   smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, method = "pfocal2")
-  # }
+  if(requireNamespace("pfocal", quietly = TRUE)){
+    slowFine <- getDistFromSource(src, maxDist, kwidth = 1, method = "pfocal2")
+    smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, method = "pfocal2")
+  }
 
   if(interactive()){
     res <- c(fastRough, slowFine, wideCircle, smootherCircle)
