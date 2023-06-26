@@ -1,3 +1,5 @@
+# roads (development version)
+
 # roads 1.1.1
 * Fix an issue where updates to `terra` were causing roads to break
 * In the process removed `raster` and `sp` from dependencies and converted example data to `terra` and `sf` formats. This requires a new function `prepExData` to unwrap the `terra` objects that needed to be wrapped for storage
