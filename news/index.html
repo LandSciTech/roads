@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">roads</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,10 +56,15 @@
 <h2 class="pkg-version" data-toc-text="development version" id="roads-development-version">roads (development version)<a class="anchor" aria-label="anchor" href="#roads-development-version"></a></h2>
 </div>
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.1.1" id="roads-111">roads 1.1.1<a class="anchor" aria-label="anchor" href="#roads-111"></a></h2><p class="text-muted">CRAN release: 2023-06-24</p>
+<ul><li>Fix an issue where updates to <code>terra</code> were causing roads to break</li>
+<li>In the process removed <code>raster</code> and <code>sp</code> from dependencies and converted example data to <code>terra</code> and <code>sf</code> formats. This requires a new function <code>prepExData</code> to unwrap the <code>terra</code> objects that needed to be wrapped for storage</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="roads-110">roads 1.1.0<a class="anchor" aria-label="anchor" href="#roads-110"></a></h2><p class="text-muted">CRAN release: 2023-02-02</p>
 <ul><li>converted to using <code>terra</code> throughout the package. <code>raster</code> objects are still accepted but will be converted to <code>terra</code> formats.</li>
 <li>Added <code>getDistFromSource</code> function to use moving windows to quickly get a raster of the distance from the nearest source (e.g road).</li>
-<li>remove <code>SpaDES.tools</code> dependency because it is archived on CRAN and there is an equivalent method in <code>terra</code> now.</li>
+<li>remove <code>SpaDES.tools</code> dependency because it was archived on CRAN and there is an equivalent method in <code>terra</code> now.</li>
 <li>The returned cost raster now includes the projected roads as having a cost of 0. This makes it easier to loop additional road building over time but is a change from the previous version where the input cost surface was returned.</li>
 </ul></div>
     <div class="section level2">
