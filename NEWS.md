@@ -1,4 +1,6 @@
-# roads (development version)
+# roads 1.1.2
+* Change dynamic least cost paths (DLCP) to iterative least cost paths (ILCP) throughout
+* Change default `roadMethod` to `"ilcp"` in `projectRoads` 
 
 # roads 1.1.1
 * Fix an issue where updates to `terra` were causing roads to break
