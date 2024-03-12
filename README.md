@@ -5,7 +5,6 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/LandSciTech/roads/workflows/R-CMD-check/badge.svg)](https://github.com/LandSciTech/roads/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/roads)](https://CRAN.R-project.org/package=roads)
 [![R-CMD-check](https://github.com/LandSciTech/roads/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/LandSciTech/roads/actions/workflows/R-CMD-check.yaml)
