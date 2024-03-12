@@ -27,7 +27,7 @@
 #'   \item{"lcp":} {Least Cost Path connects each landing to the closest point
 #'   on the road by determining the least cost path based on the cost surface
 #'   provided, it does not consider other landings}
-#'   \item{"dlcp":} {Dynamic Least Cost Path, same as "lcp" but it builds each
+#'   \item{"ilcp":} {Iterative Least Cost Path, same as "lcp" but it builds each
 #'   path sequentially so that later roads will use earlier roads. The sequence
 #'   of landings is determined by `ordering` and is "closest" by default, the
 #'   other option is "none" which will use the order that landings are supplied
@@ -45,7 +45,7 @@
 #'   cells with a cost of 0. If existing roads do not have 0 cost set
 #'   \code{roadsInCost = FALSE} and they will be burned in.
 #' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
-#' @param roadMethod Character. Options are "mst", "dlcp", "lcp", "snap".
+#' @param roadMethod Character. Options are "mst", "ilcp", "lcp", "snap".
 #' @param plotRoads Boolean. Should the resulting road network be plotted.
 #'   Default FALSE.
 #' @param mainTitle Character. A title for the plot
@@ -66,7 +66,7 @@
 #'   is assumed to include existing roads as 0 in its cost surface. If FALSE
 #'   then the roads will be "burned in" to the cost raster with a cost of 0.
 #' @param ordering character. The order in which roads should be built to
-#'   landings when `roadMethod = "dlcp"`. Options are "closest" (default) where
+#'   landings when `roadMethod = "ilcp"`. Options are "closest" (default) where
 #'   landings closest to existing roads are accessed first, or "none" where
 #'   landings are accessed in the order they are provided in.
 #'
@@ -143,7 +143,7 @@
 setGeneric('projectRoads', function(landings = NULL,
                                     cost = NULL,
                                     roads = NULL,
-                                    roadMethod = "mst",
+                                    roadMethod = "ilcp",
                                     plotRoads = FALSE,
                                     mainTitle = "",
                                     neighbourhood = "octagon",
@@ -169,15 +169,20 @@ setMethod(
            " are required if sim is not supplied")
     }
 
-    recognizedRoadMethods = c("mst", "lcp", "dlcp", "snap")
+    recognizedRoadMethods = c("mst", "lcp", "ilcp", "snap")
 
+    if(roadMethod == "dlcp"){
+      roadMethod <- "ilcp"
+      message("roadMethod 'dlcp' has been renamed. Changing to 'ilcp' instead.")
+    }
+    
     if(!is.element(roadMethod,recognizedRoadMethods)){
       stop("Invalid road method ", roadMethod, ". Options are:",
            paste(recognizedRoadMethods, collapse=','))
     }
     
-    # if method is not dlcp ignore ordering
-    if(roadMethod != "dlcp"){
+    # if method is not ilcp ignore ordering
+    if(roadMethod != "ilcp"){
       ordering <- "none"
     }
 
@@ -222,13 +227,13 @@ setMethod(
                     
                     sim <- outputRoads(sim, roadsOut)
                   },
-                  dlcp ={
+                  ilcp ={
                     sim <- getClosestRoad(sim, ordering)
                     
                     sim <- lcpList(sim)
                     
-                    # includes dynamic update graph
-                    sim <- dynamicShortestPaths(sim)
+                    # includes iterative update graph
+                    sim <- iterativeShortestPaths(sim)
                     
                     sim <- outputRoads(sim, roadsOut)
                   },
@@ -306,13 +311,13 @@ setMethod(
                     
                     sim <- outputRoads(sim, roadsOut)
                   },
-                  dlcp ={
+                  ilcp ={
                     sim <- getClosestRoad(sim, ordering)
                     
                     sim <- lcpList(sim)
                     
-                    # includes dynamic update graph
-                    sim <- dynamicShortestPaths(sim)
+                    # includes iterative update graph
+                    sim <- iterativeShortestPaths(sim)
                     
                     sim <- outputRoads(sim, roadsOut)
                   },

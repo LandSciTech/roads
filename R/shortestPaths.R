@@ -58,7 +58,7 @@ shortestPaths<- function(sim){
 #' 
 #' @param sim sim list
 #' @noRd
-dynamicShortestPaths<- function(sim){
+iterativeShortestPaths<- function(sim){
   # finds the least cost paths between a list of two points
   if(!length(sim$paths.list) == 0){
     #create a list of shortest paths

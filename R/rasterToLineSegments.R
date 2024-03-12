@@ -66,7 +66,8 @@ rasterToLineSegments <- function(rast, method = "mst"){
     cst <- terra::classify(cst, matrix(c(0, 0.001, 1, 1), ncol = 2,
                                           byrow = TRUE), right = NA)
     
-    prRes <- projectRoads(landings = lnds, cst, roads = lnds[1,], roadsInCost = TRUE)
+    prRes <- projectRoads(landings = lnds, cst, roads = lnds[1,], roadMethod = "mst",
+                          roadsInCost = TRUE)
     lines <- prRes$roads %>% sf::st_collection_extract("LINESTRING")
     return(lines)
     

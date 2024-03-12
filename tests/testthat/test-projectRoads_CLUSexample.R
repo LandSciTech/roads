@@ -62,7 +62,7 @@ test_that("Projected roads results match CLUS example results for the 'mst' meth
   expect_equal(getRoadCells(costC, pR_mst$roads, "mst"), CLUS.mst.roads)
 })
 
-test_that("Dynamic LCP works",{
+test_that("Iterative LCP works",{
   # by iterating works but should be possible to make much faster
   land.pnts2 <- landingsC %>% st_as_sf() %>% 
     mutate(ID = c(1:4)) %>% st_set_agr("constant")
@@ -85,7 +85,7 @@ test_that("Dynamic LCP works",{
   }
 
   
-  # with dynamic LCP
+  # with iterative LCP
   
   # add a landing that is touching the road for testing
   land.pnts3 <- land.pnts2 %>% 
@@ -97,7 +97,7 @@ test_that("Dynamic LCP works",{
   dyLCP <- projectRoads(land.pnts3,
                costC,
                costC==0,
-               roadMethod='dlcp', roadsOut = "sf")
+               roadMethod='ilcp', roadsOut = "sf")
 
   if(doPlot){
     plotRoads(dyLCP)

@@ -42,7 +42,8 @@ landscape (cost). Typically the roads and landings are `sf` objects or
 ``` r
 library(roads)
 library(raster)
-#> Warning: package 'sp' was built under R version 4.2.3
+#> Warning: package 'raster' was built under R version 4.3.2
+#> Warning: package 'sp' was built under R version 4.3.2
 
 # data set installed with roads package
 demoScen <- prepExData(demoScen)
@@ -56,14 +57,17 @@ prRoads <- projectRoads(landings = scen$landings.points,
 
 <img src="man/figures/README-example-1.png" width="100%" />
 
-By default `projectRoads` uses a minimum spanning tree with least cost
-paths algorithm (`roadMethod = "mst"`) to connect all landings to the
-nearest existing road or other landing following the path with the
-lowest cost. Other methods available are least cost path
-(`roadMethod = "lcp"`) which connects each landing to the nearest road
-via the least cost path but independent of other landings and snapping
-(`roadMethod = "snap"`) which ignores both cost and other landings and
-simply connects each landing to the nearest road “as the crow flies”
+By default `projectRoads` uses an iterative least cost paths algorithm
+(`roadMethod = "ilcp"`) to connect each landing to the existing road by
+the lowest cost path, updating the cost after each landing is connected.
+Other methods available are: minimum spanning tree with least cost paths
+(`roadMethod = "mst"`) to connect all landings to the nearest existing
+road or other landing following the path with the lowest cost across all
+landings, least cost path (`roadMethod = "lcp"`) which connects each
+landing to the nearest road via the least cost path but independent of
+other landings and snapping (`roadMethod = "snap"`) which ignores both
+cost and other landings and simply connects each landing to the nearest
+road “as the crow flies”.
 
 For more details on how to use the package see the vignette
 `vignette("roads-vignette", package = "roads")`

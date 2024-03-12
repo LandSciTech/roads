@@ -29,8 +29,8 @@ Given an input resource development scenario, `projectRoads` will simulate new r
 
 1. **Snapping** 
 2. **Least-cost path (LCP)** 
-2. **Dynamic least-cost path (DLCP)** 
-3. **Minimum spanning tree (MST)** 
+3. **Iterative least-cost path (ILCP)** 
+4. **Minimum spanning tree (MST)** 
 
 The output of `projectRoads` is a list of simulation results referred to as a "sim list". The list contains five elements:
 
@@ -183,19 +183,19 @@ text(x = 5.75, y = 4.2, labels = 'roads', adj = c(0, 0.3), xpd = TRUE)
 
 The main disadvantage of this approach is that roads are developed independently. The least cost path may produce parallel or redundant roads since a path is made for each target to the corresponding closest point. This may mimic road development since road tenures give licensees the right to limit other industrial users from using their road (i.e., gated roads); thereby forcing the other industrial users to consider building a nearly parallel road. In some cases there will be branching, where two roads connecting two landings to an existing road network will use the same least cost path; however, this will be conditional on the spatial configuration of the local cost surface and the existing road network. Thus, the amount of road being developed from the LCP is dependent on the local cost surface and may be either higher or lower than the corresponding snap approach.
 
-### 3. Dynamic Least Cost Paths (DLCP)
+### 3. Iterative Least Cost Paths (ILCP)
 This approach reduces the number of parallel roads seen in the LCP method because a road to each landing is built sequentially and the cost in the graph is updated after each so that roads built earlier can be used to access other landings. The order is determined by the `ordering` argument to `projectRoads` and by default builds roads to the closest landings first. To prevent this and build roads in the order that the landings are supplied use `ordering = none`. 
 
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
-## project new roads using the 'DLCP' approach
-projRoads_dlcp <- roads::projectRoads(landings, 
+## project new roads using the 'ILCP' approach
+projRoads_ilcp <- roads::projectRoads(landings, 
                                         costRaster, 
                                         roadsLine, 
-                                        roadMethod = 'dlcp')
+                                        roadMethod = 'ilcp')
 
 ## plot the cost raster and overlay it with new roads
-plot(costRaster, col = rastColours, main = "'DLCP' roads")
-plot(projRoads_dlcp$roads, add = TRUE)
+plot(costRaster, col = rastColours, main = "'ILCP' roads")
+plot(projRoads_ilcp$roads, add = TRUE)
 points(landings, pch = 19, col = 'red')  ## landings points
 ## legend
 points(x = 5.5, y = 4.8, pch = 19, xpd = TRUE, col = 'red')
@@ -204,18 +204,18 @@ lines(x = c(5.3, 5.6), y = c(4.2, 4.2), lwd = 2, xpd = TRUE)
 text(x = 5.75, y = 4.2, labels = 'roads', adj = c(0, 0.3), xpd = TRUE)
 ```
 
-The DLCP approach produces more of a network rather than many parallel roads. However, it is sensitive to the ordering of the landings. Below we reverse the order of the landings but continue using the default ordering of closest first. The two closest landings are tied for distance to the road and the tie is broken by the order they are supplied in so switching that produces a different road network.   
+The ILCP approach produces more of a network rather than many parallel roads. However, it is sensitive to the ordering of the landings. Below we reverse the order of the landings but continue using the default ordering of closest first. The two closest landings are tied for distance to the road and the tie is broken by the order they are supplied in so switching that produces a different road network.   
 
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
-## project new roads using the 'DLCP' approach
-projRoads_dlcp2 <- roads::projectRoads(rev(landings), 
+## project new roads using the 'ILCP' approach
+projRoads_ilcp2 <- roads::projectRoads(rev(landings), 
                                         costRaster, 
                                         roadsLine, 
-                                        roadMethod = 'dlcp')
+                                        roadMethod = 'ilcp')
 
 ## plot the cost raster and overlay it with new roads
-plot(costRaster, col = rastColours, main = "'DLCP' roads")
-plot(projRoads_dlcp2$roads, add = TRUE)
+plot(costRaster, col = rastColours, main = "'ILCP' roads")
+plot(projRoads_ilcp2$roads, add = TRUE)
 points(landings, pch = 19, col = 'red')  ## landings points
 ## legend
 points(x = 5.5, y = 4.8, pch = 19, xpd = TRUE, col = 'red')

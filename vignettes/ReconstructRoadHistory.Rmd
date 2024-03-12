@@ -41,12 +41,12 @@ Road construction times are not always known but they can be inferred from the h
 
 
 ```{r fig.width=6,fig.height=5}
-# make "real" roads by using dlcp method
+# make "real" roads by using ilcp method
 # use all landings and build roads to closest first
 land.pnts <- scen$landings.points[scen$landings.points$set %in% c(1:4),]
 
 realRoads <- projectRoads(land.pnts, scen$cost.rast, scen$road.line,
-                          roadMethod = "dlcp")
+                          roadMethod = "ilcp")
 
 plot(scen$cost.rast, col = rastColours, main = 'Scenario')
 plot(realRoads$roads, add = TRUE)
