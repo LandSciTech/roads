@@ -10,7 +10,7 @@ projectRoads(
   landings = NULL,
   cost = NULL,
   roads = NULL,
-  roadMethod = "mst",
+  roadMethod = "ilcp",
   plotRoads = FALSE,
   mainTitle = "",
   neighbourhood = "octagon",
@@ -24,7 +24,7 @@ projectRoads(
   landings = NULL,
   cost = NULL,
   roads = NULL,
-  roadMethod = "mst",
+  roadMethod = "ilcp",
   plotRoads = FALSE,
   mainTitle = "",
   neighbourhood = "octagon",
@@ -38,7 +38,7 @@ projectRoads(
   landings = NULL,
   cost = NULL,
   roads = NULL,
-  roadMethod = "mst",
+  roadMethod = "ilcp",
   plotRoads = FALSE,
   mainTitle = "",
   neighbourhood = "octagon",
@@ -60,7 +60,7 @@ cells with a cost of 0. If existing roads do not have 0 cost set
 
 \item{roads}{sf lines, SpatialLines*, RasterLayer. Existing road network.}
 
-\item{roadMethod}{Character. Options are "mst", "dlcp", "lcp", "snap".}
+\item{roadMethod}{Character. Options are "ilcp", "mst", "lcp", "snap".}
 
 \item{plotRoads}{Boolean. Should the resulting road network be plotted.
 Default FALSE.}
@@ -88,7 +88,7 @@ is assumed to include existing roads as 0 in its cost surface. If FALSE
 then the roads will be "burned in" to the cost raster with a cost of 0.}
 
 \item{ordering}{character. The order in which roads should be built to
-landings when `roadMethod = "dlcp"`. Options are "closest" (default) where
+landings when `roadMethod = "ilcp"`. Options are "closest" (default) where
 landings closest to existing roads are accessed first, or "none" where
 landings are accessed in the order they are provided in.}
 }
@@ -118,7 +118,7 @@ Four different methods for projecting road networks have been implemented:
   \item{"lcp":} {Least Cost Path connects each landing to the closest point
   on the road by determining the least cost path based on the cost surface
   provided, it does not consider other landings}
-  \item{"dlcp":} {Dynamic Least Cost Path, same as "lcp" but it builds each
+  \item{"ilcp":} {Iterative Least Cost Path, same as "lcp" but it builds each
   path sequentially so that later roads will use earlier roads. The sequence
   of landings is determined by `ordering` and is "closest" by default, the
   other option is "none" which will use the order that landings are supplied
@@ -141,14 +141,14 @@ projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 
 demoScen <- prepExData(demoScen)
 
-### using:  scenario 1 / sf landings / least-cost path ("lcp")
+### using:  scenario 1 / sf landings / iterative least-cost path ("ilcp")
 # demo scenario 1
 scen <- demoScen[[1]]
 
 # landing set 1 of scenario 1:
 land.pnts <- scen$landings.points[scen$landings.points$set==1,]
 
-prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line, "lcp",
+prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line, "ilcp",
                          plotRoads = doPlots, mainTitle = "Scen 1: SPDF-LCP")
 
 ### using: scenario 1 / SpatRaster landings / minimum spanning tree ("mst")

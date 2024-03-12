@@ -45,7 +45,7 @@
 #'   cells with a cost of 0. If existing roads do not have 0 cost set
 #'   \code{roadsInCost = FALSE} and they will be burned in.
 #' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
-#' @param roadMethod Character. Options are "mst", "ilcp", "lcp", "snap".
+#' @param roadMethod Character. Options are "ilcp", "mst", "lcp", "snap".
 #' @param plotRoads Boolean. Should the resulting road network be plotted.
 #'   Default FALSE.
 #' @param mainTitle Character. A title for the plot
@@ -96,14 +96,14 @@
 #' 
 #' demoScen <- prepExData(demoScen)
 #' 
-#' ### using:  scenario 1 / sf landings / least-cost path ("lcp")
+#' ### using:  scenario 1 / sf landings / iterative least-cost path ("ilcp")
 #' # demo scenario 1
 #' scen <- demoScen[[1]]
 #'
 #' # landing set 1 of scenario 1:
 #' land.pnts <- scen$landings.points[scen$landings.points$set==1,]
 #'
-#' prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line, "lcp",
+#' prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line, "ilcp",
 #'                          plotRoads = doPlots, mainTitle = "Scen 1: SPDF-LCP")
 #'
 #' ### using: scenario 1 / SpatRaster landings / minimum spanning tree ("mst")

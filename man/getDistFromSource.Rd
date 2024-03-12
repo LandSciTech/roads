@@ -10,24 +10,25 @@ getDistFromSource(src, maxDist, kwidth = 3, method = "terra")
 \item{src}{SpatRaster or RasterLayer, where all values > 0 are treated as
 source locations. NA values are treated as 0s.}
 
-\item{maxDist}{Numeric, maximum distance that should be calculated in units
-of the CRS.}
+\item{maxDist}{Numeric, maximum distance that should be calculated in units of
+the CRS.}
 
 \item{kwidth}{Integer, for the "pfocal" and "terra" methods the width of the
 moving window. For the "pfocal2" method the aggregation factor.}
 
-\item{method}{Character, the method to use, one of "terra", "pfocal" or
-"pfocal2". See below for details.}
+\item{method}{Character, the method to use, currently only "terra" supported
+with the CRAN version, while "pfocal" or "pfocal2" are available with the
+development version. See below for details.}
 }
 \value{
 A SpatRaster
 }
 \description{
-This function provides three different methods for calculating the distance
-of all points on a landscape from "source" locations. This is a
-computationally intensive process so the function arguments can be used to
-balance the tradeoffs between speed and accuracy. Note the pfocal versions
-are only available in the development version of the package.
+This function provides three different methods for calculating the distance of
+all points on a landscape from "source" locations. This is a computationally
+intensive process so the function arguments can be used to balance the
+tradeoffs between speed and accuracy. Note the pfocal versions are only
+available in the development version of the package.
 }
 \details{
 The "terra" and "pfocal" methods use an iterative moving window approach and
@@ -49,10 +50,10 @@ The third method "pfocal2" uses a global moving window to calculate the
 distance to the source. This means that the moving window only needs to be
 applied once but the window size can be very large. In this case `maxDist`
 determines the total size of the window. `kwidth` can be used to reduce the
-number of cells included in the moving window by aggregating the source
-raster by a factor of `kwidth`. This will increase the speed of computation
-but will produce results with artefacts of the larger grid and which may be
-less accurate since the output raster is disaggregated using bilinear
+number of cells included in the moving window by aggregating the source raster
+by a factor of `kwidth`. This will increase the speed of computation but will
+produce results with artefacts of the larger grid and which may be less
+accurate since the output raster is disaggregated using bilinear
 interpolation.
 }
 \examples{
@@ -65,17 +66,17 @@ getDistFromSource(CLUSexample$roads, 5, 2)
  library(terra)
 
 #make example roads from scratch
-rds <- data.frame(x = 1:1000/100, y = cos(1:1000/100)) \%>\% 
-  st_as_sf(coords = c("x", "y")) \%>\% 
-  st_union() \%>\% 
+rds <- data.frame(x = 1:1000/100, y = cos(1:1000/100)) \%>\%
+  st_as_sf(coords = c("x", "y")) \%>\%
+  st_union() \%>\%
   st_cast("LINESTRING")
 
-rds_rast <- rasterize(vect(rds), 
-                      rast(nrows = 50, ncols = 50, 
-                           xmin = 0, xmax = 10, 
+rds_rast <- rasterize(vect(rds),
+                      rast(nrows = 50, ncols = 50,
+                           xmin = 0, xmax = 10,
                            ymin = -5, ymax = 5),
                       touches = TRUE)
-                      
+
 getDistFromSource(rds_rast, 5, 2)
 }
 }
