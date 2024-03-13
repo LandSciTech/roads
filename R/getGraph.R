@@ -34,7 +34,7 @@ getGraph<- function(sim, neighbourhood,method="gdistance"){
                   rook=4,
                   octagon=8,
                   queen=8)
-    x = gdistance::transition(raster::raster(sim$costSurface), transitionFunction=function(x) 1/mean(x), directions=dirs)
+    x = gdistance::transition(as(sim$costSurface, "Raster"), transitionFunction=function(x) 1/mean(x), directions=dirs)
 
     if(neighbourhood=="octagon"){
       #correct for diagonal distances and other aspects of geographic distance
