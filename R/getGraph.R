@@ -23,17 +23,23 @@
 #' @noRd
 
 getGraph<- function(sim, neighbourhood,method="gdistance"){
+  #sim = list(costSurface=costRaster);neighbourhood="octagon"
   #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.
   if(method=="gdistance"){
-    if(!is.element(neighbourhood, c("rook", "octagon"))) {
+    if(!is.element(neighbourhood, c("rook", "octagon","queen"))) {
       stop("neighbourhood type not recognized")
     }
 
     dirs = switch(neighbourhood,
                   rook=4,
-                  octagon=8)
+                  octagon=8,
+                  queen=8)
     x = gdistance::transition(raster::raster(sim$costSurface), transitionFunction=function(x) 1/mean(x), directions=dirs)
 
+    if(neighbourhood=="octagon"){
+      #correct for diagonal distances and other aspects of geographic distance
+      x = gdistance::geoCorrection(x,type="c",scl=T)
+    }
     y = gdistance::transitionMatrix(x)
     sim$g <- igraph::graph_from_adjacency_matrix(y, mode="undirected", weighted=TRUE)
     igraph::E(sim$g)$weight <- 1/igraph::E(sim$g)$weight
@@ -126,6 +132,8 @@ getGraph<- function(sim, neighbourhood,method="gdistance"){
 
       # get the edges list #==================
       edges.weight = rbind(edges_rook, edges_bishop)
+      edges.weight = edges.weight[order(from,to),]
+
     }
 
     # get rid of NAs caused by barriers. Drop the w1 and w2 costs.
