@@ -40,7 +40,7 @@ if(FALSE){
   sim = list(costSurface=costRaster)
   
   g1 = getGraph(sim,"queen")
-  gNew = getGraph(sim,"queen",method="ours")
+  gNew = getGraph(sim,"queen",method="gdistance")
   igraph::identical_graphs(g1$g,gNew$g,attrs=F)
   
   edge_attr(g1$g,"weight")=round(edge_attr(g1$g,"weight"),5)
@@ -51,7 +51,7 @@ if(FALSE){
   #queen and rook methods yield identical graphs, up to rounding errors.
   
   g1 = getGraph(sim,"octagon")
-  gNew = getGraph(sim,"octagon",method="ours")
+  gNew = getGraph(sim,"octagon",method="gdistance")
   igraph::identical_graphs(g1$g,gNew$g,attrs=F)
   
   edge_attr(g1$g,"weight")=round(edge_attr(g1$g,"weight"),0)
@@ -63,8 +63,8 @@ if(FALSE){
   #method accounts for lengths of diagonals and other geographic distortions on the grid.
   
   #speed/memory benchmarking
-  data_path_raw <- "C:/Users/endicotts/Documents/gitprojects/RoadPaper/analysis/data/raw_data/"
-  out_path <- "C:/Users/endicotts/Documents/gitprojects/RoadPaper/analysis/figures/"
+  data_path_raw <- "~/gitprojects/RoadPaper/analysis/data/raw_data/"
+  out_path <- "~/gitprojects/RoadPaper/analysis/figures/"
   
   landscape <- rast(paste0(data_path_raw, "cost_surface_bc_ha.tif"))
   
@@ -81,37 +81,46 @@ if(FALSE){
   landscape_2000 <- list(costSurface=crop(landscape, ext_2000))
   
   bm <- bench::mark(min_iterations = 1, check = FALSE,
-                    g1_100 = getGraph(landscape_100,"octagon"),
-                    gNew_100 = getGraph(landscape_100,"octagon",method="ours"),
-                    g1_500 = getGraph(landscape_500,"octagon"),
-                    gNew_500 = getGraph(landscape_500,"octagon",method="ours"),
-                    g1_1000 = getGraph(landscape_1000,"octagon"),
-                    gNew_1000 = getGraph(landscape_1000,"octagon",method="ours"),
-                    g1_2000 = getGraph(landscape_2000,"octagon"),
-                    gNew_2000 = getGraph(landscape_2000,"octagon",method="ours")
+                    old_100 = getGraph(landscape_100,"octagon",method="old"),
+                    gdistance_100 = getGraph(landscape_100,"octagon",method="gdistance"),
+                    old_500 = getGraph(landscape_500,"octagon",method="old"),
+                    gdistance_500 = getGraph(landscape_500,"octagon",method="gdistance"),
+                    old_1000 = getGraph(landscape_1000,"octagon",method="old"),
+                    gdistance_1000 = getGraph(landscape_1000,"octagon",method="gdistance"),
+                    old_2000 = getGraph(landscape_2000,"octagon",method="old"),
+                    gdistance_2000 = getGraph(landscape_2000,"octagon",method="gdistance")
   )
   
   bm
   
   # this one is supposed to tell us about max RAM used over the whole calculation
-  ram_use <- peakRAM::peakRAM(g1_100 = getGraph(landscape_100,"octagon"),
-                              gNew_100 = getGraph(landscape_100,"octagon",method="ours"),
-                              g1_500 = getGraph(landscape_500,"octagon"),
-                              gNew_500 = getGraph(landscape_500,"octagon",method="ours"),
-                              g1_1000 = getGraph(landscape_1000,"octagon"),
-                              gNew_1000 = getGraph(landscape_1000,"octagon",method="ours"),
-                              g1_2000 = getGraph(landscape_2000,"octagon"),
-                              gNew_2000 = getGraph(landscape_2000,"octagon",method="ours"))
+  ram_use <- peakRAM::peakRAM(old_100 = getGraph(landscape_100,"octagon",method="old"),
+                              gdistance_100 = getGraph(landscape_100,"octagon",method="gdistance"),
+                              old_500 = getGraph(landscape_500,"octagon",method="old"),
+                              gdistance_500 = getGraph(landscape_500,"octagon",method="gdistance"),
+                              old_1000 = getGraph(landscape_1000,"octagon",method="old"),
+                              gdistance_1000 = getGraph(landscape_1000,"octagon",method="gdistance"),
+                              old_2000 = getGraph(landscape_2000,"octagon",method="old"),
+                              gdistance_2000 = getGraph(landscape_2000,"octagon",method="gdistance"))
   
-  pdf(paste0("outputs/figures/getGraph_compareTime.pdf"),width=4,height=4)
+  ram_use %>% 
+    ggplot(aes(Function_Call, Peak_RAM_Used_MiB))+
+    geom_col()+
+    scale_x_discrete(limits =
+                       unique(ram_use$Function_Call,
+                              invert = TRUE, value = TRUE), 
+                     labels = paste0(stringr::str_extract(ram_use$Function_Call, 
+                                                          "(method=\")(.*)\"", group = 2),
+                                     "_",
+                                     stringr::str_extract(ram_use$Function_Call, "\\d\\d*")))+
+    coord_flip()
+  
   plot(bm,type="boxplot")+
     scale_x_discrete(limits =
                        unique(names(bm$expression),
                               invert = TRUE, value = TRUE))+
     xlab("method & landscape width")+ylab("processing time")
-  dev.off()
   
-  pdf(paste0("outputs/figures/focal_compareMemory.pdf"),width=4,height=4)
   bm %>%
     mutate(x = names(expression), mem = mem_alloc) %>%
     ggplot(aes(x, mem_alloc))+
@@ -123,7 +132,6 @@ if(FALSE){
                        unique(names(bm$expression),
                               invert = TRUE, value = TRUE))+
     labs(x = "method & landscape width",y="memory allocation")
-  dev.off()
   
 }
 
