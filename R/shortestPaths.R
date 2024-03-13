@@ -23,7 +23,7 @@ shortestPaths<- function(sim){
     #create a list of shortest paths
     paths <- unlist(lapply(sim$paths.list,
                            function(x){
-                             igraph::get.shortest.paths(sim$g, x[1], 
+                             igraph::shortest_paths(sim$g, x[1], 
                                                         x[2], out = "both") 
                            } ))
     
@@ -66,7 +66,7 @@ iterativeShortestPaths<- function(sim){
     
     for (i in seq_along(sim$paths.list)) {
       path.list <- sim$paths.list[[i]]
-      path <- igraph::get.shortest.paths(sim$g, path.list[1], path.list[2], out = "both")
+      path <- igraph::shortest_paths(sim$g, path.list[1], path.list[2], out = "both")
       
       path <- unlist(path)
       

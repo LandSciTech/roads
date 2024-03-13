@@ -38,7 +38,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     dplyr,
-    igraph,
+    igraph (>= 2.0.3),
     data.table,
     sf,
     units,

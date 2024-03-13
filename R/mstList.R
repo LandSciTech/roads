@@ -50,7 +50,7 @@ mstList<- function(sim){
     mst.paths <- igraph::mst(mst.g, weighted=TRUE) 
     
     # get raster indexs for mst vertices
-    paths.matrix <- igraph::get.edgelist(mst.paths, names=TRUE)
+    paths.matrix <- igraph::as_edgelist(mst.paths, names=TRUE)
     
     paths.matrix <- matrix(as.numeric(paths.matrix), ncol = 2)
 
