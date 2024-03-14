@@ -70,13 +70,14 @@ surface that defines the cost of building roads.</p>
 <span>  plotRoads <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  mainTitle <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  neighbourhood <span class="op">=</span> <span class="st">"octagon"</span>,</span>
+<span>  weightFunction <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span><span class="op">)</span> <span class="op">(</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  sim <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  roadsOut <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  roadsInCost <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ordering <span class="op">=</span> <span class="st">"closest"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing</span></span>
+<span><span class="co"># S4 method for ANY,ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing</span></span>
 <span><span class="fu">projectRoads</span><span class="op">(</span></span>
 <span>  landings <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cost <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -85,13 +86,14 @@ surface that defines the cost of building roads.</p>
 <span>  plotRoads <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  mainTitle <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  neighbourhood <span class="op">=</span> <span class="st">"octagon"</span>,</span>
+<span>  weightFunction <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span><span class="op">)</span> <span class="op">(</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  sim <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  roadsOut <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  roadsInCost <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ordering <span class="op">=</span> <span class="st">"closest"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY,ANY,ANY,ANY,ANY,ANY,ANY,list</span></span>
+<span><span class="co"># S4 method for ANY,ANY,ANY,ANY,ANY,ANY,ANY,ANY,list</span></span>
 <span><span class="fu">projectRoads</span><span class="op">(</span></span>
 <span>  landings <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cost <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -100,6 +102,7 @@ surface that defines the cost of building roads.</p>
 <span>  plotRoads <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  mainTitle <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  neighbourhood <span class="op">=</span> <span class="st">"octagon"</span>,</span>
+<span>  weightFunction <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span><span class="op">)</span> <span class="op">(</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  sim <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  roadsOut <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  roadsInCost <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -146,6 +149,12 @@ the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
 higher than horizontal/vertical weights.</p></dd>
 
 
+<dt>weightFunction</dt>
+<dd><p>function. Method for calculating the weight of an edge between two nodes
+from the value of the cost raster at each of those nodes (x1 and x2). Default is the mean.
+Functions should be symmetric, meaning that the value returned does not depend on the ordering of x1 and x2.</p></dd>
+
+
 <dt>sim</dt>
 <dd><p>list. Returned from a previous iteration of <code>projectRoads</code>.
 cost, roads, and <code>roadMethod</code> are ignored if a <code>sim</code> list is provided.</p></dd>
@@ -184,8 +193,8 @@ landings are accessed in the order they are provided in.</p></dd>
 <li><p>roadMethod: the road simulation method used.</p></li>
 <li><p>landings: the landings used in the simulation.</p></li>
 <li><p>g: the graph that describes the cost of paths between each cell in the
-      cost raster. This is updated based on the new roads so that vertices 
-      were connected by new roads now have a cost of 0. This can be used to 
+      cost raster. This is updated based on the new roads so that vertices
+      were connected by new roads now have a cost of 0. This can be used to
       avoid recomputing the graph in a simulation with multiple time steps.</p></li>
 </ul></div>
     <div class="section level2">
@@ -251,9 +260,9 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 POINT (4.5 0.5)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 7e33b98 U-W- 25 72 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 11f037e U-W- 25 72 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: weight (e/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 7e33b98:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 11f037e:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 6  1-- 7  2-- 3  2-- 6  2-- 7  2-- 8  3-- 4  3-- 7  3-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11]  3-- 9  4-- 5  4-- 8  4-- 9  4--10  5-- 9  5--10  6-- 7  6--11  6--12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 8  7--11  7--12  7--13  8-- 9  8--12  8--13  8--14  9--10  9--13</span>
@@ -263,7 +272,7 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [61] 18--23 18--24 19--20 19--23 19--24 19--25 20--24 20--25 21--22 22--23</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [71] 23--24 24--25</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span>                         </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># More realistic examples that take longer to run</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
@@ -298,7 +307,7 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-in"><span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># landing set 5 of scenario 2, as matrix:</span></span></span>
-<span class="r-in"><span><span class="va">land.mat</span>  <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span><span class="op">==</span><span class="fl">5</span>,<span class="op">]</span> <span class="op">|&gt;</span> </span></span>
+<span class="r-in"><span><span class="va">land.mat</span>  <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span><span class="op">==</span><span class="fl">5</span>,<span class="op">]</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.mat</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.rast</span>, <span class="st">"snap"</span>,</span></span>
