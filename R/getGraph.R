@@ -22,7 +22,7 @@
 #' @param neighbourhood neighbourhood type
 #' @noRd
 
-getGraph<- function(sim, neighbourhood,method="gdistance"){
+getGraph<- function(sim, neighbourhood,method="old"){
   #sim = list(costSurface=costRaster);neighbourhood="octagon"
   #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.
   if(method=="gdistance"){
