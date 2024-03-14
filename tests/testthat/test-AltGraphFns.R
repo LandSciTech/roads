@@ -62,6 +62,7 @@ if(FALSE){
   #octagon methods yield similar but not identical graphs because gdistance::geoCorrection
   #method accounts for lengths of diagonals and other geographic distortions on the grid.
 
+
   #speed/memory benchmarking
   data_path_raw <- "~/Documents/gitprojects/RoadPaper/analysis/data/raw_data/"
   out_path <- "~/Documents/gitprojects/RoadPaper/analysis/figures/"
@@ -82,12 +83,16 @@ if(FALSE){
   neighb  ="octagon"
   bm <- bench::mark(min_iterations = 1, check = FALSE,
                     old_100 = getGraph(landscape_100,neighb,method="old"),
+                    dem_100 = getGraph(landscape_100,neighb,method="old",weightFunction = slopePenaltyFn),
                     gdistance_100 = getGraph(landscape_100,neighb,method="gdistance"),
-                    old_500 = getGraph(landscape_500,"rook",method="old"),
+                    old_500 = getGraph(landscape_500,neighb,method="old"),
+                    dem_500 = getGraph(landscape_500,neighb,method="old",weightFunction=slopePenaltyFn),
                     gdistance_500 = getGraph(landscape_500,neighb,method="gdistance"),
-                    old_1000 = getGraph(landscape_1000,"rook",method="old"),
+                    old_1000 = getGraph(landscape_1000,neighb,method="old"),
+                    dem_1000 = getGraph(landscape_1000,neighb,method="old",weightFunction=slopePenaltyFn),
                     gdistance_1000 = getGraph(landscape_1000,neighb,method="gdistance"),
-                    old_2000 = getGraph(landscape_2000,"rook",method="old"),
+                    old_2000 = getGraph(landscape_2000,neighb,method="old"),
+                    dem_2000 = getGraph(landscape_2000,neighb,method="old",weightFunction=slopePenaltyFn),
                     gdistance_2000 = getGraph(landscape_2000,neighb,method="gdistance")
   )
 
