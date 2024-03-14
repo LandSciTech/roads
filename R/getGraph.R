@@ -159,3 +159,28 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     return(invisible(sim))
   }
 }
+
+
+
+#' Grade penalty edge weight function
+#'
+#' Method for calculating the weight of an edge between two nodes
+#' from the value of the input raster at each of those nodes (x1 and x2), designed for DEM input.
+#' This is a simplified version of the grade penalty approach taken by Anderson and Nelson:
+#' doesn't distinguish between adverse and favourable grades.
+#' construction cost values from interior appraisal manual.
+#' ignores (unknown) grade penalties beside roads in order to make do with a single input layer.
+#'
+#' @param x1,x2 Value of the input raster at two nodes. A difference of 1 implies a 100% slope.
+#' @param limit Maximum grade (%) on which roads can be built.
+#' @param penalty Cost increase associated with each additional % increase in road grade.
+#' @noRd
+slopePenaltyFn<-function(x1,x2,limit=10,penalty=504){
+  grade = 100*abs(x1-x2)*(pmin(x1,x2)!=0) #percent slope. if one of the locations is a road, don't apply grade penalty
+  slp = 16178+grade*penalty
+  slp[grade>limit]=NA
+  slp[pmax(x1,x2)==0]=0 # if both 0 then this is an existing road link
+
+  return(slp)
+}
+
