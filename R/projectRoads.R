@@ -202,7 +202,7 @@ setMethod(
                         roadMethod = roadMethod,
                         landings = landings,
                         roadsInCost = roadsInCost)
-
+# browser()
     sim$landingsIn <- sim$landings
 
     # make sure the name of the sf_column is "geometry"
@@ -211,9 +211,10 @@ setMethod(
       sim$landings <- rename(sim$landings, geometry = tidyselect::all_of(geoColInL))
     }
 
-    #library(dplyr);library(sf)
     geoColInR <- attr(sim$roads, "sf_column")
-    sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
+    if(geoColInR != "geometry"){
+      sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
+    }
 
     sim$g <- getGraph(sim, neighbourhood,weightFunction=weightFunction)
 
@@ -270,7 +271,7 @@ setMethod(
       plotRoads(sim, mainTitle)
     }
 
-    return(sim)
+    return(as.list(sim))
   })
 
 #' @rdname projectRoads
@@ -285,9 +286,11 @@ setMethod(
     } else if(is.null(roadsOut)) {
       roadsOut <- "sf"
     }
+    
+    sim <- list2env(sim)
 
     # add landings to sim list. Should involve all the same checks as before
-    sim <- buildSimList(sim$roads, sim$cost, sim$roadMethod, landings,
+    sim <- buildSimList(sim$roads, sim$costSurface, sim$roadMethod, landings,
                         roadsInCost = TRUE, sim = sim)
 
     sim$landingsIn <- sim$landings
@@ -356,7 +359,7 @@ setMethod(
       plotRoads(sim, mainTitle)
     }
 
-    return(sim)
+    return(as.list(sim))
   })
 
 outputRoads <- function(sim, roadsOut){

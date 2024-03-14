@@ -180,7 +180,7 @@ buildSimList <- function(roads, cost, roadMethod, landings, roadsInCost,
   }
 
   if(is.null(sim)){
-    sim <- list(roads = roads, costSurface = cost, 
+    sim <- rlang::env(roads = roads, costSurface = cost, 
                 roadMethod = roadMethod, 
                 landings = landings)
   } else {
