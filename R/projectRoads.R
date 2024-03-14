@@ -150,7 +150,7 @@ setGeneric('projectRoads', function(landings = NULL,
                                     plotRoads = FALSE,
                                     mainTitle = "",
                                     neighbourhood = "octagon",
-                                    weightFunction=function(x1,x2) (x1+x2)/2
+                                    weightFunction=function(x1,x2) (x1+x2)/2,
                                     sim = NULL,
                                     roadsOut = NULL,
                                     roadsInCost = TRUE,
@@ -277,7 +277,7 @@ setMethod(
 setMethod(
   'projectRoads', signature(sim = "list"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, sim, roadsOut, roadsInCost, ordering) {
+           neighbourhood, weightFunction,sim, roadsOut, roadsInCost, ordering) {
 
     # If roads in are raster return as raster
     if((is(sim$roads, "Raster") || is(sim$roads, "SpatRaster")) && is.null(roadsOut) ){

@@ -2,8 +2,8 @@
 % Please edit documentation in R/projectRoads.R
 \name{projectRoads}
 \alias{projectRoads}
-\alias{projectRoads,ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing-method}
-\alias{projectRoads,ANY,ANY,ANY,ANY,ANY,ANY,ANY,list-method}
+\alias{projectRoads,ANY,ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing-method}
+\alias{projectRoads,ANY,ANY,ANY,ANY,ANY,ANY,ANY,ANY,list-method}
 \title{Project road network}
 \usage{
 projectRoads(
@@ -14,13 +14,14 @@ projectRoads(
   plotRoads = FALSE,
   mainTitle = "",
   neighbourhood = "octagon",
+  weightFunction = function(x1, x2) (x1 + x2)/2,
   sim = NULL,
   roadsOut = NULL,
   roadsInCost = TRUE,
   ordering = "closest"
 )
 
-\S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing}(
+\S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing}(
   landings = NULL,
   cost = NULL,
   roads = NULL,
@@ -28,13 +29,14 @@ projectRoads(
   plotRoads = FALSE,
   mainTitle = "",
   neighbourhood = "octagon",
+  weightFunction = function(x1, x2) (x1 + x2)/2,
   sim = NULL,
   roadsOut = NULL,
   roadsInCost = TRUE,
   ordering = "closest"
 )
 
-\S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,list}(
+\S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,ANY,list}(
   landings = NULL,
   cost = NULL,
   roads = NULL,
@@ -42,6 +44,7 @@ projectRoads(
   plotRoads = FALSE,
   mainTitle = "",
   neighbourhood = "octagon",
+  weightFunction = function(x1, x2) (x1 + x2)/2,
   sim = NULL,
   roadsOut = NULL,
   roadsInCost = TRUE,
@@ -72,6 +75,10 @@ should be considered adjacent. 'octagon' option is a modified version of
 the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
 higher than horizontal/vertical weights.}
 
+\item{weightFunction}{function. Method for calculating the weight of an edge between two nodes
+from the value of the cost raster at each of those nodes (x1 and x2). Default is the mean.
+Functions should be symmetric, meaning that the value returned does not depend on the ordering of x1 and x2.}
+
 \item{sim}{list. Returned from a previous iteration of \code{projectRoads}.
 cost, roads, and \code{roadMethod} are ignored if a \code{sim} list is provided.}
 
@@ -101,8 +108,8 @@ a list with components:
 \item{roadMethod: }{the road simulation method used.}
 \item{landings: }{the landings used in the simulation.}
 \item{g: }{the graph that describes the cost of paths between each cell in the
-      cost raster. This is updated based on the new roads so that vertices 
-      were connected by new roads now have a cost of 0. This can be used to 
+      cost raster. This is updated based on the new roads so that vertices
+      were connected by new roads now have a cost of 0. This can be used to
       avoid recomputing the graph in a simulation with multiple time steps.}
 }
 }
@@ -134,7 +141,7 @@ doPlots <- interactive()
 
 projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
              "lcp", plotRoads = doPlots, mainTitle = "CLUSexample")
-                         
+
 
 # More realistic examples that take longer to run
 \donttest{
@@ -167,7 +174,7 @@ prRes <- projectRoads(land.rLyr, scen$cost.rast, scen$road.line, "mst",
 scen <- demoScen[[2]]
 
 # landing set 5 of scenario 2, as matrix:
-land.mat  <- scen$landings.points[scen$landings.points$set==5,] |> 
+land.mat  <- scen$landings.points[scen$landings.points$set==5,] |>
   sf::st_coordinates()
 
 prRes <- projectRoads(land.mat, scen$cost.rast, scen$road.rast, "snap",
