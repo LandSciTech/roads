@@ -22,7 +22,7 @@
 #' @param neighbourhood neighbourhood type
 #' @noRd
 
-getGraph<- function(sim, neighbourhood,method="old"){
+getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1,x2) (x1+x2)/2){
   #sim = list(costSurface=costRaster);neighbourhood="octagon"
   #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.
   if(method=="gdistance"){
@@ -34,7 +34,7 @@ getGraph<- function(sim, neighbourhood,method="old"){
                   rook=4,
                   octagon=8,
                   queen=8)
-    x = gdistance::transition(as(sim$costSurface, "Raster"), transitionFunction=function(x) 1/mean(x), directions=dirs)
+    x = gdistance::transition(as(sim$costSurface, "Raster"), transitionFunction=function(x) 1/weightFunction(x[1],x[2]), directions=dirs)
 
     if(neighbourhood=="octagon"){
       #correct for diagonal distances and other aspects of geographic distance
@@ -89,7 +89,7 @@ getGraph<- function(sim, neighbourhood,method="old"){
     data.table::setnames(edges_rook, c("from", "to", "w1", "w2"))
 
     # take the average cost between the two pixels and remove w1 w2
-    edges_rook[,`:=`(weight = (w1 + w2)/ 2,
+    edges_rook[,`:=`(weight = weightFunction(w1,w2),
                      w1 = NULL,
                      w2 = NULL)]
 
@@ -126,7 +126,7 @@ getGraph<- function(sim, neighbourhood,method="old"){
       data.table::setnames(edges_bishop, c("from", "to", "w1", "w2"))
 
       # take the average cost between the two pixels and remove w1 w2
-      edges_bishop[,`:=`(weight = (w1 + w2)/ 2,
+      edges_bishop[,`:=`(weight = weightFunction(w1,w2),
                          w1 = NULL,
                          w2 = NULL)]
 

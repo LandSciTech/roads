@@ -68,7 +68,6 @@ if(FALSE){
 
   landscape <- rast(paste0(data_path_raw, "cost_surface_bc_ha.tif"))
 
-  str(landscape)
   base_point <- c((1881188-159588)/2, (1748188-173788)/2)
   the_res <- res(landscape)[1]
   ext_100 <- ext(c(base_point, base_point+100*the_res)[c(1,3,2,4)])
@@ -77,10 +76,10 @@ if(FALSE){
   landscape_500 <- list(costSurface=crop(landscape, ext_500))
   ext_1000 <- ext(c(base_point, base_point+1000*the_res)[c(1,3,2,4)])
   landscape_1000 <- list(costSurface=crop(landscape, ext_1000))
-  ext_2000 <- ext(c(base_point, base_point+2000*the_res)[c(1,3,2,4)])
+  ext_2000 <- ext(c(base_point, base_point+200*the_res)[c(1,3,2,4)])
   landscape_2000 <- list(costSurface=crop(landscape, ext_2000))
 
-  neighb  ="rook"
+  neighb  ="octagon"
   bm <- bench::mark(min_iterations = 1, check = FALSE,
                     old_100 = getGraph(landscape_100,neighb,method="old"),
                     gdistance_100 = getGraph(landscape_100,neighb,method="gdistance"),

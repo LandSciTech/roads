@@ -1,13 +1,13 @@
 # Copyright © Her Majesty the Queen in Right of Canada as represented by the
 # Minister of the Environment 2021/© Sa Majesté la Reine du chef du Canada
 # représentée par le ministre de l'Environnement 2021.
-# 
+#
 #     Licensed under the Apache License, Version 2.0 (the "License");
 #     you may not use this file except in compliance with the License.
 #     You may obtain a copy of the License at
-# 
+#
 #       http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #     Unless required by applicable law or agreed to in writing, software
 #     distributed under the License is distributed on an "AS IS" BASIS,
 #     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@
 #'   determining the least cost path to the road or other landings based on the
 #'   cost surface}
 #' }
-#' 
+#'
 #' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
 #'   SpatialPoints*, matrix, containing features to be connected
 #'   to the road network. Matrix should contain columns x, y with coordinates,
@@ -53,6 +53,9 @@
 #'   should be considered adjacent. 'octagon' option is a modified version of
 #'   the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
 #'   higher than horizontal/vertical weights.
+#' @param weightFunction function. Method for calculating the weight of an edge between two nodes
+#' from the value of the cost raster at each of those nodes (x1 and x2). Default is the mean.
+#' Functions should be symmetric, meaning that the value returned does not depend on the ordering of x1 and x2.
 #' @param sim list. Returned from a previous iteration of \code{projectRoads}.
 #'   cost, roads, and \code{roadMethod} are ignored if a \code{sim} list is provided.
 #' @param roadsOut Character. Either "raster", "sf" or NULL. If "raster" roads
@@ -70,7 +73,7 @@
 #'   landings closest to existing roads are accessed first, or "none" where
 #'   landings are accessed in the order they are provided in.
 #'
-#' @return 
+#' @return
 #' a list with components:
 #' \itemize{
 #' \item{roads: }{the projected road network, including new and input roads.}
@@ -79,23 +82,23 @@
 #' \item{roadMethod: }{the road simulation method used.}
 #' \item{landings: }{the landings used in the simulation.}
 #' \item{g: }{the graph that describes the cost of paths between each cell in the
-#'       cost raster. This is updated based on the new roads so that vertices 
-#'       were connected by new roads now have a cost of 0. This can be used to 
+#'       cost raster. This is updated based on the new roads so that vertices
+#'       were connected by new roads now have a cost of 0. This can be used to
 #'       avoid recomputing the graph in a simulation with multiple time steps.}
 #' }
 #' @examples
 #' CLUSexample <- prepExData(CLUSexample)
 #' doPlots <- interactive()
-#' 
+#'
 #' projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 #'              "lcp", plotRoads = doPlots, mainTitle = "CLUSexample")
-#'                          
+#'
 #'
 #'# More realistic examples that take longer to run
 #'\donttest{
-#' 
+#'
 #' demoScen <- prepExData(demoScen)
-#' 
+#'
 #' ### using:  scenario 1 / sf landings / iterative least-cost path ("ilcp")
 #' # demo scenario 1
 #' scen <- demoScen[[1]]
@@ -122,7 +125,7 @@
 #' scen <- demoScen[[2]]
 #'
 #' # landing set 5 of scenario 2, as matrix:
-#' land.mat  <- scen$landings.points[scen$landings.points$set==5,] |> 
+#' land.mat  <- scen$landings.points[scen$landings.points$set==5,] |>
 #'   sf::st_coordinates()
 #'
 #' prRes <- projectRoads(land.mat, scen$cost.rast, scen$road.rast, "snap",
@@ -137,9 +140,9 @@
 #' prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
 #' }
-#' 
+#'
 #' @export
-#' 
+#'
 setGeneric('projectRoads', function(landings = NULL,
                                     cost = NULL,
                                     roads = NULL,
@@ -147,9 +150,10 @@ setGeneric('projectRoads', function(landings = NULL,
                                     plotRoads = FALSE,
                                     mainTitle = "",
                                     neighbourhood = "octagon",
+                                    weightFunction=function(x1,x2) (x1+x2)/2
                                     sim = NULL,
                                     roadsOut = NULL,
-                                    roadsInCost = TRUE, 
+                                    roadsInCost = TRUE,
                                     ordering = "closest")
   standardGeneric('projectRoads'))
 
@@ -157,7 +161,7 @@ setGeneric('projectRoads', function(landings = NULL,
 setMethod(
   'projectRoads', signature(sim = "missing"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, sim, roadsOut, roadsInCost, ordering) {
+           neighbourhood, weightFunction, sim, roadsOut, roadsInCost, ordering) {
     #landings=outObj$landings;cost=outObj$cost;roads=outObj$roads;roadMethod="mst";roadsOut = "raster"
     #mainTitle = NULL;neighbourhood = "queen";sim = NULL;roadsInCost = TRUE
 
@@ -175,12 +179,12 @@ setMethod(
       roadMethod <- "ilcp"
       message("roadMethod 'dlcp' has been renamed. Changing to 'ilcp' instead.")
     }
-    
+
     if(!is.element(roadMethod,recognizedRoadMethods)){
       stop("Invalid road method ", roadMethod, ". Options are:",
            paste(recognizedRoadMethods, collapse=','))
     }
-    
+
     # if method is not ilcp ignore ordering
     if(roadMethod != "ilcp"){
       ordering <- "none"
@@ -198,7 +202,7 @@ setMethod(
                         roadMethod = roadMethod,
                         landings = landings,
                         roadsInCost = roadsInCost)
-    
+
     sim$landingsIn <- sim$landings
 
     # make sure the name of the sf_column is "geometry"
@@ -211,7 +215,7 @@ setMethod(
     geoColInR <- attr(sim$roads, "sf_column")
     sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
 
-    sim <- getGraph(sim, neighbourhood)
+    sim <- getGraph(sim, neighbourhood,weightFunction=weightFunction)
 
     sim <- switch(sim$roadMethod,
                   snap= {
@@ -224,17 +228,17 @@ setMethod(
 
                     # includes update graph
                     sim <- shortestPaths(sim)
-                    
+
                     sim <- outputRoads(sim, roadsOut)
                   },
                   ilcp ={
                     sim <- getClosestRoad(sim, ordering)
-                    
+
                     sim <- lcpList(sim)
-                    
+
                     # includes iterative update graph
                     sim <- iterativeShortestPaths(sim)
-                    
+
                     sim <- outputRoads(sim, roadsOut)
                   },
                   mst ={
@@ -246,7 +250,7 @@ setMethod(
 
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)
-                    
+
                     sim <- outputRoads(sim, roadsOut)
                   }
     )
@@ -261,11 +265,11 @@ setMethod(
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
     sim$landingsIn <- NULL
-    
+
     if(plotRoads){
       plotRoads(sim, mainTitle)
     }
-    
+
     return(sim)
   })
 
@@ -283,11 +287,11 @@ setMethod(
     }
 
     # add landings to sim list. Should involve all the same checks as before
-    sim <- buildSimList(sim$roads, sim$cost, sim$roadMethod, landings, 
+    sim <- buildSimList(sim$roads, sim$cost, sim$roadMethod, landings,
                         roadsInCost = TRUE, sim = sim)
-    
+
     sim$landingsIn <- sim$landings
-    
+
     # make sure the name of the sf_column is "geometry"
     geoColInL <- attr(sim$landings, "sf_column")
     if(geoColInL != "geometry"){
@@ -296,7 +300,7 @@ setMethod(
 
     geoColInR <- attr(sim$roads, "sf_column")
     sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
-    
+
     sim <- switch(sim$roadMethod,
                   snap= {
                     sim <- buildSnapRoads(sim, roadsOut)
@@ -308,17 +312,17 @@ setMethod(
 
                     # includes update graph
                     sim <- shortestPaths(sim)
-                    
+
                     sim <- outputRoads(sim, roadsOut)
                   },
                   ilcp ={
                     sim <- getClosestRoad(sim, ordering)
-                    
+
                     sim <- lcpList(sim)
-                    
+
                     # includes iterative update graph
                     sim <- iterativeShortestPaths(sim)
-                    
+
                     sim <- outputRoads(sim, roadsOut)
                   },
                   mst ={
@@ -330,7 +334,7 @@ setMethod(
 
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)
-                    
+
                     sim <- outputRoads(sim, roadsOut)
                   }
     )
@@ -347,7 +351,7 @@ setMethod(
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
     sim$landingsIn <- NULL
-    
+
     if(plotRoads){
       plotRoads(sim, mainTitle)
     }
@@ -364,14 +368,14 @@ outputRoads <- function(sim, roadsOut){
     # add new roads to existing
     sim$roads <- bind_rows(sim$roads, new_roads)
   }
-  
+
   sim$costSurface <- sim$costSurfaceNew
   sim$costSurfaceNew <- NULL
-  
+
   # remove no longer needed parts of list that aren't being used for update
   sim$roads.close.XY <- NULL
   sim$paths.v <- NULL
   sim$paths.list <- NULL
-  
+
   return(sim)
 }
