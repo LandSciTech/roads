@@ -215,7 +215,7 @@ setMethod(
     geoColInR <- attr(sim$roads, "sf_column")
     sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
 
-    sim <- getGraph(sim, neighbourhood,weightFunction=weightFunction)
+    sim$g <- getGraph(sim, neighbourhood,weightFunction=weightFunction)
 
     sim <- switch(sim$roadMethod,
                   snap= {
