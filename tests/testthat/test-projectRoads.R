@@ -119,3 +119,22 @@ test_that("input types are tested", {
                             "string", plotRoads = doPlot),
                "must be either")
 })
+
+
+
+if(FALSE){
+  # checking memory allocations
+  bm1 <- bench::mark(projectRoads(scen$landings.points, scen$cost.rast,
+                                  scen$road.line, plotRoads = doPlot))
+  
+  # change sim to an env
+  bm2 <- bench::mark(projectRoads(scen$landings.points, scen$cost.rast,
+                                  scen$road.line, plotRoads = doPlot))
+  
+  # look at top memory allocs
+  bm1$memory[[1]] %>% as.data.frame() %>% slice_max(bytes, n = 5)
+  bm2$memory[[1]] %>% as.data.frame() %>% slice_max(bytes, n = 5)
+  
+  # was able to reduce so only copies graph once in each iteration of iterativeShortestPAth
+  
+}
