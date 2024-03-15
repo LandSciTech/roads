@@ -72,6 +72,7 @@
 #'   landings when `roadMethod = "ilcp"`. Options are "closest" (default) where
 #'   landings closest to existing roads are accessed first, or "none" where
 #'   landings are accessed in the order they are provided in.
+#' @param ... Optional additional arguments to weightFunction
 #'
 #' @return
 #' a list with components:
@@ -154,14 +155,15 @@ setGeneric('projectRoads', function(landings = NULL,
                                     sim = NULL,
                                     roadsOut = NULL,
                                     roadsInCost = TRUE,
-                                    ordering = "closest")
+                                    ordering = "closest",
+                                    ...)
   standardGeneric('projectRoads'))
 
 #' @rdname projectRoads
 setMethod(
   'projectRoads', signature(sim = "missing"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, weightFunction, sim, roadsOut, roadsInCost, ordering) {
+           neighbourhood, weightFunction, sim, roadsOut, roadsInCost, ordering,...) {
     #landings=outObj$landings;cost=outObj$cost;roads=outObj$roads;roadMethod="mst";roadsOut = "raster"
     #mainTitle = NULL;neighbourhood = "queen";sim = NULL;roadsInCost = TRUE
 
@@ -216,7 +218,7 @@ setMethod(
       sim$roads <- select(sim$roads, everything(), geometry = tidyselect::all_of(geoColInR))
     }
 
-    sim$g <- getGraph(sim, neighbourhood,weightFunction=weightFunction)
+    sim$g <- getGraph(sim, neighbourhood,weightFunction=weightFunction,...)
 
     sim <- switch(sim$roadMethod,
                   snap= {
@@ -278,7 +280,7 @@ setMethod(
 setMethod(
   'projectRoads', signature(sim = "list"),
   function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, weightFunction,sim, roadsOut, roadsInCost, ordering) {
+           neighbourhood, weightFunction,sim, roadsOut, roadsInCost, ordering,...) {
 
     # If roads in are raster return as raster
     if((is(sim$roads, "Raster") || is(sim$roads, "SpatRaster")) && is.null(roadsOut) ){
@@ -286,7 +288,7 @@ setMethod(
     } else if(is.null(roadsOut)) {
       roadsOut <- "sf"
     }
-    
+
     sim <- list2env(sim)
 
     # add landings to sim list. Should involve all the same checks as before

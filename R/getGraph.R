@@ -22,7 +22,7 @@
 #' @param neighbourhood neighbourhood type
 #' @noRd
 
-getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1,x2) (x1+x2)/2){
+getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1,x2) (x1+x2)/2,...){
   #sim = list(costSurface=costRaster);neighbourhood="octagon"
   #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.
   if(method=="gdistance"){
@@ -34,7 +34,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
                   rook=4,
                   octagon=8,
                   queen=8)
-    x = gdistance::transition(as(sim$costSurface, "Raster"), transitionFunction=function(x) 1/weightFunction(x[1],x[2]), directions=dirs)
+    x = gdistance::transition(as(sim$costSurface, "Raster"), transitionFunction=function(x,...) 1/weightFunction(x[1],x[2],...), directions=dirs)
 
     if(neighbourhood=="octagon"){
       #correct for diagonal distances and other aspects of geographic distance
@@ -89,7 +89,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     data.table::setnames(edges.weight, c("from", "to", "w1", "w2"))
 
     # take the average cost between the two pixels and remove w1 w2
-    edges.weight[,`:=`(weight = weightFunction(w1,w2),
+    edges.weight[,`:=`(weight = weightFunction(w1,w2,...),
                      w1 = NULL,
                      w2 = NULL)]
 
@@ -124,7 +124,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
       data.table::setnames(edges_bishop, c("from", "to", "w1", "w2"))
 
       # take the average cost between the two pixels and remove w1 w2
-      edges_bishop[,`:=`(weight = weightFunction(w1,w2),
+      edges_bishop[,`:=`(weight = weightFunction(w1,w2,...),
                          w1 = NULL,
                          w2 = NULL)]
 
@@ -156,36 +156,5 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     rm(edges.weight)
     return(invisible(g))
   }
-}
-
-
-
-#' Grade penalty edge weight function
-#'
-#' Method for calculating the weight of an edge between two nodes
-#' from the value of the input raster at each of those nodes (x1 and x2), designed for a single scaled DEM input.
-#' The method assumes an input raster in which:
-#'   NA indicates a road cannot be built
-#'   Negative values are costs for crossing streams or other barriers that are crossable but expensive. Edges that link to barrier penalty (negative value) nodes are assigned the largest barrier penalty weight.
-#'   All other values are interpreted as scaled elevation - a difference of 1 between two adjacent nodes is interpreted as 100% grade.
-#' This is a simplified version of the grade penalty approach taken by Anderson and Nelson:
-#' The approach does not distinguish between adverse and favourable grades.
-#' Construction cost values are from the BC interior appraisal manual.
-#' The approach ignores (unknown) grade penalties beside roads and barriers in order to
-#' avoid increased memory and computational burden associated with multiple input rasters.
-#'
-#' @param x1,x2 Value of the input raster at two nodes. A difference of 1 implies a 100% slope.
-#' @param baseCost Construction cost of 0% grade road.
-#' @param limit Maximum grade (%) on which roads can be built.
-#' @param penalty Cost increase associated with each additional % increase in road grade.
-#' @export
-slopePenaltyFn<-function(x1,x2,baseCost = 16178,limit=10,penalty=504){
-  #If one of the nodes is a road or barrier ignore grade penalty
-  grade = 100*abs(x1-x2) #percent slope.
-  slp = baseCost+grade*penalty
-  slp[grade>limit]=NA
-
-  slp[pmin(x1,x2)<=0] = abs(pmin(x1,x2)) # if both 0 this is an existing road link. Otherwise it is a barrier.
-  return(slp)
 }
 

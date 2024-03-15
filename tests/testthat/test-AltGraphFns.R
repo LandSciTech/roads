@@ -39,8 +39,8 @@ if(FALSE){
 
   sim = list(costSurface=costRaster)
 
-  g1 = getGraph(sim,"queen")
-  gNew = getGraph(sim,"queen",method="gdistance")
+  g1$g = getGraph(sim,"queen")
+  gNew$g = getGraph(sim,"queen",method="gdistance")
   igraph::identical_graphs(g1$g,gNew$g,attrs=F)
 
   edge_attr(g1$g,"weight")=round(edge_attr(g1$g,"weight"),5)
@@ -50,8 +50,8 @@ if(FALSE){
   igraph::identical_graphs(g1$g,gNew$g,attrs=T)
   #queen and rook methods yield identical graphs, up to rounding errors.
 
-  g1 = getGraph(sim,"octagon")
-  gNew = getGraph(sim,"octagon",method="gdistance")
+  g1$g = getGraph(sim,"octagon")
+  gNew$g = getGraph(sim,"octagon",method="gdistance")
   igraph::identical_graphs(g1$g,gNew$g,attrs=F)
 
   edge_attr(g1$g,"weight")=round(edge_attr(g1$g,"weight"),0)
@@ -78,6 +78,9 @@ if(FALSE){
   landscape_1000 <- list(costSurface=crop(landscape, ext_1000))
   ext_2000 <- ext(c(base_point, base_point+200*the_res)[c(1,3,2,4)])
   landscape_2000 <- list(costSurface=crop(landscape, ext_2000))
+
+  rr = getGraph(landscape_100,neighb,method="old",weightFunction=slopePenaltyFn,limitCost=65000)
+  igraph::is_connected(rr)
 
   neighb  ="octagon"
   bm <- bench::mark(min_iterations = 1, check = FALSE,

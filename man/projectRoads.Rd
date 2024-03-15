@@ -18,7 +18,8 @@ projectRoads(
   sim = NULL,
   roadsOut = NULL,
   roadsInCost = TRUE,
-  ordering = "closest"
+  ordering = "closest",
+  ...
 )
 
 \S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,ANY,missing}(
@@ -33,7 +34,8 @@ projectRoads(
   sim = NULL,
   roadsOut = NULL,
   roadsInCost = TRUE,
-  ordering = "closest"
+  ordering = "closest",
+  ...
 )
 
 \S4method{projectRoads}{ANY,ANY,ANY,ANY,ANY,ANY,ANY,ANY,list}(
@@ -48,7 +50,8 @@ projectRoads(
   sim = NULL,
   roadsOut = NULL,
   roadsInCost = TRUE,
-  ordering = "closest"
+  ordering = "closest",
+  ...
 )
 }
 \arguments{
@@ -98,6 +101,8 @@ then the roads will be "burned in" to the cost raster with a cost of 0.}
 landings when `roadMethod = "ilcp"`. Options are "closest" (default) where
 landings closest to existing roads are accessed first, or "none" where
 landings are accessed in the order they are provided in.}
+
+\item{...}{Optional additional arguments to weightFunction}
 }
 \value{
 a list with components:
