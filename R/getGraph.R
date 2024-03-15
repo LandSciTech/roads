@@ -41,14 +41,14 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
       x = gdistance::geoCorrection(x,type="c",scl=T)
     }
     y = gdistance::transitionMatrix(x)
-    sim$g <- igraph::graph_from_adjacency_matrix(y, mode="undirected", weighted=TRUE)
-    igraph::E(sim$g)$weight <- 1/igraph::E(sim$g)$weight
-    return(invisible(sim))
+    g <- igraph::graph_from_adjacency_matrix(y, mode="undirected", weighted=TRUE)
+    
+    igraph::E(g)$weight <- 1/igraph::E(g)$weight
+    return(invisible(g))
   }else{
     # define global varaiables to avoid NOTEs on R CMD check
     w1 <- w2 <- NULL
 
-    sim$paths.v <- NULL
     # prepare the cost surface raster #===========
     # get cost as data.table from raster
     weightV <- data.table(weight = terra::values(sim$costSurface, mat = FALSE))
@@ -144,17 +144,17 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     rm(edges_bishop, edges, weightV, mW, nc, ncel)
 
     # make the graph #================
-    edge_mat <- as.matrix(edges.weight)[,1:2]
+    edge_mat <- as.matrix(edges.weight)
     # browser()
     # create the graph using to and from columns. Requires a matrix input
-    sim$g <- igraph::graph.edgelist(edge_mat, dir = FALSE)
+    g <- igraph::graph.edgelist(edge_mat[,1:2], dir = FALSE)
 
     # assign weights to the graph. Requires a matrix input
-    igraph::E(sim$g)$weight <- as.matrix(edges.weight)[,3]
+    igraph::E(g)$weight <- edge_mat[,3]
 
     #------clean up
     rm(edges.weight)
-    return(invisible(sim))
+    return(invisible(g))
   }
 }
 
