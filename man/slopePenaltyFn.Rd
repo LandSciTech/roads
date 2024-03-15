@@ -7,7 +7,6 @@
 slopePenaltyFn(
   x1,
   x2,
-  resolution,
   baseCost = 16178,
   limit = 20,
   penalty = 504,

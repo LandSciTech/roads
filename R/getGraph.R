@@ -25,6 +25,7 @@
 getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1,x2) (x1+x2)/2,...){
   #sim = list(costSurface=costRaster);neighbourhood="octagon"
   #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.
+  resolution=res(sim$costSurface)[1]
   if(method=="gdistance"){
     if(!is.element(neighbourhood, c("rook", "octagon","queen"))) {
       stop("neighbourhood type not recognized")
