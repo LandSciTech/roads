@@ -49,7 +49,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Grade penalty edge weight function</h1>
-      <small class="dont-index">Source: <a href="https://github.com/LandSciTech/roads/blob/HEAD/R/getGraph.R" class="external-link"><code>R/getGraph.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/LandSciTech/roads/blob/HEAD/R/weightFunctions.R" class="external-link"><code>R/weightFunctions.R</code></a></small>
       <div class="d-none name"><code>slopePenaltyFn.Rd</code></div>
     </div>
 
@@ -58,14 +58,21 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">slopePenaltyFn</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span>, baseCost <span class="op">=</span> <span class="fl">16178</span>, limit <span class="op">=</span> <span class="fl">10</span>, penalty <span class="op">=</span> <span class="fl">504</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">slopePenaltyFn</span><span class="op">(</span></span>
+<span>  <span class="va">x1</span>,</span>
+<span>  <span class="va">x2</span>,</span>
+<span>  baseCost <span class="op">=</span> <span class="fl">16178</span>,</span>
+<span>  limit <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  penalty <span class="op">=</span> <span class="fl">504</span>,</span>
+<span>  limitCost <span class="op">=</span> <span class="cn">NA</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x1, x2</dt>
 <dd><p>Value of the input raster at two nodes. A difference of 1 implies a 100<!-- % slope.} --></p>
-<p>baseCostConstruction cost of 0<!-- % grade road.} -->limitMaximum grade (<!-- %) on which roads can be built.} -->penaltyCost increase associated with each additional <!-- % increase in road grade.} -->Method for calculating the weight of an edge between two nodes
+<p>baseCostConstruction cost of 0<!-- % grade road.} -->limitMaximum grade (<!-- %) on which roads can be built.} -->penaltyCost increase associated with each additional <!-- % increase in road grade.} -->limitCostValue assigned to edges that exceed the grade limit. Set to a high (not NA) value ifMethod for calculating the weight of an edge between two nodes
 from the value of the input raster at each of those nodes (x1 and x2), designed for a single scaled DEM input.
 The method assumes an input raster in which:
   NA indicates a road cannot be built
