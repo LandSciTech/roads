@@ -22,11 +22,11 @@
 #' @param neighbourhood neighbourhood type
 #' @noRd
 
-getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1,x2) (x1+x2)/2,...){
+getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1,x2,...) (x1+x2)/2,...){
   #sim = list(costSurface=costRaster);neighbourhood="octagon"
   #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.  resolution=res(sim$costSurface)[1]
-  resolution=res(sim$costSurface)[1]
 
+  resolution = res(sim$costSurface)[1]
   if(method=="gdistance"){
     if(!is.element(neighbourhood, c("rook", "octagon","queen"))) {
       stop("neighbourhood type not recognized")
@@ -36,7 +36,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
                   rook=4,
                   octagon=8,
                   queen=8)
-    x = gdistance::transition(as(sim$costSurface, "Raster"), transitionFunction=function(x,...) 1/weightFunction(x[1],x[2],...), directions=dirs)
+    x = gdistance::transition(as(sim$costSurface, "Raster"), transitionFunction=function(x) 1/weightFunction(x[1],x[2],resolution=resolution,...), directions=dirs)
 
     if(neighbourhood=="octagon"){
       #correct for diagonal distances and other aspects of geographic distance
@@ -91,7 +91,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     data.table::setnames(edges.weight, c("from", "to", "w1", "w2"))
 
     # take the average cost between the two pixels and remove w1 w2
-    edges.weight[,`:=`(weight = weightFunction(w1,w2,...),
+    edges.weight[,`:=`(weight = weightFunction(w1,w2,resolution=resolution,...),
                      w1 = NULL,
                      w2 = NULL)]
 
@@ -126,7 +126,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
       data.table::setnames(edges_bishop, c("from", "to", "w1", "w2"))
 
       # take the average cost between the two pixels and remove w1 w2
-      edges_bishop[,`:=`(weight = weightFunction(w1,w2,...),
+      edges_bishop[,`:=`(weight = weightFunction(w1,w2,resolution=resolution,...),
                          w1 = NULL,
                          w2 = NULL)]
 
