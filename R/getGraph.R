@@ -181,14 +181,11 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
 #' @export
 slopePenaltyFn<-function(x1,x2,baseCost = 16178,limit=10,penalty=504){
   #If one of the nodes is a road or barrier ignore grade penalty
-  if(pmin(x1,x2)>0){
-    grade = 100*abs(x1-x2) #percent slope.
-    slp = baseCost+grade*penalty
-    slp[grade>limit]=NA
-    return(slp)
-  }
+  grade = 100*abs(x1-x2) #percent slope.
+  slp = baseCost+grade*penalty
+  slp[grade>limit]=NA
 
-  slp = abs(pmin(x1,x2)) # if both 0 this is an existing road link. Otherwise it is a barrier.
+  slp[pmin(x1,x2)<=0] = abs(pmin(x1,x2)) # if both 0 this is an existing road link. Otherwise it is a barrier.
   return(slp)
 }
 
