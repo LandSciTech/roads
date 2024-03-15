@@ -7,6 +7,7 @@
 slopePenaltyFn(
   x1,
   x2,
+  resolution,
   baseCost = 16178,
   limit = 20,
   penalty = 504,
@@ -30,7 +31,7 @@ from the value of the input raster at each of those nodes (x1 and x2), designed 
 The method assumes an input raster in which:
   NA indicates a road cannot be built
   Negative values are costs for crossing streams or other barriers that are crossable but expensive. Edges that link to barrier penalty (negative value) nodes are assigned the largest barrier penalty weight.
-  All other values are interpreted as scaled elevation - a difference of 1 between two adjacent nodes is interpreted as 100% grade.
+  All other values are interpreted as elevation in the units of the raster map (so that a difference between two cells equal to the map resolution can be interpreted as 100% grade)
 This is a simplified version of the grade penalty approach taken by Anderson and Nelson:
 The approach does not distinguish between adverse and favourable grades.
 Construction cost values are from the BC interior appraisal manual.

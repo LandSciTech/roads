@@ -19,6 +19,7 @@ if(FALSE){
   CLUSexample <- prepExData(CLUSexample)
 
   costRaster <- CLUSexample$cost
+
   roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
     matrix(c(0.5, 4.5, 4.5, 4.5),
            ncol = 2, byrow = T)
@@ -79,22 +80,21 @@ if(FALSE){
   ext_2000 <- ext(c(base_point, base_point+200*the_res)[c(1,3,2,4)])
   landscape_2000 <- list(costSurface=crop(landscape, ext_2000))
 
-  rr = getGraph(landscape_100,neighb,method="old",weightFunction=slopePenaltyFn,limitCost=65000)
-  igraph::is_connected(rr)
+  rr = getGraph(landscape_100,neighb,method="old",weightFunction=slopePenaltyFn,limitCost=65000,resolution=the_res)
 
   neighb  ="octagon"
   bm <- bench::mark(min_iterations = 1, check = FALSE,
                     old_100 = getGraph(landscape_100,neighb,method="old"),
-                    dem_100 = getGraph(landscape_100,neighb,method="old",weightFunction = slopePenaltyFn),
+                    dem_100 = getGraph(landscape_100,neighb,method="old",weightFunction = slopePenaltyFn,resolution=the_res),
                     gdistance_100 = getGraph(landscape_100,neighb,method="gdistance"),
                     old_500 = getGraph(landscape_500,neighb,method="old"),
-                    dem_500 = getGraph(landscape_500,neighb,method="old",weightFunction=slopePenaltyFn),
+                    dem_500 = getGraph(landscape_500,neighb,method="old",weightFunction=slopePenaltyFn,resolution=the_res),
                     gdistance_500 = getGraph(landscape_500,neighb,method="gdistance"),
                     old_1000 = getGraph(landscape_1000,neighb,method="old"),
-                    dem_1000 = getGraph(landscape_1000,neighb,method="old",weightFunction=slopePenaltyFn),
+                    dem_1000 = getGraph(landscape_1000,neighb,method="old",weightFunction=slopePenaltyFn,resolution=the_res),
                     gdistance_1000 = getGraph(landscape_1000,neighb,method="gdistance"),
                     old_2000 = getGraph(landscape_2000,neighb,method="old"),
-                    dem_2000 = getGraph(landscape_2000,neighb,method="old",weightFunction=slopePenaltyFn),
+                    dem_2000 = getGraph(landscape_2000,neighb,method="old",weightFunction=slopePenaltyFn,resolution=the_res),
                     gdistance_2000 = getGraph(landscape_2000,neighb,method="gdistance")
   )
 
