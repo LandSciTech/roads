@@ -67,6 +67,7 @@ Collate:
     'getClosestRoad.R'
     'getDistFromSource.R'
     'getGraph.R'
+    'weightFunctions.R'
     'getLandingsFromTarget.R'
     'lcpList.R'
     'mstList.R'
