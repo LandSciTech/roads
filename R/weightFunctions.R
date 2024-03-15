@@ -19,7 +19,7 @@
 #' @param limitCost Value assigned to edges that exceed the grade limit. Set to a high (not NA) value if
 #' @export
 slopePenaltyFn<-function(x1,x2,baseCost = 16178,limit=20,penalty=504,limitCost=NA){
-  if(is.null(resolution)){resolution=1} # Will use value from calling environment if it exists there.
+  if(!exists("resolution")){resolution=1} # Will use value from calling environment if it exists there.
   #If one of the nodes is a road or barrier ignore grade penalty
   cond = pmin(x1,x2)>0
   cond[is.na(cond)]=F
