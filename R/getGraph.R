@@ -51,11 +51,11 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     sim$paths.v <- NULL
     # prepare the cost surface raster #===========
     # get cost as data.table from raster
-    weight <- data.table(weight = terra::values(sim$costSurface, mat = FALSE))
+    weightV <- data.table(weight = terra::values(sim$costSurface, mat = FALSE))
 
     # get the id for ther verticies which is used to merge with the edge list from
     # adj
-    weight[, id := seq_len(.N)]
+    weightV[, id := seq_len(.N)]
 
     # get the adjacency using SpaDES function adj #=======
     # rooks case
@@ -76,32 +76,30 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     edges <- unique(edges)
 
     # merge in the weights from a cost surface
-    edges_rook <- merge(x = edges, y = weight, by.x = "from", by.y = "id")
+    edges.weight <- merge(x = edges, y = weightV, by.x = "from", by.y = "id")
 
     # reformat
-    data.table::setnames(edges_rook, c("from", "to", "w1"))
+    data.table::setnames(edges.weight, c("from", "to", "w1"))
 
     # merge in the weights to a cost surface
-    edges_rook <- data.table::setDT(merge(x = edges_rook, y = weight,
+    edges.weight <- data.table::setDT(merge(x = edges.weight, y = weightV,
                                           by.x = "to", by.y = "id"))
 
     # reformat
-    data.table::setnames(edges_rook, c("from", "to", "w1", "w2"))
+    data.table::setnames(edges.weight, c("from", "to", "w1", "w2"))
 
     # take the average cost between the two pixels and remove w1 w2
-    edges_rook[,`:=`(weight = weightFunction(w1,w2),
+    edges.weight[,`:=`(weight = weightFunction(w1,w2),
                      w1 = NULL,
                      w2 = NULL)]
 
-    if(neighbourhood == "rook"){
-      edges.weight = edges_rook
-    } else {
+    if(neighbourhood != "rook"){
 
       # bishop's case - multiply weights by 2^0.5
       if(neighbourhood == "octagon"){
         mW = 2^0.5
       } else {mW = 1}
-      weight[, weight := weight*mW]
+      weightV[, weight := weight*mW]
 
       edges <- terra::adjacent(sim$costSurface, cells = 1:as.integer(ncel),
                                directions = "bishop", pairs = TRUE) %>%
@@ -113,13 +111,13 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
       edges <- unique(edges)
 
       # merge in the weights from a cost surface
-      edges_bishop <- merge(x = edges, y = weight, by.x = "from", by.y = "id")
+      edges_bishop <- merge(x = edges, y = weightV, by.x = "from", by.y = "id")
 
       # reformat
       data.table::setnames(edges_bishop, c("from", "to", "w1"))
 
       # merge in the weights to a cost surface
-      edges_bishop <- data.table::setDT(merge(x = edges_bishop, y = weight,
+      edges_bishop <- data.table::setDT(merge(x = edges_bishop, y = weightV,
                                               by.x = "to", by.y = "id"))
 
       # reformat
@@ -131,7 +129,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
                          w2 = NULL)]
 
       # get the edges list #==================
-      edges.weight = rbind(edges_rook, edges_bishop)
+      edges.weight = rbind(edges.weight, edges_bishop)
       edges.weight = edges.weight[order(from,to),]
 
     }
@@ -143,7 +141,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     edges.weight[, id := seq_len(.N)]
 
     # clean-up
-    rm(edges_rook, edges_bishop, edges, weight, mW, nc, ncel)
+    rm(edges_bishop, edges, weightV, mW, nc, ncel)
 
     # make the graph #================
     edge_mat <- as.matrix(edges.weight)[,1:2]
@@ -165,22 +163,32 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
 #' Grade penalty edge weight function
 #'
 #' Method for calculating the weight of an edge between two nodes
-#' from the value of the input raster at each of those nodes (x1 and x2), designed for DEM input.
+#' from the value of the input raster at each of those nodes (x1 and x2), designed for a single scaled DEM input.
+#' The method assumes an input raster in which:
+#'   NA indicates a road cannot be built
+#'   Negative values are costs for crossing streams or other barriers that are crossable but expensive. Edges that link to barrier penalty (negative value) nodes are assigned the largest barrier penalty weight.
+#'   All other values are interpreted as scaled elevation - a difference of 1 between two adjacent nodes is interpreted as 100% grade.
 #' This is a simplified version of the grade penalty approach taken by Anderson and Nelson:
-#' doesn't distinguish between adverse and favourable grades.
-#' construction cost values from interior appraisal manual.
-#' ignores (unknown) grade penalties beside roads in order to make do with a single input layer.
+#' The approach does not distinguish between adverse and favourable grades.
+#' Construction cost values are from the BC interior appraisal manual.
+#' The approach ignores (unknown) grade penalties beside roads and barriers in order to
+#' avoid increased memory and computational burden associated with multiple input rasters.
 #'
 #' @param x1,x2 Value of the input raster at two nodes. A difference of 1 implies a 100% slope.
+#' @param baseCost Construction cost of 0% grade road.
 #' @param limit Maximum grade (%) on which roads can be built.
 #' @param penalty Cost increase associated with each additional % increase in road grade.
 #' @noRd
-slopePenaltyFn<-function(x1,x2,limit=10,penalty=504){
-  grade = 100*abs(x1-x2)*(pmin(x1,x2)!=0) #percent slope. if one of the locations is a road, don't apply grade penalty
-  slp = 16178+grade*penalty
-  slp[grade>limit]=NA
-  slp[pmax(x1,x2)==0]=0 # if both 0 then this is an existing road link
+slopePenaltyFn<-function(x1,x2,baseCost = 16178,limit=10,penalty=504){
+  #If one of the nodes is a road or barrier ignore grade penalty
+  if(pmin(x1,x2)>0){
+    grade = 100*abs(x1-x2) #percent slope.
+    slp = baseCost+grade*penalty
+    slp[grade>limit]=NA
+    return(slp)
+  }
 
+  slp = abs(pmin(x1,x2)) # if both 0 this is an existing road link. Otherwise it is a barrier.
   return(slp)
 }
 

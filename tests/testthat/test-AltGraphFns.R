@@ -62,7 +62,6 @@ if(FALSE){
   #octagon methods yield similar but not identical graphs because gdistance::geoCorrection
   #method accounts for lengths of diagonals and other geographic distortions on the grid.
 
-
   #speed/memory benchmarking
   data_path_raw <- "~/Documents/gitprojects/RoadPaper/analysis/data/raw_data/"
   out_path <- "~/Documents/gitprojects/RoadPaper/analysis/figures/"
