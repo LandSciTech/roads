@@ -42,7 +42,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     }
     y = gdistance::transitionMatrix(x)
     g <- igraph::graph_from_adjacency_matrix(y, mode="undirected", weighted=TRUE)
-    
+
     igraph::E(g)$weight <- 1/igraph::E(g)$weight
     return(invisible(g))
   }else{
@@ -178,7 +178,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
 #' @param baseCost Construction cost of 0% grade road.
 #' @param limit Maximum grade (%) on which roads can be built.
 #' @param penalty Cost increase associated with each additional % increase in road grade.
-#' @noRd
+#' @export
 slopePenaltyFn<-function(x1,x2,baseCost = 16178,limit=10,penalty=504){
   #If one of the nodes is a road or barrier ignore grade penalty
   if(pmin(x1,x2)>0){
