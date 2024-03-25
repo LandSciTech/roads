@@ -17,7 +17,7 @@ slopePenaltyFn(
 \arguments{
 \item{x1, x2}{Value of the input raster at two nodes. A difference of 1 implies a 100\% slope.}
 
-\item{resolution}{Resolution of the input raster.}
+\item{resolution}{Resolution of the input raster. Resolution and x1/x2 should have the same units.}
 
 \item{baseCost}{Construction cost of 0\% grade road.}
 
@@ -25,12 +25,12 @@ slopePenaltyFn(
 
 \item{penalty}{Cost increase associated with each additional \% increase in road grade.}
 
-\item{limitCost}{Value assigned to edges that exceed the grade limit. Set to a high, not NA, value if.}
+\item{limitCost}{Value assigned to edges that exceed the grade limit. Try setting to a high (not NA) value if encountering problems with disconnected graphs.}
 }
 \description{
 Method for calculating the weight of an edge between two nodes from the value
 of the input raster at each of those nodes (x1 and x2), designed for a single
-scaled DEM input. The method assumes an input raster in which:
+DEM input. The method assumes an input raster in which:
 \itemize{
 \item NA indicates a road cannot be built
 \item Negative values are costs for crossing streams or other barriers that are
@@ -41,7 +41,7 @@ map (so that a difference between two cells equal to the map resolution can be
 interpreted as 100\% grade)
 This is a simplified version of the grade penalty approach taken by Anderson and Nelson:
 The approach does not distinguish between adverse and favourable grades.
-Construction cost values are from the BC interior appraisal manual.
+Default construction cost values are from the BC interior appraisal manual.
 The approach ignores (unknown) grade penalties beside roads and barriers in order to
 avoid increased memory and computational burden associated with multiple input rasters.
 }
