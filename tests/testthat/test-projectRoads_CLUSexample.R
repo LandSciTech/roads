@@ -41,6 +41,8 @@ pR_mst <- projectRoads(landings = landingsC,
                           roadMethod="mst", 
                           neighbourhood = "queen", roadsOut = "sf")
 
+# ilcp tested below
+
 getRoadCells <- function(rast, roads, method){
   # browser()
   ex_line <- terra::extract(rast, terra::vect(roads %>% sf::st_collection_extract("LINESTRING")), 
@@ -88,21 +90,28 @@ test_that("Iterative LCP works",{
   # with iterative LCP
   
   # add a landing that is touching the road for testing
-  land.pnts3 <- land.pnts2 %>% 
-    bind_rows(land.pnts2 %>% slice(1) %>% 
-                mutate(geometry = geometry + c(0,1.5)) %>% 
-                sf::st_set_crs(sf::st_crs(land.pnts2))) %>% 
+  land.pnts3 <- land.pnts2 %>%
+    bind_rows(land.pnts2 %>% slice(1) %>%
+                mutate(geometry = geometry + c(0,1.5)) %>%
+                sf::st_set_crs(sf::st_crs(land.pnts2))) %>%
     mutate(ID = 1:5) %>% arrange(ID) %>% st_set_agr("constant")
 
   dyLCP <- projectRoads(land.pnts3,
                costC,
                costC==0,
-               roadMethod='ilcp', roadsOut = "sf")
+               roadMethod='ilcp', roadsOut = "sf", ordering = "none")
 
   if(doPlot){
     plotRoads(dyLCP)
   }
-
+  
+  # not really needed but potentially useful for getting total cost
+  # start_edge <- getGraph(list(costSurface = costC), "octagon") %>% 
+  #   igraph::edge_attr(name = "weight") %>% sum()
+  # 
+  # it_end_edge <- iterLands_sim[[4]]$g %>% igraph::edge_attr(name = "weight") %>% sum()
+  # dy_end_edge <- dyLCP$g %>% igraph::edge_attr(name = "weight") %>% sum()
+  
   expect_identical(getRoadCells(costC, dyLCP$roads),
                    getRoadCells(costC, iterLands_sim[[4]]$roads))
   

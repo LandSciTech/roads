@@ -44,7 +44,7 @@ shortestPaths<- function(sim){
     rm(paths)
     
     # updates the cost(weight) associated with the edge that became a road
-    igraph::set_edge_attr(sim$g, 
+    sim$g <- igraph::set_edge_attr(sim$g, 
                       index = igraph::E(sim$g)[paths.e],
                       name = "weight", value = 0.00001)
     
@@ -73,9 +73,9 @@ iterativeShortestPaths<- function(sim){
       # update the cost(weight) associated with the edge that became a road
       path_edge_ind <- igraph::E(sim$g)[path[grepl("epath", names(path))]]
       
-      igraph::set_edge_attr(sim$g, 
-                        index = path_edge_ind,
-                        name = "weight", value = 0.00001)
+      sim$g <- igraph::set_edge_attr(sim$g, 
+                                     index = path_edge_ind,
+                                     name = "weight", value = 0.00001)
       
       # get vertices
       path.vs[[i]] <- data.table::data.table(path[grepl("vpath", names(path))] )
