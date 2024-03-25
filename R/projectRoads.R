@@ -266,7 +266,7 @@ setMethod(
 
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
-    sim$landingsIn <- NULL
+    rm(landingsIn, envir = sim)
 
     if(plotRoads){
       plotRoads(sim, mainTitle)
@@ -354,7 +354,7 @@ setMethod(
 
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
-    sim$landingsIn <- NULL
+    rm(landingsIn, envir = sim)
 
     if(plotRoads){
       plotRoads(sim, mainTitle)
@@ -374,12 +374,10 @@ outputRoads <- function(sim, roadsOut){
   }
 
   sim$costSurface <- sim$costSurfaceNew
-  sim$costSurfaceNew <- NULL
 
   # remove no longer needed parts of list that aren't being used for update
-  sim$roads.close.XY <- NULL
-  sim$paths.v <- NULL
-  sim$paths.list <- NULL
+  rm(list = c("costSurfaceNew", "roads.close.XY", "paths.v", "paths.list"), 
+     envir = sim)
 
   return(sim)
 }
