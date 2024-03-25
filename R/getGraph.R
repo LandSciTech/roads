@@ -149,7 +149,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     edge_mat <- as.matrix(edges.weight)
     # browser()
     # create the graph using to and from columns. Requires a matrix input
-    g <- igraph::graph.edgelist(edge_mat[,1:2], dir = FALSE)
+    g <- igraph::graph_from_edgelist(edge_mat[,1:2], dir = FALSE)
 
     # assign weights to the graph. Requires a matrix input
     igraph::E(g)$weight <- edge_mat[,3]
