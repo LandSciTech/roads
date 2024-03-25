@@ -54,7 +54,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     return(invisible(g))
   }else{
     # define global varaiables to avoid NOTEs on R CMD check
-    w1 <- w2 <- NULL
+    weight <- from <- to <- w1 <- w2 <- NULL
 
     # prepare the cost surface raster #===========
     # get cost as data.table from raster

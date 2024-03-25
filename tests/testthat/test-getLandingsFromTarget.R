@@ -45,8 +45,9 @@ test_that("sf input polygons work for random", {
 })
 
 
-test_that("sp polygon input works for centroid",{
-  outCent <- getLandingsFromTarget(demoScen[[1]]$landings.poly)
+test_that("sf polygon input works for centroid",{
+  outCent <- getLandingsFromTarget(demoScen[[1]]$landings.poly %>%
+                                     sf::st_set_agr("constant"))
   expect_type(outCent, "list")
   
   if(interactive()){
