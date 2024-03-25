@@ -15,7 +15,7 @@ rasterizeLine(sfLine, rast, value)
 }
 \value{
 a RasterLayer where the value of cells that touch the line will be
-  the row index of the line in the sf
+the row index of the line in the sf
 }
 \description{
 Rasterize a line using \code{stars} because \code{fasterize} doesn't work on lines and

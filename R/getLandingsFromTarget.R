@@ -20,13 +20,13 @@
 #' Generate landing points inside polygons representing harvested area. There
 #' are three different sampling types available: "centroid" is the default and
 #' will return the centroid or a point that is inside the polygon if the
-#' centroid is not (see \code{\link[sf:geos_unary]{st_point_on_surface}}); "random" takes a
-#' random sample based on the given \code{landingDens} see
-#' (\code{\link[sf]{st_sample}}); "regular" intersects the polygons with a
-#' regular grid with cell size \code{sqrt(1/landingDens)}, if a polygon does not
+#' centroid is not (see `sf::st_point_on_surface()`); "random" takes a
+#' random sample based on the given `landingDens` see
+#' (`sf::st_sample()`); "regular" intersects the polygons with a
+#' regular grid with cell size `sqrt(1/landingDens)`, if a polygon does not
 #' intersect with the grid its centroid is used.
 #'
-#' Note that the \code{landingDens} is in points per unit area where the unit of
+#' Note that the `landingDens` is in points per unit area where the unit of
 #' area is determined by the CRS. For projected CRS this should likely be a very
 #' small number i.e. < 0.001.
 #'
@@ -40,10 +40,10 @@
 #' @param sampleType character. "centroid" (default), "regular" or "random".
 #'   Centroid returns one landing per harvest block, which is guaranteed to be
 #'   in the harvest block for sf objects but not for rasters. Regular returns
-#'   points from a grid with density \code{landingDens} that overlap the
+#'   points from a grid with density `landingDens` that overlap the
 #'   harvested areas. Random returns a random set of points from each polygon
 #'   where the number is determined by the area of the polygons and
-#'   \code{landingDens}. If \code{harvest} is a raster the centroid is always
+#'   `landingDens`. If `harvest` is a raster the centroid is always
 #'   returned as one of the landings to ensure all harvest areas get at least
 #'   one landing.
 #'   
@@ -201,9 +201,9 @@ getLandingsFromTarget <- function(harvest,
 #' @param sampleType character. "centroid" (default), "regular" or "random".
 #'   Centroid returns one landing per harvest block, which is not guaranteed to
 #'   be in the harvest block. Regular returns points from a grid with density
-#'   \code{landingDens} that overlap the harvested areas. Random returns a
+#'   `landingDens` that overlap the harvested areas. Random returns a
 #'   random set of points from each polygon where the number is determined by
-#'   the area of the polygons and \code{landingDens}. The centroid is always
+#'   the area of the polygons and `landingDens`. The centroid is always
 #'   returned as one of the landings to ensure all harvest areas get at least
 #'   one landing.
 #' @param omitCentroidsOutOfPolygons Logical. Default is FALSE in which case

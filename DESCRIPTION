@@ -81,3 +81,4 @@ Collate:
     'prepExData.R'
     'roads-package.R'
 BugReports: https://github.com/LandSciTech/roads/issues
+Roxygen: list(markdown = TRUE)

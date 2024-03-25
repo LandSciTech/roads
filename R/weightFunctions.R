@@ -16,7 +16,8 @@
 #' @param baseCost Construction cost of 0% grade road.
 #' @param limit Maximum grade (%) on which roads can be built.
 #' @param penalty Cost increase associated with each additional % increase in road grade.
-#' @param limitCost Value assigned to edges that exceed the grade limit. Set to a high (not NA) value if
+#' @param limitCost Value assigned to edges that exceed the grade limit. Set to a high, not NA, value if.
+#' 
 #' @export
 slopePenaltyFn<-function(x1,x2,resolution=1, baseCost = 16178,limit=20,penalty=504,limitCost=NA){
   #If one of the nodes is a road or barrier ignore grade penalty

@@ -6,17 +6,17 @@
 \title{Data from the CLUS example}
 \format{
 A named list where: $cost is an object of class PackedSpatRaster
-  representing road cost, $landings is an object of class sf representing
-  landing locations and $roads is an object of class PackedSpatRaster
-  representing existing roads
+representing road cost, $landings is an object of class sf representing
+landing locations and $roads is an object of class PackedSpatRaster
+representing existing roads
 }
 \usage{
 data(CLUSexample)
 }
 \description{
 From Kyle Lochhead and Tyler Muhly's CLUS road simulation example. SpatRaster
-files created with the terra package must be saved with [terra::wrap()] and
-need to be unwrapped before they are used. [prepExData()] is provided to do
+files created with the terra package must be saved with \code{\link[terra:wrap]{terra::wrap()}} and
+need to be unwrapped before they are used. \code{\link[=prepExData]{prepExData()}} is provided to do
 this.
 }
 \examples{

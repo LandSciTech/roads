@@ -82,7 +82,7 @@ higher than horizontal/vertical weights.}
 between two nodes from the value of the cost raster at each of those nodes
 (x1 and x2). Default is the mean. Functions should be symmetric, meaning
 that the value returned does not depend on the ordering of x1 and x2. All
-functions must include the arguments `x1`, `x2` and `...`.}
+functions must include the arguments \code{x1}, \code{x2} and \code{...}.}
 
 \item{sim}{list. Returned from a previous iteration of \code{projectRoads}.
 cost, roads, and \code{roadMethod} are ignored if a \code{sim} list is provided.}
@@ -100,7 +100,7 @@ is assumed to include existing roads as 0 in its cost surface. If FALSE
 then the roads will be "burned in" to the cost raster with a cost of 0.}
 
 \item{ordering}{character. The order in which roads should be built to
-landings when `roadMethod = "ilcp"`. Options are "closest" (default) where
+landings when \code{roadMethod = "ilcp"}. Options are "closest" (default) where
 landings closest to existing roads are accessed first, or "none" where
 landings are accessed in the order they are provided in.}
 
@@ -109,15 +109,15 @@ landings are accessed in the order they are provided in.}
 \value{
 a list with components:
 \itemize{
-\item{roads: }{the projected road network, including new and input roads.}
-\item{costSurface: }{the cost surface, updated to have 0 for new roads that
-      were added.}
-\item{roadMethod: }{the road simulation method used.}
-\item{landings: }{the landings used in the simulation.}
-\item{g: }{the graph that describes the cost of paths between each cell in the
-      cost raster. This is updated based on the new roads so that vertices
-      were connected by new roads now have a cost of 0. This can be used to
-      avoid recomputing the graph in a simulation with multiple time steps.}
+\item roads: the projected road network, including new and input roads.
+\item costSurface: the cost surface, updated to have 0 for new roads that
+were added.
+\item roadMethod: the road simulation method used.
+\item landings: the landings used in the simulation.
+\item g: the graph that describes the cost of paths between each cell in the
+cost raster. This is updated based on the new roads so that vertices
+were connected by new roads now have a cost of 0. This can be used to
+avoid recomputing the graph in a simulation with multiple time steps.
 }
 }
 \description{
@@ -127,19 +127,19 @@ surface that defines the cost of building roads.
 \details{
 Four different methods for projecting road networks have been implemented:
 \itemize{
-  \item{"snap":} {Connects each landing directly to the closest road without
-  reference to the cost or other landings}
-  \item{"lcp":} {Least Cost Path connects each landing to the closest point
-  on the road by determining the least cost path based on the cost surface
-  provided, it does not consider other landings}
-  \item{"ilcp":} {Iterative Least Cost Path, same as "lcp" but it builds each
-  path sequentially so that later roads will use earlier roads. The sequence
-  of landings is determined by `ordering` and is "closest" by default, the
-  other option is "none" which will use the order that landings are supplied
-  in.}
-  \item{"mst":} {Minimum Spanning Tree connects all landings to the road by
-  determining the least cost path to the road or other landings based on the
-  cost surface}
+\item "snap": Connects each landing directly to the closest road without
+reference to the cost or other landings
+\item "lcp": Least Cost Path connects each landing to the closest point
+on the road by determining the least cost path based on the cost surface
+provided, it does not consider other landings
+\item "ilcp": Iterative Least Cost Path, same as "lcp" but it builds each
+path sequentially so that later roads will use earlier roads. The sequence
+of landings is determined by \code{ordering} and is "closest" by default, the
+other option is "none" which will use the order that landings are supplied
+in.
+\item "mst": Minimum Spanning Tree connects all landings to the road by
+determining the least cost path to the road or other landings based on the
+cost surface
 }
 }
 \examples{

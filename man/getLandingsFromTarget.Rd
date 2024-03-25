@@ -33,9 +33,9 @@ an sf simple feature collection with an ID column and POINT geometry
 Generate landing points inside polygons representing harvested area. There
 are three different sampling types available: "centroid" is the default and
 will return the centroid or a point that is inside the polygon if the
-centroid is not (see \code{\link[sf:geos_unary]{st_point_on_surface}}); "random" takes a
+centroid is not (see \code{sf::st_point_on_surface()}); "random" takes a
 random sample based on the given \code{landingDens} see
-(\code{\link[sf]{st_sample}}); "regular" intersects the polygons with a
+(\code{sf::st_sample()}); "regular" intersects the polygons with a
 regular grid with cell size \code{sqrt(1/landingDens)}, if a polygon does not
 intersect with the grid its centroid is used.
 }

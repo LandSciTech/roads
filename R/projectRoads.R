@@ -21,21 +21,19 @@
 #' surface that defines the cost of building roads.
 #'
 #' Four different methods for projecting road networks have been implemented:
-#' \itemize{
-#'   \item{"snap":} {Connects each landing directly to the closest road without
-#'   reference to the cost or other landings}
-#'   \item{"lcp":} {Least Cost Path connects each landing to the closest point
+#'   * "snap": Connects each landing directly to the closest road without
+#'   reference to the cost or other landings
+#'   * "lcp": Least Cost Path connects each landing to the closest point
 #'   on the road by determining the least cost path based on the cost surface
-#'   provided, it does not consider other landings}
-#'   \item{"ilcp":} {Iterative Least Cost Path, same as "lcp" but it builds each
+#'   provided, it does not consider other landings
+#'   * "ilcp": Iterative Least Cost Path, same as "lcp" but it builds each
 #'   path sequentially so that later roads will use earlier roads. The sequence
 #'   of landings is determined by `ordering` and is "closest" by default, the
 #'   other option is "none" which will use the order that landings are supplied
-#'   in.}
-#'   \item{"mst":} {Minimum Spanning Tree connects all landings to the road by
+#'   in.
+#'   * "mst": Minimum Spanning Tree connects all landings to the road by
 #'   determining the least cost path to the road or other landings based on the
-#'   cost surface}
-#' }
+#'   cost surface
 #'
 #' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
 #'   SpatialPoints*, matrix, containing features to be connected
@@ -43,7 +41,7 @@
 #'   all other columns will be ignored.
 #' @param cost RasterLayer. Cost surface where existing roads must be the only
 #'   cells with a cost of 0. If existing roads do not have 0 cost set
-#'   \code{roadsInCost = FALSE} and they will be burned in.
+#'   `roadsInCost = FALSE` and they will be burned in.
 #' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
 #' @param roadMethod Character. Options are "ilcp", "mst", "lcp", "snap".
 #' @param plotRoads Boolean. Should the resulting road network be plotted.
@@ -58,10 +56,10 @@
 #'   (x1 and x2). Default is the mean. Functions should be symmetric, meaning
 #'   that the value returned does not depend on the ordering of x1 and x2. All
 #'   functions must include the arguments `x1`, `x2` and `...`.
-#' @param sim list. Returned from a previous iteration of \code{projectRoads}.
-#'   cost, roads, and \code{roadMethod} are ignored if a \code{sim} list is provided.
+#' @param sim list. Returned from a previous iteration of `projectRoads`.
+#'   cost, roads, and `roadMethod` are ignored if a `sim` list is provided.
 #' @param roadsOut Character. Either "raster", "sf" or NULL. If "raster" roads
-#'   are returned as a raster in the \code{sim} list. If "sf" the roads are returned as
+#'   are returned as a raster in the `sim` list. If "sf" the roads are returned as
 #'   an sf object which will contain lines if the roads input was sf lines but a
 #'   geometry collection of lines and points if the roads input was a raster.
 #'   The points in the geometry collection represent the existing roads while
@@ -78,17 +76,16 @@
 #'
 #' @return
 #' a list with components:
-#' \itemize{
-#' \item{roads: }{the projected road network, including new and input roads.}
-#' \item{costSurface: }{the cost surface, updated to have 0 for new roads that
-#'       were added.}
-#' \item{roadMethod: }{the road simulation method used.}
-#' \item{landings: }{the landings used in the simulation.}
-#' \item{g: }{the graph that describes the cost of paths between each cell in the
+#' * roads: the projected road network, including new and input roads.
+#' * costSurface: the cost surface, updated to have 0 for new roads that
+#'       were added.
+#' * roadMethod: the road simulation method used.
+#' * landings: the landings used in the simulation.
+#' * g: the graph that describes the cost of paths between each cell in the
 #'       cost raster. This is updated based on the new roads so that vertices
 #'       were connected by new roads now have a cost of 0. This can be used to
-#'       avoid recomputing the graph in a simulation with multiple time steps.}
-#' }
+#'       avoid recomputing the graph in a simulation with multiple time steps.
+#'
 #' @examples
 #' CLUSexample <- prepExData(CLUSexample)
 #' doPlots <- interactive()

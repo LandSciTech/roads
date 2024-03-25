@@ -17,7 +17,7 @@
 #' Build sim list object
 #'
 #' Build a sim list object to be used in the rest of the functions and returned
-#' by \code{projectRoads}. It will convert other types of spatial objects to sf
+#' by `projectRoads`. It will convert other types of spatial objects to sf
 #' or terra objects.
 #' 
 #' @param roads roads input

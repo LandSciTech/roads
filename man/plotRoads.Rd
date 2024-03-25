@@ -19,7 +19,7 @@ plotRoads(sim, mainTitle, subTitle = paste0("Method: ", sim$roadMethod), ...)
 Creates a plot using base graphics
 }
 \description{
-Plot the results of \code{\link{projectRoads}}
+Plot the results of \code{projectRoads}
 }
 \examples{
 CLUSexample <- prepExData(CLUSexample)

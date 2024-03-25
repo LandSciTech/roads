@@ -16,8 +16,8 @@
 
 #' Faster rasterize for lines
 #'
-#' Rasterize a line using \code{stars} because \code{fasterize} doesn't work on lines and
-#' rasterize is slow. Deprecated use \code{terra::rasterize}
+#' Rasterize a line using `stars` because `fasterize` doesn't work on lines and
+#' rasterize is slow. Deprecated use `terra::rasterize`
 #'
 #' @param sfLine an sf object to be rasterized
 #' @param rast a raster to use as template for the output raster
