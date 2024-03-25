@@ -153,9 +153,11 @@ higher than horizontal/vertical weights.</p></dd>
 
 
 <dt>weightFunction</dt>
-<dd><p>function. Method for calculating the weight of an edge between two nodes
-from the value of the cost raster at each of those nodes (x1 and x2). Default is the mean.
-Functions should be symmetric, meaning that the value returned does not depend on the ordering of x1 and x2.</p></dd>
+<dd><p>function. Method for calculating the weight of an edge
+between two nodes from the value of the cost raster at each of those nodes
+(x1 and x2). Default is the mean. Functions should be symmetric, meaning
+that the value returned does not depend on the ordering of x1 and x2. All
+functions must include the arguments `x1`, `x2` and `...`.</p></dd>
 
 
 <dt>sim</dt>
@@ -265,9 +267,9 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 0932690 U-W- 25 72 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 4cbf4cd U-W- 25 72 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: weight (e/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 0932690:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 4cbf4cd:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 6  1-- 7  2-- 3  2-- 6  2-- 7  2-- 8  3-- 4  3-- 7  3-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11]  3-- 9  4-- 5  4-- 8  4-- 9  4--10  5-- 9  5--10  6-- 7  6--11  6--12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 8  7--11  7--12  7--13  8-- 9  8--12  8--13  8--14  9--10  9--13</span>
