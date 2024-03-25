@@ -26,15 +26,27 @@ slopePenaltyFn(
 \item{limitCost}{Value assigned to edges that exceed the grade limit. Set to a high, not NA, value if.}
 }
 \description{
-Method for calculating the weight of an edge between two nodes
-from the value of the input raster at each of those nodes (x1 and x2), designed for a single scaled DEM input.
-The method assumes an input raster in which:
-NA indicates a road cannot be built
-Negative values are costs for crossing streams or other barriers that are crossable but expensive. Edges that link to barrier penalty (negative value) nodes are assigned the largest barrier penalty weight.
-All other values are interpreted as elevation in the units of the raster map (so that a difference between two cells equal to the map resolution can be interpreted as 100\% grade)
+Method for calculating the weight of an edge between two nodes from the value
+of the input raster at each of those nodes (x1 and x2), designed for a single
+scaled DEM input. The method assumes an input raster in which:
+\itemize{
+\item NA indicates a road cannot be built
+\item Negative values are costs for crossing streams or other barriers that are
+crossable but expensive. Edges that link to barrier penalty (negative value)
+nodes are assigned the largest barrier penalty weight.
+\item All other values are interpreted as elevation in the units of the raster
+map (so that a difference between two cells equal to the map resolution can be
+interpreted as 100\% grade)
 This is a simplified version of the grade penalty approach taken by Anderson and Nelson:
 The approach does not distinguish between adverse and favourable grades.
 Construction cost values are from the BC interior appraisal manual.
 The approach ignores (unknown) grade penalties beside roads and barriers in order to
 avoid increased memory and computational burden associated with multiple input rasters.
+}
+}
+\examples{
+slopePenaltyFn(0.5,0.51)
+slopePenaltyFn(0.5,0.65)
+# grade > 20\% so NA
+slopePenaltyFn(0.5,0.75)
 }
