@@ -78,9 +78,11 @@ should be considered adjacent. 'octagon' option is a modified version of
 the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
 higher than horizontal/vertical weights.}
 
-\item{weightFunction}{function. Method for calculating the weight of an edge between two nodes
-from the value of the cost raster at each of those nodes (x1 and x2). Default is the mean.
-Functions should be symmetric, meaning that the value returned does not depend on the ordering of x1 and x2.}
+\item{weightFunction}{function. Method for calculating the weight of an edge
+between two nodes from the value of the cost raster at each of those nodes
+(x1 and x2). Default is the mean. Functions should be symmetric, meaning
+that the value returned does not depend on the ordering of x1 and x2. All
+functions must include the arguments `x1`, `x2` and `...`.}
 
 \item{sim}{list. Returned from a previous iteration of \code{projectRoads}.
 cost, roads, and \code{roadMethod} are ignored if a \code{sim} list is provided.}

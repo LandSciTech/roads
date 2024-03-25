@@ -27,11 +27,16 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
   #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.  resolution=res(sim$costSurface)[1]
 
   resolution = terra::res(sim$costSurface)[1]
+  
+  if(!is.element(neighbourhood, c("rook", "octagon","queen"))) {
+    stop("neighbourhood type not recognized")
+  }
+  
   if(method=="gdistance"){
-    if(!is.element(neighbourhood, c("rook", "octagon","queen"))) {
-      stop("neighbourhood type not recognized")
+    if(!requireNamespace("gdistance", quietly = TRUE)){
+      stop("The gdistance package is required to use method gdistance")
     }
-
+    
     dirs = switch(neighbourhood,
                   rook=4,
                   octagon=8,
@@ -133,6 +138,8 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
       # get the edges list #==================
       edges.weight = rbind(edges.weight, edges_bishop)
       edges.weight = edges.weight[order(from,to),]
+      
+      rm(edges_bishop, mW)
 
     }
 
@@ -143,7 +150,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     edges.weight[, id := seq_len(.N)]
 
     # clean-up
-    rm(edges_bishop, edges, weightV, mW, nc, ncel)
+    rm(edges, weightV, nc, ncel)
 
     # make the graph #================
     edge_mat <- as.matrix(edges.weight)
