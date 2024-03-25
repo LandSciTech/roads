@@ -17,6 +17,8 @@ slopePenaltyFn(
 \arguments{
 \item{x1, x2}{Value of the input raster at two nodes. A difference of 1 implies a 100\% slope.}
 
+\item{resolution}{Resolution of the input raster.}
+
 \item{baseCost}{Construction cost of 0\% grade road.}
 
 \item{limit}{Maximum grade (\%) on which roads can be built.}

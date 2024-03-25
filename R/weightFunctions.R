@@ -17,6 +17,7 @@
 #' avoid increased memory and computational burden associated with multiple input rasters.
 #'
 #' @param x1,x2 Value of the input raster at two nodes. A difference of 1 implies a 100% slope.
+#' @param resolution Resolution of the input raster.
 #' @param baseCost Construction cost of 0% grade road.
 #' @param limit Maximum grade (%) on which roads can be built.
 #' @param penalty Cost increase associated with each additional % increase in road grade.
