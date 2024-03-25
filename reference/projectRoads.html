@@ -157,7 +157,7 @@ higher than horizontal/vertical weights.</p></dd>
 between two nodes from the value of the cost raster at each of those nodes
 (x1 and x2). Default is the mean. Functions should be symmetric, meaning
 that the value returned does not depend on the ordering of x1 and x2. All
-functions must include the arguments `x1`, `x2` and `...`.</p></dd>
+functions must include the arguments <code>x1</code>, <code>x2</code> and <code>...</code>.</p></dd>
 
 
 <dt>sim</dt>
@@ -183,7 +183,7 @@ then the roads will be "burned in" to the cost raster with a cost of 0.</p></dd>
 
 <dt>ordering</dt>
 <dd><p>character. The order in which roads should be built to
-landings when `roadMethod = "ilcp"`. Options are "closest" (default) where
+landings when <code>roadMethod = "ilcp"</code>. Options are "closest" (default) where
 landings closest to existing roads are accessed first, or "none" where
 landings are accessed in the order they are provided in.</p></dd>
 
@@ -198,29 +198,29 @@ landings are accessed in the order they are provided in.</p></dd>
 
 <p>a list with components:</p><ul><li><p>roads: the projected road network, including new and input roads.</p></li>
 <li><p>costSurface: the cost surface, updated to have 0 for new roads that
-      were added.</p></li>
+were added.</p></li>
 <li><p>roadMethod: the road simulation method used.</p></li>
 <li><p>landings: the landings used in the simulation.</p></li>
 <li><p>g: the graph that describes the cost of paths between each cell in the
-      cost raster. This is updated based on the new roads so that vertices
-      were connected by new roads now have a cost of 0. This can be used to
-      avoid recomputing the graph in a simulation with multiple time steps.</p></li>
+cost raster. This is updated based on the new roads so that vertices
+were connected by new roads now have a cost of 0. This can be used to
+avoid recomputing the graph in a simulation with multiple time steps.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Four different methods for projecting road networks have been implemented:</p><ul><li><p>"snap": Connects each landing directly to the closest road without
-  reference to the cost or other landings</p></li>
+reference to the cost or other landings</p></li>
 <li><p>"lcp": Least Cost Path connects each landing to the closest point
-  on the road by determining the least cost path based on the cost surface
-  provided, it does not consider other landings</p></li>
+on the road by determining the least cost path based on the cost surface
+provided, it does not consider other landings</p></li>
 <li><p>"ilcp": Iterative Least Cost Path, same as "lcp" but it builds each
-  path sequentially so that later roads will use earlier roads. The sequence
-  of landings is determined by `ordering` and is "closest" by default, the
-  other option is "none" which will use the order that landings are supplied
-  in.</p></li>
+path sequentially so that later roads will use earlier roads. The sequence
+of landings is determined by <code>ordering</code> and is "closest" by default, the
+other option is "none" which will use the order that landings are supplied
+in.</p></li>
 <li><p>"mst": Minimum Spanning Tree connects all landings to the road by
-  determining the least cost path to the road or other landings based on the
-  cost surface</p></li>
+determining the least cost path to the road or other landings based on the
+cost surface</p></li>
 </ul></div>
 
     <div class="section level2">
@@ -267,9 +267,9 @@ landings are accessed in the order they are provided in.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 4cbf4cd U-W- 25 72 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 3560836 U-W- 25 72 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: weight (e/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 4cbf4cd:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 3560836:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 6  1-- 7  2-- 3  2-- 6  2-- 7  2-- 8  3-- 4  3-- 7  3-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11]  3-- 9  4-- 5  4-- 8  4-- 9  4--10  5-- 9  5--10  6-- 7  6--11  6--12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 8  7--11  7--12  7--13  8-- 9  8--12  8--13  8--14  9--10  9--13</span>
