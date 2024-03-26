@@ -6,6 +6,7 @@ NA indicates a road cannot be built
 Negative values are costs for crossing streams or other barriers that are
 crossable but expensive. Edges that link to barrier penalty (negative value)
 nodes are assigned the largest barrier penalty weight.
+Zero values are assumed to be existing roads.
 All other values are interpreted as elevation in the units of the raster
 map (so that a difference between two cells equal to the map resolution can be
 interpreted as 100% grade)
@@ -22,6 +23,7 @@ NA indicates a road cannot be built
 Negative values are costs for crossing streams or other barriers that are
 crossable but expensive. Edges that link to barrier penalty (negative value)
 nodes are assigned the largest barrier penalty weight.
+Zero values are assumed to be existing roads.
 All other values are interpreted as elevation in the units of the raster
 map (so that a difference between two cells equal to the map resolution can be
 interpreted as 100% grade)
@@ -92,6 +94,7 @@ DEM input. The method assumes an input raster in which:</p><ul><li><p>NA indicat
 <li><p>Negative values are costs for crossing streams or other barriers that are
 crossable but expensive. Edges that link to barrier penalty (negative value)
 nodes are assigned the largest barrier penalty weight.</p></li>
+<li><p>Zero values are assumed to be existing roads.</p></li>
 <li><p>All other values are interpreted as elevation in the units of the raster
 map (so that a difference between two cells equal to the map resolution can be
 interpreted as 100% grade)
@@ -111,7 +114,7 @@ avoid increased memory and computational burden associated with multiple input r
 <span>  baseCost <span class="op">=</span> <span class="fl">16178</span>,</span>
 <span>  limit <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  penalty <span class="op">=</span> <span class="fl">504</span>,</span>
-<span>  limitCost <span class="op">=</span> <span class="cn">NA</span></span>
+<span>  limitWeight <span class="op">=</span> <span class="cn">NA</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -137,7 +140,7 @@ avoid increased memory and computational burden associated with multiple input r
 <dd><p>Cost increase associated with each additional % increase in road grade.</p></dd>
 
 
-<dt>limitCost</dt>
+<dt>limitWeight</dt>
 <dd><p>Value assigned to edges that exceed the grade limit. Try setting to a high (not NA) value if encountering problems with disconnected graphs.</p></dd>
 
 </dl></div>

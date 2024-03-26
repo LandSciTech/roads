@@ -106,9 +106,9 @@ below are included in the package as <code>CLUSexample</code> and
 represented by three components:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong>Cost Layer:</strong> a spatial, gridded cost layer covering
-the entire landscape, wherein each cell value represents the cost of new
-road development through it.</li>
+<strong>Weights Layer:</strong> a spatial, gridded weight layer
+covering the entire landscape, wherein each cell value represents the
+cost of new road development through it.</li>
 <li>
 <strong>Existing Road Network:</strong> a spatial, representation of
 the existing road network within the landscape.</li>
@@ -133,18 +133,18 @@ elements:</p>
 <strong>roads:</strong> the projected road network, including new
 and input roads.</li>
 <li>
-<strong>costSurface:</strong> the cost surface, updated to reflect
-the new roads that were added.</li>
+<strong>weightRaster:</strong> the weights raster, updated to
+reflect the new roads that were added.</li>
 <li>
 <strong>roadMethod</strong> the road simulation method used.</li>
 <li>
 <strong>landings</strong> the landings used in the simulation.</li>
 <li>
 <strong>g</strong> the graph that describes the cost of paths
-between each cell in the cost raster. This is updated based on the new
-roads so that vertices connected by new roads now have a cost of 0. This
-can be used to avoid recomputing the graph in a simulation with multiple
-time steps.</li>
+between each cell in the weights raster. This is updated based on the
+new roads so that vertices connected by new roads now have a weight of
+0. This can be used to avoid recomputing the graph in a simulation with
+multiple time steps.</li>
 </ol>
 <div class="section level4">
 <h4 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
@@ -155,7 +155,7 @@ time steps.</li>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## colours for displaying cost raster </span></span>
+<span><span class="co">## colours for displaying weight raster </span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"viridis"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="co"># Use colour blind friendly palette if available</span></span>
 <span>  <span class="va">rastColours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
@@ -171,7 +171,7 @@ time steps.</li>
 <h2 id="resource-development-scenario">Resource development scenario<a class="anchor" aria-label="anchor" href="#resource-development-scenario"></a>
 </h2>
 <div class="section level4">
-<h4 id="cost-layer">1. Cost layer<a class="anchor" aria-label="anchor" href="#cost-layer"></a>
+<h4 id="weights-layer">1. Weights layer<a class="anchor" aria-label="anchor" href="#weights-layer"></a>
 </h4>
 <p>The cost of new roads development within a landscape must be provided
 as a single, numeric <code>SpatRaster</code> or <code>RasterLayer</code>
@@ -182,7 +182,7 @@ the sum of the cost raster cells that it traverses.</p>
 <ul>
 <li>The traversal cost of existing road segments is assumed to be zero.
 If existing roads are not 0 in the cost layer they can be “burned in” by
-setting <code>roadsInCost = FALSE</code>.</li>
+setting <code>roadsInWeight = FALSE</code>.</li>
 <li>The extent of the landscape of interest is assumed to match the
 extent of the specified cost raster layer.</li>
 <li>The coordinate reference system (CRS) of this raster must match all
@@ -193,7 +193,7 @@ user, it is important to remember that a unit area of road is assumed to
 take up an entire cell.</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">costRaster</span> <span class="op">&lt;-</span> <span class="va">CLUSexample</span><span class="op">$</span><span class="va">cost</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">weightRaster</span> <span class="op">&lt;-</span> <span class="va">CLUSexample</span><span class="op">$</span><span class="va">cost</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="existing-road-network-layer">2. Existing road network layer<a class="anchor" aria-label="anchor" href="#existing-road-network-layer"></a>
@@ -214,7 +214,7 @@ is a raster but we use a line to make plotting easier.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">4.5</span><span class="op">)</span>,</span>
 <span>         ncol <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> </span>
 <span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span>crs <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="va">costRaster</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span>crs <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="va">weightRaster</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="landings-layers">3. Landings layer(s)<a class="anchor" aria-label="anchor" href="#landings-layers"></a>
@@ -244,7 +244,7 @@ landing per polygon see Multiple landings per harvest block below.</p>
 <span><span class="va">landings</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="va"><a href="../reference/CLUSexample.html">CLUSexample</a></span><span class="op">$</span><span class="va">landings</span></span>
 <span></span>
 <span><span class="co">## plot example scenario</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">'Example Scenario'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">'Example Scenario'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">roadsLine</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">landings</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">5.6</span>,y<span class="op">=</span><span class="fl">4.5</span>,pch<span class="op">=</span><span class="fl">19</span>,xpd<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
@@ -277,12 +277,12 @@ segment. Since the snapping is done for each landing it is also called
 an independent path method.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## project new roads using the 'snap' approach</span></span>
-<span><span class="va">projRoads_snap</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">landings</span>, <span class="va">costRaster</span>, <span class="va">roadsLine</span>,</span>
+<span><span class="va">projRoads_snap</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">landings</span>, <span class="va">weightRaster</span>, <span class="va">roadsLine</span>,</span>
 <span>                                      roadMethod <span class="op">=</span> <span class="st">'snap'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
-<span><span class="co">## plot the cost raster, landings, and roads segments to the landings</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'Snapped' roads"</span><span class="op">)</span></span>
+<span><span class="co">## plot the weight raster, landings, and roads segments to the landings</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'Snapped' roads"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  </span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">projRoads_snap</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
 <span></span>
@@ -318,13 +318,13 @@ graph returned in the result reflects the new roads built.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## project new roads using the 'LCP' approach</span></span>
 <span><span class="va">projRoads_lcp</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">landings</span>, </span>
-<span>                                        <span class="va">costRaster</span>, </span>
+<span>                                        <span class="va">weightRaster</span>, </span>
 <span>                                        <span class="va">roadsLine</span>, </span>
 <span>                                        roadMethod <span class="op">=</span> <span class="st">'lcp'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
-<span><span class="co">## plot the cost raster and overlay it with new roads</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'LCP' roads"</span><span class="op">)</span></span>
+<span><span class="co">## plot the weight raster and overlay it with new roads</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'LCP' roads"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">projRoads_lcp</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  <span class="co">## landings points</span></span>
 <span><span class="co">## legend</span></span>
@@ -361,13 +361,13 @@ build roads in the order that the landings are supplied use
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## project new roads using the 'ILCP' approach</span></span>
 <span><span class="va">projRoads_ilcp</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">landings</span>, </span>
-<span>                                        <span class="va">costRaster</span>, </span>
+<span>                                        <span class="va">weightRaster</span>, </span>
 <span>                                        <span class="va">roadsLine</span>, </span>
 <span>                                        roadMethod <span class="op">=</span> <span class="st">'ilcp'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
-<span><span class="co">## plot the cost raster and overlay it with new roads</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'ILCP' roads"</span><span class="op">)</span></span>
+<span><span class="co">## plot the weight raster and overlay it with new roads</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'ILCP' roads"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">projRoads_ilcp</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  <span class="co">## landings points</span></span>
 <span><span class="co">## legend</span></span>
@@ -385,13 +385,13 @@ supplied in so switching that produces a different road network.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## project new roads using the 'ILCP' approach</span></span>
 <span><span class="va">projRoads_ilcp2</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/flip.html" class="external-link">rev</a></span><span class="op">(</span><span class="va">landings</span><span class="op">)</span>, </span>
-<span>                                        <span class="va">costRaster</span>, </span>
+<span>                                        <span class="va">weightRaster</span>, </span>
 <span>                                        <span class="va">roadsLine</span>, </span>
 <span>                                        roadMethod <span class="op">=</span> <span class="st">'ilcp'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
-<span><span class="co">## plot the cost raster and overlay it with new roads</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'ILCP' roads"</span><span class="op">)</span></span>
+<span><span class="co">## plot the weight raster and overlay it with new roads</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'ILCP' roads"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">projRoads_ilcp2</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  <span class="co">## landings points</span></span>
 <span><span class="co">## legend</span></span>
@@ -414,13 +414,13 @@ following the solution to the MST.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## project new roads using the 'MST' approach</span></span>
 <span><span class="va">projRoads_mst</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">landings</span>, </span>
-<span>                                        <span class="va">costRaster</span>,</span>
+<span>                                        <span class="va">weightRaster</span>,</span>
 <span>                                        <span class="va">roadsLine</span>, </span>
 <span>                                        roadMethod <span class="op">=</span> <span class="st">'mst'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
-<span><span class="co">## plot the cost raster and overlay it with new roads</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">costRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'MST' roads"</span><span class="op">)</span></span>
+<span><span class="co">## plot the weight raster and overlay it with new roads</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'MST' roads"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">projRoads_mst</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">landings</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>  <span class="co">## landings points</span></span>
 <span><span class="co">## legend</span></span>
@@ -445,7 +445,7 @@ time step (one-time) or for multiple time steps. This section will use a
 demonstration scenario <code>demoScen</code> data-set that is included
 with the roads package. There are four different sets of landings.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## colours for displaying cost raster</span></span>
+<code class="sourceCode R"><span><span class="co">## colours for displaying weight raster</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"viridis"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="co"># Use colour blind friendly palette if available</span></span>
 <span>  <span class="va">rastColours2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'grey50'</span>, <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">)</span></span>
@@ -458,7 +458,7 @@ with the roads package. There are four different sets of landings.</p>
 <span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">## landing sets 1 to 4 of this scenario </span></span>
 <span><span class="va">land.pnts</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span> <span class="op"><a href="https://rspatial.github.io/terra/reference/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>,<span class="op">]</span></span>
-<span><span class="co">## plot the cost raster and landings</span></span>
+<span><span class="co">## plot the weight raster and landings</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, main <span class="op">=</span> <span class="st">'Cost and landings (by set)'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">2</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span></span>
@@ -487,10 +487,10 @@ represented alternate scenarios for development.</p>
 <span>                                              <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span><span class="op">==</span><span class="fl">0</span>,</span>
 <span>                                              roadMethod<span class="op">=</span><span class="st">'mst'</span><span class="op">)</span><span class="op">$</span><span class="va">roads</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
 <span><span class="co">## plot</span></span>
 <span><span class="va">oldpar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span></span>
@@ -563,7 +563,7 @@ to determine the least cost path. This can be implemented in a loop.</p>
 <span><span class="co"># initialize sim list with first landings set</span></span>
 <span><span class="va">multiTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.stack</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, </span>
 <span>                                               <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
 <span><span class="co"># iterate over landings sets using the sim list from the previous run as input</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">land.stack</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -572,9 +572,9 @@ to determine the least cost path. This can be implemented in a loop.</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span>sim <span class="op">=</span>  <span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, landings <span class="op">=</span> <span class="va">land.stack</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> </span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span></span>
@@ -583,7 +583,7 @@ to determine the least cost path. This can be implemented in a loop.</p>
 <span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, col <span class="op">=</span> <span class="st">'grey30'</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  </span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">costSurface</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, </span>
+<span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours2</span>, </span>
 <span>       main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'Roads at time t = '</span>, <span class="va">i</span><span class="op">)</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span>, col <span class="op">=</span> <span class="st">'grey30'</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="va">i</span>, <span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, </span>
@@ -646,7 +646,7 @@ block.</p>
 <span><span class="va">outRand</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getLandingsFromTarget.html">getLandingsFromTarget</a></span><span class="op">(</span><span class="va">harvPoly</span>, <span class="fl">0.02</span>, sampleType <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; you have asked for &gt; 0.001 pts per m2 which is &gt; 1000 pts per km2 and may take a long time</span></span>
 <span><span class="va">prRand</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">outRand</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, main <span class="op">=</span> <span class="st">"Random Landings in Harvest Blocks"</span>,</span>
 <span>     col <span class="op">=</span> <span class="va">rastColours2</span><span class="op">)</span></span>
@@ -660,7 +660,7 @@ block.</p>
 <span><span class="va">outReg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getLandingsFromTarget.html">getLandingsFromTarget</a></span><span class="op">(</span><span class="va">harvPoly</span>, <span class="fl">0.02</span>, sampleType <span class="op">=</span> <span class="st">"regular"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; you have asked for &gt; 0.001 pts per m2 which is &gt; 1000 pts per km2 and may take a long time</span></span>
 <span><span class="va">prReg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">outReg</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>,<span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in cost raster, these will be considered as existing roads</span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span></span>
 <span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, main <span class="op">=</span> <span class="st">"Regular Landings in Harvest Blocks"</span>,</span>

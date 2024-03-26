@@ -77,7 +77,7 @@
 
 
 <dt>...</dt>
-<dd><p>Other arguments passed to raster plot call for the <code>costSurface</code></p></dd>
+<dd><p>Other arguments passed to raster plot call for the <code>weightRaster</code></p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -91,7 +91,7 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">CLUSexample</span> <span class="op">&lt;-</span> <span class="fu"><a href="prepExData.html">prepExData</a></span><span class="op">(</span><span class="va">CLUSexample</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">CLUSexample</span><span class="op">$</span><span class="va">landings</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">cost</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">roads</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in cost raster, these will be considered as existing roads</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in weightRaster raster, these will be considered as existing roads</span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu">plotRoads</span><span class="op">(</span><span class="va">prRes</span>, <span class="st">"Title"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
