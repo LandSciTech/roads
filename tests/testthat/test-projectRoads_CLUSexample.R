@@ -25,18 +25,18 @@ costC     <- CLUSexample$cost
 roadsC    <- CLUSexample$roads
 
 pR_snap <- projectRoads(landings = landingsC, 
-                           cost = costC,
+                           weightRaster = costC,
                            roads = roadsC,
                            roadMethod = "snap", roadsOut = "sf")
 
 pR_lcp <- projectRoads(landings = landingsC,
-                          cost = costC,
+                          weightRaster = costC,
                           roads = roadsC,
                           roadMethod = "lcp", 
                           neighbourhood = "queen", roadsOut = "sf")
 
 pR_mst <- projectRoads(landings = landingsC,
-                          cost = costC,
+                          weightRaster = costC,
                           roads = roadsC,
                           roadMethod="mst", 
                           neighbourhood = "queen", roadsOut = "sf")
@@ -106,7 +106,7 @@ test_that("Iterative LCP works",{
   }
   
   # not really needed but potentially useful for getting total cost
-  # start_edge <- getGraph(list(costSurface = costC), "octagon") %>% 
+  # start_edge <- getGraph(list(weightRaster = costC), "octagon") %>% 
   #   igraph::edge_attr(name = "weight") %>% sum()
   # 
   # it_end_edge <- iterLands_sim[[4]]$g %>% igraph::edge_attr(name = "weight") %>% sum()

@@ -21,7 +21,7 @@ This vignette provides a tutorial on the use of the `roads` package for the spat
 
 In the context of this package, resource development scenarios are represented by three components:
 
-1. **Cost Layer:** a spatial, gridded cost layer covering the entire landscape, wherein each cell value represents the cost of new road development through it.
+1. **Weights Layer:** a spatial, gridded weight layer covering the entire landscape, wherein each cell value represents the cost of new road development through it.
 2. **Existing Road Network:** a spatial, representation of the existing road network within the landscape.
 3. **Landings:** a set of locations where new resource development is to take place.
 
@@ -35,10 +35,10 @@ Given an input resource development scenario, `projectRoads` will simulate new r
 The output of `projectRoads` is a list of simulation results referred to as a "sim list". The list contains five elements:
 
 1. **roads:** the projected road network, including new and input roads.
-2. **costSurface:** the cost surface, updated to reflect the new roads that were added.
+2. **weightRaster:** the weights raster, updated to reflect the new roads that were added.
 3. **roadMethod** the road simulation method used.
 4. **landings** the landings used in the simulation.
-5. **g** the graph that describes the cost of paths between each cell in the cost raster. This is updated based on the new roads so that vertices connected by new roads now have a cost of 0. This can be used to avoid recomputing the graph in a simulation with multiple time steps. 
+5. **g** the graph that describes the cost of paths between each cell in the weights raster. This is updated based on the new roads so that vertices connected by new roads now have a weight of 0. This can be used to avoid recomputing the graph in a simulation with multiple time steps. 
 
 ### Setup
 
@@ -48,7 +48,7 @@ library(dplyr)
 library(sf)
 library(roads)
 
-## colours for displaying cost raster 
+## colours for displaying weight raster 
 if(requireNamespace("viridis", quietly = TRUE)){
   # Use colour blind friendly palette if available
   rastColours <- c('grey50', viridis::viridis(20))
@@ -63,17 +63,17 @@ CLUSexample <- prepExData(CLUSexample)
 
 # Resource development scenario
 
-### 1. Cost layer
+### 1. Weights layer
 
 The cost of new roads development within a landscape must be provided as a single, numeric `SpatRaster` or `RasterLayer` object.  Each cell of this raster represents the cost of new road development (the definition of which is up to the user) through it. The total cost of the development of a new road segment is considered to be the sum of the cost raster cells that it traverses.
 
-* The traversal cost of existing road segments is assumed to be zero. If existing roads are not 0 in the cost layer they can be "burned in" by setting `roadsInCost = FALSE`.
+* The traversal cost of existing road segments is assumed to be zero. If existing roads are not 0 in the cost layer they can be "burned in" by setting `roadsInWeight = FALSE`.
 * The extent of the landscape of interest is assumed to match the extent of the specified cost raster layer.
 * The coordinate reference system (CRS) of this raster must match all other input data-sets.  
 * While the cell size (or resolution) of this cost raster is up to the user, it is important to remember that a unit area of road is assumed to take up an entire cell.
 
 ```{r}
-costRaster <- CLUSexample$cost
+weightRaster <- CLUSexample$cost
 ```
 
 ### 2. Existing road network layer
@@ -88,7 +88,7 @@ roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
   matrix(c(0.5, 4.5, 4.5, 4.5),
          ncol = 2, byrow = T) 
 )) %>%
-  sf::st_as_sf(crs = sf::st_crs(costRaster))
+  sf::st_as_sf(crs = sf::st_crs(weightRaster))
 ```
 
 ### 3. Landings layer(s)
@@ -109,7 +109,7 @@ If the landings are polygons then the centroid is used as the destination for ne
 landings <- roads::CLUSexample$landings
 
 ## plot example scenario
-plot(costRaster, col = rastColours, main = 'Example Scenario')
+plot(weightRaster, col = rastColours, main = 'Example Scenario')
 plot(roadsLine, add = TRUE)
 plot(landings, add = TRUE, pch = 19)
 points(x=5.6,y=4.5,pch=19,xpd=TRUE)
@@ -134,11 +134,11 @@ This approach simply 'snaps' a landing to the nearest existing road segment. Sin
 
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
 ## project new roads using the 'snap' approach
-projRoads_snap <- roads::projectRoads(landings, costRaster, roadsLine,
+projRoads_snap <- roads::projectRoads(landings, weightRaster, roadsLine,
                                       roadMethod = 'snap')
 
-## plot the cost raster, landings, and roads segments to the landings
-plot(costRaster, col = rastColours, main = "'Snapped' roads")
+## plot the weight raster, landings, and roads segments to the landings
+plot(weightRaster, col = rastColours, main = "'Snapped' roads")
 points(landings, pch = 19, col = 'red')  
 plot(projRoads_snap$roads, add = TRUE) 
 
@@ -166,12 +166,12 @@ Once the graph is built, the least cost path between each landing and the neares
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
 ## project new roads using the 'LCP' approach
 projRoads_lcp <- roads::projectRoads(landings, 
-                                        costRaster, 
+                                        weightRaster, 
                                         roadsLine, 
                                         roadMethod = 'lcp')
 
-## plot the cost raster and overlay it with new roads
-plot(costRaster, col = rastColours, main = "'LCP' roads")
+## plot the weight raster and overlay it with new roads
+plot(weightRaster, col = rastColours, main = "'LCP' roads")
 plot(projRoads_lcp$roads, add = TRUE)
 points(landings, pch = 19, col = 'red')  ## landings points
 ## legend
@@ -189,12 +189,12 @@ This approach reduces the number of parallel roads seen in the LCP method becaus
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
 ## project new roads using the 'ILCP' approach
 projRoads_ilcp <- roads::projectRoads(landings, 
-                                        costRaster, 
+                                        weightRaster, 
                                         roadsLine, 
                                         roadMethod = 'ilcp')
 
-## plot the cost raster and overlay it with new roads
-plot(costRaster, col = rastColours, main = "'ILCP' roads")
+## plot the weight raster and overlay it with new roads
+plot(weightRaster, col = rastColours, main = "'ILCP' roads")
 plot(projRoads_ilcp$roads, add = TRUE)
 points(landings, pch = 19, col = 'red')  ## landings points
 ## legend
@@ -209,12 +209,12 @@ The ILCP approach produces more of a network rather than many parallel roads. Ho
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
 ## project new roads using the 'ILCP' approach
 projRoads_ilcp2 <- roads::projectRoads(rev(landings), 
-                                        costRaster, 
+                                        weightRaster, 
                                         roadsLine, 
                                         roadMethod = 'ilcp')
 
-## plot the cost raster and overlay it with new roads
-plot(costRaster, col = rastColours, main = "'ILCP' roads")
+## plot the weight raster and overlay it with new roads
+plot(weightRaster, col = rastColours, main = "'ILCP' roads")
 plot(projRoads_ilcp2$roads, add = TRUE)
 points(landings, pch = 19, col = 'red')  ## landings points
 ## legend
@@ -231,12 +231,12 @@ The MST approach builds upon the LCP approach by determining if landings should 
 ```{r, fig.show='hold',  fig.width=5, fig.height=4.85}
 ## project new roads using the 'MST' approach
 projRoads_mst <- roads::projectRoads(landings, 
-                                        costRaster,
+                                        weightRaster,
                                         roadsLine, 
                                         roadMethod = 'mst')
 
-## plot the cost raster and overlay it with new roads
-plot(costRaster, col = rastColours, main = "'MST' roads")
+## plot the weight raster and overlay it with new roads
+plot(weightRaster, col = rastColours, main = "'MST' roads")
 plot(projRoads_mst$roads, add = TRUE)
 points(landings, pch = 19, col = 'red')  ## landings points
 ## legend
@@ -253,7 +253,7 @@ The MST approach will produce the least amount of roads (relative to the other a
 Roads development simulation can be performed either for a single time step (one-time) or for multiple time steps.  This section will use a demonstration scenario `demoScen` data-set that is included with the roads package. There are four different sets of landings. 
 
 ```{r, fig.show='hold', fig.width=7,fig.height=6.5}
-## colours for displaying cost raster
+## colours for displaying weight raster
 if(requireNamespace("viridis", quietly = TRUE)){
   # Use colour blind friendly palette if available
   rastColours2 <- c('grey50', viridis::viridis(30))
@@ -266,7 +266,7 @@ demoScen <- prepExData(demoScen)
 scen <- demoScen[[1]]
 ## landing sets 1 to 4 of this scenario 
 land.pnts <- scen$landings.points[scen$landings.points$set %in% c(1:4),]
-## plot the cost raster and landings
+## plot the weight raster and landings
 par(mar=par('mar')/2)
 plot(scen$cost.rast, col = rastColours2, main = 'Cost and landings (by set)')
 plot(land.pnts, add = TRUE, pch = 21, cex = 2, bg = 'white')
@@ -350,7 +350,7 @@ par(mar = par('mar')/2)
   plot(scen$road.line, col = 'grey30', add = TRUE, legend = FALSE)
   
 for (i in 1:length(multiTime_sim)){
-  plot(multiTime_sim[[i]]$costSurface, col = rastColours2, 
+  plot(multiTime_sim[[i]]$weightRaster, col = rastColours2, 
        main = paste0('Roads at time t = ', i), legend = FALSE)
   plot(multiTime_sim[[i]]$roads, col = 'grey30', add = TRUE, legend = FALSE)
   plot(land.pnts[land.pnts$set == i, ], add = TRUE, pch = 21, 

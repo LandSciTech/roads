@@ -23,12 +23,12 @@
 #' @noRd
 
 getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1,x2,...) (x1+x2)/2,...){
-  #sim = list(costSurface=costRaster);neighbourhood="octagon"
-  #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.  resolution=res(sim$costSurface)[1]
+  #sim = list(weightRaster=weightRaster);neighbourhood="octagon"
+  #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.  resolution=res(sim$weightRaster)[1]
 
   inargs = list(...)
   if(!is.element("resolution",names(inargs))){
-    resolution = terra::res(sim$costSurface)[1]
+    resolution = terra::res(sim$weightRaster)[1]
   }else{
     resolution = inargs$resolution
   }
@@ -46,7 +46,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
                   rook=4,
                   octagon=8,
                   queen=8)
-    x = gdistance::transition(as(sim$costSurface, "Raster"), transitionFunction=function(x) 1/weightFunction(x[1],x[2],resolution=resolution,...), directions=dirs)
+    x = gdistance::transition(as(sim$weightRaster, "Raster"), transitionFunction=function(x) 1/weightFunction(x[1],x[2],resolution=resolution,...), directions=dirs)
 
     if(neighbourhood=="octagon"){
       #correct for diagonal distances and other aspects of geographic distance
@@ -61,9 +61,9 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     # define global varaiables to avoid NOTEs on R CMD check
     weightV <- from <- to <- w1 <- w2 <- NULL
 
-    # prepare the cost surface raster #===========
-    # get cost as data.table from raster
-    weightV <- data.table(weight = terra::values(sim$costSurface, mat = FALSE))
+    # prepare the weightRaster raster #===========
+    # get weight as data.table from raster
+    weightV <- data.table(weight = terra::values(sim$weightRaster, mat = FALSE))
 
     # get the id for ther verticies which is used to merge with the edge list from
     # adj
@@ -75,10 +75,10 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
       stop("neighbourhood type not recognized")
     }
 
-    nc <- terra::ncol(sim$costSurface)
-    ncel <- terra::ncell(sim$costSurface) %>% as.integer()
+    nc <- terra::ncol(sim$weightRaster)
+    ncel <- terra::ncell(sim$weightRaster) %>% as.integer()
 
-    edges <- terra::adjacent(sim$costSurface, cells = 1:as.integer(ncel),
+    edges <- terra::adjacent(sim$weightRaster, cells = 1:as.integer(ncel),
                              directions = "rook", pairs = TRUE) %>%
       data.table::as.data.table()
 
@@ -87,20 +87,20 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
 
     edges <- unique(edges)
 
-    # merge in the weights from a cost surface
+    # merge in the weights from a weightRaster
     edges.weight <- merge(x = edges, y = weightV, by.x = "from", by.y = "id")
 
     # reformat
     data.table::setnames(edges.weight, c("from", "to", "w1"))
 
-    # merge in the weights to a cost surface
+    # merge in the weights to a weightRaster
     edges.weight <- data.table::setDT(merge(x = edges.weight, y = weightV,
                                           by.x = "to", by.y = "id"))
 
     # reformat
     data.table::setnames(edges.weight, c("from", "to", "w1", "w2"))
 
-    # take the average cost between the two pixels and remove w1 w2
+    # apply the weightFunction across the two pixels and remove w1 w2
     edges.weight[,`:=`(weight = weightFunction(w1,w2,resolution=resolution,...),
                      w1 = NULL,
                      w2 = NULL)]
@@ -113,7 +113,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
       } else {mW = 1}
       weightV[, weight := weight*mW]
 
-      edges <- terra::adjacent(sim$costSurface, cells = 1:as.integer(ncel),
+      edges <- terra::adjacent(sim$weightRaster, cells = 1:as.integer(ncel),
                                directions = "bishop", pairs = TRUE) %>%
         data.table::as.data.table()
 
@@ -122,20 +122,20 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
 
       edges <- unique(edges)
 
-      # merge in the weights from a cost surface
+      # merge in the weights from a weightRaster
       edges_bishop <- merge(x = edges, y = weightV, by.x = "from", by.y = "id")
 
       # reformat
       data.table::setnames(edges_bishop, c("from", "to", "w1"))
 
-      # merge in the weights to a cost surface
+      # merge in the weights to a weightRaster
       edges_bishop <- data.table::setDT(merge(x = edges_bishop, y = weightV,
                                               by.x = "to", by.y = "id"))
 
       # reformat
       data.table::setnames(edges_bishop, c("from", "to", "w1", "w2"))
 
-      # take the average cost between the two pixels and remove w1 w2
+      # apply weightFunction across the two pixels and remove w1 w2
       edges_bishop[,`:=`(weight = weightFunction(w1,w2,resolution=resolution,...),
                          w1 = NULL,
                          w2 = NULL)]
@@ -148,7 +148,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
 
     }
 
-    # get rid of NAs caused by barriers. Drop the w1 and w2 costs.
+    # get rid of NAs caused by barriers. Drop the w1 and w2 columns.
     edges.weight <- na.omit(edges.weight)
 
     # set the ids of the edge list. Faster than using as.integer(row.names())

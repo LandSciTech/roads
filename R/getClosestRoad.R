@@ -31,7 +31,7 @@ getClosestRoad <- function(sim, ordering = "closest"){
   # lines to points at raster centers
   if(sf::st_geometry_type(roads.pts, by_geometry = FALSE) == "GEOMETRY"){
     rd.lines <- sf::st_collection_extract(roads.pts, type = "LINESTRING")
-    rd.lines.pts <- terra::extract(sim$costSurface, terra::vect(rd.lines), xy = TRUE) %>% 
+    rd.lines.pts <- terra::extract(sim$weightRaster, terra::vect(rd.lines), xy = TRUE) %>% 
       sf::st_as_sf(coords = c("x", "y"), crs = sf::st_crs(rd.lines)) %>% 
       sf::st_geometry()
     
@@ -53,7 +53,7 @@ getClosestRoad <- function(sim, ordering = "closest"){
   
   # find landings that are within the space of one raster cell from the road
   touching_road <- which(distToRoad < 
-                           terra::res(sim$costSurface)[1])
+                           terra::res(sim$weightRaster)[1])
   
   if(length(touching_road) > 0){
     # make snap roads for these ones 

@@ -28,14 +28,14 @@ prRes <- projectRoads(land.pnts, scen$cost.rast, ex_roads, "mst",
                          plotRoads = TRUE)
 
 # 0s look ugly so smooth out
-prRes$costSurface[prRes$costSurface == 0] <- NA
+prRes$weightRaster[prRes$weightRaster == 0] <- NA
 
-prRes$costSurface <- raster::focal(prRes$costSurface, w=matrix(1, nc=5, nr=5),
+prRes$weightRaster <- raster::focal(prRes$weightRaster, w=matrix(1, nc=5, nr=5),
                                    fun = "mean",
                                    na.rm = TRUE,
                                    NAonly = TRUE)
 
-mp <- tm_shape(prRes$costSurface)+
+mp <- tm_shape(prRes$weightRaster)+
   tm_raster(style = "cont", legend.show = FALSE)+
   tm_shape(prRes$roads)+
   tm_lines(lwd = 1)+

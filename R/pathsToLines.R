@@ -23,7 +23,7 @@
 
 pathsToLines <- function(sim){
   ## existing roads
-  er <- sim$costSurface == 0
+  er <- sim$weightRaster == 0
 
   linelist <- lapply(1:length(sim$paths.list), function(i){
 
@@ -31,7 +31,7 @@ pathsToLines <- function(sim){
     inds <- match(sim$paths.list[[i]], sim$paths.v[[1]])
 
     if(any(is.na(inds))){
-      stop("NA values in cost raster along paths. Check for disconnected clumps in cost raster. If weightFunction=slopePenaltyFn, try adjusting limit or setting limitCost to high value that is not NA.", call. = FALSE)
+      stop("NA values in weightRaster along paths. Check for disconnected clumps in weightRaster. If weightFunction=slopePenaltyFn, try adjusting limit or setting limitWeight to high value that is not NA.", call. = FALSE)
     }
 
     if(inds[1] == inds[2]){
@@ -49,7 +49,7 @@ pathsToLines <- function(sim){
     ## index of where new road connects to existing road
     conn <- which(er_v == 1)
 
-    # outLine1 <- sf::st_linestring(raster::xyFromCell(sim$costSurface, v))
+    # outLine1 <- sf::st_linestring(raster::xyFromCell(sim$weightRaster, v))
 
     ## remove portions that run along existing road, if applicable. If there are
     ## multiple sections of new road with sections of old road in between we
@@ -117,25 +117,25 @@ pathsToLines <- function(sim){
     if(length(keep) == 1){
       cellsToKeep <- v[keep[[1]]]
       cellsToKeep <- na.omit(cellsToKeep)
-      outLine <- sf::st_linestring(terra::xyFromCell(sim$costSurface,
+      outLine <- sf::st_linestring(terra::xyFromCell(sim$weightRaster,
                                                       cellsToKeep)) %>%
         sf::st_sfc()
     } else {
       outLine <- lapply(keep, function(x){
         cellsToKeep <- v[x]
         cellsToKeep <- na.omit(cellsToKeep)
-        sf::st_linestring(terra::xyFromCell(sim$costSurface, cellsToKeep))
+        sf::st_linestring(terra::xyFromCell(sim$weightRaster, cellsToKeep))
       })
       outLine <- sf::st_union(outLine %>% sf::st_as_sfc())
     }
 
 
-    # strt_end <-raster::xyFromCell(sim$costSurface, sim$paths.list[[i]]) %>%
+    # strt_end <-raster::xyFromCell(sim$weightRaster, sim$paths.list[[i]]) %>%
     #   as.data.frame %>%
     #   st_as_sf(coords = c("x", "y"))
     #
     # plot(outLine1, col = "blue")
-    # #raster::plot(sim$costSurface, add = TRUE)
+    # #raster::plot(sim$weightRaster, add = TRUE)
     # plot(sim$landings %>% st_geometry(), add = T)
     # plot(sim$roads %>% st_geometry(), add = T)
     # plot(outLine1, col = "blue", add = T)

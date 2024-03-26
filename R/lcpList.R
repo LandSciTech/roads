@@ -18,9 +18,9 @@ lcpList<- function(sim){
     return(invisible(sim))
   }
   ##Get a list of of cell indexs for to and from points
-  paths.matrix <- cbind(terra::cellFromXY(sim$costSurface,
+  paths.matrix <- cbind(terra::cellFromXY(sim$weightRaster,
                                          sf::st_coordinates(sim$landings)), 
-                      terra::cellFromXY(sim$costSurface, sim$roads.close.XY))
+                      terra::cellFromXY(sim$weightRaster, sim$roads.close.XY))
   
   sim$paths.list <- split(paths.matrix, 1:nrow(paths.matrix))
   

@@ -2,18 +2,18 @@
 
 CLUSexample <- prepExData(CLUSexample)
 
-costRaster <- CLUSexample$cost
+weightRaster <- CLUSexample$cost
 
 roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
   matrix(c(0.5, 4.5, 4.5, 4.5),
          ncol = 2, byrow = T)
 )) %>%
-  sf::st_as_sf(crs = sf::st_crs(costRaster))
+  sf::st_as_sf(crs = sf::st_crs(weightRaster))
 
 
 landings <- roads::CLUSexample$landings
 
-sim = list(costSurface=costRaster)
+sim = list(weightRaster=weightRaster)
 
 test_that("getGraph works with different neighbourhoods", {
   gR = getGraph(sim, "rook")

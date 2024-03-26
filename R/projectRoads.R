@@ -17,15 +17,16 @@
 
 #' Project road network
 #'
-#' Project road locations based on existing roads, planned landings, and a cost
-#' surface that defines the cost of building roads.
+#' Project road locations based on existing roads, planned landings, and a weights
+#' raster that in conjunction with a weighting function determines the cost to
+#' build a road between two cells in the raster.
 #'
 #' Four different methods for projecting road networks have been implemented:
 #'   * "snap": Connects each landing directly to the closest road without
-#'   reference to the cost or other landings
+#'   reference to the weights or other landings.
 #'   * "lcp": Least Cost Path connects each landing to the closest point
-#'   on the road by determining the least cost path based on the cost surface
-#'   provided, it does not consider other landings
+#'   on the road by determining the least cost path based on the weights raster
+#'   provided, it does not consider other landings.
 #'   * "ilcp": Iterative Least Cost Path, same as "lcp" but it builds each
 #'   path sequentially so that later roads will use earlier roads. The sequence
 #'   of landings is determined by `ordering` and is "closest" by default, the
@@ -33,16 +34,16 @@
 #'   in.
 #'   * "mst": Minimum Spanning Tree connects all landings to the road by
 #'   determining the least cost path to the road or other landings based on the
-#'   cost surface
+#'   weight raster.
 #'
 #' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
 #'   SpatialPoints*, matrix, containing features to be connected
 #'   to the road network. Matrix should contain columns x, y with coordinates,
 #'   all other columns will be ignored.
-#' @param cost RasterLayer. Cost surface where existing roads must be the only
-#'   cells with a cost of 0. If existing roads do not have 0 cost set
-#'   `roadsInCost = FALSE` and they will be burned in.
-#' @param roads sf lines, SpatialLines*, RasterLayer. Existing road network.
+#' @param weightRaster SpatRaster or RasterLayer. weights Raster where existing
+#'   roads must be the only cells with a weight of 0. If existing roads do not
+#'   have 0 weight set `roadsInWeight = FALSE` and they will be burned in.
+#' @param roads sf lines, SpatialLines*, RasterLayer, SpatRaster. Existing road network.
 #' @param roadMethod Character. Options are "ilcp", "mst", "lcp", "snap".
 #' @param plotRoads Boolean. Should the resulting road network be plotted.
 #'   Default FALSE.
@@ -52,12 +53,12 @@
 #'   the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
 #'   higher than horizontal/vertical weights.
 #' @param weightFunction function. Method for calculating the weight of an edge
-#'   between two nodes from the value of the cost raster at each of those nodes
+#'   between two nodes from the value of the weights raster at each of those nodes
 #'   (x1 and x2). Default is the mean. Functions should be symmetric, meaning
 #'   that the value returned does not depend on the ordering of x1 and x2. All
 #'   functions must include the arguments `x1`, `x2` and `...`.
 #' @param sim list. Returned from a previous iteration of `projectRoads`.
-#'   cost, roads, and `roadMethod` are ignored if a `sim` list is provided.
+#'   weightRaster, roads, and `roadMethod` are ignored if a `sim` list is provided.
 #' @param roadsOut Character. Either "raster", "sf" or NULL. If "raster" roads
 #'   are returned as a raster in the `sim` list. If "sf" the roads are returned as
 #'   an sf object which will contain lines if the roads input was sf lines but a
@@ -65,9 +66,9 @@
 #'   The points in the geometry collection represent the existing roads while
 #'   new roads are created as lines. If NULL (default) then the returned roads
 #'   are sf if the input is sf or Spatial* and raster if the input was a raster.
-#' @param roadsInCost Logical. The default is TRUE which means the cost raster
-#'   is assumed to include existing roads as 0 in its cost surface. If FALSE
-#'   then the roads will be "burned in" to the cost raster with a cost of 0.
+#' @param roadsInWeight Logical. The default is TRUE which means the
+#'   `weightRaster` is assumed to include existing roads as 0. If FALSE then the
+#'   roads will be "burned in" to the `weightRaster` with a weight of 0.
 #' @param ordering character. The order in which roads should be built to
 #'   landings when `roadMethod = "ilcp"`. Options are "closest" (default) where
 #'   landings closest to existing roads are accessed first, or "none" where
@@ -77,13 +78,13 @@
 #' @return
 #' a list with components:
 #' * roads: the projected road network, including new and input roads.
-#' * costSurface: the cost surface, updated to have 0 for new roads that
+#' * weightRaster: the weights raster, updated to have 0 for new roads that
 #'       were added.
 #' * roadMethod: the road simulation method used.
 #' * landings: the landings used in the simulation.
 #' * g: the graph that describes the cost of paths between each cell in the
-#'       cost raster. This is updated based on the new roads so that vertices
-#'       were connected by new roads now have a cost of 0. This can be used to
+#'       `weightRaster`. This is updated based on the new roads so that vertices
+#'       that were connected by new roads now have a weight of 0. This can be used to
 #'       avoid recomputing the graph in a simulation with multiple time steps.
 #'
 #' @examples
@@ -144,7 +145,7 @@
 #' @export
 #'
 setGeneric('projectRoads', function(landings = NULL,
-                                    cost = NULL,
+                                    weightRaster = NULL,
                                     roads = NULL,
                                     roadMethod = "ilcp",
                                     plotRoads = FALSE,
@@ -153,7 +154,7 @@ setGeneric('projectRoads', function(landings = NULL,
                                     weightFunction=function(x1,x2,...) (x1+x2)/2,
                                     sim = NULL,
                                     roadsOut = NULL,
-                                    roadsInCost = TRUE,
+                                    roadsInWeight = TRUE,
                                     ordering = "closest",
                                     ...)
   standardGeneric('projectRoads'))
@@ -161,13 +162,11 @@ setGeneric('projectRoads', function(landings = NULL,
 #' @rdname projectRoads
 setMethod(
   'projectRoads', signature(sim = "missing"),
-  function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, weightFunction, sim, roadsOut, roadsInCost, ordering,...) {
-    #landings=outObj$landings;cost=outObj$cost;roads=outObj$roads;roadMethod="mst";roadsOut = "raster"
-    #mainTitle = NULL;neighbourhood = "queen";sim = NULL;roadsInCost = TRUE
+  function(landings, weightRaster, roads, roadMethod, plotRoads, mainTitle,
+           neighbourhood, weightFunction, sim, roadsOut, roadsInWeight, ordering,...) {
 
     # check required args
-    missingNames = names(which(sapply(lst(roads, cost, roadMethod, landings),
+    missingNames = names(which(sapply(lst(roads, weightRaster, roadMethod, landings),
                                       is.null)))
     if(length(missingNames) > 0){
       stop("Argument(s): ", paste0(missingNames, collapse = ", "),
@@ -199,10 +198,10 @@ setMethod(
     }
 
     # set up sim list
-    sim <- buildSimList(roads = roads, cost = cost,
+    sim <- buildSimList(roads = roads, weightRaster = weightRaster,
                         roadMethod = roadMethod,
                         landings = landings,
-                        roadsInCost = roadsInCost)
+                        roadsInWeight = roadsInWeight)
 # browser()
     sim$landingsIn <- sim$landings
 
@@ -278,8 +277,8 @@ setMethod(
 #' @rdname projectRoads
 setMethod(
   'projectRoads', signature(sim = "list"),
-  function(landings, cost, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, weightFunction,sim, roadsOut, roadsInCost, ordering,...) {
+  function(landings, weightRaster, roads, roadMethod, plotRoads, mainTitle,
+           neighbourhood, weightFunction,sim, roadsOut, roadsInWeight, ordering,...) {
 
     # If roads in are raster return as raster
     if((is(sim$roads, "Raster") || is(sim$roads, "SpatRaster")) && is.null(roadsOut) ){
@@ -291,8 +290,8 @@ setMethod(
     sim <- list2env(sim)
 
     # add landings to sim list. Should involve all the same checks as before
-    sim <- buildSimList(sim$roads, sim$costSurface, sim$roadMethod, landings,
-                        roadsInCost = TRUE, sim = sim)
+    sim <- buildSimList(sim$roads, sim$weightRaster, sim$roadMethod, landings,
+                        roadsInWeight = TRUE, sim = sim)
 
     sim$landingsIn <- sim$landings
 
@@ -365,7 +364,7 @@ setMethod(
 
 outputRoads <- function(sim, roadsOut){
   if(roadsOut == "raster"){
-    sim$roads <- sim$costSurfaceNew == 0
+    sim$roads <- sim$weightRasterNew == 0
   } else {
     # make new roads
     new_roads <- pathsToLines(sim)
@@ -373,10 +372,10 @@ outputRoads <- function(sim, roadsOut){
     sim$roads <- bind_rows(sim$roads, new_roads)
   }
 
-  sim$costSurface <- sim$costSurfaceNew
+  sim$weightRaster <- sim$weightRasterNew
 
   # remove no longer needed parts of list that aren't being used for update
-  rm(list = c("costSurfaceNew", "roads.close.XY", "paths.v", "paths.list"), 
+  rm(list = c("weightRasterNew", "roads.close.XY", "paths.v", "paths.list"), 
      envir = sim)
 
   return(sim)

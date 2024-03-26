@@ -8,7 +8,7 @@
 #   library(ggplot2)
 #   devtools::document();devtools::load_all()
 # 
-#   ## colours for displaying cost raster
+#   ## colours for displaying weight raster
 #   if(requireNamespace("viridis", quietly = TRUE)){
 #     # Use colour blind friendly palette if available
 #     rastColours <- c('grey50', viridis::viridis(20))
@@ -18,19 +18,19 @@
 # 
 #   CLUSexample <- prepExData(CLUSexample)
 # 
-#   costRaster <- CLUSexample$cost
+#   weightRaster <- CLUSexample$cost
 # 
 #   roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
 #     matrix(c(0.5, 4.5, 4.5, 4.5),
 #            ncol = 2, byrow = T)
 #   )) %>%
-#     sf::st_as_sf(crs = sf::st_crs(costRaster))
+#     sf::st_as_sf(crs = sf::st_crs(weightRaster))
 # 
 # 
 #   landings <- roads::CLUSexample$landings
 # 
 #   ## plot example scenario
-#   plot(costRaster, col = rastColours, main = 'Example Scenario')
+#   plot(weightRaster, col = rastColours, main = 'Example Scenario')
 #   plot(roadsLine, add = TRUE)
 #   plot(landings, add = TRUE, pch = 19)
 #   points(x=5.6,y=4.5,pch=19,xpd=TRUE)
@@ -38,7 +38,7 @@
 #   lines(x=c(5.3,5.6),y=c(4.2,4.2),lwd=2,xpd=TRUE)
 #   text(x=5.75,y=4.2,labels='roads',adj=c(0,0.3),xpd=TRUE)
 # 
-#   sim = list(costSurface=costRaster)
+#   sim = list(weightRaster=weightRaster)
 # 
 #   g1$g = getGraph(sim,"queen")
 #   gNew$g = getGraph(sim,"queen",method="gdistance")
@@ -72,15 +72,15 @@
 #   base_point <- c((1881188-159588)/2, (1748188-173788)/2)
 #   the_res <- res(landscape)[1]
 #   ext_100 <- ext(c(base_point, base_point+100*the_res)[c(1,3,2,4)])
-#   landscape_100 <- list(costSurface=crop(landscape, ext_100))
+#   landscape_100 <- list(weightRaster=crop(landscape, ext_100))
 #   ext_500 <- ext(c(base_point, base_point+500*the_res)[c(1,3,2,4)])
-#   landscape_500 <- list(costSurface=crop(landscape, ext_500))
+#   landscape_500 <- list(weightRaster=crop(landscape, ext_500))
 #   ext_1000 <- ext(c(base_point, base_point+1000*the_res)[c(1,3,2,4)])
-#   landscape_1000 <- list(costSurface=crop(landscape, ext_1000))
+#   landscape_1000 <- list(weightRaster=crop(landscape, ext_1000))
 #   ext_2000 <- ext(c(base_point, base_point+200*the_res)[c(1,3,2,4)])
-#   landscape_2000 <- list(costSurface=crop(landscape, ext_2000))
+#   landscape_2000 <- list(weightRaster=crop(landscape, ext_2000))
 # 
-#   rr = getGraph(landscape_100,neighb,method="old",weightFunction=slopePenaltyFn,limitCost=65000)
+#   rr = getGraph(landscape_100,neighb,method="old",weightFunction=slopePenaltyFn,limitWeight=65000)
 # 
 #   neighb  ="octagon"
 #   bm <- bench::mark(min_iterations = 1, check = FALSE,

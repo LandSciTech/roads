@@ -33,17 +33,17 @@ shortestPaths<- function(sim){
     sim$paths.v <- rbind(data.table::data.table(paths.v), 
                          sim$paths.v) 
     
-    # use vertices to update cost raster to 0 at new roads need copy so old cost
+    # use vertices to update weight raster to 0 at new roads need copy so old weight
     # available in pathsToLines
-    sim$costSurfaceNew <- sim$costSurface
-    sim$costSurfaceNew[unique(paths.v)] <- 0
+    sim$weightRasterNew <- sim$weightRaster
+    sim$weightRasterNew[unique(paths.v)] <- 0
     
     # get edges for updating graph
     paths.e <- paths[grepl("epath", names(paths))]
     
     rm(paths)
     
-    # updates the cost(weight) associated with the edge that became a road
+    # updates the weight associated with the edge that became a road
     sim$g <- igraph::set_edge_attr(sim$g, 
                       index = igraph::E(sim$g)[paths.e],
                       name = "weight", value = 0.00001)
@@ -54,7 +54,7 @@ shortestPaths<- function(sim){
   return(invisible(sim))
 }
 
-#' Get shortest path between points in list updating cost after each
+#' Get shortest path between points in list updating weight after each
 #' 
 #' @param sim sim list
 #' @noRd
@@ -70,7 +70,7 @@ iterativeShortestPaths<- function(sim){
       
       path <- unlist(path)
       
-      # update the cost(weight) associated with the edge that became a road
+      # update the weight associated with the edge that became a road
       path_edge_ind <- igraph::E(sim$g)[path[grepl("epath", names(path))]]
       
       sim$g <- igraph::set_edge_attr(sim$g, 
@@ -82,10 +82,10 @@ iterativeShortestPaths<- function(sim){
     }
     paths.v <-  do.call(rbind, path.vs)
     
-    # use vertices to update cost raster to 0 at new roads need copy so old cost
+    # use vertices to update weight raster to 0 at new roads need copy so old weight
     # available in pathsToLines
-    sim$costSurfaceNew <- sim$costSurface
-    sim$costSurfaceNew[unique(paths.v)$V1] <- 0
+    sim$weightRasterNew <- sim$weightRaster
+    sim$weightRasterNew[unique(paths.v)$V1] <- 0
     
     sim$paths.v <- rbind(sim$paths.v, paths.v)
     

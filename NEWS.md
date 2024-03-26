@@ -1,6 +1,9 @@
 # roads 1.1.2
 * Change dynamic least cost paths (DLCP) to iterative least cost paths (ILCP) throughout
 * Change default `roadMethod` to `"ilcp"` in `projectRoads` 
+* Add ability to use a custom `weightFunction` and add a `weightFunction` `slopePenaltyFn` that determines the grade between two cells
+* Change argument name from `cost` to `weightRaster` since it no longer represents a cost surface
+and can now be inputs to the `weightFunction`. Also change `roadsInCost` to `roadsInWeight`.
 
 # roads 1.1.1
 * Fix an issue where updates to `terra` were causing roads to break

@@ -67,7 +67,7 @@ Our scenario is that we have landings that were harvested over four years and a 
 roadsRast <- terra::rasterize(terra::vect(realRoads$roads), scen$cost.rast, 
                               background = 0) == 0
 
-# doesn't work if cost is 0 because areas with 0 cost are assumed to already be
+# doesn't work if weight is 0 because areas with 0 weight are assumed to already be
 # roads so no new ones will be built
 scen$cost.rast <- scen$cost.rast * (roadsRast + 0.00001) 
 

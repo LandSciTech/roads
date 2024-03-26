@@ -25,9 +25,9 @@ mstList<- function(sim){
     return(invisible(sim))
   }
   # get cell indexs for new road start and end
-  mst.v <- rbind(terra::cellFromXY(sim$costSurface, 
+  mst.v <- rbind(terra::cellFromXY(sim$weightRaster, 
                                               sf::st_coordinates(sim$landings)),
-                           terra::cellFromXY(sim$costSurface,
+                           terra::cellFromXY(sim$weightRaster,
                                               sim$roads.close.XY))
   mst.v <- as.vector(mst.v)
   paths.matrix <- unique(mst.v) 
@@ -37,10 +37,10 @@ mstList<- function(sim){
     # get an adjaceny matrix given the cell numbers
     mst.adj <- igraph::distances(sim$g, paths.matrix, paths.matrix) 
     
-    # set the verticies names as the cell numbers in the costSurface
+    # set the verticies names as the cell numbers in the weightRaster
     rownames(mst.adj) <- paths.matrix
     
-    # set the verticies names as the cell numbers in the costSurface
+    # set the verticies names as the cell numbers in the weightRaster
     colnames(mst.adj) <- paths.matrix 
     
     # create a graph

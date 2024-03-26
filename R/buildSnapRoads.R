@@ -38,11 +38,11 @@ buildSnapRoads <- function(sim, roadsOut){
   # add to existing roads
   sim$roads <- bind_rows(sim$roads, snap_roads_lines)
   
-  # burn into cost as 0
-  sim$cost <- burnRoadsInCost(sim$roads, sim$costSurface)
+  # burn into weightRaster as 0
+  sim$weightRaster <- burnRoadsInWeight(sim$roads, sim$weightRaster)
   
   if(roadsOut == "raster"){
-    sim$roads <- sim$cost == 0
+    sim$roads <- sim$weightRaster == 0
   }
   
   return(invisible(sim))

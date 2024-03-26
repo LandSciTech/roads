@@ -67,7 +67,7 @@ rasterToLineSegments <- function(rast, method = "mst"){
                                           byrow = TRUE), right = NA)
     
     prRes <- projectRoads(landings = lnds, cst, roads = lnds[1,], roadMethod = "mst",
-                          roadsInCost = TRUE)
+                          roadsInWeight = TRUE)
     lines <- prRes$roads %>% sf::st_collection_extract("LINESTRING")
     return(lines)
     

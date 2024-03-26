@@ -11,7 +11,7 @@ slopePenaltyFn(
   baseCost = 16178,
   limit = 20,
   penalty = 504,
-  limitCost = NA
+  limitWeight = NA
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ slopePenaltyFn(
 
 \item{penalty}{Cost increase associated with each additional \% increase in road grade.}
 
-\item{limitCost}{Value assigned to edges that exceed the grade limit. Try setting to a high (not NA) value if encountering problems with disconnected graphs.}
+\item{limitWeight}{Value assigned to edges that exceed the grade limit. Try setting to a high (not NA) value if encountering problems with disconnected graphs.}
 }
 \description{
 Method for calculating the weight of an edge between two nodes from the value
@@ -36,6 +36,7 @@ DEM input. The method assumes an input raster in which:
 \item Negative values are costs for crossing streams or other barriers that are
 crossable but expensive. Edges that link to barrier penalty (negative value)
 nodes are assigned the largest barrier penalty weight.
+\item Zero values are assumed to be existing roads.
 \item All other values are interpreted as elevation in the units of the raster
 map (so that a difference between two cells equal to the map resolution can be
 interpreted as 100\% grade)

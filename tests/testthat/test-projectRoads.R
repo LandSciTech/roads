@@ -42,7 +42,7 @@ test_that("cost and road options work", {
   
   # all input roads should be included in output
   out2 <- projectRoads(scen$landings.points, costNo0,
-               roadInt, plotRoads = doPlot, roadsInCost = FALSE)
+               roadInt, plotRoads = doPlot, roadsInWeight = FALSE)
   
   inrd <- terra::cells(terra::rast(roadInt), 1:100)
   
@@ -60,7 +60,7 @@ test_that("cost and road options work", {
   # burn in roads as 0 when cost raster has no 0
   expect_message(projectRoads(scen$landings.points, costNo0,
                               scen$road.line, plotRoads = doPlot, 
-                              roadsInCost = FALSE),
+                              roadsInWeight = FALSE),
                  "Burning in roads")
 })
 
