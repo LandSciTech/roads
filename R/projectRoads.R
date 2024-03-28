@@ -217,6 +217,8 @@ setMethod(
     }
 
     sim$g <- getGraph(sim, neighbourhood,weightFunction=weightFunction,...)
+    message("graph done")
+    print(gc(full = TRUE))
 
     sim <- switch(sim$roadMethod,
                   snap= {
@@ -234,25 +236,44 @@ setMethod(
                   },
                   ilcp ={
                     sim <- getClosestRoad(sim, ordering)
+                    message("closest done")
+                    print(gc(full = TRUE))
 
                     sim <- lcpList(sim)
+                    
+                    message("lcp done")
+                    print(gc(full = TRUE))
 
                     # includes iterative update graph
                     sim <- iterativeShortestPaths(sim)
+                    
+                    message("short path done")
+                    print(gc(full = TRUE))
 
                     sim <- outputRoads(sim, roadsOut)
+                    
+                    message("out roads done")
+                    print(gc(full = TRUE))
                   },
                   mst ={
                     sim <- getClosestRoad(sim, ordering)
+                    message("closest done")
+                    print(gc(full = TRUE))
 
                     # will take more time than lcpList given the construction of
                     # a mst
                     sim <- mstList(sim)
+                    message("mst done")
+                    print(gc(full = TRUE))
 
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)
+                    message("short path done")
+                    print(gc(full = TRUE))
 
                     sim <- outputRoads(sim, roadsOut)
+                    message("out roads done")
+                    print(gc(full = TRUE))
                   }
     )
 
