@@ -274,6 +274,7 @@ setMethod(
                     sim <- outputRoads(sim, roadsOut)
                     message("out roads done")
                     print(gc(full = TRUE))
+                    sim
                   }
     )
 
