@@ -97,6 +97,26 @@ large rasters</p>
 <span class="r-in"><span><span class="co"># works well for very simple roads</span></span></span>
 <span class="r-in"><span><span class="va">roadLine1</span> <span class="op">&lt;-</span> <span class="fu">rasterToLineSegments</span><span class="op">(</span><span class="va">CLUSexample</span><span class="op">$</span><span class="va">roads</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No 0s detected in weightRaster. If existing roads have not been included in the weightRaster set roadsInWeight = FALSE to have them burned in</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> graph done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3120250 166.7    5937237 317.1  5553477 296.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5374824  41.1   12255594  93.6 10818825  82.6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> closest done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3114069 166.4    5937237 317.1  5553477 296.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5085766  38.9   12255594  93.6 10818825  82.6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> mst done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3113451 166.3    5937237 317.1  5553477 296.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5084801  38.8   12255594  93.6 10818825  82.6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> short path done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3113717 166.3    5937237 317.1  5553477 296.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5091283  38.9   12255594  93.6 10818825  82.6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> out roads done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3113949 166.4    5937237 317.1  5553477 296.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5095573  38.9   12255594  93.6 10818825  82.6</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># longer running more realistic examples</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
@@ -104,6 +124,26 @@ large rasters</p>
 <span class="r-in"><span><span class="co"># mst method works well in this case</span></span></span>
 <span class="r-in"><span><span class="va">roadLine2</span> <span class="op">&lt;-</span> <span class="fu">rasterToLineSegments</span><span class="op">(</span><span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">road.rast</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No 0s detected in weightRaster. If existing roads have not been included in the weightRaster set roadsInWeight = FALSE to have them burned in</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> graph done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3136279 167.5    5937237 317.1  5659095 302.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5391490  41.2   12255594  93.6 11386790  86.9</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> closest done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3121788 166.8    5937237 317.1  5659095 302.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5293847  40.4   12255594  93.6 11386790  86.9</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> mst done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3122716 166.8    5937237 317.1  5659095 302.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5750934  43.9   12255594  93.6 11386790  86.9</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> short path done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3124540 166.9    5937237 317.1  5659095 302.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5415207  41.4   12255594  93.6 12229616  93.4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> out roads done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3125399 167.0    5937237 317.1  5937237 317.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5412624  41.3   12255594  93.6 12229616  93.4</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># nearest method has doubled line where the two roads meet</span></span></span>
 <span class="r-in"><span><span class="va">roadLine3</span> <span class="op">&lt;-</span> <span class="fu">rasterToLineSegments</span><span class="op">(</span><span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">road.rast</span>, method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span></span>
@@ -111,6 +151,26 @@ large rasters</p>
 <span class="r-in"><span><span class="co"># The mst method can also produce odd results in some cases</span></span></span>
 <span class="r-in"><span><span class="va">roadLine4</span> <span class="op">&lt;-</span> <span class="fu">rasterToLineSegments</span><span class="op">(</span><span class="va">demoScen</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">road.rast</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No 0s detected in weightRaster. If existing roads have not been included in the weightRaster set roadsInWeight = FALSE to have them burned in</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> graph done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3132712 167.4    5937237 317.1  5937237 317.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5592559  42.7   12255594  93.6 12229616  93.4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> closest done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3129105 167.2    5937237 317.1  5937237 317.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5372476  41.0   12255594  93.6 12229616  93.4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> mst done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3129172 167.2    5937237 317.1  5937237 317.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5324059  40.7   12255594  93.6 12229616  93.4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> short path done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3129816 167.2    5937237 317.1  5937237 317.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5420507  41.4   12255594  93.6 12229616  93.4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> out roads done</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3130709 167.2    5937237 317.1  5937237 317.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5622156  42.9   12255594  93.6 12229616  93.4</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
