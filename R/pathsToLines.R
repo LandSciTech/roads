@@ -118,15 +118,14 @@ pathsToLines <- function(sim){
       cellsToKeep <- v[keep[[1]]]
       cellsToKeep <- na.omit(cellsToKeep)
       outLine <- sf::st_linestring(terra::xyFromCell(sim$weightRaster,
-                                                      cellsToKeep)) %>%
-        sf::st_sfc()
+                                                      cellsToKeep)) 
     } else {
       outLine <- lapply(keep, function(x){
         cellsToKeep <- v[x]
         cellsToKeep <- na.omit(cellsToKeep)
         sf::st_linestring(terra::xyFromCell(sim$weightRaster, cellsToKeep))
       })
-      outLine <- sf::st_union(outLine %>% sf::st_as_sfc())
+      outLine <- do.call(c, outLine)
     }
 
 
@@ -153,8 +152,6 @@ pathsToLines <- function(sim){
     return(slice(sim$roads, 0))
   }
 
-  outLines <- do.call(c, linelist) %>%
-    sf::st_union()
-  outLines <- sf::st_sf(geometry = outLines)
+  outLines <- sf::st_sf(geometry = linelist %>% sf::st_as_sfc())
   return(sf::st_set_crs(outLines, sf::st_crs(sim$roads)))
 }
