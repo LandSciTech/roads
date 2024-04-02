@@ -251,9 +251,6 @@ setMethod(
                     print(gc(full = TRUE))
 
                     sim <- outputRoads(sim, roadsOut)
-                    
-                    message("out roads done")
-                    print(gc(full = TRUE))
                   },
                   mst ={
                     sim <- getClosestRoad(sim, ordering)
