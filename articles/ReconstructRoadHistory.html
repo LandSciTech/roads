@@ -132,22 +132,6 @@ creates a demonstration road data set.</p>
 <span><span class="va">realRoads</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.pnts</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>,</span>
 <span>                          roadMethod <span class="op">=</span> <span class="st">"ilcp"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1764290 94.3    3420121 182.7  2360084 126.1</span></span>
-<span><span class="co">#&gt; Vcells 3552159 27.2    8388608  64.0  7889615  60.2</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1784777 95.4    3420121 182.7  2360084 126.1</span></span>
-<span><span class="co">#&gt; Vcells 3501351 26.8    8388608  64.0  7889615  60.2</span></span>
-<span><span class="co">#&gt; lcp done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1784880 95.4    3420121 182.7  2360084 126.1</span></span>
-<span><span class="co">#&gt; Vcells 3501681 26.8    8388608  64.0  7889615  60.2</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1791197 95.7    3420121 182.7  2360084 126.1</span></span>
-<span><span class="co">#&gt; Vcells 3610664 27.6    8388608  64.0  8384432  64.0</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">'Scenario'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">realRoads</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -182,22 +166,6 @@ maximum year of road construction.</p>
 <span><span class="va">multiTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="fl">1</span>,<span class="op">]</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, </span>
 <span>                                               <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1839359 98.3    3420121 182.7  3102519 165.7</span></span>
-<span><span class="co">#&gt; Vcells 3861478 29.5    8388608  64.0  8384432  64.0</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1839571 98.3    3420121 182.7  3102519 165.7</span></span>
-<span><span class="co">#&gt; Vcells 3857707 29.5    8388608  64.0  8384432  64.0</span></span>
-<span><span class="co">#&gt; lcp done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1839420 98.3    3420121 182.7  3102519 165.7</span></span>
-<span><span class="co">#&gt; Vcells 3857473 29.5    8388608  64.0  8384432  64.0</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1840947 98.4    3420121 182.7  3102519 165.7</span></span>
-<span><span class="co">#&gt; Vcells 3913814 29.9    8388608  64.0  8384432  64.0</span></span>
 <span></span>
 <span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span> <span class="op">&lt;-</span> <span class="va">multiTime_sim</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Year</span><span class="op">)</span>, <span class="fl">1</span>, <span class="va">Year</span><span class="op">)</span><span class="op">)</span></span>

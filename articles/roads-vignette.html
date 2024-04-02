@@ -280,10 +280,6 @@ an independent path method.</p>
 <span><span class="va">projRoads_snap</span> <span class="op">&lt;-</span> <span class="fu">roads</span><span class="fu">::</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">landings</span>, <span class="va">weightRaster</span>, <span class="va">roadsLine</span>,</span>
 <span>                                      roadMethod <span class="op">=</span> <span class="st">'snap'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1828336 97.7    3602345 192.4  2396661 128.0</span></span>
-<span><span class="co">#&gt; Vcells 2745884 21.0    8388608  64.0  3944756  30.1</span></span>
 <span></span>
 <span><span class="co">## plot the weight raster, landings, and roads segments to the landings</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'Snapped' roads"</span><span class="op">)</span></span>
@@ -326,10 +322,6 @@ graph returned in the result reflects the new roads built.</p>
 <span>                                        <span class="va">roadsLine</span>, </span>
 <span>                                        roadMethod <span class="op">=</span> <span class="st">'lcp'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1866967 99.8    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2918609 22.3    8388608  64.0  4038516  30.9</span></span>
 <span></span>
 <span><span class="co">## plot the weight raster and overlay it with new roads</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'LCP' roads"</span><span class="op">)</span></span>
@@ -373,22 +365,6 @@ build roads in the order that the landings are supplied use
 <span>                                        <span class="va">roadsLine</span>, </span>
 <span>                                        roadMethod <span class="op">=</span> <span class="st">'ilcp'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1884414 100.7    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2971555  22.7    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1882141 100.6    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2862057  21.9    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; lcp done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1881572 100.5    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2861185  21.9    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1883477 100.6    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2883213  22.0    8388608  64.0  4038516  30.9</span></span>
 <span></span>
 <span><span class="co">## plot the weight raster and overlay it with new roads</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'ILCP' roads"</span><span class="op">)</span></span>
@@ -413,22 +389,6 @@ supplied in so switching that produces a different road network.</p>
 <span>                                        <span class="va">roadsLine</span>, </span>
 <span>                                        roadMethod <span class="op">=</span> <span class="st">'ilcp'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1885596 100.8    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2972611  22.7    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1884073 100.7    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2868261  21.9    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; lcp done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1883504 100.6    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2867389  21.9    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1883816 100.7    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2884321  22.1    8388608  64.0  4038516  30.9</span></span>
 <span></span>
 <span><span class="co">## plot the weight raster and overlay it with new roads</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'ILCP' roads"</span><span class="op">)</span></span>
@@ -458,26 +418,6 @@ following the solution to the MST.</p>
 <span>                                        <span class="va">roadsLine</span>, </span>
 <span>                                        roadMethod <span class="op">=</span> <span class="st">'mst'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1885883 100.8    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2973623  22.7    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1884335 100.7    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2869257  21.9    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; mst done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1886820 100.8    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2875425  22.0    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1887093 100.8    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2881904  22.0    8388608  64.0  4038516  30.9</span></span>
-<span><span class="co">#&gt; out roads done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1887317 100.8    3602345 192.4  3346735 178.8</span></span>
-<span><span class="co">#&gt; Vcells 2892418  22.1    8388608  64.0  4038516  30.9</span></span>
 <span></span>
 <span><span class="co">## plot the weight raster and overlay it with new roads</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weightRaster</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">"'MST' roads"</span><span class="op">)</span></span>
@@ -548,89 +488,9 @@ represented alternate scenarios for development.</p>
 <span>                                              roadMethod<span class="op">=</span><span class="st">'mst'</span><span class="op">)</span><span class="op">$</span><span class="va">roads</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906708 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3847484  29.4    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1905349 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3753884  28.7    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; mst done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1905229 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3675008  28.1    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1905486 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3799623  29.0    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; out roads done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1905595 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3795401  29.0    8388608  64.0  8061619  61.6</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1907379 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3969199  30.3    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1905930 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3756655  28.7    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; mst done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1905832 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3678671  28.1    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906141 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3802966  29.1    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; out roads done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906234 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3798443  29.0    8388608  64.0  8061619  61.6</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1907643 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3969775  30.3    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906119 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3756934  28.7    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; mst done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906023 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3679018  28.1    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906336 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3803463  29.1    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; out roads done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906428 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3798742  29.0    8388608  64.0  8061619  61.6</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1907813 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3969929  30.3    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906284 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3757052  28.7    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; mst done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906156 101.8    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3678175  28.1    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906405 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3802728  29.1    8388608  64.0  8061619  61.6</span></span>
-<span><span class="co">#&gt; out roads done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1906513 101.9    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3798556  29.0    8388608  64.0  8061619  61.6</span></span>
 <span></span>
 <span><span class="co">## plot</span></span>
 <span><span class="va">oldpar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">'mar'</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span></span>
@@ -704,22 +564,6 @@ to determine the least cost path. This can be implemented in a loop.</p>
 <span><span class="va">multiTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.stack</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, </span>
 <span>                                               <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1918207 102.5    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3906320  29.9    8388608  64.0  8340426  63.7</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1917267 102.4    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3785897  28.9    8388608  64.0  8340426  63.7</span></span>
-<span><span class="co">#&gt; lcp done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1917109 102.4    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3785655  28.9    8388608  64.0  8340426  63.7</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1917399 102.5    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 3837711  29.3    8388608  64.0  8340426  63.7</span></span>
 <span></span>
 <span><span class="co"># iterate over landings sets using the sim list from the previous run as input</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">land.stack</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -803,22 +647,6 @@ block.</p>
 <span><span class="co">#&gt; you have asked for &gt; 0.001 pts per m2 which is &gt; 1000 pts per km2 and may take a long time</span></span>
 <span><span class="va">prRand</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">outRand</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1934924 103.4    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 4558149  34.8   10146329  77.5  8386178  64.0</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1934086 103.3    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 4423087  33.8   10146329  77.5  8386178  64.0</span></span>
-<span><span class="co">#&gt; lcp done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1933937 103.3    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 4422898  33.8   10146329  77.5  8386178  64.0</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1934326 103.4    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 4494119  34.3   10146329  77.5 10107103  77.2</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, main <span class="op">=</span> <span class="st">"Random Landings in Harvest Blocks"</span>,</span>
 <span>     col <span class="op">=</span> <span class="va">rastColours2</span><span class="op">)</span></span>
@@ -833,22 +661,6 @@ block.</p>
 <span><span class="co">#&gt; you have asked for &gt; 0.001 pts per m2 which is &gt; 1000 pts per km2 and may take a long time</span></span>
 <span><span class="va">prReg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">outReg</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>,<span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; graph done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1957176 104.6    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 4884146  37.3   10146329  77.5 10107103  77.2</span></span>
-<span><span class="co">#&gt; closest done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1955459 104.5    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 4764827  36.4   10146329  77.5 10107103  77.2</span></span>
-<span><span class="co">#&gt; lcp done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1955314 104.5    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 4764646  36.4   10146329  77.5 10107103  77.2</span></span>
-<span><span class="co">#&gt; short path done</span></span>
-<span><span class="co">#&gt;           used  (Mb) gc trigger  (Mb) max used  (Mb)</span></span>
-<span><span class="co">#&gt; Ncells 1955757 104.5    3602345 192.4  3602345 192.4</span></span>
-<span><span class="co">#&gt; Vcells 4846412  37.0   10146329  77.5 10129144  77.3</span></span>
 <span></span>
 <span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, main <span class="op">=</span> <span class="st">"Regular Landings in Harvest Blocks"</span>,</span>

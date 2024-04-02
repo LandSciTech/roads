@@ -92,22 +92,6 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">CLUSexample</span> <span class="op">&lt;-</span> <span class="fu"><a href="prepExData.html">prepExData</a></span><span class="op">(</span><span class="va">CLUSexample</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">CLUSexample</span><span class="op">$</span><span class="va">landings</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">cost</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">roads</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in weightRaster raster, these will be considered as existing roads</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> graph done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3091919 165.2    5937237 317.1  4295008 229.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5094713  38.9   10146329  77.5  7637085  58.3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> closest done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3080071 164.5    5937237 317.1  4295008 229.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5003639  38.2   10146329  77.5  7637085  58.3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> lcp done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3079701 164.5    5937237 317.1  4295008 229.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5003192  38.2   10146329  77.5  7637085  58.3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> short path done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3085803 164.8    5937237 317.1  4295008 229.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5032757  38.4   10146329  77.5  7637085  58.3</span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu">plotRoads</span><span class="op">(</span><span class="va">prRes</span>, <span class="st">"Title"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>

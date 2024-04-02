@@ -234,10 +234,6 @@ weight raster.</p></li>
 <span class="r-in"><span><span class="fu">projectRoads</span><span class="op">(</span><span class="va">CLUSexample</span><span class="op">$</span><span class="va">landings</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">cost</span>, <span class="va">CLUSexample</span><span class="op">$</span><span class="va">roads</span>,</span></span>
 <span class="r-in"><span>             <span class="st">"lcp"</span>, plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"CLUSexample"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in weightRaster raster, these will be considered as existing roads</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> graph done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3091602 165.2    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5121827  39.1   10146329  77.5  7637085  58.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $landings</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 4 features and 0 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POINT</span>
@@ -262,9 +258,9 @@ weight raster.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> max value   :  TRUE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 39ce896 U-W- 25 72 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH e15591c U-W- 25 72 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: weight (e/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 39ce896:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from e15591c:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 6  1-- 7  2-- 3  2-- 6  2-- 7  2-- 8  3-- 4  3-- 7  3-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11]  3-- 9  4-- 5  4-- 8  4-- 9  4--10  5-- 9  5--10  6-- 7  6--11  6--12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 8  7--11  7--12  7--13  8-- 9  8--12  8--13  8--14  9--10  9--13</span>
@@ -305,22 +301,6 @@ weight raster.</p></li>
 <span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.pnts</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, <span class="st">"ilcp"</span>,</span></span>
 <span class="r-in"><span>                         plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"Scen 1: SPDF-LCP"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in weightRaster raster, these will be considered as existing roads</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> graph done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3098773 165.5    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5283206  40.4   10146329  77.5 10136632  77.4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> closest done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3098475 165.5    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5237440  40.0   10146329  77.5 10136632  77.4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> lcp done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3098324 165.5    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5237198  40.0   10146329  77.5 10136632  77.4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> short path done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3098621 165.5    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5289254  40.4   10146329  77.5 10136632  77.4</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### using: scenario 1 / SpatRaster landings / minimum spanning tree ("mst")</span></span></span>
 <span class="r-in"><span><span class="co"># demo scenario 1</span></span></span>
@@ -332,26 +312,6 @@ weight raster.</p></li>
 <span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.rLyr</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, <span class="st">"mst"</span>,</span></span>
 <span class="r-in"><span>                         plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"Scen 1: Raster-MST"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in weightRaster raster, these will be considered as existing roads</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> graph done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3107932 166.0    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5592337  42.7   12255594  93.6 10136632  77.4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> closest done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3106310 165.9    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5491764  41.9   12255594  93.6 10136632  77.4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> mst done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3109010 166.1    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5419368  41.4   12255594  93.6 10136632  77.4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> short path done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3109259 166.1    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5543911  42.3   12255594  93.6 10136632  77.4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> out roads done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3109474 166.1    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5546079  42.4   12255594  93.6 10136632  77.4</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### using: scenario 2 / matrix landings raster roads / snapping ("snap")</span></span></span>
@@ -366,10 +326,6 @@ weight raster.</p></li>
 <span class="r-in"><span>                      plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"Scen 2: Matrix-Snap"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in weightRaster raster, these will be considered as existing roads</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CRS of landings supplied as a matrix is assumed to match the weightRaster</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> graph done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3112341 166.3    5937237 317.1  5274868 281.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5715500  43.7   12255594  93.6 10136632  77.4</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## using scenario 7 / Polygon landings raster / minimum spanning tree</span></span></span>
 <span class="r-in"><span><span class="co"># demo scenario 7</span></span></span>
@@ -380,26 +336,6 @@ weight raster.</p></li>
 <span class="r-in"><span><span class="va">prRes</span> <span class="op">&lt;-</span> <span class="fu">projectRoads</span><span class="op">(</span><span class="va">land.polyR</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.rast</span>, <span class="st">"mst"</span>,</span></span>
 <span class="r-in"><span>                         plotRoads <span class="op">=</span> <span class="va">doPlots</span>, mainTitle <span class="op">=</span> <span class="st">"Scen 7: PolyRast-MST"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in weightRaster raster, these will be considered as existing roads</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> graph done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3123203 166.8    5937237 317.1  5553477 296.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5693676  43.5   12255594  93.6 10818825  82.6</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> closest done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3117558 166.5    5937237 317.1  5553477 296.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5479042  41.9   12255594  93.6 10818825  82.6</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> mst done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3117445 166.5    5937237 317.1  5553477 296.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5400282  41.3   12255594  93.6 10818825  82.6</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> short path done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3117717 166.6    5937237 317.1  5553477 296.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5524922  42.2   12255594  93.6 10818825  82.6</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> out roads done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used  (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 3117821 166.6    5937237 317.1  5553477 296.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 5520627  42.2   12255594  93.6 10818825  82.6</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
