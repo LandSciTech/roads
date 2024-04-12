@@ -33,14 +33,15 @@
 #' slopePenaltyFn(0.5,0.75)
 slopePenaltyFn<-function(x1,x2,resolution=1, baseCost = 16178,limit=20,penalty=504,limitWeight=NA){
   #If one of the nodes is a road or barrier ignore grade penalty
-  cond = pmin(x1,x2)>0
+  cond = pmin(x1,x2)>=0
   cond[is.na(cond)]=F
   grade = 100*abs(x1-x2)*cond/resolution #percent slope, if both nodes have elevation values.
   #stop(print(max(grade)))
-  slp = baseCost+grade*penalty
+  slp = baseCost+grade*penalty*(pmin(x1,x2)>0)
   slp[grade>limit]=limitWeight
 
   slp[!cond] = abs(pmin(x1,x2))[!cond] # if both 0 this is an existing road link. Otherwise it is a barrier.
+
   return(slp)
 }
 
