@@ -82,7 +82,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>roads Package</h1>
             
-            <h4 data-toc-skip class="date">2024-04-12</h4>
+            <h4 data-toc-skip class="date">2024-04-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/LandSciTech/roads/blob/HEAD/vignettes/roads-vignette.Rmd" class="external-link"><code>vignettes/roads-vignette.Rmd</code></a></small>
       <div class="d-none name"><code>roads-vignette.Rmd</code></div>
@@ -106,9 +106,10 @@ below are included in the package as <code>CLUSexample</code> and
 represented by three components:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong>Weights Layer:</strong> a spatial, gridded weight layer
-covering the entire landscape, wherein each cell value represents the
-cost of new road development through it.</li>
+<strong>Weights Raster and Weight Function:</strong> the weights
+raster is a spatial, gridded weight layer covering the entire landscape.
+The weight function takes values from adjacent weights raster cells as
+inputs and returns the cost of developing a new road between them.</li>
 <li>
 <strong>Existing Road Network:</strong> a spatial, representation of
 the existing road network within the landscape.</li>
@@ -171,27 +172,44 @@ multiple time steps.</li>
 <h2 id="resource-development-scenario">Resource development scenario<a class="anchor" aria-label="anchor" href="#resource-development-scenario"></a>
 </h2>
 <div class="section level4">
-<h4 id="weights-layer">1. Weights layer<a class="anchor" aria-label="anchor" href="#weights-layer"></a>
+<h4 id="weights-raster-and-weight-function">1. Weights Raster and Weight Function<a class="anchor" aria-label="anchor" href="#weights-raster-and-weight-function"></a>
 </h4>
-<p>The cost of new roads development within a landscape must be provided
-as a single, numeric <code>SpatRaster</code> or <code>RasterLayer</code>
-object. Each cell of this raster represents the cost of new road
-development (the definition of which is up to the user) through it. The
-total cost of the development of a new road segment is considered to be
-the sum of the cost raster cells that it traverses.</p>
-<ul>
-<li>The traversal cost of existing road segments is assumed to be zero.
-If existing roads are not 0 in the cost layer they can be “burned in” by
-setting <code>roadsInWeight = FALSE</code>.</li>
-<li>The extent of the landscape of interest is assumed to match the
-extent of the specified cost raster layer.</li>
-<li>The coordinate reference system (CRS) of this raster must match all
-other input data-sets.<br>
-</li>
-<li>While the cell size (or resolution) of this cost raster is up to the
-user, it is important to remember that a unit area of road is assumed to
-take up an entire cell.</li>
-</ul>
+<p>The cost of new roads development within the landscape is determined
+by applying the <code>weightFunction</code> to the
+<code>weightRaster</code>. The <code>weightRaster</code> must be
+provided as a single, numeric <code>SpatRaster</code> or
+<code>RasterLayer</code> object. The cell values in the raster for two
+adjacent cells are provided to the <code>weightFunction</code> to
+calculate the weight for the edge connecting the two cells in the graph
+which should represent the cost of building a road connecting the two
+cells. Two ways of calculating the cost are supported by the package
+with the option for users to develop their own. The simplest method is
+for the <code>weightRaster</code> values to represent the cost of
+building a road across a cell and the for the
+<code>weightFunction</code> to simply take the mean of the values in
+adjacent cells. The other option included in the package is to use the
+<code>slopePenaltyFn</code>. This function takes a modified DEM raster
+as input and determines costs by applying a base cost and a grade
+penalty which is multiplied by the % grade between adjacent cells. The
+DEM can be modified by adding barriers to the raster, either as negative
+values which represent high costs (e.g. a stream crossing) or NAs for
+inaccessible areas (e.g. a cliff or a lake). See
+<code><a href="../reference/slopePenaltyFn.html">?slopePenaltyFn</a></code> for more details.</p>
+<p>The following points apply to all <code>weightRaster</code>s:<br>
+* Weights of existing road segments are assumed to be zero. If existing
+roads are not 0 in the <code>weightRaster</code> they can be “burned in”
+by setting <code>roadsInWeight = FALSE</code>. * The extent of the
+landscape of interest is assumed to match the extent of the specified
+<code>weightRaster</code>. * The coordinate reference system (CRS) of
+this raster must match all other input data-sets.<br>
+* While the cell size (or resolution) of the <code>weightRaster</code>
+is up to the user, it is important to remember that a unit area of road
+is assumed to take up an entire cell. * Areas that are NA are not
+included in the graph and are assumed to be inaccessible to roads. If a
+landing is surrounded by NAs then it cannot be connected to the existing
+road network and an error is produced.</p>
+<p>The weight raster for this basic example is a cost surface and the
+<code>weightFunction</code> used is the average.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weightRaster</span> <span class="op">&lt;-</span> <span class="va">CLUSexample</span><span class="op">$</span><span class="va">cost</span></span></code></pre></div>
 </div>
@@ -204,8 +222,9 @@ of an <code>sf</code> object with geometry type “LINES”, a
 <code>SpatialLines</code> object, a <code>RasterLayer</code>, or a
 <code>SpatRaster</code>. If the input roads are a raster the resulting
 roads will be returned as a raster by default but if
-<code>roadsOut = "sf</code> is set then a geometry collection of lines
-and points will be returned.</p>
+<code>roadsOut = "sf"</code> is set then a geometry collection of lines
+and points will be returned with points representing the input
+roads.</p>
 <p>The roads network included in the <code>CLUSexample</code> data-set
 is a raster but we use a line to make plotting easier.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
