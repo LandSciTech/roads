@@ -45,6 +45,9 @@ pathsToLines <- function(sim){
 
     # raster values at v
     er_v <- terra::extract(er, v)[[1]]
+    
+    # set er to 1 for these cells since they are now existing roads
+    terra::set.values(er, v, 1)
 
     ## index of where new road connects to existing road
     conn <- which(er_v == 1)
