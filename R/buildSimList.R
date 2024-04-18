@@ -224,7 +224,7 @@ burnRoadsInWeight <- function(roads, weightRaster){
     
     roadsRast <- !(rasts[[1]]|rasts[[2]])
   } else {
-    roadsRast <- terra::rasterize(terra::vect(roads), weightRaster, background = 0) == 0 
+    roadsRast <- terra::rasterize(terra::vect(roads), weightRaster, touches = TRUE, background = 0) == 0 
   }
   
   weightRaster <- weightRaster * roadsRast
