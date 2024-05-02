@@ -73,6 +73,9 @@
 #'   landings when `roadMethod = "ilcp"`. Options are "closest" (default) where
 #'   landings closest to existing roads are accessed first, or "none" where
 #'   landings are accessed in the order they are provided in.
+#' @param roadsConnected Logical. Are all roads fully connected? If TRUE and
+#'   `roadMethod = "mst"` the MST graph can be simplified and the projection
+#'   should be faster
 #' @param ... Optional additional arguments to weightFunction
 #'
 #' @return
@@ -156,6 +159,7 @@ setGeneric('projectRoads', function(landings = NULL,
                                     roadsOut = NULL,
                                     roadsInWeight = TRUE,
                                     ordering = "closest",
+                                    roadsConnected = FALSE,
                                     ...)
   standardGeneric('projectRoads'))
 
@@ -163,7 +167,8 @@ setGeneric('projectRoads', function(landings = NULL,
 setMethod(
   'projectRoads', signature(sim = "missing"),
   function(landings, weightRaster, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, weightFunction, sim, roadsOut, roadsInWeight, ordering,...) {
+           neighbourhood, weightFunction, sim, roadsOut, roadsInWeight, ordering, 
+           roadsConnected, ...) {
 
     # check required args
     missingNames = names(which(sapply(lst(roads, weightRaster, roadMethod, landings),
@@ -247,7 +252,7 @@ setMethod(
 
                     # will take more time than lcpList given the construction of
                     # a mst
-                    sim <- mstList(sim)
+                    sim <- mstList(sim, roadsConnected)
 
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)
@@ -278,7 +283,8 @@ setMethod(
 setMethod(
   'projectRoads', signature(sim = "list"),
   function(landings, weightRaster, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, weightFunction,sim, roadsOut, roadsInWeight, ordering,...) {
+           neighbourhood, weightFunction,sim, roadsOut, roadsInWeight, ordering,
+           roadsConnected, ...) {
 
     # If roads in are raster return as raster
     if((is(sim$roads, "Raster") || is(sim$roads, "SpatRaster")) && is.null(roadsOut) ){
@@ -333,7 +339,7 @@ setMethod(
 
                     # will take more time than lcpList given the construction of
                     # a mst
-                    sim <- mstList(sim)
+                    sim <- mstList(sim, roadsConnected)
 
                     # update graph is within the shortestPaths function
                     sim <- shortestPaths(sim)

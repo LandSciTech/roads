@@ -19,6 +19,7 @@ projectRoads(
   roadsOut = NULL,
   roadsInWeight = TRUE,
   ordering = "closest",
+  roadsConnected = FALSE,
   ...
 )
 
@@ -35,6 +36,7 @@ projectRoads(
   roadsOut = NULL,
   roadsInWeight = TRUE,
   ordering = "closest",
+  roadsConnected = FALSE,
   ...
 )
 
@@ -51,6 +53,7 @@ projectRoads(
   roadsOut = NULL,
   roadsInWeight = TRUE,
   ordering = "closest",
+  roadsConnected = FALSE,
   ...
 )
 }
@@ -103,6 +106,10 @@ roads will be "burned in" to the \code{weightRaster} with a weight of 0.}
 landings when \code{roadMethod = "ilcp"}. Options are "closest" (default) where
 landings closest to existing roads are accessed first, or "none" where
 landings are accessed in the order they are provided in.}
+
+\item{roadsConnected}{Logical. Are all roads fully connected? If TRUE and
+\code{roadMethod = "mst"} the MST graph can be simplified and the projection
+should be faster}
 
 \item{...}{Optional additional arguments to weightFunction}
 }

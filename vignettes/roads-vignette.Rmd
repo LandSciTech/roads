@@ -13,6 +13,9 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+# ignore spherical coordinates 
+s2_in <- sf::sf_use_s2(FALSE)
 ```
 
 # Introduction
@@ -211,7 +214,7 @@ The ILCP approach produces more of a network rather than many parallel roads. Ho
 
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
 ## project new roads using the 'ILCP' approach
-projRoads_ilcp2 <- roads::projectRoads(rev(landings), 
+projRoads_ilcp2 <- roads::projectRoads(st_coordinates(landings)[4:1,], 
                                         weightRaster, 
                                         roadsLine, 
                                         roadMethod = 'ilcp')
@@ -272,7 +275,7 @@ land.pnts <- scen$landings.points[scen$landings.points$set %in% c(1:4),]
 ## plot the weight raster and landings
 par(mar=par('mar')/2)
 plot(scen$cost.rast, col = rastColours2, main = 'Cost and landings (by set)')
-plot(land.pnts, add = TRUE, pch = 21, cex = 2, bg = 'white')
+plot(land.pnts %>% st_geometry(), add = TRUE, pch = 21, cex = 2, bg = 'white')
 text(st_coordinates(land.pnts), labels = land.pnts$set, cex = 0.6, adj = c(0.5, 0.3),
      xpd = TRUE)
 ```
@@ -300,7 +303,7 @@ for (i in 1:4){
        main = paste0('Landings set ', i),
        legend = FALSE)
   plot(oneTime_sim[[i]], add = TRUE, col = "grey50", legend = FALSE)
-  plot(land.pnts[land.pnts$set == i, ], add = TRUE,
+  plot(st_geometry(land.pnts[land.pnts$set == i, ]), add = TRUE,
        pch = 21, cex = 1.5, bg = 'white')
 }
 
@@ -311,9 +314,9 @@ While the results of these one-time simulations may be fine when looking at each
 ```{r, fig.show='hold', fig.width=5,fig.height=4.85}
 ## raster representing the union of completely independent simulations for multiple sets
 oneTime_sim <- rast(oneTime_sim)
-independent <- any(oneTime_sim == 1)
+independent <- any(oneTime_sim, na.rm = TRUE)
 ## set non-road to NA for display purposes
-independent[!independent] <- NA 
+independent[!independent] <- NA
 
 ## plot 
 plot(scen$cost.rast, col = rastColours2,
@@ -322,7 +325,7 @@ plot(scen$cost.rast, col = rastColours2,
 
 plot(independent, col = 'grey30', add = TRUE, legend = FALSE)
 
-plot(land.pnts, add = TRUE, pch = 21, cex = 1.5, bg = 'white')
+plot(st_geometry(land.pnts), add = TRUE, pch = 21, cex = 1.5, bg = 'white')
 ```
 
 ### Multi-temporal simulation
@@ -356,11 +359,11 @@ for (i in 1:length(multiTime_sim)){
   plot(multiTime_sim[[i]]$weightRaster, col = rastColours2, 
        main = paste0('Roads at time t = ', i), legend = FALSE)
   plot(multiTime_sim[[i]]$roads, col = 'grey30', add = TRUE, legend = FALSE)
-  plot(land.pnts[land.pnts$set == i, ], add = TRUE, pch = 21, 
+  plot(st_geometry(land.pnts[land.pnts$set == i, ]), add = TRUE, pch = 21, 
          cex = 1.5, bg = 'white')
   if (i >= 2){
-    plot(land.pnts[land.pnts$set < i, ], add = TRUE, pch = 1, cex = 1.5)
-    plot(land.pnts[land.pnts$set == i, ], add = TRUE, pch = 21, 
+    plot(st_geometry(land.pnts[land.pnts$set < i, ]), add = TRUE, pch = 1, cex = 1.5)
+    plot(st_geometry(land.pnts[land.pnts$set == i, ]), add = TRUE, pch = 21, 
          cex = 1.5, bg = 'white')
   }
 }
@@ -409,4 +412,8 @@ The regular sampling method may be the most realistic since it ensures that land
 # Note
 This vignette is partially copied from Kyle Lochhead & Tyler Muhly's [2018 CLUS example](https://github.com/bcgov/castor/blob/main/reports/roads/draft-CLUS-roads.md)
 
+```{r, include=FALSE}
+# ignore shperical coordinates 
+sf::sf_use_s2(s2_in)
+```
 
