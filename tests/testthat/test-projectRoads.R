@@ -120,6 +120,33 @@ test_that("input types are tested", {
                "must be either")
 })
 
+test_that("duplicate roads are not created", {
+  res <- projectRoads(scen$landings.points, scen$cost.rast,
+                      scen$road.line, plotRoads = doPlot, roadsInWeight = FALSE)
+  
+  #useful to visualize need to load fun from RoadsPaper
+  # dens <- res$roads %>% rasterizeLineDensity(r = res$weightRaster)
+  
+  res_mst <- projectRoads(scen$landings.points, scen$cost.rast,
+                      scen$road.line, plotRoads = doPlot, roadMethod = "mst")
+  
+  # dens_mst <- res_mst$roads %>% rasterizeLineDensity(r = res_mst$weightRaster)
+  
+  expect_equal(sf::st_union(res$roads) %>% sf::st_length(), sf::st_length(res$roads) %>% sum())
+  
+  # expect_equal(sf::st_union(res_mst$roads) %>% sf::st_length(), sf::st_length(res_mst$roads) %>% sum())
+  # # draw extent to get problem tiny line created
+  # plot(scen$cost.rast)
+  # plot(scen$landings.points, add = TRUE)
+  # ext <- terra::draw()
+  # 
+  # lnds <- sf::st_crop(scen$landings.points, ext)
+  # cst <- terra::crop(scen$cost.rast, ext)
+  # rds <- sf::st_crop(scen$road.line, ext)
+  # 
+  # projectRoads(lnds, cst, rds, plotRoads = doPlot, roadsInWeight = FALSE)
+  
+})
 
 
 if(FALSE){

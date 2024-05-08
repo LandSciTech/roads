@@ -13,6 +13,9 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+# ignore spherical coordinates 
+s2_in <- sf::sf_use_s2(FALSE)
 ```
 
 # Introduction
@@ -21,7 +24,7 @@ This vignette provides a tutorial on the use of the `roads` package for the spat
 
 In the context of this package, resource development scenarios are represented by three components:
 
-1. **Weights Layer:** a spatial, gridded weight layer covering the entire landscape, wherein each cell value represents the cost of new road development through it.
+1. **Weights Raster and Weight Function:** the weights raster is a spatial, gridded weight layer covering the entire landscape. The weight function takes values from adjacent weights raster cells as inputs and returns the cost of developing a new road between them.
 2. **Existing Road Network:** a spatial, representation of the existing road network within the landscape.
 3. **Landings:** a set of locations where new resource development is to take place.
 
@@ -63,22 +66,25 @@ CLUSexample <- prepExData(CLUSexample)
 
 # Resource development scenario
 
-### 1. Weights layer
+### 1. Weights Raster and Weight Function
 
-The cost of new roads development within a landscape must be provided as a single, numeric `SpatRaster` or `RasterLayer` object.  Each cell of this raster represents the cost of new road development (the definition of which is up to the user) through it. The total cost of the development of a new road segment is considered to be the sum of the cost raster cells that it traverses.
+The cost of new roads development within the landscape is determined by applying the `weightFunction` to the `weightRaster`. The `weightRaster` must be provided as a single, numeric `SpatRaster` or `RasterLayer` object.  The cell values in the raster for two adjacent cells are provided to the `weightFunction` to calculate the weight for the edge connecting the two cells in the graph which should represent the cost of building a road connecting the two cells. Two ways of calculating the cost are supported by the package with the option for users to develop their own. The simplest method is for the `weightRaster` values to represent the cost of building a road across a cell and the for the `weightFunction` to simply take the mean of the values in adjacent cells. The other option included in the package is to use the `slopePenaltyFn`. This function takes a modified DEM raster as input and determines costs by applying a base cost and a grade penalty which is multiplied by the % grade between adjacent cells. The DEM can be modified by adding barriers to the raster, either as negative values which represent high costs (e.g. a stream crossing) or NAs for inaccessible areas (e.g. a cliff or a lake). See `?slopePenaltyFn` for more details.   
 
-* The traversal cost of existing road segments is assumed to be zero. If existing roads are not 0 in the cost layer they can be "burned in" by setting `roadsInWeight = FALSE`.
-* The extent of the landscape of interest is assumed to match the extent of the specified cost raster layer.
+The following points apply to all `weightRaster`s:  
+* Weights of existing road segments are assumed to be zero. If existing roads are not 0 in the `weightRaster` they can be "burned in" by setting `roadsInWeight = FALSE`.
+* The extent of the landscape of interest is assumed to match the extent of the specified `weightRaster`.
 * The coordinate reference system (CRS) of this raster must match all other input data-sets.  
-* While the cell size (or resolution) of this cost raster is up to the user, it is important to remember that a unit area of road is assumed to take up an entire cell.
+* While the cell size (or resolution) of the `weightRaster` is up to the user, it is important to remember that a unit area of road is assumed to take up an entire cell.
+* Areas that are NA are not included in the graph and are assumed to be inaccessible to roads. If a landing is surrounded by NAs then it cannot be connected to the existing road network and an error is produced.
 
+The weight raster for this basic example is a cost surface and the `weightFunction` used is the average. 
 ```{r}
 weightRaster <- CLUSexample$cost
 ```
 
 ### 2. Existing road network layer
 
-The state of the existing roads network must be specified to the `projectRoads` method. This specification is made in the form of an `sf` object with geometry type "LINES", a `SpatialLines` object, a `RasterLayer`, or a `SpatRaster`. If the input roads are a raster the resulting roads will be returned as a raster by default but if `roadsOut = "sf` is set then a geometry collection of lines and points will be returned.
+The state of the existing roads network must be specified to the `projectRoads` method. This specification is made in the form of an `sf` object with geometry type "LINES", a `SpatialLines` object, a `RasterLayer`, or a `SpatRaster`. If the input roads are a raster the resulting roads will be returned as a raster by default but if `roadsOut = "sf"` is set then a geometry collection of lines and points will be returned with points representing the input roads.
 
 The roads network included in the `CLUSexample` data-set is a raster but we use a line to make plotting easier.  
 
@@ -208,7 +214,7 @@ The ILCP approach produces more of a network rather than many parallel roads. Ho
 
 ```{r, fig.show='hold', fig.width=5, fig.height=4.85}
 ## project new roads using the 'ILCP' approach
-projRoads_ilcp2 <- roads::projectRoads(rev(landings), 
+projRoads_ilcp2 <- roads::projectRoads(st_coordinates(landings)[4:1,], 
                                         weightRaster, 
                                         roadsLine, 
                                         roadMethod = 'ilcp')
@@ -269,7 +275,7 @@ land.pnts <- scen$landings.points[scen$landings.points$set %in% c(1:4),]
 ## plot the weight raster and landings
 par(mar=par('mar')/2)
 plot(scen$cost.rast, col = rastColours2, main = 'Cost and landings (by set)')
-plot(land.pnts, add = TRUE, pch = 21, cex = 2, bg = 'white')
+plot(land.pnts %>% st_geometry(), add = TRUE, pch = 21, cex = 2, bg = 'white')
 text(st_coordinates(land.pnts), labels = land.pnts$set, cex = 0.6, adj = c(0.5, 0.3),
      xpd = TRUE)
 ```
@@ -297,7 +303,7 @@ for (i in 1:4){
        main = paste0('Landings set ', i),
        legend = FALSE)
   plot(oneTime_sim[[i]], add = TRUE, col = "grey50", legend = FALSE)
-  plot(land.pnts[land.pnts$set == i, ], add = TRUE,
+  plot(st_geometry(land.pnts[land.pnts$set == i, ]), add = TRUE,
        pch = 21, cex = 1.5, bg = 'white')
 }
 
@@ -308,9 +314,9 @@ While the results of these one-time simulations may be fine when looking at each
 ```{r, fig.show='hold', fig.width=5,fig.height=4.85}
 ## raster representing the union of completely independent simulations for multiple sets
 oneTime_sim <- rast(oneTime_sim)
-independent <- any(oneTime_sim == 1)
+independent <- any(oneTime_sim, na.rm = TRUE)
 ## set non-road to NA for display purposes
-independent[!independent] <- NA 
+independent[!independent] <- NA
 
 ## plot 
 plot(scen$cost.rast, col = rastColours2,
@@ -319,7 +325,7 @@ plot(scen$cost.rast, col = rastColours2,
 
 plot(independent, col = 'grey30', add = TRUE, legend = FALSE)
 
-plot(land.pnts, add = TRUE, pch = 21, cex = 1.5, bg = 'white')
+plot(st_geometry(land.pnts), add = TRUE, pch = 21, cex = 1.5, bg = 'white')
 ```
 
 ### Multi-temporal simulation
@@ -353,11 +359,11 @@ for (i in 1:length(multiTime_sim)){
   plot(multiTime_sim[[i]]$weightRaster, col = rastColours2, 
        main = paste0('Roads at time t = ', i), legend = FALSE)
   plot(multiTime_sim[[i]]$roads, col = 'grey30', add = TRUE, legend = FALSE)
-  plot(land.pnts[land.pnts$set == i, ], add = TRUE, pch = 21, 
+  plot(st_geometry(land.pnts[land.pnts$set == i, ]), add = TRUE, pch = 21, 
          cex = 1.5, bg = 'white')
   if (i >= 2){
-    plot(land.pnts[land.pnts$set < i, ], add = TRUE, pch = 1, cex = 1.5)
-    plot(land.pnts[land.pnts$set == i, ], add = TRUE, pch = 21, 
+    plot(st_geometry(land.pnts[land.pnts$set < i, ]), add = TRUE, pch = 1, cex = 1.5)
+    plot(st_geometry(land.pnts[land.pnts$set == i, ]), add = TRUE, pch = 21, 
          cex = 1.5, bg = 'white')
   }
 }
@@ -406,4 +412,8 @@ The regular sampling method may be the most realistic since it ensures that land
 # Note
 This vignette is partially copied from Kyle Lochhead & Tyler Muhly's [2018 CLUS example](https://github.com/bcgov/castor/blob/main/reports/roads/draft-CLUS-roads.md)
 
+```{r, include=FALSE}
+# ignore shperical coordinates 
+sf::sf_use_s2(s2_in)
+```
 
