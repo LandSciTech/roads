@@ -2,12 +2,12 @@
 
 export(getDistFromSource)
 export(getLandingsFromTarget)
+export(gradePenaltyFn)
 export(plotRoads)
 export(prepExData)
 export(projectRoads)
 export(rasterToLineSegments)
 export(rasterizeLine)
-export(slopePenaltyFn)
 import(dplyr)
 importClassesFrom(terra,SpatRaster)
 importFrom(data.table,":=")

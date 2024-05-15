@@ -31,7 +31,7 @@ pathsToLines <- function(sim){
     inds <- match(sim$paths.list[[i]], sim$paths.v[[1]])
 
     if(any(is.na(inds))){
-      stop("NA values in weightRaster along paths. Check for disconnected clumps in weightRaster. If weightFunction=slopePenaltyFn, try adjusting limit or setting limitWeight to high value that is not NA.", call. = FALSE)
+      stop("NA values in weightRaster along paths. Check for disconnected clumps in weightRaster. If weightFunction=gradePenaltyFn, try adjusting limit or setting limitWeight to high value that is not NA.", call. = FALSE)
     }
 
     if(inds[1] == inds[2]){

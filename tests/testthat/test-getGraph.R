@@ -39,11 +39,11 @@ test_that("getGraph works with gdistance method", {
   # expect_true(all(igraph::edge_attr(gO_gD, "weight") >= igraph::edge_attr(gQ_gD, "weight")))
 })
 
-test_that("getGraph works with slopePenaltyFun", {
+test_that("getGraph works with gradePenaltyFun", {
   # need to set limit high so that all cells will be included
-  gR_sl = getGraph(sim, "rook", weightFunction = slopePenaltyFn, limit = 10000)
-  gQ_sl = getGraph(sim, "queen", weightFunction = slopePenaltyFn, limit = 10000)
-  gO_sl = getGraph(sim, "octagon", weightFunction = slopePenaltyFn, limit = 10000)
+  gR_sl = getGraph(sim, "rook", weightFunction = gradePenaltyFn, limit = 10000)
+  gQ_sl = getGraph(sim, "queen", weightFunction = gradePenaltyFn, limit = 10000)
+  gO_sl = getGraph(sim, "octagon", weightFunction = gradePenaltyFn, limit = 10000)
   
   expect_length(igraph::edge_attr(gR_sl, "weight"), 40)
   expect_length(igraph::edge_attr(gQ_sl, "weight"), 72)
