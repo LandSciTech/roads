@@ -40,6 +40,9 @@
     <loc>https://landscitech.github.io/roads/reference/getLandingsFromTarget.html</loc>
   </url>
   <url>
+    <loc>https://landscitech.github.io/roads/reference/gradePenaltyFn.html</loc>
+  </url>
+  <url>
     <loc>https://landscitech.github.io/roads/reference/index.html</loc>
   </url>
   <url>
@@ -59,8 +62,5 @@
   </url>
   <url>
     <loc>https://landscitech.github.io/roads/reference/roads-package.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/slopePenaltyFn.html</loc>
   </url>
 </urlset>
