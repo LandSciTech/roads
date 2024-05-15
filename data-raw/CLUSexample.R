@@ -18,7 +18,7 @@
 #   - 5 by 5 raster representing cost, populated with uniform random numbers based on seed value 1
 #   - first/top row (cost[1:5]) identified as existing roads (cost is 0 for these cells)
 #   - 4 landings are cells: 11, 13, 22, 25
-cost       <- terra::rast(terra::ext(0, 5, 0, 5),res=1,vals =1, crs="local") # define cost raster
+cost       <- terra::rast(terra::ext(0, 5, 0, 5),res=1,vals =1, crs="EPSG:3347") # define cost raster
 # hard code the random cost values to avoid having random seed being modified
 #   - values are the same as running:  set.seed(1);runif(25,1,20)
 cost[]     <- c( 6.0446645996998996, 8.0703540930990130,11.8842139036860317,18.2559480099007487, 4.8319566897116601,
