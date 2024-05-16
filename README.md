@@ -33,23 +33,22 @@ devtools::install_github("LandSciTech/roads")
 ## Example
 
 To simulate the development of roads three inputs are needed: the
-current road network (roads), the locations that should be connected to
-the road network (landings) and the cost of building roads across the
-landscape (cost). Typically the roads and landings are `sf` objects or
-`sp` Spatial\* objects and the cost is a raster.
+current road network, the locations that should be connected to the road
+network (landings), and a weights raster that together with the
+weighting function determines the cost to connect two raster cells with
+a road. Typically the roads and landings are `sf` objects or `sp`
+Spatial\* objects and the weight is a raster.
 
 ``` r
 library(roads)
 library(raster)
-#> Warning: package 'raster' was built under R version 4.3.2
-#> Warning: package 'sp' was built under R version 4.3.2
 
 # data set installed with roads package
 demoScen <- prepExData(demoScen)
 scen <- demoScen[[1]]
 
 prRoads <- projectRoads(landings = scen$landings.points, 
-                        cost = scen$cost.rast,
+                        weightRaster = scen$cost.rast,
                         roads = scen$road.line, 
                         plotRoads = TRUE) 
 ```

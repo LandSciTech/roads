@@ -270,7 +270,7 @@ setMethod(
 
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
-    rm(landingsIn, envir = sim)
+    rm("landingsIn", envir = sim)
 
     if(plotRoads){
       plotRoads(sim, mainTitle)
@@ -359,7 +359,7 @@ setMethod(
 
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
-    rm(landingsIn, envir = sim)
+    rm("landingsIn", envir = sim)
 
     if(plotRoads){
       plotRoads(sim, mainTitle)

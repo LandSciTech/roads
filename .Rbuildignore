@@ -13,6 +13,8 @@
 ^docs$
 ^pkgdown$
 ^vignettes/articles$
+^\.git$
+^tests/testthat/benchmarking.R
 ^CRAN-RELEASE$
 
 ^CRAN-SUBMISSION$

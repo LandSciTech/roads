@@ -59,7 +59,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     return(invisible(g))
   }else{
     # define global varaiables to avoid NOTEs on R CMD check
-    weightV <- from <- to <- w1 <- w2 <- NULL
+    weight <- weightV <- from <- to <- w1 <- w2 <- NULL
 
     # prepare the weightRaster raster #===========
     # get weight as data.table from raster
