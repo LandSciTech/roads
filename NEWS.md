@@ -1,3 +1,5 @@
+# roads 1.2.0
+
 # roads 1.1.2
 * Change dynamic least cost paths (DLCP) to iterative least cost paths (ILCP) throughout
 * Change default `roadMethod` to `"ilcp"` in `projectRoads` 
