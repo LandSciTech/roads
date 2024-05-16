@@ -4,7 +4,7 @@
 \alias{getDistFromSource}
 \title{Moving window approach to get distance from source}
 \usage{
-getDistFromSource(src, maxDist, kwidth = 3, method = "terra")
+getDistFromSource(src, maxDist, kwidth = 3, method = "terra", override = FALSE)
 }
 \arguments{
 \item{src}{SpatRaster or RasterLayer, where all values > 0 are treated as
@@ -19,18 +19,24 @@ moving window. For the "pfocal2" method the aggregation factor.}
 \item{method}{Character, the method to use, currently only "terra" supported
 with the CRAN version, while "pfocal" or "pfocal2" are available with the
 development version. See below for details.}
+
+\item{override}{Logical, if TRUE will use the old deprecated function.}
 }
 \value{
 A SpatRaster
 }
 \description{
+This function is deprecated please use \code{\link[terra:distance]{terra::distance()}}. Note that you need
+to set \code{target = 0} to get distances from cells that are zero to cells that
+are non-zero.
+}
+\details{
 This function provides three different methods for calculating the distance of
 all points on a landscape from "source" locations. This is a computationally
 intensive process so the function arguments can be used to balance the
 tradeoffs between speed and accuracy. Note the pfocal versions are only
 available in the development version of the package.
-}
-\details{
+
 The "terra" and "pfocal" methods use an iterative moving window approach and
 assign each cell a distance based on the number of times the moving window is
 repeated before it is included. This means that the moving window function is
@@ -61,7 +67,11 @@ interpolation.
 \examples{
 
 CLUSexample <-  prepExData(CLUSexample)
-getDistFromSource(CLUSexample$roads, 5, 2)
+# Deprecated
+# getDistFromSource(CLUSexample$roads, 5, 2)
+
+# Use terra::distance instead
+terra::distance(CLUSexample$roads, target = 0)
 
 \donttest{
  library(sf)
@@ -79,6 +89,9 @@ rds_rast <- rasterize(vect(rds),
                            ymin = -5, ymax = 5),
                       touches = TRUE)
 
-getDistFromSource(rds_rast, 5, 2)
+terra::distance(rds_rast)
+
+# or straight from the line
+terra::distance(rds_rast, terra::vect(rds \%>\% st_set_crs(st_crs(rds_rast))))
 }
 }

@@ -5,6 +5,7 @@
 * Change argument name from `cost` to `weightRaster` since it no longer represents a cost surface
 and can now be inputs to the `weightFunction`. Also change `roadsInCost` to `roadsInWeight`.
 * returned roads are no longer unioned together. 
+* Deprecate `getDistFromSource` and use `terra::distance` instead. 
 
 # roads 1.1.1
 * Fix an issue where updates to `terra` were causing roads to break

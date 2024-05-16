@@ -1,5 +1,9 @@
 #'Moving window approach to get distance from source
 #'
+#'This function is deprecated please use [terra::distance()]. Note that you need
+#'to set `target = 0` to get distances from cells that are zero to cells that
+#'are non-zero. 
+#'
 #'This function provides three different methods for calculating the distance of
 #'all points on a landscape from "source" locations. This is a computationally
 #'intensive process so the function arguments can be used to balance the
@@ -40,6 +44,7 @@
 #'@param method Character, the method to use, currently only "terra" supported
 #'  with the CRAN version, while "pfocal" or "pfocal2" are available with the
 #'  development version. See below for details.
+#'@param override Logical, if TRUE will use the old deprecated function.
 #'
 #'@return A SpatRaster
 #'@export
@@ -47,7 +52,11 @@
 #' @examples
 #'
 #' CLUSexample <-  prepExData(CLUSexample)
-#' getDistFromSource(CLUSexample$roads, 5, 2)
+#' # Deprecated
+#' # getDistFromSource(CLUSexample$roads, 5, 2)
+#' 
+#' # Use terra::distance instead
+#' terra::distance(CLUSexample$roads, target = 0)
 #'
 #'\donttest{
 #'  library(sf)
@@ -65,10 +74,19 @@
 #'                            ymin = -5, ymax = 5),
 #'                       touches = TRUE)
 #'
-#' getDistFromSource(rds_rast, 5, 2)
+#' terra::distance(rds_rast)
+#' 
+#' # or straight from the line
+#' terra::distance(rds_rast, terra::vect(rds %>% st_set_crs(st_crs(rds_rast))))
 #'}
 
-getDistFromSource <- function(src, maxDist, kwidth = 3, method = "terra") {
+getDistFromSource <- function(src, maxDist, kwidth = 3, method = "terra", override = FALSE) {
+  if(!override){
+    .Deprecated("terra::distance")
+    return(terra::distance(src, target = 0))
+  }
+  # Leaving this here for now
+  
   # Not currently using this parameter but could in the future
   dissag = F
   

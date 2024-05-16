@@ -16,11 +16,11 @@ rds_rast <- terra::rasterize(terra::vect(rds),
 test_that("distance to roads has expected values", {
   src <- rds_rast
   maxDist <- 5
-  fastRough <- getDistFromSource(src, maxDist, kwidth = 1)
-  wideCircle <- getDistFromSource(src, maxDist, kwidth = 5)
+  expect_warning(fastRough <- getDistFromSource(src, maxDist, kwidth = 1))
+  expect_warning(wideCircle <- getDistFromSource(src, maxDist, kwidth = 5))
   if(requireNamespace("pfocal", quietly = TRUE)){
-    slowFine <- getDistFromSource(src, maxDist, kwidth = 1, method = "pfocal2")
-    smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, method = "pfocal2")
+    expect_warning(slowFine <- getDistFromSource(src, maxDist, kwidth = 1, method = "pfocal2"))
+    expect_warning(smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, method = "pfocal2"))
   }
 
   if(interactive()){
@@ -29,8 +29,9 @@ test_that("distance to roads has expected values", {
                     "kwidth = 5, pfocal2")
     tmap::qtm(res %>% terra::`crs<-`(value = "EPSG:5070"), raster.style = "cont")
   }
-
-  expect_gt(length(terra::unique(fastRough)[[1]]), length(terra::unique(wideCircle)[[1]]))
+  
+  # no difference any more since using terra::distance
+  expect_equal(length(terra::unique(fastRough)[[1]]), length(terra::unique(wideCircle)[[1]]))
   
 })
 

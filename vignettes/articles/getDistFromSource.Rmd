@@ -16,6 +16,35 @@ library(ggplot2)
 library(dplyr)
 ```
 
+**This function is deprecated please use `terra::distance` instead**
+Here is an example of how to use `terra::distance` which is much faster than `getDistFromSource` was.
+```{r terra-distance}
+
+#make example roads from scratch
+rds <- data.frame(x = 1:1000, y = cos(1:1000/100)*500) %>% 
+  sf::st_as_sf(coords = c("x", "y")) %>% 
+  sf::st_union() %>% 
+  sf::st_cast("LINESTRING") %>% 
+  sf::st_set_crs("+proj=utm +zone=12")
+
+rds_rast <- terra::rasterize(terra::vect(rds), 
+                             terra::rast(nrows = 500, ncols = 500, 
+                                         xmin = 0, xmax = 1000, 
+                                         ymin = -500, ymax = 500),
+                             touches = TRUE, background = 0) %>% 
+  terra::`crs<-`(value = "+proj=utm +zone=12")
+
+# Slightly different from getDistFromSource calculates distance from target, in
+# this case 0, to nearest cell that is not target
+terr_dist <- terra::distance(rds_rast, target = 0)
+
+# Or you can use the line directly
+terr_dist_vect <- terra::distance(rds)
+
+```
+
+
+
 `getDistFromSource` allows you to calculate the distance to the closest "source" location for all cells in a raster. A source is a raster cell with a value \> 0 in the input raster. In the case of this package the source is typically a road. `getDistFromSource` includes three slightly different methods that are all based on a moving window approach.
 
 **Note: the development version of `roads` is needed to run the following code**
@@ -31,13 +60,14 @@ Below we will explore different settings and how they affect the speed and memor
 rds <- data.frame(x = 1:1000, y = cos(1:1000/100)*500) %>% 
   sf::st_as_sf(coords = c("x", "y")) %>% 
   sf::st_union() %>% 
-  sf::st_cast("LINESTRING")
+  sf::st_cast("LINESTRING") %>% 
+  sf::st_set_crs("+proj=utm +zone=12")
 
 rds_rast <- terra::rasterize(terra::vect(rds), 
                              terra::rast(nrows = 500, ncols = 500, 
                                          xmin = 0, xmax = 1000, 
                                          ymin = -500, ymax = 500),
-                             touches = TRUE) %>% 
+                             touches = TRUE, background = 0) %>% 
   terra::`crs<-`(value = "+proj=utm +zone=12")
 
 # table of different parameters
@@ -51,10 +81,12 @@ param_grid <- expand.grid(kwidth = c(1,10,20), maxDist = c(100, 200), method = c
 
 # function to run each version and save the results
 doFun <- function(x){
- bm <- bench::mark(
+  bm <- bench::mark(
     param_grid$result[[x]] <<- getDistFromSource(rds_rast, param_grid$maxDist[x], 
-                                                     kwidth = param_grid$kwidth[x],
-                                                     method = param_grid$method[x]),
+                                                 kwidth = param_grid$kwidth[x],
+                                                 method = param_grid$method[x], 
+                                                 #override deprecation
+                                                 override = TRUE),
     iterations = 1, filter_gc = FALSE
   )
  param_grid$time[x] <<- bm$median
