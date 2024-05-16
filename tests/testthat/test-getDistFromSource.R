@@ -18,10 +18,10 @@ test_that("distance to roads has expected values", {
   maxDist <- 5
   expect_warning(fastRough <- getDistFromSource(src, maxDist, kwidth = 1))
   expect_warning(wideCircle <- getDistFromSource(src, maxDist, kwidth = 5))
-  if(requireNamespace("pfocal", quietly = TRUE)){
-    expect_warning(slowFine <- getDistFromSource(src, maxDist, kwidth = 1, method = "pfocal2"))
-    expect_warning(smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, method = "pfocal2"))
-  }
+  # if(requireNamespace("pfocal", quietly = TRUE)){
+  #   expect_warning(slowFine <- getDistFromSource(src, maxDist, kwidth = 1, method = "pfocal2"))
+  #   expect_warning(smootherCircle <- getDistFromSource(src, maxDist, kwidth = 5, method = "pfocal2"))
+  # }
 
   if(interactive()){
     res <- c(fastRough, slowFine, wideCircle, smootherCircle)

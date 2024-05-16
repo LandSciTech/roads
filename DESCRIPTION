@@ -54,10 +54,7 @@ Suggests:
     viridis,
     tmap,
     bench,
-    pfocal,
     gdistance
-Remotes: LandSciTech/pfocal
-Additional_repositories: https://LandSciTech.github.io/drat
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
 Collate: 
