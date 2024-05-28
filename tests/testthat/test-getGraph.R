@@ -35,8 +35,7 @@ test_that("getGraph works with gdistance method", {
   expect_length(igraph::edge_attr(gR_gD, "weight"), 40)
   expect_length(igraph::edge_attr(gQ_gD, "weight"), 72)
   expect_length(igraph::edge_attr(gO_gD, "weight"), 72)
-  # TODO: figure out why not as expected but not really using gdistance right now
-  # expect_true(all(igraph::edge_attr(gO_gD, "weight") >= igraph::edge_attr(gQ_gD, "weight")))
+  expect_true(all(igraph::edge_attr(gO_gD, "weight") >= igraph::edge_attr(gQ_gD, "weight")))
 })
 
 test_that("getGraph works with gradePenaltyFun", {
