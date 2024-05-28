@@ -22,7 +22,7 @@
 #' @param neighbourhood neighbourhood type
 #' @noRd
 
-getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1,x2,...) (x1+x2)/2,...){
+getGraph<- function(sim, neighbourhood,method="old",weightFunction =  simpleCostFn,... ){
   #sim = list(weightRaster=weightRaster);neighbourhood="octagon"
   #gdistance method takes more time and less memory. See testAltGraphFns in RoadPaper repo for details.  resolution=res(sim$weightRaster)[1]
 
@@ -46,7 +46,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
                   rook=4,
                   octagon=8,
                   queen=8)
-    x = gdistance::transition(as(sim$weightRaster, "Raster"), transitionFunction=function(x) 1/weightFunction(x[1],x[2],resolution=resolution,...), directions=dirs)
+    x = gdistance::transition(as(sim$weightRaster, "Raster"), transitionFunction=function(x) 1/weightFunction(x[1],x[2],hdistance=resolution,...), directions=dirs)
 
     if(neighbourhood=="octagon"){
       #correct for diagonal distances and other aspects of geographic distance
@@ -69,7 +69,6 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     # adj
     weightV[, id := seq_len(.N)]
 
-    # get the adjacency using SpaDES function adj #=======
     # rooks case
     if(!is.element(neighbourhood, c("rook", "octagon", "queen"))) {
       stop("neighbourhood type not recognized")
@@ -101,17 +100,17 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
     data.table::setnames(edges.weight, c("from", "to", "w1", "w2"))
 
     # apply the weightFunction across the two pixels and remove w1 w2
-    edges.weight[,`:=`(weight = weightFunction(w1,w2,resolution=resolution,...),
+    edges.weight[,`:=`(weight = weightFunction(w1,w2,hdistance=resolution,...),
                      w1 = NULL,
                      w2 = NULL)]
 
     if(neighbourhood != "rook"){
 
-      # bishop's case - multiply weights by 2^0.5
+      # bishop's case - multiply horizontal distance by 2^0.5
       if(neighbourhood == "octagon"){
         mW = 2^0.5
       } else {mW = 1}
-      weightV[, weight := weight*mW]
+      #weightV[, weight := weight*mW]
 
       edges <- terra::adjacent(sim$weightRaster, cells = 1:as.integer(ncel),
                                directions = "bishop", pairs = TRUE) %>%
@@ -136,7 +135,7 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction = function(x1
       data.table::setnames(edges_bishop, c("from", "to", "w1", "w2"))
 
       # apply weightFunction across the two pixels and remove w1 w2
-      edges_bishop[,`:=`(weight = weightFunction(w1,w2,resolution=resolution,...),
+      edges_bishop[,`:=`(weight = weightFunction(w1,w2,hdistance=resolution*mW,...),
                          w1 = NULL,
                          w2 = NULL)]
 

@@ -154,7 +154,7 @@ setGeneric('projectRoads', function(landings = NULL,
                                     plotRoads = FALSE,
                                     mainTitle = "",
                                     neighbourhood = "octagon",
-                                    weightFunction=function(x1,x2,...) (x1+x2)/2,
+                                    weightFunction=simpleCostFn,
                                     sim = NULL,
                                     roadsOut = NULL,
                                     roadsInWeight = TRUE,
@@ -167,7 +167,7 @@ setGeneric('projectRoads', function(landings = NULL,
 setMethod(
   'projectRoads', signature(sim = "missing"),
   function(landings, weightRaster, roads, roadMethod, plotRoads, mainTitle,
-           neighbourhood, weightFunction, sim, roadsOut, roadsInWeight, ordering, 
+           neighbourhood, weightFunction, sim, roadsOut, roadsInWeight, ordering,
            roadsConnected, ...) {
 
     # check required args
@@ -239,12 +239,12 @@ setMethod(
                   },
                   ilcp ={
                     sim <- getClosestRoad(sim, ordering)
-                    
+
                     sim <- lcpList(sim)
 
                     # includes iterative update graph
                     sim <- iterativeShortestPaths(sim)
-                    
+
                     sim <- outputRoads(sim, roadsOut)
                   },
                   mst ={
@@ -381,7 +381,7 @@ outputRoads <- function(sim, roadsOut){
   sim$weightRaster <- sim$weightRasterNew
 
   # remove no longer needed parts of list that aren't being used for update
-  rm(list = c("weightRasterNew", "roads.close.XY", "paths.v", "paths.list"), 
+  rm(list = c("weightRasterNew", "roads.close.XY", "paths.v", "paths.list"),
      envir = sim)
 
   return(sim)

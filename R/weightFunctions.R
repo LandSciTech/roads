@@ -17,36 +17,61 @@
 #' The approach ignores (unknown) grade penalties beside roads and barriers in order to
 #' avoid increased memory and computational burden associated with multiple input rasters.
 #'
-#' @param x1,x2 Value of the input raster at two nodes. A difference of 1 implies a 100% slope.
-#' @param resolution Resolution of the input raster. Resolution and x1/x2 should have the same units.
-#' @param baseCost Construction cost of 0% grade road.
+#' @param x1,x2 Value of the input raster at two nodes.
+#' @param hdistance Horizontal distance between nodes. hdistance and x1,x2 should have the same units.
+#' @param baseCost Construction cost of 0% grade road per km.
 #' @param limit Maximum grade (%) on which roads can be built.
-#' @param penalty Cost increase associated with each additional % increase in road grade.
+#' @param penalty Cost increase (per km) associated with each additional % increase in road grade.
 #' @param limitWeight Value assigned to edges that exceed the grade limit. Try setting to a high (not NA) value if encountering problems with disconnected graphs.
 #'
 #' @export
 #'
 #' @examples
-#' gradePenaltyFn(0.5,0.51)
-#' gradePenaltyFn(0.5,0.65)
+#' gradePenaltyFn(0.5,0.51,1)
+#' gradePenaltyFn(0.5,0.65,1)
 #' # grade > 20% so NA
-#' gradePenaltyFn(0.5,0.75)
-gradePenaltyFn <- function(x1, x2, resolution = 1, baseCost = 16178, limit = 20,
+#' gradePenaltyFn(0.5,0.75,1)
+gradePenaltyFn <- function(x1, x2, hdistance, baseCost = 16178, limit = 20,
                            penalty = 504, limitWeight = NA){
+
   # Don't calculate grade penalty cost if one of the nodes is a barrier.
   cond <- pmin(x1, x2) >= 0
   cond[is.na(cond)] <- F
 
   # Apply grade penalty if both nodes have elevation values.
   # If one node is a road use base cost.
-  grade <- 100 * abs(x1 - x2) * cond / resolution
+  grade <- 100 * abs(x1 - x2) * cond / hdistance #This is % (dimensionless)
 
-  slp <- baseCost + grade * penalty * (pmin(x1, x2) > 0)
+  slp <- baseCost + grade * penalty * (pmin(x1, x2) > 0) #This is cost per km.
   slp[grade > limit] <- limitWeight
 
   # If both 0 this is an existing road link. Otherwise it is a barrier.
   slp[!cond] <- abs(pmin(x1, x2))[!cond]
 
+  # Multiply by hdistance to penalize diagonals.
+  # Note that multiplying all edge weights by a constant does not change algorithm behaviour,
+  # so we ignore the unit of hdistance here.
+  slp = slp*hdistance
+
   return(slp)
+}
+
+
+#' Simple cost edge weight function
+#'
+#' Calculates the weight of an edge between two nodes as the mean value
+#' of an input cost raster at each of those nodes (x1 and x2).
+#'
+#' @param x1,x2 Value of the input cost raster at two nodes.
+#' @param hdistance Horizontal distance between nodes - for penalizing longer diagonal edges.
+#' @export
+#'
+#' @examples
+#' simpleCostFn(0.5,0.7,1)
+simpleCostFn <- function(x1,x2,hdistance){
+
+  # Multiply by hdistance to penalize diagonals.
+  # Note that multiplying all edge weights by a constant does not change algorithm behaviour - so we ignore the unit of hdistance.
+  return(hdistance*(x1+x2)/2)
 }
 

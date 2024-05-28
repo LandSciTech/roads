@@ -7,7 +7,7 @@
 gradePenaltyFn(
   x1,
   x2,
-  resolution = 1,
+  hdistance,
   baseCost = 16178,
   limit = 20,
   penalty = 504,
@@ -15,15 +15,15 @@ gradePenaltyFn(
 )
 }
 \arguments{
-\item{x1, x2}{Value of the input raster at two nodes. A difference of 1 implies a 100\% slope.}
+\item{x1, x2}{Value of the input raster at two nodes.}
 
-\item{resolution}{Resolution of the input raster. Resolution and x1/x2 should have the same units.}
+\item{hdistance}{Horizontal distance between nodes. hdistance and x1,x2 should have the same units.}
 
-\item{baseCost}{Construction cost of 0\% grade road.}
+\item{baseCost}{Construction cost of 0\% grade road per km.}
 
 \item{limit}{Maximum grade (\%) on which roads can be built.}
 
-\item{penalty}{Cost increase associated with each additional \% increase in road grade.}
+\item{penalty}{Cost increase (per km) associated with each additional \% increase in road grade.}
 
 \item{limitWeight}{Value assigned to edges that exceed the grade limit. Try setting to a high (not NA) value if encountering problems with disconnected graphs.}
 }
@@ -48,8 +48,8 @@ avoid increased memory and computational burden associated with multiple input r
 }
 }
 \examples{
-gradePenaltyFn(0.5,0.51)
-gradePenaltyFn(0.5,0.65)
+gradePenaltyFn(0.5,0.51,1)
+gradePenaltyFn(0.5,0.65,1)
 # grade > 20\% so NA
-gradePenaltyFn(0.5,0.75)
+gradePenaltyFn(0.5,0.75,1)
 }
