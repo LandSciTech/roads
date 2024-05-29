@@ -39,7 +39,9 @@ rds_rast <- terra::rasterize(terra::vect(rds),
 terr_dist <- terra::distance(rds_rast, target = 0)
 
 # Or you can use the line directly
-terr_dist_vect <- terra::distance(rds)
+terr_dist_vect <- terra::distance(terra::vect(rds))
+
+terra::plot(terr_dist)
 
 ```
 
