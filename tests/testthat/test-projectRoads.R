@@ -148,6 +148,21 @@ test_that("duplicate roads are not created", {
   
 })
 
+test_that("landings on road or multiple landings in same cell work", {
+  CLUSexample <- prepExData(CLUSexample)
+  
+  CLUSexample$landings <- bind_rows(CLUSexample$landings, 
+                                    list(sf::st_point(c(1.5, 4.2)), sf::st_point(c(1.5, 0.6))) %>% 
+                                      sf::st_as_sfc() %>%
+                                      sf::st_as_sf(crs = sf::st_crs(CLUSexample$landings)) %>%
+                                      rename(geometry = x))
+  expect_type(
+    projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads, 
+                 roadMethod = "mst"),
+    "list")
+  
+  
+})
 
 if(FALSE){
   # checking memory allocations

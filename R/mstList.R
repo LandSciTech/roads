@@ -48,7 +48,7 @@ mstList<- function(sim, roadsConnected){
       
       mst.adj <- cbind(rbind(lnd_to_lnd,t(lnd_to_rd)), rbind(lnd_to_rd, 0))
     } else {
-      both.v <- c(lnd.v, rd.v)
+      both.v <- unique(c(lnd.v, rd.v))
       mst.adj <- igraph::distances(sim$g, both.v, both.v)
       dimnames(mst.adj) <- list(both.v, both.v)
     }
