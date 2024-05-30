@@ -208,6 +208,18 @@ setMethod(
                         roadMethod = roadMethod,
                         landings = landings,
                         roadsInWeight = roadsInWeight)
+    
+    # Check memeory requirements
+    rast_cells <- terra::ncell(weightRaster)
+    ram_needed_Mb <- 10^(-1.6+0.769*log10(rast_cells))
+    ram_avail_Mb <- terra::free_RAM()/1000
+    
+    if(ram_needed_Mb > ram_avail_Mb){
+      warning("This road projection is expected to require ", ram_needed_Mb, 
+              " Mb of RAM but only ", ram_avail_Mb, "Mb is available. ",
+              "Consider closing other applications and/or running on a larger machine")
+    }
+    
 # browser()
     sim$landingsIn <- sim$landings
 

@@ -101,26 +101,28 @@ test_that("raster with clumps input works no ID",{
 })
 
 test_that("raster with clumps input works with ID",{
-  rast <- demoScen[[1]]$landings.poly %>% terra::vect() %>%
-    terra::rasterize(terra::rast(demoScen[[1]]$cost.rast), field = "ID") %>% 
+  rst <- demoScen[[1]]$landings.poly %>% terra::vect() %>%
+    terra::rasterize(demoScen[[1]]$cost.rast, field = "ID") %>% 
     terra::`crs<-`(value = "EPSG:5070")
   
   # make sure that a single celled harvest block will work with clumps
-  rast[10,10] <- 20
+  rst[10,10] <- 20
   
   # Show effect of ID and check for ID not sequential
-  rast[78:88, 4:5] <- 30
+  rst[78:88, 4:5] <- 30
   
-  outRastCent <- getLandingsFromTarget(rast)
-  outRastRand <- getLandingsFromTarget(rast, landingDens = 0.1, 
+  rst[is.na(rst)] <- 0
+  
+  outRastCent <- getLandingsFromTarget(rst)
+  outRastRand <- getLandingsFromTarget(rst, landingDens = 0.1,
                                        sampleType = "random")
-  outRastReg <- getLandingsFromTarget(rast, landingDens = 0.1, 
+  outRastReg <- getLandingsFromTarget(rst, landingDens = 0.1,
                                       sampleType = "regular")
   
-  land_vals <- terra::extract(rast, terra::vect(outRastCent), ID = FALSE) %>% pull(ID)
+  land_vals <- terra::extract(rst, terra::vect(outRastCent), ID = FALSE) %>% pull(ID)
   
   # all unique raster values represented in landings
-  expect_length(setdiff(land_vals, terra::unique(rast) %>% pull(ID)), 0)
+  expect_length(setdiff(land_vals, terra::unique(rst) %>% pull(ID)), 0)
   
   expect_type(outRastCent, "list")
   
@@ -136,7 +138,7 @@ test_that("raster with clumps input works with ID",{
   }
   
   # compare to supplying raster to projectRoads
-  prRastCent <- projectRoads(rast, demoScen[[1]]$cost.rast, demoScen[[1]]$road.line)
+  prRastCent <- projectRoads(rst, demoScen[[1]]$cost.rast, demoScen[[1]]$road.line)
   
   expect_equal(prRastCent$landings, outRastCent)
 

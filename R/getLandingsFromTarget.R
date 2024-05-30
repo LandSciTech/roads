@@ -117,7 +117,7 @@ getLandingsFromTarget <- function(harvest,
         harvest <- terra::rast(harvest)
       }
       
-      if(terra::nlyr(landings) > 1){
+      if(terra::nlyr(harvest) > 1){
         stop("landings should be a single layer SpatRaster")
       }
       
@@ -140,6 +140,8 @@ getLandingsFromTarget <- function(harvest,
       clumps <- clumps[,3] %>% max() > 1
       
       if(clumps){
+        # zeros should be treated as NA
+        harvest <- terra::subst(harvest, from = 0, to = NA)
         harvest <- sf::st_as_sf(terra::as.polygons(harvest, 
                                                    aggregate = TRUE)) %>% 
           sf::st_set_agr("constant")
