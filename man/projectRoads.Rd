@@ -58,10 +58,11 @@ projectRoads(
 )
 }
 \arguments{
-\item{landings}{sf polygons or points, RasterLayer, SpatialPolygons*,
+\item{landings}{sf polygons or points, SpatRaster, RasterLayer, SpatialPolygons*,
 SpatialPoints*, matrix, containing features to be connected
 to the road network. Matrix should contain columns x, y with coordinates,
-all other columns will be ignored.}
+all other columns will be ignored. Polygon and raster inputs will be
+processed by \code{getLandingsFromTarget} to get the centroid of harvest blocks.}
 
 \item{weightRaster}{SpatRaster or RasterLayer. weights Raster where existing
 roads must be the only cells with a weight of 0. If existing roads do not

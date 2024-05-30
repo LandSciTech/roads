@@ -81,34 +81,8 @@ buildSimList <- function(roads, weightRaster, roadMethod, landings, roadsInWeigh
         sf::st_set_agr("constant")
       
     } else if(is(landings, "Raster") || is(landings, "SpatRaster")){
-      if(is(landings, "Raster")){
-        landings <- terra::rast(landings)
-      }
       
-      if(terra::nlyr(landings) > 1){
-        stop("landings should be a single layer SpatRaster")
-      }
-      
-      # check if landings are clumps of cells (ie polygons) or single cells
-      # (ie points) and if clumps take centroid
-      clumpedRast <- terra::patches(landings, allowGaps = FALSE, zeroAsNA = TRUE) 
-      
-      clumps <- clumpedRast %>% 
-        terra::freq()
-      
-      clumps <- clumps[,2] %>% max() > 1
-      
-      if(clumps){
-        landings <- sf::st_as_sf(terra::as.polygons(clumpedRast, 
-                                                          dissolve = TRUE)) %>% 
-          sf::st_set_agr("constant")
-      } else {
-        landings <- terra::subst(landings, from = 0, to = NA)%>% 
-          terra::as.points() %>% 
-          sf::st_as_sf() %>% 
-          sf::st_set_agr("constant")
-      }
-      
+      landings <- getLandingsFromTarget(landings)
 
     } else if(is(landings, "matrix")){
       xyind <- which(colnames(landings) %in% c("x", "X", "y", "Y"))

@@ -30,10 +30,11 @@
 #' area is determined by the CRS. For projected CRS this should likely be a very
 #' small number i.e. < 0.001.
 #'
-#' @param harvest sf, SpatialPolygons or RasterLayer object with harvested
-#'   areas. If it is a RasterLayer with more than one unique value other than 0
-#'   each value will be run separately which will produce different results from
-#'   a 0/1 raster but will be much slower.
+#' @param harvest sf, SpatialPolygons, SpatRaster or RasterLayer object with harvested
+#'   areas. If it is a raster with values outside 0,1, values are assumed
+#'   to be harvest block IDs. If raster values are in 0,1 they are assumed to be
+#'   a binary raster and `terra::patches` is used to identify harvest
+#'   blocks.
 #' @param landingDens number of landings per unit area. This should be in the
 #'   same units as the CRS of the harvest. Note that 0.001 points per m2 is > 1000
 #'   points per km2 so this number is usually very small for projected CRS.
@@ -108,24 +109,40 @@ getLandingsFromTarget <- function(harvest,
   
   if(!(is(harvest, "sf") || is(harvest, "sfc"))){
     if(is(harvest, "Spatial")){
-
+      
       harvest <- sf::st_as_sf(harvest) %>% sf::st_set_agr("constant")
-
+      
     } else if(is(harvest, "Raster") || is(harvest, "SpatRaster")){
       if(is(harvest, "Raster")){
         harvest <- terra::rast(harvest)
       }
-
-      # check if harvest are clumps of cells (ie polygons) or single cells
-      # (ie points) and if clumps take centroid
-      clumpedRast <- terra::patches(harvest, allowGaps = FALSE, zeroAsNA = TRUE)
       
-      clumps <- clumpedRast %>%
-        terra::freq() 
-      clumps <- max(clumps[,3])  > 1
+      if(terra::nlyr(landings) > 1){
+        stop("landings should be a single layer SpatRaster")
+      }
+      
+      #if harvest rast is binary use clumping else assume values are cutblock ids
+      lnds_mnmx <- terra::minmax(harvest)[,1]
+      
+      if(all(lnds_mnmx %in% c(0,1))){
+        message("harvest raster values are all in 0,1. Using patches as landing areas")
+        # check if harvest are clumps of cells (ie polygons) or single cells
+        # (ie points) and if clumps take centroid
+        harvest <- terra::patches(harvest, allowGaps = TRUE, zeroAsNA = TRUE) 
+        
+      } else {
+        message("harvest raster values not in 0,1. Using values as landing ids")
+        
+      }
+      
+      clumps <- harvest %>% terra::freq()
+      
+      clumps <- clumps[,3] %>% max() > 1
       
       if(clumps){
-        landings <- getLandingsFromTargetRast(harvest, landingDens, sampleType)
+        harvest <- sf::st_as_sf(terra::as.polygons(harvest, 
+                                                   aggregate = TRUE)) %>% 
+          sf::st_set_agr("constant")
       } else {
         landings <- terra::subst(harvest, from = 0, to = NA)%>% 
           terra::as.points() %>% 
@@ -137,12 +154,11 @@ getLandingsFromTarget <- function(harvest,
                   " landingDens is ignored and cells > 0 converted to points",
                   call. = FALSE)
         }
-        
+        return(landings)
       }
-      return(landings)
-    } 
+      
+    }
   }
-
   if(sf::st_geometry_type(harvest, by_geometry = FALSE) %in%
      c("POLYGON", "MULTIPOLYGON")){
     if(sampleType == "centroid"){
@@ -181,14 +197,15 @@ getLandingsFromTarget <- function(harvest,
         
         landings <- c(landings1$lands, landings2Plus)
       } else {
-      
+        
         landings <- landings1$lands
       }
-      sf::st_sf(landings)
+      return(sf::st_sf(landings))
     }
-
+    
   }
 }
+
 
 
 #' Select random landing locations within patches.

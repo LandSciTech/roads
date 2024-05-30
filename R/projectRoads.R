@@ -36,10 +36,11 @@
 #'   determining the least cost path to the road or other landings based on the
 #'   weight raster.
 #'
-#' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
+#' @param landings sf polygons or points, SpatRaster, RasterLayer, SpatialPolygons*,
 #'   SpatialPoints*, matrix, containing features to be connected
 #'   to the road network. Matrix should contain columns x, y with coordinates,
-#'   all other columns will be ignored.
+#'   all other columns will be ignored. Polygon and raster inputs will be
+#'   processed by `getLandingsFromTarget` to get the centroid of harvest blocks.
 #' @param weightRaster SpatRaster or RasterLayer. weights Raster where existing
 #'   roads must be the only cells with a weight of 0. If existing roads do not
 #'   have 0 weight set `roadsInWeight = FALSE` and they will be burned in.
