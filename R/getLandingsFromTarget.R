@@ -243,7 +243,7 @@ getLandingsFromTargetRast<-function(inputPatches,
     
     nl <- ifelse(is.null(landingDens), 0, landingDens)
     
-    ip <- inputPatches == i
+    ip <- inputPatches == clumpVals[i]
     
     ip[ip == 0] <- NA
     
