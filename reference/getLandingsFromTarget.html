@@ -87,10 +87,11 @@ intersect with the grid its centroid is used.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>harvest</dt>
-<dd><p>sf, SpatialPolygons or RasterLayer object with harvested
-areas. If it is a RasterLayer with more than one unique value other than 0
-each value will be run separately which will produce different results from
-a 0/1 raster but will be much slower.</p></dd>
+<dd><p>sf, SpatialPolygons, SpatRaster or RasterLayer object with harvested
+areas. If it is a raster with values outside 0,1, values are assumed
+to be harvest block IDs. If raster values are in 0,1 they are assumed to be
+a binary raster and <code><a href="https://rspatial.github.io/terra/reference/patches.html" class="external-link">terra::patches</a></code> is used to identify harvest
+blocks.</p></dd>
 
 
 <dt>landingDens</dt>
