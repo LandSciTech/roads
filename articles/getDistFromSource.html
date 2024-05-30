@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">roads</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
+    <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
   </div>
@@ -101,6 +102,35 @@
 <span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span></code></pre></div>
+<p><strong>This function is deprecated please use
+<code><a href="https://rspatial.github.io/terra/reference/distance.html" class="external-link">terra::distance</a></code> instead</strong> Here is an example of how
+to use <code><a href="https://rspatial.github.io/terra/reference/distance.html" class="external-link">terra::distance</a></code> which is much faster than
+<code>getDistFromSource</code> was.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co">#make example roads from scratch</span></span>
+<span><span class="va">rds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">*</span><span class="fl">500</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span>coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_combine.html" class="external-link">st_union</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_cast.html" class="external-link">st_cast</a></span><span class="op">(</span><span class="st">"LINESTRING"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_set_crs</a></span><span class="op">(</span><span class="st">"+proj=utm +zone=12"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">rds_rast</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rasterize.html" class="external-link">rasterize</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rds</span><span class="op">)</span>, </span>
+<span>                             <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span>nrows <span class="op">=</span> <span class="fl">500</span>, ncols <span class="op">=</span> <span class="fl">500</span>, </span>
+<span>                                         xmin <span class="op">=</span> <span class="fl">0</span>, xmax <span class="op">=</span> <span class="fl">1000</span>, </span>
+<span>                                         ymin <span class="op">=</span> <span class="op">-</span><span class="fl">500</span>, ymax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span>,</span>
+<span>                             touches <span class="op">=</span> <span class="cn">TRUE</span>, background <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu">`crs&lt;-`</span><span class="op">(</span>value <span class="op">=</span> <span class="st">"+proj=utm +zone=12"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Slightly different from getDistFromSource calculates distance from target, in</span></span>
+<span><span class="co"># this case 0, to nearest cell that is not target</span></span>
+<span><span class="va">terr_dist</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/distance.html" class="external-link">distance</a></span><span class="op">(</span><span class="va">rds_rast</span>, target <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Or you can use the line directly</span></span>
+<span><span class="va">terr_dist_vect</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/distance.html" class="external-link">distance</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rds</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">terr_dist</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getDistFromSource_files/figure-html/terra-distance-1.png" width="700"></p>
 <p><code>getDistFromSource</code> allows you to calculate the distance
 to the closest “source” location for all cells in a raster. A source is
 a raster cell with a value &gt; 0 in the input raster. In the case of
@@ -140,18 +170,20 @@ interpolation.</p>
 speed and memory usage as well as the resulting distance map. The code
 below creates a source raster showing a curving road and applies the
 <code>getDistToSource</code> function under different parameters.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#make example roads from scratch</span></span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pfocal"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#make example roads from scratch</span></span>
 <span><span class="va">rds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">*</span><span class="fl">500</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span>coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_combine.html" class="external-link">st_union</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_cast.html" class="external-link">st_cast</a></span><span class="op">(</span><span class="st">"LINESTRING"</span><span class="op">)</span></span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_cast.html" class="external-link">st_cast</a></span><span class="op">(</span><span class="st">"LINESTRING"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_set_crs</a></span><span class="op">(</span><span class="st">"+proj=utm +zone=12"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">rds_rast</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rasterize.html" class="external-link">rasterize</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="va">rds</span><span class="op">)</span>, </span>
 <span>                             <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span>nrows <span class="op">=</span> <span class="fl">500</span>, ncols <span class="op">=</span> <span class="fl">500</span>, </span>
 <span>                                         xmin <span class="op">=</span> <span class="fl">0</span>, xmax <span class="op">=</span> <span class="fl">1000</span>, </span>
 <span>                                         ymin <span class="op">=</span> <span class="op">-</span><span class="fl">500</span>, ymax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span>,</span>
-<span>                             touches <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>                             touches <span class="op">=</span> <span class="cn">TRUE</span>, background <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu">`crs&lt;-`</span><span class="op">(</span>value <span class="op">=</span> <span class="st">"+proj=utm +zone=12"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># table of different parameters</span></span>
@@ -165,10 +197,12 @@ below creates a source raster showing a curving road and applies the
 <span></span>
 <span><span class="co"># function to run each version and save the results</span></span>
 <span><span class="va">doFun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
-<span> <span class="va">bm</span> <span class="op">&lt;-</span> <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span><span class="op">(</span></span>
+<span>  <span class="va">bm</span> <span class="op">&lt;-</span> <span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span><span class="op">(</span></span>
 <span>    <span class="va">param_grid</span><span class="op">$</span><span class="va">result</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;&lt;-</span> <span class="fu"><a href="../reference/getDistFromSource.html">getDistFromSource</a></span><span class="op">(</span><span class="va">rds_rast</span>, <span class="va">param_grid</span><span class="op">$</span><span class="va">maxDist</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>, </span>
-<span>                                                     kwidth <span class="op">=</span> <span class="va">param_grid</span><span class="op">$</span><span class="va">kwidth</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,</span>
-<span>                                                     method <span class="op">=</span> <span class="va">param_grid</span><span class="op">$</span><span class="va">method</span><span class="op">[</span><span class="va">x</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>                                                 kwidth <span class="op">=</span> <span class="va">param_grid</span><span class="op">$</span><span class="va">kwidth</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>,</span>
+<span>                                                 method <span class="op">=</span> <span class="va">param_grid</span><span class="op">$</span><span class="va">method</span><span class="op">[</span><span class="va">x</span><span class="op">]</span>, </span>
+<span>                                                 <span class="co">#override deprecation</span></span>
+<span>                                                 override <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>    iterations <span class="op">=</span> <span class="fl">1</span>, filter_gc <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span>
 <span> <span class="va">param_grid</span><span class="op">$</span><span class="va">time</span><span class="op">[</span><span class="va">x</span><span class="op">]</span> <span class="op">&lt;&lt;-</span> <span class="va">bm</span><span class="op">$</span><span class="va">median</span></span>
@@ -176,10 +210,11 @@ below creates a source raster showing a curving road and applies the
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># iterate over all parameters</span></span>
-<span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">param_grid</span><span class="op">)</span>, <span class="va">doFun</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">param_grid</span><span class="op">)</span>, <span class="va">doFun</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pfocal"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span><span class="co"># all maps </span></span>
 <span><span class="va">all_maps</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">param_grid</span><span class="op">)</span>, </span>
 <span>                       <span class="op">~</span><span class="fu">tmap</span><span class="fu">::</span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/qtm.html" class="external-link">qtm</a></span><span class="op">(</span><span class="va">param_grid</span><span class="op">$</span><span class="va">result</span><span class="op">[[</span><span class="va">.x</span><span class="op">]</span><span class="op">]</span>, raster.style <span class="op">=</span> <span class="st">"cont"</span>,</span>
@@ -189,14 +224,15 @@ below creates a source raster showing a curving road and applies the
 <span>                                  layout.title.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"left"</span>, <span class="st">"TOP"</span><span class="op">)</span>,</span>
 <span>                                  layout.title.snap.to.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">tmap</span><span class="fu">::</span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">all_maps</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getDistFromSource_files/figure-html/make_plots-1.png" width="768"></p>
+<span><span class="fu">tmap</span><span class="fu">::</span><span class="fu"><a href="https://r-tmap.github.io/tmap/reference/tmap_arrange.html" class="external-link">tmap_arrange</a></span><span class="op">(</span><span class="va">all_maps</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>The maps above show the affect of the different parameters with
 <code>maxDist</code> changing the area covered, <code>kwidth</code>
 changing the smoothness of the gradations for the “terra” and “pfocal”
 methods and causing grid artefacts for the “pfocal2” method.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">get_hist</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">{</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pfocal"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="va">get_hist</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rast</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">rast</span>, plot <span class="op">=</span> <span class="cn">FALSE</span>, breaks <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
 <span>  <span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>counts<span class="op">=</span> <span class="va">f</span><span class="op">$</span><span class="va">counts</span>,breaks <span class="op">=</span> <span class="va">f</span><span class="op">$</span><span class="va">mids</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -208,27 +244,26 @@ methods and causing grid artefacts for the “pfocal2” method.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">breaks</span>, y <span class="op">=</span> <span class="va">counts</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span>,fill<span class="op">=</span><span class="st">'blue'</span>,alpha <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Distance"</span><span class="op">)</span><span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Frequency"</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">method</span> <span class="op">+</span><span class="va">maxDist</span> <span class="op">~</span> <span class="va">kwidth</span>, labeller <span class="op">=</span> <span class="va">label_both</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getDistFromSource_files/figure-html/make_plots2-1.png" width="960"></p>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">method</span> <span class="op">+</span><span class="va">maxDist</span> <span class="op">~</span> <span class="va">kwidth</span>, labeller <span class="op">=</span> <span class="va">label_both</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>Looking at histograms of the raster values shows the larger steps
 between distance values as <code>kwidth</code> increases for the “terra”
 and “pfocal” methods. For the “pfocal2” method the frequency of distance
 values stays similar with higher values of <code>kwidth</code> but the
 maps above show that some spatial accuracy is lost due to the
 aggregation and disaggregation processes.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">param_grid</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pfocal"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="va">param_grid</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">method</span>, y <span class="op">=</span> <span class="va">time</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">kwidth</span><span class="op">~</span><span class="va">maxDist</span>, labeller <span class="op">=</span> <span class="va">label_both</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getDistFromSource_files/figure-html/make_plots3-1.png" width="960"></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">kwidth</span><span class="op">~</span><span class="va">maxDist</span>, labeller <span class="op">=</span> <span class="va">label_both</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">param_grid</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">method</span>, y <span class="op">=</span> <span class="va">mem_alloc</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">kwidth</span><span class="op">~</span><span class="va">maxDist</span>, labeller <span class="op">=</span> <span class="va">label_both</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getDistFromSource_files/figure-html/make_plots3-2.png" width="960"></p>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">kwidth</span><span class="op">~</span><span class="va">maxDist</span>, labeller <span class="op">=</span> <span class="va">label_both</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>The last two graphs show that the “pfocal2” method is fastest in all
 the cases shown, however for very high <code>maxDist</code> values this
 may not be the case. The “pfocal” method uses the most memory of all the

@@ -14,7 +14,7 @@ that all PackedSpatRasters are converted to SpatRasters."><meta property="og:ima
     
     <a class="navbar-brand me-2" href="../index.html">roads</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@ that all PackedSpatRasters are converted to SpatRasters."><meta property="og:ima
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
+    <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
   </div>
@@ -92,7 +93,7 @@ that all PackedSpatRasters are converted to SpatRasters.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POINT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 0.5 ymin: 0.5 xmax: 4.5 ymax: 2.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geodetic CRS:  WGS 84</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: NAD83 / Statistics Canada Lambert</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          geometry</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 POINT (0.5 2.5)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 POINT (2.5 2.5)</span>
@@ -108,7 +109,7 @@ that all PackedSpatRasters are converted to SpatRasters.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dimensions  : 5, 5, 1  (nrow, ncol, nlyr)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 1, 1  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> source(s)   : memory</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> name        :    lyr.1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> min value   :  0.00000 </span>
@@ -119,7 +120,7 @@ that all PackedSpatRasters are converted to SpatRasters.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POINT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 0.5 ymin: 0.5 xmax: 4.5 ymax: 2.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geodetic CRS:  WGS 84</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: NAD83 / Statistics Canada Lambert</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          geometry</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 POINT (0.5 2.5)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 POINT (2.5 2.5)</span>
@@ -131,7 +132,7 @@ that all PackedSpatRasters are converted to SpatRasters.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dimensions  : 5, 5, 1  (nrow, ncol, nlyr)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 1, 1  (x, y)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> source(s)   : memory</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> name        : lyr.1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> min value   : FALSE </span>

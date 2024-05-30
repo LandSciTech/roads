@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">roads</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
+    <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
   </div>
@@ -91,11 +92,13 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; terra 1.7.71</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; terra 1.7.78</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:terra':</span></span>
@@ -106,8 +109,9 @@
 <span><span class="co">#&gt;     filter, lag</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
-<span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co">## colours for displaying cost raster </span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"viridis"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="co"># Use colour blind friendly palette if available</span></span>
@@ -124,21 +128,23 @@ from the harvest times of harvest blocks that they access. To do this we
 need harvest locations with a known sequence and a present day road
 network where the sequence of road building is not known. The code below
 creates a demonstration road data set.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># make "real" roads by using ilcp method</span></span>
 <span><span class="co"># use all landings and build roads to closest first</span></span>
 <span><span class="va">land.pnts</span> <span class="op">&lt;-</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">[</span><span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span><span class="op">$</span><span class="va">set</span> <span class="op"><a href="https://rspatial.github.io/terra/reference/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>,<span class="op">]</span></span>
 <span></span>
 <span><span class="va">realRoads</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.pnts</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>,</span>
 <span>                          roadMethod <span class="op">=</span> <span class="st">"ilcp"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, col <span class="op">=</span> <span class="va">rastColours</span>, main <span class="op">=</span> <span class="st">'Scenario'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">realRoads</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">2</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in plot.sf(land.pnts, add = TRUE, pch = 21, cex = 2, bg = "white"):</span></span>
-<span><span class="co">#&gt; ignoring all but the first attribute</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/text.html" class="external-link">text</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span>, cex <span class="op">=</span> <span class="fl">0.6</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span><span class="op">)</span>,</span>
+<span><span class="co">#&gt; ignoring all but the first attribute</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/text.html" class="external-link">text</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span>, cex <span class="op">=</span> <span class="fl">0.6</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span><span class="op">)</span>,</span>
 <span>     xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ReconstructRoadHistory_files/figure-html/unnamed-chunk-2-1.png" width="576"></p>
 <p>Our scenario is that we have landings that were harvested over four
@@ -147,7 +153,7 @@ road segment by first setting the cost of building roads to very low
 where our road network is and then projecting road development to
 landings in each year, assigning that year to the road segments as a
 maximum year of road construction.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Use sequence of landings to assign sequence of roads built</span></span>
 <span></span>
@@ -165,8 +171,9 @@ maximum year of road construction.</p>
 <span><span class="co"># initialize sim list with first landings set </span></span>
 <span><span class="va">multiTime_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="fl">1</span>,<span class="op">]</span>, <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>, </span>
 <span>                                               <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span> <span class="op">&lt;-</span> <span class="va">multiTime_sim</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Year</span><span class="op">)</span>, <span class="fl">1</span>, <span class="va">Year</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -184,8 +191,9 @@ maximum year of road construction.</p>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
 <span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span>
-<span></span>
+<span><span class="co">#&gt; 0s detected in weightRaster raster, these will be considered as existing roads</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">multiTime_sim</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">roads</span><span class="op">[</span><span class="st">"Year"</span><span class="op">]</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ReconstructRoadHistory_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
   </main>

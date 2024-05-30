@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="index.html">roads</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="articles/getDistFromSource.html">getDistFromSource</a>
+    <a class="dropdown-item" href="articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="articles/roads-vignette.html">roads Package</a>
   </div>
@@ -98,19 +99,17 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>To simulate the development of roads three inputs are needed: the current road network (roads), the locations that should be connected to the road network (landings) and the cost of building roads across the landscape (cost). Typically the roads and landings are <code>sf</code> objects or <code>sp</code> Spatial* objects and the cost is a raster.</p>
+<p>To simulate the development of roads three inputs are needed: the current road network, the locations that should be connected to the road network (landings), and a weights raster that together with the weighting function determines the cost to connect two raster cells with a road. Typically the roads and landings are <code>sf</code> objects or <code>sp</code> Spatial* objects and the weight is a raster.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'raster' was built under R version 4.3.2</span></span>
-<span><span class="co">#&gt; Warning: package 'sp' was built under R version 4.3.2</span></span>
 <span></span>
 <span><span class="co"># data set installed with roads package</span></span>
 <span><span class="va">demoScen</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/prepExData.html">prepExData</a></span><span class="op">(</span><span class="va">demoScen</span><span class="op">)</span></span>
 <span><span class="va">scen</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">prRoads</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/projectRoads.html">projectRoads</a></span><span class="op">(</span>landings <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">landings.points</span>, </span>
-<span>                        cost <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>,</span>
+<span>                        weightRaster <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">cost.rast</span>,</span>
 <span>                        roads <span class="op">=</span> <span class="va">scen</span><span class="op">$</span><span class="va">road.line</span>, </span>
 <span>                        plotRoads <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="reference/figures/README-example-1.png" width="100%"></p>

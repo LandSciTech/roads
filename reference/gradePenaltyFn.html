@@ -44,7 +44,7 @@ avoid increased memory and computational burden associated with multiple input r
     
     <a class="navbar-brand me-2" href="../index.html">roads</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,6 +59,7 @@ avoid increased memory and computational burden associated with multiple input r
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
+    <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
   </div>
@@ -110,7 +111,7 @@ avoid increased memory and computational burden associated with multiple input r
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gradePenaltyFn</span><span class="op">(</span></span>
 <span>  <span class="va">x1</span>,</span>
 <span>  <span class="va">x2</span>,</span>
-<span>  resolution <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">hdistance</span>,</span>
 <span>  baseCost <span class="op">=</span> <span class="fl">16178</span>,</span>
 <span>  limit <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  penalty <span class="op">=</span> <span class="fl">504</span>,</span>
@@ -121,15 +122,15 @@ avoid increased memory and computational burden associated with multiple input r
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x1, x2</dt>
-<dd><p>Value of the input raster at two nodes. A difference of 1 implies a 100% slope.</p></dd>
+<dd><p>Value of the input raster at two nodes.</p></dd>
 
 
-<dt>resolution</dt>
-<dd><p>Resolution of the input raster. Resolution and x1/x2 should have the same units.</p></dd>
+<dt>hdistance</dt>
+<dd><p>Horizontal distance between nodes. hdistance and x1,x2 should have the same units.</p></dd>
 
 
 <dt>baseCost</dt>
-<dd><p>Construction cost of 0% grade road.</p></dd>
+<dd><p>Construction cost of 0% grade road per km.</p></dd>
 
 
 <dt>limit</dt>
@@ -137,7 +138,7 @@ avoid increased memory and computational burden associated with multiple input r
 
 
 <dt>penalty</dt>
-<dd><p>Cost increase associated with each additional % increase in road grade.</p></dd>
+<dd><p>Cost increase (per km) associated with each additional % increase in road grade.</p></dd>
 
 
 <dt>limitWeight</dt>
@@ -147,12 +148,12 @@ avoid increased memory and computational burden associated with multiple input r
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">gradePenaltyFn</span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.51</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">gradePenaltyFn</span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.51</span>,<span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16682</span>
-<span class="r-in"><span><span class="fu">gradePenaltyFn</span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.65</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">gradePenaltyFn</span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.65</span>,<span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 23738</span>
 <span class="r-in"><span><span class="co"># grade &gt; 20% so NA</span></span></span>
-<span class="r-in"><span><span class="fu">gradePenaltyFn</span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.75</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">gradePenaltyFn</span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.75</span>,<span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
 </code></pre></div>
     </div>

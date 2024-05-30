@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">roads</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,6 +25,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
+    <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
   </div>
@@ -53,13 +54,14 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.1.2" id="roads-112">roads 1.1.2<a class="anchor" aria-label="anchor" href="#roads-112"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.2.0" id="roads-120">roads 1.2.0<a class="anchor" aria-label="anchor" href="#roads-120"></a></h2>
 <ul><li>Change dynamic least cost paths (DLCP) to iterative least cost paths (ILCP) throughout</li>
 <li>Change default <code>roadMethod</code> to <code>"ilcp"</code> in <code>projectRoads</code>
 </li>
 <li>Add ability to use a custom <code>weightFunction</code> and add a <code>weightFunction</code> <code>gradePenaltyFn</code> that determines the grade between two cells</li>
 <li>Change argument name from <code>cost</code> to <code>weightRaster</code> since it no longer represents a cost surface and can now be inputs to the <code>weightFunction</code>. Also change <code>roadsInCost</code> to <code>roadsInWeight</code>.</li>
 <li>returned roads are no longer unioned together.</li>
+<li>Deprecate <code>getDistFromSource</code> and use <code><a href="https://rspatial.github.io/terra/reference/distance.html" class="external-link">terra::distance</a></code> instead.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.1" id="roads-111">roads 1.1.1<a class="anchor" aria-label="anchor" href="#roads-111"></a></h2><p class="text-muted">CRAN release: 2023-06-24</p>

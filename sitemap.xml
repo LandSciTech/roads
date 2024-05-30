@@ -13,6 +13,9 @@
     <loc>https://landscitech.github.io/roads/articles/getDistFromSource.html</loc>
   </url>
   <url>
+    <loc>https://landscitech.github.io/roads/articles/grade-penalty.html</loc>
+  </url>
+  <url>
     <loc>https://landscitech.github.io/roads/articles/index.html</loc>
   </url>
   <url>
@@ -62,5 +65,8 @@
   </url>
   <url>
     <loc>https://landscitech.github.io/roads/reference/roads-package.html</loc>
+  </url>
+  <url>
+    <loc>https://landscitech.github.io/roads/reference/simpleCostFn.html</loc>
   </url>
 </urlset>
