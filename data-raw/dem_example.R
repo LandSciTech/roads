@@ -18,21 +18,22 @@ ex_elev <- crop(can_elev, ext)
 ex_lc <- crop(wrld_lc, ext)
 
 plot(ex_elev)
-plot(ex_lc >0.2)
+plot(ex_lc > 0.2)
 
 
 
 tpi <- ex_elev %>% terra::terrain(v = "TPI")
 
 # Try TPI over larger window
-TPI <- focal(ex_elev, w=7, fun=\(x) x[25] - mean(x[-25]))
+TPI <- focal(ex_elev, w=9, fun=\(x) x[41] - mean(x[-41]))
 
 # thing is at this resolution crossing the river and following the river are
 # going to both be in the higher cost area which isn't correct...
 
-plot(TPI < -200 |ex_lc > 0.2)
+plot(TPI < -400 |ex_lc > 0.1)
 
+dem_example <- lst(ex_elev, ex_wat = ex_lc)
 
+dem_example <- lapply(dem_example, wrap)
 
-# Move the above to a data-raw file
 usethis::use_data(dem_example, overwrite = TRUE)

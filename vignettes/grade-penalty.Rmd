@@ -16,6 +16,110 @@ knitr::opts_chunk$set(
 )
 ```
 
+To use the grade penalty function we need to supply a raster to the `weightRaster` argument that contains elevation and has other barriers (eg water bodies) included in the raster as negative or NA values. In this example we will use an elevation and proportion water data set downloaded with the `geodata` package and cropped to an example area in British Columbia, Canada that is included in the package.    
+
 ```{r setup}
-# see data being prepared in dem_example.R
+library(roads)
+devtools::load_all(here::here())
+library(terra)
+library(dplyr)
+library(sf)
+
+# prep the terra rasters for use
+dem_example <- prepExData(dem_example)
 ```
+
+The elevation data shows that this is a mountainous region. 
+```{r elev}
+plot(dem_example$ex_elev)
+```
+
+And the proportion of the landscape covered by water in each cell shows that there are several long narrow lakes crossing the landscape. 
+```{r water}
+plot(dem_example$ex_wat)
+```
+
+`gradePenaltyFn` requires a single raster as input but allows factors other than grade that will affect road construction to be included in the raster as negative values and barriers where no road construction is possible to be included as NA values. In this example we will assume that road construction is impossible for cells where the proportion of water is > 10% since our rasters have cell widths of ~ 0.75 km. So we are assuming that no roads will be built across water bodies > 250 m across. Then we set areas with less than 1% water to NA so that the grade penalty will still apply in this case. We also need to get the penalty for water crossing on to a similar scale as the grade penalty in this case we will assume the same base cost of \$16178 and the same penalty of \$504 for every percentage point increase in percent water. 
+
+```{r}
+wat_use <- classify(dem_example$ex_wat, matrix(c(0.5, 1, NA), nrow = 1))
+
+# set elev to NA when water is NA
+elev_use <- mask(dem_example$ex_elev, wat_use)
+
+# Now change water to NA when it is < 1% water
+wat_use <- mask(wat_use, wat_use < 0.01, maskvalue = TRUE)
+
+wat_use <- (wat_use *100) * -504 - 16178
+
+plot(wat_use)
+```
+
+We then combine the two rasters together by setting elevation to 0 when there is a water penalty and summing them
+
+```{r}
+# set elev to NA when wat is not 0
+elev_use <- mask(elev_use, wat_use, inverse = TRUE, updatevalue = 0)
+
+# add wat_use to elev when not NA
+
+wt_rast <- sum(elev_use, wat_use, na.rm = TRUE)
+
+plot(wt_rast, breaks = c(-40000, -30000, -20000, -16178, 0, 1:10*300), 
+     col = c(terra::map.pal("blues", 5) %>% rev(), terra::map.pal("oranges", 10)), 
+     colNA = "grey30")
+```
+
+```{r}
+# Get landing points
+
+for_area <- is.na(wat_use) & !is.na(elev_use) & elev_use < 2000
+
+lnds <- spatSample(for_area, 20, method = "stratified", as.points = TRUE) %>%
+  st_as_sf() %>% 
+  filter(water == 1)
+
+plot(lnds, add = TRUE)
+
+# Get starting road
+
+# create line interactively
+# line <- draw("line")
+# 
+# line <- st_as_sf(line)
+
+# get line non-interactively
+rd_in <- structure(list(
+  geometry = structure(list(structure(c(
+    -118.05680803603, -118.05680803603, -118.090575046526, -118.090575046526, -118.095398905168, 
+    -118.080927329241, -118.023041025535, -118.003745590966, 49.8523988273988, 
+    49.7936436436436, 49.7225189475189, 49.6606713856714, 49.6050085800086, 
+    49.5369762619762, 49.4627591877592, 49.4132811382811), 
+    dim = c(8L, 2L),
+    class = c("XY", "LINESTRING", "sfg"))),
+    n_empty = 0L, class = c("sfc_LINESTRING", "sfc"),
+    precision = 0, 
+    bbox = structure(c(xmin = -118.095398905168, ymin = 49.4132811382811, 
+                       xmax = -118.003745590966, ymax = 49.8523988273988),
+                     class = "bbox"), 
+    crs = structure(list(input = NA_character_, wkt = NA_character_), class = "crs"))),
+  row.names = 1L, sf_column = "geometry", 
+  agr = structure(integer(0), class = "factor", 
+                  levels = c("constant", "aggregate", "identity"), 
+                  names = character(0)),
+  class = c("sf", "data.frame")) %>% 
+  st_set_crs(st_crs(lnds))
+
+```
+
+```{r proj-rds}
+rd_proj <- projectRoads(lnds, wt_rast, rd_in, weightFunction = gradePenaltyFn, 
+                        roadsInWeight = FALSE, roadMethod = "ilcp", limit = 100)
+
+plotRoads(rd_proj, breaks = c(-40000, -30000, -20000, -16178, 0, 1:10*300), 
+     col = c(terra::map.pal("blues", 5) %>% rev(), terra::map.pal("oranges", 10)), 
+     colNA = "grey30")
+
+
+```
+
