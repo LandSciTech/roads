@@ -28,7 +28,13 @@ getGraph<- function(sim, neighbourhood,method="old",weightFunction =  simpleCost
 
   inargs = list(...)
   if(!is.element("resolution",names(inargs))){
-    resolution = terra::res(sim$weightRaster)[1]
+    if(terra::is.lonlat(sim$weightRaster)){
+      sze <- terra::cellSize(sim$weightRaster)
+      resolution <- terra::global(sze, fun = "mean")^0.5
+      resolution <- resolution[1,1]
+    } else {
+      resolution = terra::res(sim$weightRaster)[1]
+    }
   }else{
     resolution = inargs$resolution
   }
