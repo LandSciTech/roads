@@ -17,46 +17,54 @@
 
 #' Project road network
 #'
-#' Project road locations based on existing roads, planned landings, and a weights
-#' raster that in conjunction with a weighting function determines the cost to
-#' build a road between two cells in the raster.
+#' Project a road network that links target landings to existing roads.
+#' For all methods except "snap", a `weightRaster` and `weightFunction` together determine the cost to
+#' build a road between two adjacent raster cells.
 #'
-#' Four different methods for projecting road networks have been implemented:
-#'   * "snap": Connects each landing directly to the closest road without
+#' Four road network projection methods are:
+#'   * "lcp": The Least Cost Path method connects each landing to the closest road with a
+#'   least cost path, without reference to other landings.
+#'   * "ilcp": The Iterative Least Cost Path method iteratively connects each landing to the closest road
+#'   with a least cost path, so that the path to each successive landing can include roads
+#'   constructed to access previous landings. The sequence
+#'   of landings is determined by `ordering` and is "closest" by default. The
+#'   alternative "none" option processes landings in the order supplied by the user.
+#'   * "mst": The Minimum Spanning Tree method connects landings to the existing road
+#'   with a minimum spanning tree that does not require users to specify the order in which landings are processed.
+#'   * "snap": Connects each landing to the closest (by Euclidean distance) road without,
 #'   reference to the weights or other landings.
-#'   * "lcp": Least Cost Path connects each landing to the closest point
-#'   on the road by determining the least cost path based on the weights raster
-#'   provided, it does not consider other landings.
-#'   * "ilcp": Iterative Least Cost Path, same as "lcp" but it builds each
-#'   path sequentially so that later roads will use earlier roads. The sequence
-#'   of landings is determined by `ordering` and is "closest" by default, the
-#'   other option is "none" which will use the order that landings are supplied
-#'   in.
-#'   * "mst": Minimum Spanning Tree connects all landings to the road by
-#'   determining the least cost path to the road or other landings based on the
-#'   weight raster.
 #'
 #' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
-#'   SpatialPoints*, matrix, containing features to be connected
+#'   SpatialPoints*, or matrix, containing features to be connected
 #'   to the road network. Matrix should contain columns x, y with coordinates,
 #'   all other columns will be ignored.
-#' @param weightRaster SpatRaster or RasterLayer. weights Raster where existing
-#'   roads must be the only cells with a weight of 0. If existing roads do not
-#'   have 0 weight set `roadsInWeight = FALSE` and they will be burned in.
-#' @param roads sf lines, SpatialLines*, RasterLayer, SpatRaster. Existing road network.
-#' @param roadMethod Character. Options are "ilcp", "mst", "lcp", "snap".
+#' @param weightRaster SpatRaster or RasterLayer. A `weightRaster` and `weightFunction`
+#'   together determine the cost to build a road between two adjacent raster cells.
+#'   For the default `weightFunction = simpleCostFn`, the `weightRaster` should specify the cost of
+#'   construction across each raster cell. The value of existing roads should be set to 0; if not
+#'   set `roadsInWeight = FALSE` to adjust the cost of existing roads. To use the alternative grade penalty method,
+#'   set `weightFunction = gradePenaltyFn`, and provide a `weightRaster` in which:
+#'   * NA indicates a road cannot be built
+#'   * Negative values are costs for crossing streams or other barriers that are
+#'   crossable but expensive.
+#'   * Zero values are existing roads.
+#'   * All other values are interpreted as elevation in the units of the raster
+#'    map (so that a difference between two cells equal to the map resolution can be
+#'     interpreted as 100% grade).
+#' @param roads sf lines, SpatialLines*, RasterLayer, SpatRaster. The existing road network.
+#' @param roadMethod Character. Options are "ilcp", "mst", "lcp", and "snap".
 #' @param plotRoads Boolean. Should the resulting road network be plotted.
 #'   Default FALSE.
 #' @param mainTitle Character. A title for the plot
-#' @param neighbourhood Character. 'rook','queen', or 'octagon'. The cells that
-#'   should be considered adjacent. 'octagon' option is a modified version of
-#'   the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
-#'   higher than horizontal/vertical weights.
+#' @param neighbourhood Character. 'rook','queen', or 'octagon' determines which cells are considered adjacent.
+#'   The default 'octagon' option is a modified version of
+#'   the queen's 8 cell neighbourhood in which diagonal weights are multiplied by 2^0.5.
 #' @param weightFunction function. Method for calculating the weight of an edge
-#'   between two nodes from the value of the weights raster at each of those nodes
-#'   (x1 and x2). Default is the mean. Functions should be symmetric, meaning
-#'   that the value returned does not depend on the ordering of x1 and x2. All
-#'   functions must include the arguments `x1`, `x2` and `...`.
+#'   between two nodes from the value of the `weightRaster` at each of those nodes
+#'   (`x1` and `x2`). Default `simpleCostFn` is the mean. The alternative `gradePenaltyFn` sets edge weights as a function of the
+#'   difference between adjacent `weightRaster` cells to penalize steep grades. Users supplying their own `weightFunction` should note that it must be symmetric,
+#'   meaning that the value returned should not depend on the ordering of `x1` and `x2`.
+#'   The `weightFunction` must include arguments `x1`, `x2` and `...`.
 #' @param sim list. Returned from a previous iteration of `projectRoads`.
 #'   weightRaster, roads, and `roadMethod` are ignored if a `sim` list is provided.
 #' @param roadsOut Character. Either "raster", "sf" or NULL. If "raster" roads
@@ -66,29 +74,25 @@
 #'   The points in the geometry collection represent the existing roads while
 #'   new roads are created as lines. If NULL (default) then the returned roads
 #'   are sf if the input is sf or Spatial* and raster if the input was a raster.
-#' @param roadsInWeight Logical. The default is TRUE which means the
-#'   `weightRaster` is assumed to include existing roads as 0. If FALSE then the
-#'   roads will be "burned in" to the `weightRaster` with a weight of 0.
-#' @param ordering character. The order in which roads should be built to
-#'   landings when `roadMethod = "ilcp"`. Options are "closest" (default) where
+#' @param roadsInWeight Logical. If TRUE (default) the value of existing roads in the
+#'   `weightRaster` is assumed to be 0. If FALSE cells in the `weightRaster` that contain existing roads will be set to 0.
+#' @param ordering character. The order in which landings are processed when `roadMethod = "ilcp"`. Options are "closest" (default) where
 #'   landings closest to existing roads are accessed first, or "none" where
 #'   landings are accessed in the order they are provided in.
 #' @param roadsConnected Logical. Are all roads fully connected? If TRUE and
 #'   `roadMethod = "mst"` the MST graph can be simplified and the projection
 #'   should be faster
-#' @param ... Optional additional arguments to weightFunction
+#' @param ... Optional additional arguments to `weightFunction`
 #'
 #' @return
 #' a list with components:
 #' * roads: the projected road network, including new and input roads.
-#' * weightRaster: the weights raster, updated to have 0 for new roads that
-#'       were added.
+#' * weightRaster: the updated `weightRaster` in which new and old roads have value 0.
 #' * roadMethod: the road simulation method used.
 #' * landings: the landings used in the simulation.
-#' * g: the graph that describes the cost of paths between each cell in the
-#'       `weightRaster`. This is updated based on the new roads so that vertices
-#'       that were connected by new roads now have a weight of 0. This can be used to
-#'       avoid recomputing the graph in a simulation with multiple time steps.
+#' * g: the graph that describes the cost of paths between each cell in the updated
+#'       `weightRaster`. Edges between vertices connected by new roads have weight 0.
+#'       `g` can be used to avoid the cost of rebuilding the graph in a simulation with multiple time steps.
 #'
 #' @examples
 #' CLUSexample <- prepExData(CLUSexample)

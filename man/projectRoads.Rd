@@ -59,33 +59,45 @@ projectRoads(
 }
 \arguments{
 \item{landings}{sf polygons or points, RasterLayer, SpatialPolygons*,
-SpatialPoints*, matrix, containing features to be connected
+SpatialPoints*, or matrix, containing features to be connected
 to the road network. Matrix should contain columns x, y with coordinates,
 all other columns will be ignored.}
 
-\item{weightRaster}{SpatRaster or RasterLayer. weights Raster where existing
-roads must be the only cells with a weight of 0. If existing roads do not
-have 0 weight set \code{roadsInWeight = FALSE} and they will be burned in.}
+\item{weightRaster}{SpatRaster or RasterLayer. A \code{weightRaster} and \code{weightFunction}
+together determine the cost to build a road between two adjacent raster cells.
+For the default \code{weightFunction = simpleCostFn}, the \code{weightRaster} should specify the cost of
+construction across each raster cell. The value of existing roads should be set to 0; if not
+set \code{roadsInWeight = FALSE} to adjust the cost of existing roads. To use the alternative grade penalty method,
+set \code{weightFunction = gradePenaltyFn}, and provide a \code{weightRaster} in which:
+\itemize{
+\item NA indicates a road cannot be built
+\item Negative values are costs for crossing streams or other barriers that are
+crossable but expensive.
+\item Zero values are existing roads.
+\item All other values are interpreted as elevation in the units of the raster
+map (so that a difference between two cells equal to the map resolution can be
+interpreted as 100\% grade).
+}}
 
-\item{roads}{sf lines, SpatialLines*, RasterLayer, SpatRaster. Existing road network.}
+\item{roads}{sf lines, SpatialLines*, RasterLayer, SpatRaster. The existing road network.}
 
-\item{roadMethod}{Character. Options are "ilcp", "mst", "lcp", "snap".}
+\item{roadMethod}{Character. Options are "ilcp", "mst", "lcp", and "snap".}
 
 \item{plotRoads}{Boolean. Should the resulting road network be plotted.
 Default FALSE.}
 
 \item{mainTitle}{Character. A title for the plot}
 
-\item{neighbourhood}{Character. 'rook','queen', or 'octagon'. The cells that
-should be considered adjacent. 'octagon' option is a modified version of
-the queen's 8 cell neighbourhood in which diagonals weights are 2^0.5x
-higher than horizontal/vertical weights.}
+\item{neighbourhood}{Character. 'rook','queen', or 'octagon' determines which cells are considered adjacent.
+The default 'octagon' option is a modified version of
+the queen's 8 cell neighbourhood in which diagonal weights are multiplied by 2^0.5.}
 
 \item{weightFunction}{function. Method for calculating the weight of an edge
-between two nodes from the value of the weights raster at each of those nodes
-(x1 and x2). Default is the mean. Functions should be symmetric, meaning
-that the value returned does not depend on the ordering of x1 and x2. All
-functions must include the arguments \code{x1}, \code{x2} and \code{...}.}
+between two nodes from the value of the \code{weightRaster} at each of those nodes
+(\code{x1} and \code{x2}). Default \code{simpleCostFn} is the mean. The alternative \code{gradePenaltyFn} sets edge weights as a function of the
+difference between adjacent \code{weightRaster} cells to penalize steep grades. Users supplying their own \code{weightFunction} should note that it must be symmetric,
+meaning that the value returned should not depend on the ordering of \code{x1} and \code{x2}.
+The \code{weightFunction} must include arguments \code{x1}, \code{x2} and \code{...}.}
 
 \item{sim}{list. Returned from a previous iteration of \code{projectRoads}.
 weightRaster, roads, and \code{roadMethod} are ignored if a \code{sim} list is provided.}
@@ -98,12 +110,10 @@ The points in the geometry collection represent the existing roads while
 new roads are created as lines. If NULL (default) then the returned roads
 are sf if the input is sf or Spatial* and raster if the input was a raster.}
 
-\item{roadsInWeight}{Logical. The default is TRUE which means the
-\code{weightRaster} is assumed to include existing roads as 0. If FALSE then the
-roads will be "burned in" to the \code{weightRaster} with a weight of 0.}
+\item{roadsInWeight}{Logical. If TRUE (default) the value of existing roads in the
+\code{weightRaster} is assumed to be 0. If FALSE cells in the \code{weightRaster} that contain existing roads will be set to 0.}
 
-\item{ordering}{character. The order in which roads should be built to
-landings when \code{roadMethod = "ilcp"}. Options are "closest" (default) where
+\item{ordering}{character. The order in which landings are processed when \code{roadMethod = "ilcp"}. Options are "closest" (default) where
 landings closest to existing roads are accessed first, or "none" where
 landings are accessed in the order they are provided in.}
 
@@ -111,43 +121,39 @@ landings are accessed in the order they are provided in.}
 \code{roadMethod = "mst"} the MST graph can be simplified and the projection
 should be faster}
 
-\item{...}{Optional additional arguments to weightFunction}
+\item{...}{Optional additional arguments to \code{weightFunction}}
 }
 \value{
 a list with components:
 \itemize{
 \item roads: the projected road network, including new and input roads.
-\item weightRaster: the weights raster, updated to have 0 for new roads that
-were added.
+\item weightRaster: the updated \code{weightRaster} in which new and old roads have value 0.
 \item roadMethod: the road simulation method used.
 \item landings: the landings used in the simulation.
-\item g: the graph that describes the cost of paths between each cell in the
-\code{weightRaster}. This is updated based on the new roads so that vertices
-that were connected by new roads now have a weight of 0. This can be used to
-avoid recomputing the graph in a simulation with multiple time steps.
+\item g: the graph that describes the cost of paths between each cell in the updated
+\code{weightRaster}. Edges between vertices connected by new roads have weight 0.
+\code{g} can be used to avoid the cost of rebuilding the graph in a simulation with multiple time steps.
 }
 }
 \description{
-Project road locations based on existing roads, planned landings, and a weights
-raster that in conjunction with a weighting function determines the cost to
-build a road between two cells in the raster.
+Project a road network that links target landings to existing roads.
+For all methods except "snap", a \code{weightRaster} and \code{weightFunction} together determine the cost to
+build a road between two adjacent raster cells.
 }
 \details{
-Four different methods for projecting road networks have been implemented:
+Four road network projection methods are:
 \itemize{
-\item "snap": Connects each landing directly to the closest road without
+\item "lcp": The Least Cost Path method connects each landing to the closest road with a
+least cost path, without reference to other landings.
+\item "ilcp": The Iterative Least Cost Path method iteratively connects each landing to the closest road
+with a least cost path, so that the path to each successive landing can include roads
+constructed to access previous landings. The sequence
+of landings is determined by \code{ordering} and is "closest" by default. The
+alternative "none" option processes landings in the order supplied by the user.
+\item "mst": The Minimum Spanning Tree method connects landings to the existing road
+with a minimum spanning tree that does not require users to specify the order in which landings are processed.
+\item "snap": Connects each landing to the closest (by Euclidean distance) road without,
 reference to the weights or other landings.
-\item "lcp": Least Cost Path connects each landing to the closest point
-on the road by determining the least cost path based on the weights raster
-provided, it does not consider other landings.
-\item "ilcp": Iterative Least Cost Path, same as "lcp" but it builds each
-path sequentially so that later roads will use earlier roads. The sequence
-of landings is determined by \code{ordering} and is "closest" by default, the
-other option is "none" which will use the order that landings are supplied
-in.
-\item "mst": Minimum Spanning Tree connects all landings to the road by
-determining the least cost path to the road or other landings based on the
-weight raster.
 }
 }
 \examples{

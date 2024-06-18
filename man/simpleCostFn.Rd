@@ -7,9 +7,9 @@
 simpleCostFn(x1, x2, hdistance)
 }
 \arguments{
-\item{x1, x2}{Value of the input cost raster at two nodes.}
+\item{x1, x2}{Number. Value of the input cost raster at two nodes.}
 
-\item{hdistance}{Horizontal distance between nodes - for penalizing longer diagonal edges.}
+\item{hdistance}{Number. Horizontal distance between the nodes - for penalizing longer diagonal edges.}
 }
 \description{
 Calculates the weight of an edge between two nodes as the mean value

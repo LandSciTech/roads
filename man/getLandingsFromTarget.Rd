@@ -2,7 +2,7 @@
 % Please edit documentation in R/getLandingsFromTarget.R
 \name{getLandingsFromTarget}
 \alias{getLandingsFromTarget}
-\title{Get landing points inside harvest blocks}
+\title{Get landing target points within harvest blocks}
 \usage{
 getLandingsFromTarget(harvest, landingDens = NULL, sampleType = "centroid")
 }
@@ -10,7 +10,7 @@ getLandingsFromTarget(harvest, landingDens = NULL, sampleType = "centroid")
 \item{harvest}{sf, SpatialPolygons or RasterLayer object with harvested
 areas. If it is a RasterLayer with more than one unique value other than 0
 each value will be run separately which will produce different results from
-a 0/1 raster but will be much slower.}
+a 0/1 raster and will be much slower.}
 
 \item{landingDens}{number of landings per unit area. This should be in the
 same units as the CRS of the harvest. Note that 0.001 points per m2 is > 1000
@@ -18,29 +18,27 @@ points per km2 so this number is usually very small for projected CRS.}
 
 \item{sampleType}{character. "centroid" (default), "regular" or "random".
 Centroid returns one landing per harvest block, which is guaranteed to be
-in the harvest block for sf objects but not for rasters. Regular returns
+in the harvest block for sf objects but not for rasters. "regular" returns
 points from a grid with density \code{landingDens} that overlap the
-harvested areas. Random returns a random set of points from each polygon
-where the number is determined by the area of the polygons and
-\code{landingDens}. If \code{harvest} is a raster the centroid is always
-returned as one of the landings to ensure all harvest areas get at least
-one landing.}
+harvested areas. "random" returns a random set of points from each polygon
+determined by the area of the polygon and
+\code{landingDens}. If \code{harvest} is a raster set of landings always includes the centroid
+to ensure at least one landing for each harvest block.}
 }
 \value{
 an sf simple feature collection with an ID column and POINT geometry
 }
 \description{
 Generate landing points inside polygons representing harvested area. There
-are three different sampling types available: "centroid" is the default and
-will return the centroid or a point that is inside the polygon if the
-centroid is not (see \code{sf::st_point_on_surface()}); "random" takes a
-random sample based on the given \code{landingDens} see
-(\code{sf::st_sample()}); "regular" intersects the polygons with a
-regular grid with cell size \code{sqrt(1/landingDens)}, if a polygon does not
-intersect with the grid its centroid is used.
+are three different sampling types available: "centroid" (default) returns
+the centroid or a point inside the polygon if the
+centroid is not (see \code{sf::st_point_on_surface()}); "random" returns a
+random sample given \code{landingDens} see
+(\code{sf::st_sample()}); "regular" returns points on a regular grid with cell size \code{sqrt(1/landingDens)}
+that intersect the polygon, or centroid if no grid points fall within the polygon.
 }
 \details{
-Note that the \code{landingDens} is in points per unit area where the unit of
+Note that the \code{landingDens} is points per unit area where the unit of
 area is determined by the CRS. For projected CRS this should likely be a very
 small number i.e. < 0.001.
 }
