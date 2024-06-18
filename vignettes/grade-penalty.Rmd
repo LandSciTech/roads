@@ -17,19 +17,5 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(roads)
-
-demoScen <- prepExData(demoScen)
-
-purrr::map(demoScen, "cost.rast") %>% terra::rast() %>% terra::plot()
-
-can_elev <- geodata::elevation_30s("CAN", "test")
-
-ext <- terra::draw()
-
-ex_elev <- terra::crop(can_elev, ext)
-
-plot(ex_elev)
-
-# Move the above to a data-raw file
+# see data being prepared in dem_example.R
 ```

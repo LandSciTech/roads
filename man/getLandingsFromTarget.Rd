@@ -7,10 +7,18 @@
 getLandingsFromTarget(harvest, landingDens = NULL, sampleType = "centroid")
 }
 \arguments{
+<<<<<<< HEAD
 \item{harvest}{sf, SpatialPolygons or RasterLayer object with harvested
 areas. If it is a RasterLayer with more than one unique value other than 0
 each value will be run separately which will produce different results from
 a 0/1 raster and will be much slower.}
+=======
+\item{harvest}{sf, SpatialPolygons, SpatRaster or RasterLayer object with harvested
+areas. If it is a raster with values outside 0,1, values are assumed
+to be harvest block IDs. If raster values are in 0,1 they are assumed to be
+a binary raster and \code{terra::patches} is used to identify harvest
+blocks.}
+>>>>>>> b96540ec721aa63598cf23506b7ccfc903e0b443
 
 \item{landingDens}{number of landings per unit area. This should be in the
 same units as the CRS of the harvest. Note that 0.001 points per m2 is > 1000

@@ -39,7 +39,9 @@ rds_rast <- terra::rasterize(terra::vect(rds),
 terr_dist <- terra::distance(rds_rast, target = 0)
 
 # Or you can use the line directly
-terr_dist_vect <- terra::distance(rds)
+terr_dist_vect <- terra::distance(terra::vect(rds))
+
+terra::plot(terr_dist)
 
 ```
 
@@ -56,7 +58,8 @@ The third method "pfocal2" uses a global moving window to calculate the distance
 Below we will explore different settings and how they affect the speed and memory usage as well as the resulting distance map. The code below creates a source raster showing a curving road and applies the `getDistToSource` function under different parameters.
 
 ```{r run_dist, cache=TRUE}
-#make example roads from scratch
+if(requireNamespace("pfocal", quietly = TRUE)){
+  #make example roads from scratch
 rds <- data.frame(x = 1:1000, y = cos(1:1000/100)*500) %>% 
   sf::st_as_sf(coords = c("x", "y")) %>% 
   sf::st_union() %>% 
@@ -95,11 +98,14 @@ doFun <- function(x){
 
 # iterate over all parameters
 purrr::walk(1:nrow(param_grid), doFun)
+}
+
+
 ```
 
 ```{r make_plots, fig.height= 10, fig.width = 8}
 
-
+if(requireNamespace("pfocal", quietly = TRUE)){
 # all maps 
 all_maps <- purrr::map(1:nrow(param_grid), 
                        ~tmap::qtm(param_grid$result[[.x]], raster.style = "cont",
@@ -110,11 +116,13 @@ all_maps <- purrr::map(1:nrow(param_grid),
                                   layout.title.snap.to.legend = FALSE))
 
 tmap::tmap_arrange(all_maps, ncol = 3)
+}
 ```
 
 The maps above show the affect of the different parameters with `maxDist` changing the area covered, `kwidth` changing the smoothness of the gradations for the "terra" and "pfocal" methods and causing grid artefacts for the "pfocal2" method.
 
 ```{r make_plots2, fig.height= 7, fig.width = 10}
+if(requireNamespace("pfocal", quietly = TRUE)){
 get_hist <- function(rast){
   f <- terra::hist(rast, plot = FALSE, breaks = 30)
   dat <- data.frame(counts= f$counts,breaks = f$mids)
@@ -128,13 +136,14 @@ purrr::map_dfr(1:nrow(param_grid),
   geom_bar(stat = "identity",fill='blue',alpha = 0.8)+
   xlab("Distance")+ ylab("Frequency")+
   facet_grid(method +maxDist ~ kwidth, labeller = label_both)
-
+}
 ```
 
 
 Looking at histograms of the raster values shows the larger steps between distance values as `kwidth` increases for the "terra" and "pfocal" methods. For the "pfocal2" method the frequency of distance values stays similar with higher values of `kwidth` but the maps above show that some spatial accuracy is lost due to the aggregation and disaggregation processes.
 
 ```{r make_plots3, fig.height= 7, fig.width = 10}
+if(requireNamespace("pfocal", quietly = TRUE)){
 param_grid %>% 
   ggplot( aes(x = method, y = time))+
   geom_point()+
@@ -144,6 +153,7 @@ param_grid %>%
   ggplot( aes(x = method, y = mem_alloc))+
   geom_point()+
   facet_grid(kwidth~maxDist, labeller = label_both)
+}
 ```
 
 The last two graphs show that the "pfocal2" method is fastest in all the cases shown, however for very high `maxDist` values this may not be the case. The "pfocal" method uses the most memory of all the methods but note that this is the total memory allocated and does not account for deallocated memory, meaning not all the memory allocated is used at once.

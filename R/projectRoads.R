@@ -34,6 +34,7 @@
 #'   * "snap": Connects each landing to the closest (by Euclidean distance) road without,
 #'   reference to the weights or other landings.
 #'
+<<<<<<< HEAD
 #' @param landings sf polygons or points, RasterLayer, SpatialPolygons*,
 #'   SpatialPoints*, or matrix, containing features to be connected
 #'   to the road network. Matrix should contain columns x, y with coordinates,
@@ -53,6 +54,18 @@
 #'     interpreted as 100% grade).
 #' @param roads sf lines, SpatialLines*, RasterLayer, SpatRaster. The existing road network.
 #' @param roadMethod Character. Options are "ilcp", "mst", "lcp", and "snap".
+=======
+#' @param landings sf polygons or points, SpatRaster, RasterLayer, SpatialPolygons*,
+#'   SpatialPoints*, matrix, containing features to be connected
+#'   to the road network. Matrix should contain columns x, y with coordinates,
+#'   all other columns will be ignored. Polygon and raster inputs will be
+#'   processed by `getLandingsFromTarget` to get the centroid of harvest blocks.
+#' @param weightRaster SpatRaster or RasterLayer. weights Raster where existing
+#'   roads must be the only cells with a weight of 0. If existing roads do not
+#'   have 0 weight set `roadsInWeight = FALSE` and they will be burned in.
+#' @param roads sf lines, SpatialLines*, RasterLayer, SpatRaster. Existing road network.
+#' @param roadMethod Character. Options are "ilcp", "mst", "lcp", "snap".
+>>>>>>> b96540ec721aa63598cf23506b7ccfc903e0b443
 #' @param plotRoads Boolean. Should the resulting road network be plotted.
 #'   Default FALSE.
 #' @param mainTitle Character. A title for the plot
@@ -211,6 +224,18 @@ setMethod(
                         roadMethod = roadMethod,
                         landings = landings,
                         roadsInWeight = roadsInWeight)
+    
+    # Check memeory requirements
+    rast_cells <- terra::ncell(weightRaster)
+    ram_needed_Mb <- 10^(-1.6+0.769*log10(rast_cells))
+    ram_avail_Mb <- terra::free_RAM()/1000
+    
+    if(ram_needed_Mb > ram_avail_Mb){
+      warning("This road projection is expected to require ", ram_needed_Mb, 
+              " Mb of RAM but only ", ram_avail_Mb, "Mb is available. ",
+              "Consider closing other applications and/or running on a larger machine")
+    }
+    
 # browser()
     sim$landingsIn <- sim$landings
 
