@@ -17,17 +17,17 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-This vignette provides a tutorial on the use of the `roads` package for the spatial simulation of future roads development under a given resource development scenario.  This tutorial, which borrows heavily from a demonstration written by Kyle Lochhead and Tyler Muhly in 2018, will focus primarily on the `projectRoads` function of the `roads` package, as it is responsible for performing the simulation. Example data sets used below are included in the package as `CLUSexample` and `demoScen`. 
+This tutorial on using the `projectRoads` function of the `roads` package to project forest road networks borrows heavily from a demonstration written by Kyle Lochhead and Tyler Muhly in 2018. Example data sets used below are included in the package as `CLUSexample` and `demoScen`. 
 
-In the context of this package, resource development scenarios are represented by three components:
+There are three main inputs to the `projectRoads` function:
 
-1. **Weights Raster and Weight Function:** the weights raster is a spatial, gridded weight layer covering the entire landscape. The weight function takes values from adjacent weights raster cells as inputs and returns the cost of developing a new road between them.
-2. **Existing Road Network:** a spatial, representation of the existing road network within the landscape.
-3. **Landings:** a set of locations where new resource development is to take place.
+1. **weightRaster and weightFunction:** together, these determine the cost to build a road between two adjacent raster cells. The weightRaster is a spatial gridded raster with values for all locations where road construction is possible. The weight function calculates the cost of constructing a road between two adjacent raster cells from the weightRaster at each of those cells.
+2. **Existing Road Network:** a spatial representation of the existing road network.
+3. **Landings:** a set of locations to be connected to the existing road network by constructing new roads.
 
-Given an input resource development scenario, `projectRoads` will simulate new roads between the existing road network and the landings using one of four algorithms:
+`projectRoads` simulates new roads that connect landings to the existing road network using one of four methods:
 
-1. **Snapping** 
+1. **Snap** 
 2. **Least-cost path (LCP)** 
 3. **Iterative least-cost path (ILCP)** 
 4. **Minimum spanning tree (MST)** 
@@ -35,10 +35,10 @@ Given an input resource development scenario, `projectRoads` will simulate new r
 The output of `projectRoads` is a list of simulation results referred to as a "sim list". The list contains five elements:
 
 1. **roads:** the projected road network, including new and input roads.
-2. **weightRaster:** the weights raster, updated to reflect the new roads that were added.
+2. **weightRaster:** the updated `weightRaster` in which new and old roads have value 0.
 3. **roadMethod** the road simulation method used.
 4. **landings** the landings used in the simulation.
-5. **g** the graph that describes the cost of paths between each cell in the weights raster. This is updated based on the new roads so that vertices connected by new roads now have a weight of 0. This can be used to avoid recomputing the graph in a simulation with multiple time steps. 
+5. **g** the graph that describes the cost of paths between each cell in the updated `weightRaster`. Edges between vertices connected by new roads have weight 0. `g` can be used to avoid the cost of rebuilding the graph in a simulation with multiple time steps.
 
 ### Setup
 
@@ -65,15 +65,16 @@ CLUSexample <- prepExData(CLUSexample)
 
 ### 1. Weights Raster and Weight Function
 
-The cost of new roads development within the landscape is determined by applying the `weightFunction` to the `weightRaster`. The `weightRaster` must be provided as a single, numeric `SpatRaster` or `RasterLayer` object.  The cell values in the raster for two adjacent cells and the distance between the cells are provided to the `weightFunction` to calculate the weight for the edge connecting the two cells in the graph which should represent the cost of building a road connecting the two cells. Two ways of calculating the cost are supported by the package with the option for users to develop their own. The simplest method is for the `weightRaster` values to represent the cost of building a road across a cell and the for the `weightFunction` to simply take the mean of the values in adjacent cells (`simpleCostFn`). The other option included in the package is to use the `gradePenaltyFn`. This function takes a modified DEM raster as input and determines costs by applying a base cost and a grade penalty which is multiplied by the % grade between adjacent cells. The DEM can be modified by adding barriers to the raster, either as negative values which represent high costs (e.g. a stream crossing) or NAs for inaccessible areas (e.g. a cliff or a lake). See `?gradePenaltyFn` for more details.   
+The cost of constructing a road segment to connect adjacent cells is determined by the `weightFunction` and the `weightRaster`. The `weightFunction` calculates the cost of construction between adjacent cells from the value of the `weightRaster` at those cells and the distance between them. Two methods of calculating costs are provided, and there is an option for users to develop their own. The default `weightFunction = simpleCostFn` assumes that the values in the `weightRaster` represent the cost of building a road across a cell, and sets cost as the mean value of adjacent cells. The alternative `weightFunction = gradePenaltyFn` penalizes road construction on steep grades by setting cost as a function of the difference in `weightRaster` values between adjacent cells. In this case, the `weightRaster` is an elevation raster that can also include barriers. See `?gradePenaltyFn` for details.   
 
 The following points apply to all `weightRasters`:
 
-* Weights of existing road segments are assumed to be zero. If existing roads are not 0 in the `weightRaster` they can be "burned in" by setting `roadsInWeight = FALSE`.
-* The extent of the landscape of interest is assumed to match the extent of the specified `weightRaster`.
-* The coordinate reference system (CRS) of this raster must match all other input data-sets.  
-* While the cell size (or resolution) of the `weightRaster` is up to the user, it is important to remember that a unit area of road is assumed to take up an entire cell.
-* Areas that are NA are not included in the graph and are assumed to be inaccessible to roads. If a landing is surrounded by NAs then it cannot be connected to the existing road network and an error is produced.
+* The `weightRaster` must be a single, numeric `SpatRaster` or `RasterLayer` object. 
+* The coordinate reference system (CRS) of this raster must match the CRS of the existing road network and landings.  
+* The `weightRaster` determines the extent of area considered for new road construction. Existing roads and landings outside the extent of the `weightRaster` are ignored.
+* Values of cells that include existing roads should be 0, and all 0 values are assumed to be existing roads. Existing roads can be added to `weightRaster` by setting `roadsInWeight = FALSE`.
+* The resolution of the `weightRaster` determines the resolution of the constructed road network. Adjacent cells are connected with straight road segments, and each cell either contains a road, or it does not.
+* NA values in the `weightRaster` are not included in the graph, and are not considered for road construction. A landing surrounded by NAs that cannot be connected to the existing road network will produce an error.
 
 The weight raster for this basic example is a cost surface and the `weightFunction` used is the average. 
 ```{r}
@@ -82,9 +83,9 @@ weightRaster <- CLUSexample$cost
 
 ### 2. Existing road network layer
 
-The state of the existing roads network must be specified to the `projectRoads` method. This specification is made in the form of an `sf` object with geometry type "LINES", a `SpatialLines` object, a `RasterLayer`, or a `SpatRaster`. If the input roads are a raster the resulting roads will be returned as a raster by default but if `roadsOut = "sf"` is set then a geometry collection of lines and points will be returned with points representing the input roads.
+The network of existing roads must be provided as an `sf` object with geometry type "LINES", a `SpatialLines` object, a `RasterLayer`, or a `SpatRaster`. If the input roads are a raster the projected roads will also be returned as a raster by default, but if `roadsOut = "sf"` then a geometry collection of lines and points will be returned with points representing the input roads.
 
-The roads network included in the `CLUSexample` data-set is a raster but we use a line to make plotting easier.  
+The road network included in the `CLUSexample` data-set is a raster but we use a line for plotting.  
 
 ```{r, fig.show='hold'}
 ## existing roads network
@@ -97,7 +98,7 @@ roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
 
 ### 3. Landings layer(s)
 
-Landings, or resource development locations, that are to be connected to the existing road network can be specified to the `projectRoads` method in a variety of forms.  These include specification as:
+Landings, or resource development locations, that are to be connected to the existing road network can be specified in a variety of forms:
 
 * A `sf` object with geometry type "POINTS" or "POLYGONs"
 * A logical `SpatRaster` or `RasterLayer` object with cell values of `TRUE` for landings,
@@ -106,7 +107,7 @@ Landings, or resource development locations, that are to be connected to the exi
 * A `SpatialPolygons`or `SpatialPolygonsDataFrame` object with polygons representing landings, 
 
 
-If the landings are polygons then the centroid is used as the destination for new roads. For more control or to have more than one landing per polygon see Multiple landings per harvest block below.
+If the landings are polygons then the centroid is used as the destination for new roads. For more control or to specify more than one landing per polygon see Multiple landings per harvest section below.
 
 ```{r, fig.show='hold', fig.width=6.5, fig.height=4.85}
 ## landings as spatial points
@@ -123,7 +124,7 @@ legend(x = 7.25, y = 5, legend = c("landings", "roads"), pch = c(19, NA),
 
 ```
 
-Notice that the top row of the raster has a cost of zero, this is where an existing road traverses the landscape.
+Notice that the top row of the raster has a cost of zero where an existing road traverses the landscape.
 
 ### Output format
 `projectRoads` accepts a wide range of classes of spatial objects as input but all results are returned as `sf` for vectors and `SpatRaster` for rasters. 
@@ -134,7 +135,7 @@ Notice that the top row of the raster has a cost of zero, this is where an exist
 
 ### 1. Snapping
 
-This approach simply 'snaps' a landing to the nearest existing road segment. Since the snapping is done for each landing it is also called an independent path method. 
+This approach simply 'snaps' a landing to the nearest (by Euclidean distance) existing road segment, ignoring spatial variation in road construction cost and the locations of other landings and access roads.
 
 ```{r, fig.show='hold', fig.width=6.5, fig.height=4.85}
 ## project new roads using the 'snap' approach
@@ -153,19 +154,11 @@ legend(x = 7.25, y = 5, legend = c("landings", "roads"), pch = c(19, NA),
        xpd = NA, inset = -0.1, xjust = 1)
 ```
 
-Using this approach, a few issues would arise: 
-
-1. parallel roads are not realistic since there is no branching and this leads to increased numbers of roads; 
-
-2. costs are not included (i.e., slope and barriers like large water bodies).
-
-This means this approach, while simple to implement, would over estimate the amount of simulated roads.
+This simple approach give an unrealistically redundant road network without branches that does not account for variation in road construction costs across the landscape. 
 
 ### 2. Least Cost Paths (LCP)
 
-This approach builds upon the snapping approach by assuming a 'cost directed' path (i.e., "as the wolf runs") for each landing to the existing road network.  This approach requires that a cost surface be provided and used to build a mathematical [graph](https://en.wikipedia.org/wiki/Graph_theory) using [`igraph`](https://igraph.org/r/) and takes considerably longer to compute.
-
-Once the graph is built, the least cost path between each landing and the nearest existing road is determined using [Dijkstra’s algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), which is implemented in the [shortest_paths](https://igraph.org/r/doc/distances.html) function in `igraph`. Then the graph is updated so that the graph returned in the result reflects the new roads built.
+The least cost paths method builds a 'cost directed' path (i.e., "as the wolf runs") for each landing to the existing road network.  A mathematical [graph](https://en.wikipedia.org/wiki/Graph_theory) with a node for each non-NA cell in the `weightRaster` and edge weights determined by the `weightFunction` is built using [`igraph`](https://igraph.org/r/). The graph is used to compute least cost paths between each landing and the nearest existing road using [Dijkstra’s algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) implemented in the [shortest_paths](https://igraph.org/r/doc/distances.html) function in `igraph`. Graph weights are updated to include new roads after all new roads are identified.
 
 ```{r, fig.show='hold', fig.width=6.5, fig.height=4.85}
 ## project new roads using the 'LCP' approach
@@ -185,10 +178,10 @@ legend(x = 7.25, y = 5, legend = c("landings", "roads"), pch = c(19, NA),
        xpd = NA, inset = -0.1, xjust = 1)
 ```
 
-The main disadvantage of this approach is that roads are developed independently. The least cost path may produce parallel or redundant roads since a path is made for each target to the corresponding closest point. This may mimic road development since road tenures give licensees the right to limit other industrial users from using their road (i.e., gated roads); thereby forcing the other industrial users to consider building a nearly parallel road. In some cases there will be branching, where two roads connecting two landings to an existing road network will use the same least cost path; however, this will be conditional on the spatial configuration of the local cost surface and the existing road network. Thus, the amount of road being developed from the LCP is dependent on the local cost surface and may be either higher or lower than the corresponding snap approach.
+The main disadvantage of this approach is that roads are developed independently, which tends to produce parallel or redundant roads. This could mimic road development in cases where licensees restrict others users from using their road (i.e., gated roads), and thereby force others to consider building a nearly parallel road. In some cases there will be branching, where two roads connecting two landings to an existing road network will use the same least cost path; however, this will be conditional on the spatial configuration of the local cost surface and the existing road network. 
 
 ### 3. Iterative Least Cost Paths (ILCP)
-This approach reduces the number of parallel roads seen in the LCP method because a road to each landing is built sequentially and the cost in the graph is updated after each so that roads built earlier can be used to access other landings. The order is determined by the `ordering` argument to `projectRoads` and by default builds roads to the closest landings first. To prevent this and build roads in the order that the landings are supplied use `ordering = none`. 
+This approach builds fewer redundant roads than the LCP method because the graph edge weights are updated after each landing is accessed, so that roads built earlier can be reused to access other landings. The order is determined by the `ordering` argument to `projectRoads`; by default the closest landings are accessed first. The alternative `ordering = none` builds roads in the order that landings are supplied by the user. 
 
 ```{r, fig.show='hold', fig.width=6.5, fig.height=4.85}
 ## project new roads using the 'ILCP' approach
@@ -208,7 +201,7 @@ legend(x = 7.25, y = 5, legend = c("landings", "roads"), pch = c(19, NA),
        xpd = NA, inset = -0.1, xjust = 1)
 ```
 
-The ILCP approach produces more of a network rather than many parallel roads. However, it is sensitive to the ordering of the landings. Below we reverse the order of the landings but continue using the default ordering of closest first. The two closest landings are tied for distance to the road and the tie is broken by the order they are supplied in so switching that produces a different road network.   
+The ILCP approach produces more realistic branching network with less redundancy. However, it is sensitive to the ordering of the landings. Below we reverse the order of the landings but continue using the default ordering of closest first. The two closest landings are tied for distance to the road and the tie is broken by the order they are supplied in so switching that produces a different road network.   
 
 ```{r, fig.show='hold', fig.width=6.5, fig.height=4.85}
 ## project new roads using the 'ILCP' approach
@@ -230,7 +223,7 @@ legend(x = 7.25, y = 5, legend = c("landings", "roads"), pch = c(19, NA),
 
 ### 4. Minimum Spanning Tree (MST) with Least Cost Paths (LCP)
 
-The MST approach builds upon the LCP approach by determining if landings should be connected to one another before being connected to the existing road network. In the MST approach, LCPs are estimated both between the landings and between landings and the existing road network. These distances are then used as nodes for solving a minimum spanning tree. The sequence of vertices from the LCPs are then constructed following the solution to the MST. 
+The MST approach builds upon the LCP approach by determining if landings should be connected to one another before being connected to the existing road network. In the MST approach, LCPs are estimated both between the landings and between landings and the existing road network. These distances are then used as nodes for solving a minimum spanning tree network that minimizes the overall cost of connecting all landings to the existing road network.
 
 ```{r, fig.show='hold',  fig.width=6.5, fig.height=4.85}
 ## project new roads using the 'MST' approach
@@ -250,11 +243,11 @@ legend(x = 7.25, y = 5, legend = c("landings", "roads"), pch = c(19, NA),
        xpd = NA, inset = -0.1, xjust = 1)
 ```
 
-The MST approach will produce the least amount of roads (relative to the other approaches), given landings are allowed to connect to other landings. This approach simulates a realistic view of road branching relative to the other approaches. However, given the need to get LCP distances, solve a MST and then construct the LCPs, it will likely be the most costly in terms of computation time.
+The MST approach will produce fewer roads than the other approaches, and realistic branching patterns. However, it is also more computationally costly than the other methods.
 
 ## One-time versus multi-temporal simulation
 
-Roads development simulation can be performed either for a single time step (one-time) or for multiple time steps.  This section will use a demonstration scenario `demoScen` data-set that is included with the roads package. There are four different sets of landings. 
+Roads can be projected over a single time step (one-time) or over multiple time steps. To demonstrate construction over multiple time steps we use a demonstration scenario `demoScen` data-set included in the roads package. The scenario includes four different sets of landings. 
 
 ```{r, fig.show='hold', fig.width=7,fig.height=6.5}
 ## colours for displaying weight raster
@@ -280,7 +273,7 @@ text(st_coordinates(land.pnts), labels = land.pnts$set, cex = 0.6, adj = c(0.5, 
 
 ### One-time simulation
 
-If landings, costs, and roads are all specified to `projectRoads`, then a one-time road simulation will be performed that returns a list object holding the projected roads and related information. This can be repeated multiple times for different road building scenarios but each simulation will be independent of previous simulations. This would be appropriate if each landing set represented alternate scenarios for development.
+If landings, costs, and roads are all specified to `projectRoads`, then a one-time road simulation will be performed that returns a list object holding the projected roads and related information. This can be repeated multiple times for different road building scenarios but each simulation will be independent of the others. 
 
 ```{r, fig.show='hold', fig.width=7,fig.height=6.86}
 ## project roads for landing sets 1 to 4, with independent one-time simulations
@@ -307,7 +300,7 @@ for (i in 1:4){
 
 ```
 
-While the results of these one-time simulations may be fine when looking at each landings scenario/set independently (e.g. each representing a possible scenario for time t=1), they are likely not appropriate for cases where all landings sets follow a temporal development sequence (e.g. set 1 is development at time t=1, set 2 is development at time t=2, and so on). Independent one-time simulations do not take into account the fact that, for a given time step, existing roads for a given simulation should be the union of existing roads at time t=0 and all roads simulation results leading up to the current step.  For example, existing roads input into simulation at time t=2 (landings set 2), would be the union of existing roads at time t=0 and projected roads at time t=1 (landings set 1).
+These independent one-time simulations are appropriate if each landing set represents a different development scenario (e.g. each representing a possible set of landings at time t=1), but they are not appropriate if landings sets are sequential (e.g. set 1 is development at time t=1, set 2 is development at time t=2, and so on). In the latter case, roads at the beginning of time t should be the union of roads developed in all previous times steps. 
 
 ```{r, fig.show='hold', fig.width=5,fig.height=4.85}
 ## raster representing the union of completely independent simulations for multiple sets
@@ -328,7 +321,7 @@ plot(st_geometry(land.pnts), add = TRUE, pch = 21, cex = 1.5, bg = 'white')
 
 ### Multi-temporal simulation
 
-Multi-temporal (multiple time steps) roads projections can be performed by `projectRoads`, by providing the list produced by a previous simulation run (sim list) to the `sim` argument and the landings for the current time period. The function uses the sim list as a starting point and does not need to recompute the graph used to determine the least cost path. This can be implemented in a loop.
+Multi-temporal (multiple time steps) road projections can obtained by providing `projectRoads` with the list produced by a previous call to `projectRoads`, and a new set of landings. The function uses the `sim` list as a starting point, and avoids the computational cost of reconstructing the landscape graph. This can be implemented in a loop.
 
 ```{r, fig.show='hold', fig.width=7, fig.height=9.97}
 ## continuing on with demo scenario 1
@@ -370,7 +363,7 @@ for (i in 1:length(multiTime_sim)){
 
 ## Multiple landings per harvest block
 
-Often harvest information is available as polygons showing the cutover area but the point locations of landings are not known. The roads package includes the `getLandingsFromTarget` function to address these situations. By default `getLandingsFromTarget` will use the centroid of a polygon as the landing but you can also specify a `sampleType` of "random" or "regular" and a `landingDens` in landings per unit area to generate multiple landing points with in the harvest block.
+Often harvest information is available as polygons showing the cutover area but the point locations of landings are not known. The roads package includes the `getLandingsFromTarget` function to address these situations. By default `getLandingsFromTarget` will use the centroid of a polygon as the landing but other `sampleType` options include "random" or "regular" selection of multiple landing points within harvest blocks. For "random" or "regular" sampling, `landingDens` specifies the expected number of landings per unit area.
 
 ```{r fig.width=6,fig.height=5}
 harvPoly <- demoScen[[1]]$landings.poly
@@ -404,8 +397,6 @@ plot(outReg, col = "red", add = TRUE)
 # clean up 
 par(oldpar)
 ```
-
-The regular sampling method may be the most realistic since it ensures that landings are spaced apart from each other.
 
 # Note
 This vignette is partially copied from Kyle Lochhead & Tyler Muhly's [2018 CLUS example](https://github.com/bcgov/castor/blob/main/reports/roads/draft-CLUS-roads.md)
