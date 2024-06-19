@@ -10,8 +10,18 @@ status](https://www.r-pkg.org/badges/version/roads)](https://CRAN.R-project.org/
 [![R-CMD-check](https://github.com/LandSciTech/roads/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/LandSciTech/roads/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of roads is to simulate road development under resource
-development scenarios.
+The roads package offers iterative least cost path and minimum spanning
+tree methods for projecting forest road networks. The methods connect a
+set of target points to an existing road network using igraph
+<https://igraph.org> to identify least cost routes. The cost of
+constructing a road segment between adjacent pixels is determined by a
+user supplied `weightRaster` and a `weightFunction`; options include the
+average of adjacent `weightRaster` values, and a function of the
+elevation differences between adjacent cells that penalizes steep
+grades. These road network projection methods are intended for
+integration into R workflows and modelling frameworks used for
+forecasting forest change, and can be applied over multiple timesteps
+without rebuilding a graph at each timestep.
 
 ## Installation
 
@@ -58,16 +68,9 @@ prRoads <- projectRoads(landings = scen$landings.points,
 By default `projectRoads` uses an iterative least cost paths algorithm
 (`roadMethod = "ilcp"`) to connect each landing to the existing road by
 the lowest cost path, updating the cost after each landing is connected.
-Other methods available are: minimum spanning tree with least cost paths
-(`roadMethod = "mst"`) to connect all landings to the nearest existing
-road or other landing following the path with the lowest cost across all
-landings, least cost path (`roadMethod = "lcp"`) which connects each
-landing to the nearest road via the least cost path but independent of
-other landings and snapping (`roadMethod = "snap"`) which ignores both
-cost and other landings and simply connects each landing to the nearest
-road “as the crow flies”.
+A minimum spanning tree method (`roadMethod = "mst"`) is also available.
 
-For more details on how to use the package see the vignette
+For more details see the vignette
 `vignette("roads-vignette", package = "roads")`
 
 # License
