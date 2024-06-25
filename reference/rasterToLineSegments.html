@@ -24,7 +24,6 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
     <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
@@ -66,11 +65,12 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>rast</dt>
-<dd><p>raster representing lines all values &gt; 0 are assumed to be lines</p></dd>
+<dd><p><code>SpatRaster</code>. Raster representing lines all values &gt; 0 are assumed to be lines</p></dd>
 
 
 <dt>method</dt>
-<dd><p>method of building lines. See Details</p></dd>
+<dd><p>character. Method of building lines. Options are <code>"mst"</code> (default) or <code>"nearest"</code>.
+See Details below.</p></dd>
 
 </dl></div>
     <div class="section level2">

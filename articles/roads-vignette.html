@@ -48,7 +48,6 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
     <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
@@ -83,7 +82,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>roads Package</h1>
             
-            <h4 data-toc-skip class="date">2024-06-19</h4>
+            <h4 data-toc-skip class="date">2024-06-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/LandSciTech/roads/blob/HEAD/vignettes/roads-vignette.Rmd" class="external-link"><code>vignettes/roads-vignette.Rmd</code></a></small>
       <div class="d-none name"><code>roads-vignette.Rmd</code></div>
@@ -105,10 +104,11 @@ function:</p>
 <li>
 <strong>weightRaster and weightFunction:</strong> together, these
 determine the cost to build a road between two adjacent raster cells.
-The weightRaster is a spatial gridded raster with values for all
-locations where road construction is possible. The weight function
-calculates the cost of constructing a road between two adjacent raster
-cells from the weightRaster at each of those cells.</li>
+The <code>weightRaster</code> is a spatial gridded raster with values
+for all locations where road construction is possible. The
+<code>weightFunction</code> calculates the cost of constructing a road
+between two adjacent raster cells from the <code>weightRaster</code> at
+each of those cells.</li>
 <li>
 <strong>Existing Road Network:</strong> a spatial representation of
 the existing road network.</li>
@@ -220,12 +220,12 @@ will produce an error.</li>
 <h4 id="existing-road-network-layer">2. Existing road network layer<a class="anchor" aria-label="anchor" href="#existing-road-network-layer"></a>
 </h4>
 <p>The network of existing roads must be provided as an <code>sf</code>
-object with geometry type “LINES”, a <code>SpatialLines</code> object, a
-<code>RasterLayer</code>, or a <code>SpatRaster</code>. If the input
-roads are a raster the projected roads will also be returned as a raster
-by default, but if <code>roadsOut = "sf"</code> then a geometry
-collection of lines and points will be returned with points representing
-the input roads.</p>
+object with geometry type <code>"LINES"</code>, a
+<code>SpatialLines</code> object, a <code>RasterLayer</code>, or a
+<code>SpatRaster</code>. If the input roads are a raster the projected
+roads will also be returned as a raster by default, but if
+<code>roadsOut = "sf"</code> then a geometry collection of lines and
+points will be returned with points representing the input roads.</p>
 <p>The road network included in the <code>CLUSexample</code> data-set is
 a raster but we use a line for plotting.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -242,8 +242,9 @@ a raster but we use a line for plotting.</p>
 <p>Landings, or resource development locations, that are to be connected
 to the existing road network can be specified in a variety of forms:</p>
 <ul>
-<li>A <code>sf</code> object with geometry type “POINTS” or
-“POLYGONs”</li>
+<li>A <code>sf</code> object with geometry type <code>"POINTS"</code> or
+<code>"POLYGON"</code>
+</li>
 <li>A logical <code>SpatRaster</code> or <code>RasterLayer</code> object
 with cell values of <code>TRUE</code> for landings,</li>
 <li>A <code>SpatialPoints</code> or <code>SpatialPointsDataFrame</code>
@@ -312,7 +313,7 @@ roads.</p>
 <span>       lwd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>       xpd <span class="op">=</span> <span class="cn">NA</span>, inset <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, xjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-4-1.png" width="624"></p>
-<p>This simple approach give an unrealistically redundant road network
+<p>This simple approach gives an unrealistically redundant road network
 without branches that does not account for variation in road
 construction costs across the landscape.</p>
 </div>
@@ -351,12 +352,12 @@ new roads after all new roads are identified.</p>
 <p>The main disadvantage of this approach is that roads are developed
 independently, which tends to produce parallel or redundant roads. This
 could mimic road development in cases where licensees restrict others
-users from using their road (i.e., gated roads), and thereby force
-others to consider building a nearly parallel road. In some cases there
-will be branching, where two roads connecting two landings to an
-existing road network will use the same least cost path; however, this
-will be conditional on the spatial configuration of the local cost
-surface and the existing road network.</p>
+from using their road (i.e., gated roads), and thereby force others to
+consider building a nearly parallel road. In some cases there will be
+branching, where two roads connecting two landings to an existing road
+network will use the same least cost path; however, this will be
+conditional on the spatial configuration of the local cost surface and
+the existing road network.</p>
 </div>
 <div class="section level4">
 <h4 id="iterative-least-cost-paths-ilcp">3. Iterative Least Cost Paths (ILCP)<a class="anchor" aria-label="anchor" href="#iterative-least-cost-paths-ilcp"></a>
@@ -387,11 +388,11 @@ roads in the order that landings are supplied by the user.</p>
 <span>       lwd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>       xpd <span class="op">=</span> <span class="cn">NA</span>, inset <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, xjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="roads-vignette_files/figure-html/unnamed-chunk-6-1.png" width="624"></p>
-<p>The ILCP approach produces more realistic branching network with less
-redundancy. However, it is sensitive to the ordering of the landings.
-Below we reverse the order of the landings but continue using the
-default ordering of closest first. The two closest landings are tied for
-distance to the road and the tie is broken by the order they are
+<p>The ILCP approach produces a more realistic branching network with
+less redundancy. However, it is sensitive to the ordering of the
+landings. Below we reverse the order of the landings but continue using
+the default ordering of closest first. The two closest landings are tied
+for distance to the road and the tie is broken by the order they are
 supplied in so switching that produces a different road network.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## project new roads using the 'ILCP' approach</span></span>
@@ -541,12 +542,12 @@ developed in all previous times steps.</p>
 <div class="section level4">
 <h4 id="multi-temporal-simulation">Multi-temporal simulation<a class="anchor" aria-label="anchor" href="#multi-temporal-simulation"></a>
 </h4>
-<p>Multi-temporal (multiple time steps) road projections can obtained by
-providing <code>projectRoads</code> with the list produced by a previous
-call to <code>projectRoads</code>, and a new set of landings. The
-function uses the <code>sim</code> list as a starting point, and avoids
-the computational cost of reconstructing the landscape graph. This can
-be implemented in a loop.</p>
+<p>Multi-temporal (multiple time steps) road projections can be obtained
+by providing <code>projectRoads</code> with the list produced by a
+previous call to <code>projectRoads</code>, and a new set of landings.
+The function uses the <code>sim</code> list as a starting point, and
+avoids the computational cost of reconstructing the landscape graph.
+This can be implemented in a loop.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## continuing on with demo scenario 1</span></span>
 <span><span class="co">## landing sets 1 to 4 of this scenario as a raster stack</span></span>
@@ -603,10 +604,11 @@ cutover area but the point locations of landings are not known. The
 roads package includes the <code>getLandingsFromTarget</code> function
 to address these situations. By default
 <code>getLandingsFromTarget</code> will use the centroid of a polygon as
-the landing but other <code>sampleType</code> options include “random”
-or “regular” selection of multiple landing points within harvest blocks.
-For “random” or “regular” sampling, <code>landingDens</code> specifies
-the expected number of landings per unit area.</p>
+the landing but other <code>sampleType</code> options include
+<code>"random"</code> or <code>"regular"</code> selection of multiple
+landing points within harvest blocks. For <code>"random"</code> or
+<code>"regular"</code> sampling, <code>landingDens</code> specifies the
+expected number of landings per unit area.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">harvPoly</span> <span class="op">&lt;-</span> <span class="va">demoScen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">landings.poly</span></span>
 <span></span>

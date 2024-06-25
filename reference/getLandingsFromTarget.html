@@ -36,7 +36,6 @@ that intersect the polygon, or centroid if no grid points fall within the polygo
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
     <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
@@ -68,11 +67,11 @@ that intersect the polygon, or centroid if no grid points fall within the polygo
 
     <div class="ref-description section level2">
     <p>Generate landing points inside polygons representing harvested area. There
-are three different sampling types available: "centroid" (default) returns
+are three different sampling types available: <code>"centroid"</code> (default) returns
 the centroid or a point inside the polygon if the
-centroid is not (see <code><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">sf::st_point_on_surface()</a></code>); "random" returns a
+centroid is not (see <code><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">sf::st_point_on_surface()</a></code>); <code>"random"</code> returns a
 random sample given <code>landingDens</code> see
-(<code><a href="https://r-spatial.github.io/sf/reference/st_sample.html" class="external-link">sf::st_sample()</a></code>); "regular" returns points on a regular grid with cell size <code>sqrt(1/landingDens)</code>
+(<code><a href="https://r-spatial.github.io/sf/reference/st_sample.html" class="external-link">sf::st_sample()</a></code>); <code>"regular"</code> returns points on a regular grid with cell size <code>sqrt(1/landingDens)</code>
 that intersect the polygon, or centroid if no grid points fall within the polygon.</p>
     </div>
 
@@ -84,10 +83,10 @@ that intersect the polygon, or centroid if no grid points fall within the polygo
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>harvest</dt>
-<dd><p>sf, SpatialPolygons, SpatRaster or RasterLayer object with harvested
+<dd><p><code>sf</code>, <code>SpatialPolygons</code>, <code>SpatRaster</code> or <code>RasterLayer</code> object with harvested
 areas. If it is a raster with values outside 0,1, values are assumed
 to be harvest block IDs. If raster values are in 0,1 they are assumed to be
-a binary raster and <code><a href="https://rspatial.github.io/terra/reference/patches.html" class="external-link">terra::patches</a></code> is used to identify harvest
+a binary raster and <a href="https://rspatial.github.io/terra/reference/patches.html" class="external-link">terra::patches</a> is used to identify harvest
 blocks.</p></dd>
 
 
@@ -98,11 +97,11 @@ points per km2 so this number is usually very small for projected CRS.</p></dd>
 
 
 <dt>sampleType</dt>
-<dd><p>character. "centroid" (default), "regular" or "random".
-Centroid returns one landing per harvest block, which is guaranteed to be
-in the harvest block for sf objects but not for rasters. "regular" returns
+<dd><p>character. <code>"centroid"</code> (default), <code>"regular"</code> or <code>"random"</code>.
+<code>"centroid"</code> returns one landing per harvest block, which is guaranteed to be
+in the harvest block for sf objects but not for rasters. <code>"regular"</code> returns
 points from a grid with density <code>landingDens</code> that overlap the
-harvested areas. "random" returns a random set of points from each polygon
+harvested areas. <code>"random"</code> returns a random set of points from each polygon
 determined by the area of the polygon and
 <code>landingDens</code>. If <code>harvest</code> is a raster set of landings always includes the centroid
 to ensure at least one landing for each harvest block.</p></dd>
@@ -112,7 +111,7 @@ to ensure at least one landing for each harvest block.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>an sf simple feature collection with an ID column and POINT geometry</p>
+<p>an sf simple feature collection with an <code>ID</code> column and <code>POINT</code> geometry</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

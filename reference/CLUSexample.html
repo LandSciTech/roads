@@ -28,7 +28,6 @@ need to be unwrapped before they are used. prepExData() does this."><meta proper
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
     <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
@@ -59,7 +58,7 @@ need to be unwrapped before they are used. prepExData() does this."><meta proper
     </div>
 
     <div class="ref-description section level2">
-    <p>From Kyle Lochhead and Tyler Muhly's CLUS road simulation example. SpatRaster
+    <p>From Kyle Lochhead and Tyler Muhly's CLUS road simulation example. <code>SpatRaster</code>
 files created with the terra package must be saved with <code><a href="https://rspatial.github.io/terra/reference/wrap.html" class="external-link">terra::wrap()</a></code> and
 need to be unwrapped before they are used. <code><a href="prepExData.html">prepExData()</a></code> does this.</p>
     </div>
@@ -71,11 +70,10 @@ need to be unwrapped before they are used. <code><a href="prepExData.html">prepE
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A named list where: $cost is an object of class PackedSpatRaster
-representing road cost, $landings is an object of class sf representing
-landing locations and $roads is an object of class PackedSpatRaster
-representing existing roads</p>
-    </div>
+    <p>A named list with components:</p><ul><li><p>cost: a <code>PackedSpatRaster</code> representing road building cost.</p></li>
+<li><p>landings: an sf dataframe of points representing landing locations.</p></li>
+<li><p>roads: a <code>PackedSpatRaster</code> representing existing roads.</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

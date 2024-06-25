@@ -58,7 +58,6 @@ avoid increased memory and computational burden associated with multiple input r
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/getDistFromSource.html">getDistFromSource</a>
     <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
     <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
     <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
@@ -90,8 +89,8 @@ avoid increased memory and computational burden associated with multiple input r
 
     <div class="ref-description section level2">
     <p>Method for calculating the weight of an edge between two nodes from the value
-of the input raster at each of those nodes (x1 and x2), designed for a single
-DEM input. The method assumes an input <code>weightRaster</code> in which:</p><ul><li><p>NA indicates a road cannot be built</p></li>
+of the input raster at each of those nodes (<code>x1</code> and <code>x2</code>), designed for a single
+DEM input. The method assumes an input <code>weightRaster</code> in which:</p><ul><li><p><code>NA</code> indicates a road cannot be built</p></li>
 <li><p>Negative values are costs for crossing streams or other barriers that are
 crossable but expensive. Edges that link to barrier penalty (negative value)
 nodes are assigned the largest barrier penalty weight.</p></li>
@@ -122,32 +121,37 @@ avoid increased memory and computational burden associated with multiple input r
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x1, x2</dt>
-<dd><p>Value of the input raster at two nodes.</p></dd>
+<dd><p>Number. Value of the input raster at two nodes.</p></dd>
 
 
 <dt>hdistance</dt>
-<dd><p>Horizontal distance between nodes. hdistance and x1,x2 should have the same units.</p></dd>
+<dd><p>Number. Horizontal distance between nodes. <code>hdistance</code>, <code>x1</code>, and <code>x2</code>
+should have the same units.</p></dd>
 
 
 <dt>baseCost</dt>
-<dd><p>Construction cost of 0% grade road per km.</p></dd>
+<dd><p>Number. Construction cost of 0% grade road per km.</p></dd>
 
 
 <dt>limit</dt>
-<dd><p>Maximum grade (%) on which roads can be built.</p></dd>
+<dd><p>Number. Maximum grade (%) on which roads can be built.</p></dd>
 
 
 <dt>penalty</dt>
-<dd><p>Cost increase (per km) associated with each additional % increase in road grade.</p></dd>
+<dd><p>Number. Cost increase (per km) associated with each
+additional % increase in road grade.</p></dd>
 
 
 <dt>limitWeight</dt>
-<dd><p>Value assigned to edges that exceed the grade limit. Try setting to a high (not NA) value if encountering problems with disconnected graphs.</p></dd>
+<dd><p>Number. Value assigned to edges that exceed the grade
+limit. Try setting to a high (not <code>NA</code>) value if encountering problems with
+disconnected graphs.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Anderson AE, Nelson J (2004) Projecting vector-based road networks with a shortest path algorithm. Canadian Journal of Forest Research 34:1444–1457. https://doi.org/10.1139/x04-030</p>
+    <p>Anderson AE, Nelson J (2004) Projecting vector-based road networks with a
+shortest path algorithm. Canadian Journal of Forest Research 34:1444–1457. https://doi.org/10.1139/x04-030</p>
     </div>
 
     <div class="section level2">
