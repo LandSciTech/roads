@@ -21,7 +21,7 @@ This tutorial on using the `projectRoads` function of the `roads` package to pro
 
 There are three main inputs to the `projectRoads` function:
 
-1. **weightRaster and weightFunction:** together, these determine the cost to build a road between two adjacent raster cells. The weightRaster is a spatial gridded raster with values for all locations where road construction is possible. The weight function calculates the cost of constructing a road between two adjacent raster cells from the weightRaster at each of those cells.
+1. **weightRaster and weightFunction:** together, these determine the cost to build a road between two adjacent raster cells. The `weightRaster` is a spatial gridded raster with values for all locations where road construction is possible. The `weightFunction` calculates the cost of constructing a road between two adjacent raster cells from the `weightRaster` at each of those cells.
 2. **Existing Road Network:** a spatial representation of the existing road network.
 3. **Landings:** a set of locations to be connected to the existing road network by constructing new roads.
 
@@ -154,7 +154,7 @@ legend(x = 7.25, y = 5, legend = c("landings", "roads"), pch = c(19, NA),
        xpd = NA, inset = -0.1, xjust = 1)
 ```
 
-This simple approach give an unrealistically redundant road network without branches that does not account for variation in road construction costs across the landscape. 
+This simple approach gives an unrealistically redundant road network without branches that does not account for variation in road construction costs across the landscape. 
 
 ### 2. Least Cost Paths (LCP)
 
@@ -178,7 +178,7 @@ legend(x = 7.25, y = 5, legend = c("landings", "roads"), pch = c(19, NA),
        xpd = NA, inset = -0.1, xjust = 1)
 ```
 
-The main disadvantage of this approach is that roads are developed independently, which tends to produce parallel or redundant roads. This could mimic road development in cases where licensees restrict others users from using their road (i.e., gated roads), and thereby force others to consider building a nearly parallel road. In some cases there will be branching, where two roads connecting two landings to an existing road network will use the same least cost path; however, this will be conditional on the spatial configuration of the local cost surface and the existing road network. 
+The main disadvantage of this approach is that roads are developed independently, which tends to produce parallel or redundant roads. This could mimic road development in cases where licensees restrict others from using their road (i.e., gated roads), and thereby force others to consider building a nearly parallel road. In some cases there will be branching, where two roads connecting two landings to an existing road network will use the same least cost path; however, this will be conditional on the spatial configuration of the local cost surface and the existing road network. 
 
 ### 3. Iterative Least Cost Paths (ILCP)
 This approach builds fewer redundant roads than the LCP method because the graph edge weights are updated after each landing is accessed, so that roads built earlier can be reused to access other landings. The order is determined by the `ordering` argument to `projectRoads`; by default the closest landings are accessed first. The alternative `ordering = none` builds roads in the order that landings are supplied by the user. 
@@ -201,7 +201,7 @@ legend(x = 7.25, y = 5, legend = c("landings", "roads"), pch = c(19, NA),
        xpd = NA, inset = -0.1, xjust = 1)
 ```
 
-The ILCP approach produces more realistic branching network with less redundancy. However, it is sensitive to the ordering of the landings. Below we reverse the order of the landings but continue using the default ordering of closest first. The two closest landings are tied for distance to the road and the tie is broken by the order they are supplied in so switching that produces a different road network.   
+The ILCP approach produces a more realistic branching network with less redundancy. However, it is sensitive to the ordering of the landings. Below we reverse the order of the landings but continue using the default ordering of closest first. The two closest landings are tied for distance to the road and the tie is broken by the order they are supplied in so switching that produces a different road network.   
 
 ```{r, fig.show='hold', fig.width=6.5, fig.height=4.85}
 ## project new roads using the 'ILCP' approach
@@ -321,7 +321,7 @@ plot(st_geometry(land.pnts), add = TRUE, pch = 21, cex = 1.5, bg = 'white')
 
 ### Multi-temporal simulation
 
-Multi-temporal (multiple time steps) road projections can obtained by providing `projectRoads` with the list produced by a previous call to `projectRoads`, and a new set of landings. The function uses the `sim` list as a starting point, and avoids the computational cost of reconstructing the landscape graph. This can be implemented in a loop.
+Multi-temporal (multiple time steps) road projections can be obtained by providing `projectRoads` with the list produced by a previous call to `projectRoads`, and a new set of landings. The function uses the `sim` list as a starting point, and avoids the computational cost of reconstructing the landscape graph. This can be implemented in a loop.
 
 ```{r, fig.show='hold', fig.width=7, fig.height=9.97}
 ## continuing on with demo scenario 1
