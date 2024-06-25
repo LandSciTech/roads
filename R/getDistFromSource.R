@@ -79,6 +79,7 @@
 #' # or straight from the line
 #' terra::distance(rds_rast, terra::vect(rds %>% st_set_crs(st_crs(rds_rast))))
 #'}
+#'@keywords internal
 
 getDistFromSource <- function(src, maxDist, kwidth = 3, method = "terra", override = FALSE) {
   if(!override){

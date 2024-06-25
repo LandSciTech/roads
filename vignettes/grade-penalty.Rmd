@@ -20,7 +20,6 @@ To use the grade penalty function we need to supply a raster to the `weightRaste
 
 ```{r setup}
 library(roads)
-devtools::load_all(here::here())
 library(terra)
 library(dplyr)
 library(sf)

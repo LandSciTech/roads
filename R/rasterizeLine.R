@@ -38,6 +38,7 @@
 #' # Use terra::rasterize
 #' terra::rasterize(roadsLine, CLUSexample$cost, background = 0)
 #'
+#'@keywords internal
 rasterizeLine <- function(sfLine, rast, value){
   # rasterize roads to template
   .Deprecated("terra::rasterize")

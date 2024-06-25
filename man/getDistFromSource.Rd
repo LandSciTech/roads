@@ -95,3 +95,4 @@ terra::distance(rds_rast)
 terra::distance(rds_rast, terra::vect(rds \%>\% st_set_crs(st_crs(rds_rast))))
 }
 }
+\keyword{internal}

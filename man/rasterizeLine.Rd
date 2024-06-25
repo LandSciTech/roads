@@ -33,3 +33,4 @@ matrix(c(0.5, 4.5, 4.5, 4.51),
 terra::rasterize(roadsLine, CLUSexample$cost, background = 0)
 
 }
+\keyword{internal}
