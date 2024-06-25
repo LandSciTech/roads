@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Project road network development based on an existing road network, target locations to be connected by roads and a cost surface. Road projection methods include minimum spanning tree with least cost path (Kruskal's algorithm (1956) \doi{10.2307/2033241}), least cost path (Dijkstra's algorithm (1959) \doi{10.1007/BF01386390}) or snapping. These road network projection methods are ideal for use with land cover change projection models.
+Iterative least cost path and minimum spanning tree methods for projecting forest road networks. The methods connect a set of target points to an existing road network using igraph \url{https://igraph.org} to identify least cost routes. The cost of constructing a road segment between adjacent pixels is determined by a user supplied `weightRaster` and a `weightFunction`; options include the average of adjacent `weightRaster` values, and a function of the elevation differences between adjacent cells that penalizes steep grades. These road network projection methods are intended for integration into R workflows and modelling frameworks used for forecasting forest change, and can be applied over multiple timesteps without rebuilding a graph at each timestep.
 }
 \seealso{
 Useful links:

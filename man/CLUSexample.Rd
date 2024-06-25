@@ -16,8 +16,7 @@ data(CLUSexample)
 \description{
 From Kyle Lochhead and Tyler Muhly's CLUS road simulation example. SpatRaster
 files created with the terra package must be saved with \code{\link[terra:wrap]{terra::wrap()}} and
-need to be unwrapped before they are used. \code{\link[=prepExData]{prepExData()}} is provided to do
-this.
+need to be unwrapped before they are used. \code{\link[=prepExData]{prepExData()}} does this.
 }
 \examples{
 CLUSexample
