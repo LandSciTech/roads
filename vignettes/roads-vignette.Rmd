@@ -83,7 +83,7 @@ weightRaster <- CLUSexample$cost
 
 ### 2. Existing road network layer
 
-The network of existing roads must be provided as an `sf` object with geometry type "LINES", a `SpatialLines` object, a `RasterLayer`, or a `SpatRaster`. If the input roads are a raster the projected roads will also be returned as a raster by default, but if `roadsOut = "sf"` then a geometry collection of lines and points will be returned with points representing the input roads.
+The network of existing roads must be provided as an `sf` object with geometry type `"LINES"`, a `SpatialLines` object, a `RasterLayer`, or a `SpatRaster`. If the input roads are a raster the projected roads will also be returned as a raster by default, but if `roadsOut = "sf"` then a geometry collection of lines and points will be returned with points representing the input roads.
 
 The road network included in the `CLUSexample` data-set is a raster but we use a line for plotting.  
 
@@ -100,7 +100,7 @@ roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
 
 Landings, or resource development locations, that are to be connected to the existing road network can be specified in a variety of forms:
 
-* A `sf` object with geometry type "POINTS" or "POLYGONs"
+* A `sf` object with geometry type `"POINTS"` or `"POLYGON"`
 * A logical `SpatRaster` or `RasterLayer` object with cell values of `TRUE` for landings,
 * A `SpatialPoints` or `SpatialPointsDataFrame` object with points representing landings,
 * A matrix with at least two columns, with columns 1 and 2 representing x any y coordinates of landing locations respectively, 
@@ -363,7 +363,7 @@ for (i in 1:length(multiTime_sim)){
 
 ## Multiple landings per harvest block
 
-Often harvest information is available as polygons showing the cutover area but the point locations of landings are not known. The roads package includes the `getLandingsFromTarget` function to address these situations. By default `getLandingsFromTarget` will use the centroid of a polygon as the landing but other `sampleType` options include "random" or "regular" selection of multiple landing points within harvest blocks. For "random" or "regular" sampling, `landingDens` specifies the expected number of landings per unit area.
+Often harvest information is available as polygons showing the cutover area but the point locations of landings are not known. The roads package includes the `getLandingsFromTarget` function to address these situations. By default `getLandingsFromTarget` will use the centroid of a polygon as the landing but other `sampleType` options include `"random"` or `"regular"` selection of multiple landing points within harvest blocks. For `"random"` or `"regular"` sampling, `landingDens` specifies the expected number of landings per unit area.
 
 ```{r fig.width=6,fig.height=5}
 harvPoly <- demoScen[[1]]$landings.poly

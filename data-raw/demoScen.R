@@ -25,7 +25,7 @@
 #       - cost.rast:   RasterLayer representing the cost of developing new roads on a given cell
 #       - landings.points:  a SpatialPointsDataFrame representing landings sets and points
 #                           - data frame includes a field named "set" containing integer values representing the landings set that each point belongs to
-#       - landings.stack:  a SpatRaster representing the landings and landings sets
+#       - landings.stack:  a `SpatRaster` representing the landings and landings sets
 #                          - each layer in the stack represents an individual landings set as a logical layers where TRUE is a landing in that set and FALSE is not
 #                            a landing in the set
 #       - landings.poly: a single set of polygonal landings

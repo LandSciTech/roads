@@ -1,9 +1,9 @@
 #' Grade penalty edge weight function
 #'
 #' Method for calculating the weight of an edge between two nodes from the value
-#' of the input raster at each of those nodes (x1 and x2), designed for a single
+#' of the input raster at each of those nodes (`x1` and `x2`), designed for a single
 #' DEM input. The method assumes an input `weightRaster` in which:
-#'   * NA indicates a road cannot be built
+#'   * `NA` indicates a road cannot be built
 #'   * Negative values are costs for crossing streams or other barriers that are
 #'   crossable but expensive. Edges that link to barrier penalty (negative value)
 #'   nodes are assigned the largest barrier penalty weight.
@@ -16,15 +16,20 @@
 #' Default construction cost values are from the BC interior appraisal manual.
 #' The approach ignores (unknown) grade penalties beside roads and barriers in order to
 #' avoid increased memory and computational burden associated with multiple input rasters.
-#' @references Anderson AE, Nelson J (2004) Projecting vector-based road networks with a shortest path algorithm. Canadian Journal of Forest Research 34:1444–1457. https://doi.org/10.1139/x04-030
+#' @references Anderson AE, Nelson J (2004) Projecting vector-based road networks with a
+#'  shortest path algorithm. Canadian Journal of Forest Research 34:1444–1457. https://doi.org/10.1139/x04-030
 #'
-#' @param x1,x2 Value of the input raster at two nodes.
-#' @param hdistance Horizontal distance between nodes. hdistance and x1,x2 should have the same units.
-#' @param baseCost Construction cost of 0% grade road per km.
-#' @param limit Maximum grade (%) on which roads can be built.
-#' @param penalty Cost increase (per km) associated with each additional % increase in road grade.
-#' @param limitWeight Value assigned to edges that exceed the grade limit. Try setting to a high (not NA) value if encountering problems with disconnected graphs.
-#'
+#' @param x1,x2 Number. Value of the input raster at two nodes.
+#' @param hdistance Number. Horizontal distance between nodes. `hdistance`, `x1`, and `x2`
+#'  should have the same units.
+#' @param baseCost Number. Construction cost of 0% grade road per km.
+#' @param limit Number. Maximum grade (%) on which roads can be built.
+#' @param penalty Number. Cost increase (per km) associated with each
+#'   additional % increase in road grade.
+#' @param limitWeight Number. Value assigned to edges that exceed the grade
+#'   limit. Try setting to a high (not `NA`) value if encountering problems with
+#'   disconnected graphs.
+#' 
 #' @export
 #'
 #' @examples
@@ -61,7 +66,7 @@ gradePenaltyFn <- function(x1, x2, hdistance, baseCost = 16178, limit = 20,
 #' Simple cost edge weight function
 #'
 #' Calculates the weight of an edge between two nodes as the mean value
-#' of an input cost raster at each of those nodes (x1 and x2).
+#' of an input cost raster at each of those nodes (`x1` and `x2`).
 #'
 #' @param x1,x2 Number. Value of the input cost raster at two nodes.
 #' @param hdistance Number. Horizontal distance between the nodes - for penalizing longer diagonal edges.

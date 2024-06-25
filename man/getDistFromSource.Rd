@@ -7,7 +7,7 @@
 getDistFromSource(src, maxDist, kwidth = 3, method = "terra", override = FALSE)
 }
 \arguments{
-\item{src}{SpatRaster or RasterLayer, where all values > 0 are treated as
+\item{src}{\code{SpatRaster} or RasterLayer, where all values > 0 are treated as
 source locations. NA values are treated as 0s.}
 
 \item{maxDist}{Numeric, maximum distance that should be calculated in units of

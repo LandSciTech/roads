@@ -35,7 +35,7 @@
 #'accurate since the output raster is disaggregated using bilinear
 #'interpolation.
 #'
-#'@param src SpatRaster or RasterLayer, where all values > 0 are treated as
+#'@param src `SpatRaster` or RasterLayer, where all values > 0 are treated as
 #'  source locations. NA values are treated as 0s.
 #'@param maxDist Numeric, maximum distance that should be calculated in units of
 #'  the CRS.

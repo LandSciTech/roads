@@ -29,8 +29,9 @@
 #' will not double lines as often. Neither method is likely to work for very
 #' large rasters
 #'
-#' @param rast raster representing lines all values > 0 are assumed to be lines
-#' @param method method of building lines. See Details
+#' @param rast `SpatRaster`. Raster representing lines all values > 0 are assumed to be lines
+#' @param method character. Method of building lines. Options are `"mst"` (default) or `"nearest"`.
+#'  See Details below.
 #'
 #' @return an sf simple feature collection
 #'

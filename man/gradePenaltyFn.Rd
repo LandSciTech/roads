@@ -15,24 +15,28 @@ gradePenaltyFn(
 )
 }
 \arguments{
-\item{x1, x2}{Value of the input raster at two nodes.}
+\item{x1, x2}{Number. Value of the input raster at two nodes.}
 
-\item{hdistance}{Horizontal distance between nodes. hdistance and x1,x2 should have the same units.}
+\item{hdistance}{Number. Horizontal distance between nodes. \code{hdistance}, \code{x1}, and \code{x2}
+should have the same units.}
 
-\item{baseCost}{Construction cost of 0\% grade road per km.}
+\item{baseCost}{Number. Construction cost of 0\% grade road per km.}
 
-\item{limit}{Maximum grade (\%) on which roads can be built.}
+\item{limit}{Number. Maximum grade (\%) on which roads can be built.}
 
-\item{penalty}{Cost increase (per km) associated with each additional \% increase in road grade.}
+\item{penalty}{Number. Cost increase (per km) associated with each
+additional \% increase in road grade.}
 
-\item{limitWeight}{Value assigned to edges that exceed the grade limit. Try setting to a high (not NA) value if encountering problems with disconnected graphs.}
+\item{limitWeight}{Number. Value assigned to edges that exceed the grade
+limit. Try setting to a high (not \code{NA}) value if encountering problems with
+disconnected graphs.}
 }
 \description{
 Method for calculating the weight of an edge between two nodes from the value
-of the input raster at each of those nodes (x1 and x2), designed for a single
+of the input raster at each of those nodes (\code{x1} and \code{x2}), designed for a single
 DEM input. The method assumes an input \code{weightRaster} in which:
 \itemize{
-\item NA indicates a road cannot be built
+\item \code{NA} indicates a road cannot be built
 \item Negative values are costs for crossing streams or other barriers that are
 crossable but expensive. Edges that link to barrier penalty (negative value)
 nodes are assigned the largest barrier penalty weight.
@@ -54,5 +58,6 @@ gradePenaltyFn(0.5,0.65,1)
 gradePenaltyFn(0.5,0.75,1)
 }
 \references{
-Anderson AE, Nelson J (2004) Projecting vector-based road networks with a shortest path algorithm. Canadian Journal of Forest Research 34:1444–1457. https://doi.org/10.1139/x04-030
+Anderson AE, Nelson J (2004) Projecting vector-based road networks with a
+shortest path algorithm. Canadian Journal of Forest Research 34:1444–1457. https://doi.org/10.1139/x04-030
 }

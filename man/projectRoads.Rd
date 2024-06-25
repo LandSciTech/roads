@@ -58,18 +58,20 @@ projectRoads(
 )
 }
 \arguments{
-\item{landings}{sf polygons or points, RasterLayer, SpatialPolygons*,
-SpatialPoints*, or matrix, containing features to be connected
+\item{landings}{sf polygons or points, \code{RasterLayer}, \verb{SpatialPolygons*},
+\verb{SpatialPoints*}, or matrix. Contains features to be connected
 to the road network. Matrix should contain columns x, y with coordinates,
 all other columns will be ignored. Polygon and raster inputs will be
-processed by \code{getLandingsFromTarget} to get the centroid of harvest blocks.}
+processed by \code{\link[=getLandingsFromTarget]{getLandingsFromTarget()}} to get the centroid of harvest blocks.}
 
-\item{weightRaster}{SpatRaster or RasterLayer. A \code{weightRaster} and \code{weightFunction}
-together determine the cost to build a road between two adjacent raster cells.
-For the default \code{weightFunction = simpleCostFn}, the \code{weightRaster} should specify the cost of
-construction across each raster cell. The value of cells that contain existing roads should be set to 0; if not
-set \code{roadsInWeight = FALSE} to adjust the cost of existing roads. To use the alternative grade penalty method,
-set \code{weightFunction = gradePenaltyFn}, and provide a \code{weightRaster} in which:
+\item{weightRaster}{\code{SpatRaster} or \code{RasterLayer}. A \code{weightRaster} and
+\code{weightFunction} together determine the cost to build a road between two
+adjacent raster cells. For the default \code{weightFunction = simpleCostFn}, the
+\code{weightRaster} should specify the cost of construction across each raster
+cell. The value of cells that contain existing roads should be set to 0; if
+not set \code{roadsInWeight = FALSE} to adjust the cost of existing roads. To
+use the alternative grade penalty method, set \code{weightFunction = gradePenaltyFn},
+and provide a \code{weightRaster} in which:
 \itemize{
 \item NA indicates a road cannot be built
 \item Negative values are costs for crossing streams or other barriers that are
@@ -80,49 +82,56 @@ map (so that a difference between two cells equal to the map resolution can be
 interpreted as 100\% grade).
 }}
 
-\item{roads}{sf lines, SpatialLines*, RasterLayer, SpatRaster. The existing road network.}
+\item{roads}{sf lines, \verb{SpatialLines*}, \code{RasterLayer}, \code{SpatRaster}. The existing road network.}
 
-\item{roadMethod}{Character. Options are "ilcp", "mst", "lcp", and "snap".}
+\item{roadMethod}{Character. Options are \code{"ilcp"}, \code{"mst"}, \code{"lcp"}, and \code{"snap"}.
+See Details below.}
 
 \item{plotRoads}{Boolean. Should the resulting road network be plotted.
-Default FALSE.}
+Default \code{FALSE}.}
 
-\item{mainTitle}{Character. A title for the plot}
+\item{mainTitle}{Character. A title for the plot.}
 
-\item{neighbourhood}{Character. 'rook','queen', or 'octagon' determines which cells are considered adjacent.
-The default 'octagon' option is a modified version of
-the queen's 8 cell neighbourhood in which diagonal weights are multiplied by 2^0.5.}
+\item{neighbourhood}{Character. \code{"rook"}, \code{"queen"}, or \code{"octagon"}.
+Determines which cells are considered adjacent. The default \code{"octagon"}
+option is a modified version of the queen's 8 cell neighbourhood in which
+diagonal weights are multiplied by 2^0.5.}
 
 \item{weightFunction}{function. Method for calculating the weight of an edge
-between two nodes from the value of the \code{weightRaster} at each of those nodes
-(\code{x1} and \code{x2}). Default \code{simpleCostFn} is the mean. The alternative \code{gradePenaltyFn} sets edge weights as a function of the
-difference between adjacent \code{weightRaster} cells to penalize steep grades. Users supplying their own \code{weightFunction} should note that it must be symmetric,
-meaning that the value returned should not depend on the ordering of \code{x1} and \code{x2}.
-The \code{weightFunction} must include arguments \code{x1}, \code{x2} and \code{...}.}
+between two nodes from the value of the \code{weightRaster} at each of those
+nodes (\code{x1} and \code{x2}). The default \code{simpleCostFn} is the mean. The
+alternative, \code{gradePenaltyFn}, sets edge weights as a function of the
+difference between adjacent \code{weightRaster} cells to penalize steep grades.
+Users supplying their own \code{weightFunction} should note that it must be
+symmetric, meaning that the value returned should not depend on the
+ordering of \code{x1} and \code{x2}. The \code{weightFunction} must include arguments
+\code{x1}, \code{x2} and \code{...}.}
 
 \item{sim}{list. Returned from a previous iteration of \code{projectRoads}.
-weightRaster, roads, and \code{roadMethod} are ignored if a \code{sim} list is provided.}
+\code{weightRaster}, \code{roads}, and \code{roadMethod} are ignored if a \code{sim} list is provided.}
 
-\item{roadsOut}{Character. Either "raster", "sf" or NULL. If "raster" roads
-are returned as a raster in the \code{sim} list. If "sf" the roads are returned as
+\item{roadsOut}{Character. Either \code{"raster"}, \code{"sf"} or \code{NULL}. If \code{"raster"} roads
+are returned as a \code{SpatRaster} in the \code{sim} list. If \code{"sf"} the roads are returned as
 an sf object which will contain lines if the roads input was sf lines but a
 geometry collection of lines and points if the roads input was a raster.
 The points in the geometry collection represent the existing roads while
-new roads are created as lines. If NULL (default) then the returned roads
-are sf if the input is sf or Spatial* and raster if the input was a raster.}
+new roads are created as lines. If \code{NULL} (default) then the returned roads
+are \code{sf} if the input is \code{sf} or \verb{Spatial*} and \code{SpatRaster} if the input was a raster.}
 
-\item{roadsInWeight}{Logical. If TRUE (default) the value of existing roads in the
-\code{weightRaster} is assumed to be 0. If FALSE cells in the \code{weightRaster} that contain existing roads will be set to 0.}
+\item{roadsInWeight}{Logical. If \code{TRUE} (default) the value of existing roads in the
+\code{weightRaster} is assumed to be 0. If \code{FALSE} cells in the \code{weightRaster} that
+contain existing roads will be set to 0.}
 
-\item{ordering}{character. The order in which landings are processed when \code{roadMethod = "ilcp"}. Options are "closest" (default) where
-landings closest to existing roads are accessed first, or "none" where
+\item{ordering}{character. The order in which landings are processed when
+\code{roadMethod = "ilcp"}. Options are \code{"closest"} (default) where landings
+closest to existing roads are accessed first, or \code{"none"} where
 landings are accessed in the order they are provided in.}
 
-\item{roadsConnected}{Logical. Are all roads fully connected? If TRUE and
+\item{roadsConnected}{Logical. Are all roads fully connected? If \code{TRUE} and
 \code{roadMethod = "mst"} the MST graph can be simplified and the projection
-should be faster}
+should be faster. Default is \code{FALSE}.}
 
-\item{...}{Optional additional arguments to \code{weightFunction}}
+\item{...}{Optional additional arguments to \code{weightFunction}.}
 }
 \value{
 a list with components:
@@ -133,27 +142,30 @@ a list with components:
 \item landings: the landings used in the simulation.
 \item g: the graph that describes the cost of paths between each cell in the updated
 \code{weightRaster}. Edges between vertices connected by new roads have weight 0.
-\code{g} can be used to avoid the cost of rebuilding the graph in a simulation with multiple time steps.
+\code{g} can be used to avoid the cost of rebuilding the graph in a simulation
+with multiple time steps.
 }
 }
 \description{
-Project a road network that links target landings to existing roads.
-For all methods except "snap", a \code{weightRaster} and \code{weightFunction} together determine the cost to
-build a road between two adjacent raster cells.
+Project a road network that links target landings to existing roads. For all
+methods except \code{"snap"}, a \code{weightRaster} and \code{weightFunction} together
+determine the cost to build a road between two adjacent raster cells.
 }
 \details{
 Four road network projection methods are:
 \itemize{
-\item "lcp": The Least Cost Path method connects each landing to the closest road with a
-least cost path, without reference to other landings.
-\item "ilcp": The Iterative Least Cost Path method iteratively connects each landing to the closest road
-with a least cost path, so that the path to each successive landing can include roads
-constructed to access previous landings. The sequence
-of landings is determined by \code{ordering} and is "closest" by default. The
-alternative "none" option processes landings in the order supplied by the user.
-\item "mst": The Minimum Spanning Tree method connects landings to the existing road
-with a minimum spanning tree that does not require users to specify the order in which landings are processed.
-\item "snap": Connects each landing to the closest (by Euclidean distance) road without,
+\item \code{"lcp"}: The Least Cost Path method connects each landing to the closest
+road with a least cost path, without reference to other landings.
+\item \code{"ilcp"}: The Iterative Least Cost Path method iteratively connects each
+landing to the closest road with a least cost path, so that the path to
+each successive landing can include roads constructed to access previous
+landings. The sequence of landings is determined by \code{ordering} and is
+"closest" by default. The alternative "none" option processes landings in
+the order supplied by the user.
+\item \code{"mst"}: The Minimum Spanning Tree method connects landings to the existing road
+with a minimum spanning tree that does not require users to specify the
+order in which landings are processed.
+\item \code{"snap"}: Connects each landing to the closest (by Euclidean distance) road without,
 reference to the weights or other landings.
 }
 }
@@ -180,7 +192,7 @@ land.pnts <- scen$landings.points[scen$landings.points$set==1,]
 prRes <- projectRoads(land.pnts, scen$cost.rast, scen$road.line, "ilcp",
                          plotRoads = doPlots, mainTitle = "Scen 1: SPDF-LCP")
 
-### using: scenario 1 / SpatRaster landings / minimum spanning tree ("mst")
+### using: scenario 1 / `SpatRaster` landings / minimum spanning tree ("mst")
 # demo scenario 1
 scen <- demoScen[[1]]
 

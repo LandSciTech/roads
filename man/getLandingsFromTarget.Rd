@@ -7,35 +7,35 @@
 getLandingsFromTarget(harvest, landingDens = NULL, sampleType = "centroid")
 }
 \arguments{
-\item{harvest}{sf, SpatialPolygons, SpatRaster or RasterLayer object with harvested
+\item{harvest}{\code{sf}, \code{SpatialPolygons}, \code{SpatRaster} or \code{RasterLayer} object with harvested
 areas. If it is a raster with values outside 0,1, values are assumed
 to be harvest block IDs. If raster values are in 0,1 they are assumed to be
-a binary raster and \code{terra::patches} is used to identify harvest
+a binary raster and \link[terra:patches]{terra::patches} is used to identify harvest
 blocks.}
 
 \item{landingDens}{number of landings per unit area. This should be in the
 same units as the CRS of the harvest. Note that 0.001 points per m2 is > 1000
 points per km2 so this number is usually very small for projected CRS.}
 
-\item{sampleType}{character. "centroid" (default), "regular" or "random".
-Centroid returns one landing per harvest block, which is guaranteed to be
-in the harvest block for sf objects but not for rasters. "regular" returns
+\item{sampleType}{character. \code{"centroid"} (default), \code{"regular"} or \code{"random"}.
+\code{"centroid"} returns one landing per harvest block, which is guaranteed to be
+in the harvest block for sf objects but not for rasters. \code{"regular"} returns
 points from a grid with density \code{landingDens} that overlap the
-harvested areas. "random" returns a random set of points from each polygon
+harvested areas. \code{"random"} returns a random set of points from each polygon
 determined by the area of the polygon and
 \code{landingDens}. If \code{harvest} is a raster set of landings always includes the centroid
 to ensure at least one landing for each harvest block.}
 }
 \value{
-an sf simple feature collection with an ID column and POINT geometry
+an sf simple feature collection with an \code{ID} column and \code{POINT} geometry
 }
 \description{
 Generate landing points inside polygons representing harvested area. There
-are three different sampling types available: "centroid" (default) returns
+are three different sampling types available: \code{"centroid"} (default) returns
 the centroid or a point inside the polygon if the
-centroid is not (see \code{sf::st_point_on_surface()}); "random" returns a
+centroid is not (see \code{\link[sf:geos_unary]{sf::st_point_on_surface()}}); \code{"random"} returns a
 random sample given \code{landingDens} see
-(\code{sf::st_sample()}); "regular" returns points on a regular grid with cell size \code{sqrt(1/landingDens)}
+(\code{\link[sf:st_sample]{sf::st_sample()}}); \code{"regular"} returns points on a regular grid with cell size \code{sqrt(1/landingDens)}
 that intersect the polygon, or centroid if no grid points fall within the polygon.
 }
 \details{

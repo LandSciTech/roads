@@ -7,9 +7,10 @@
 rasterToLineSegments(rast, method = "mst")
 }
 \arguments{
-\item{rast}{raster representing lines all values > 0 are assumed to be lines}
+\item{rast}{\code{SpatRaster}. Raster representing lines all values > 0 are assumed to be lines}
 
-\item{method}{method of building lines. See Details}
+\item{method}{character. Method of building lines. Options are \code{"mst"} (default) or \code{"nearest"}.
+See Details below.}
 }
 \value{
 an sf simple feature collection

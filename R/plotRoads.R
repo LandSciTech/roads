@@ -16,11 +16,11 @@
 
 #' Plot projected roads
 #' 
-#' Plot the results of `projectRoads`
+#' Plot the results of [projectRoads()]
 #'
-#' @param sim sim list result from `projectRoads`
-#' @param mainTitle A title for the plot
-#' @param subTitle A sub title for the plot, by default the `roadMethod` is used
+#' @param sim `sim` list result from `projectRoads`
+#' @param mainTitle character. A title for the plot
+#' @param subTitle character. A sub title for the plot, by default the `roadMethod` is used
 #' @param ... Other arguments passed to raster plot call for the `weightRaster`
 #' 
 #' @return Creates a plot using base graphics

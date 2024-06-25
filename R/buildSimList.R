@@ -34,7 +34,7 @@ buildSimList <- function(roads, weightRaster, roadMethod, landings, roadsInWeigh
     if(is(weightRaster, "RasterLayer")){
       weightRaster <- terra::rast(weightRaster)
     } else {
-      stop("weightRaster must be provided as a SpatRaster or RasterLayer", call. = FALSE)
+      stop("weightRaster must be provided as a `SpatRaster` or RasterLayer", call. = FALSE)
     }
   } 
   if(terra::minmax(weightRaster)[1] == 0 || 0 %in% terra::unique(weightRaster)[[1]]){
@@ -175,9 +175,9 @@ buildSimList <- function(roads, weightRaster, roadMethod, landings, roadsInWeigh
 #' an internal function and does not contain many checks. Use at own risk.
 #'
 #' @param roads sf object with road lines
-#' @param weightRaster SpatRaster with weights
+#' @param weightRaster `SpatRaster` with weights
 #'
-#' @return a SpatRaster with 0 for roads.
+#' @return a `SpatRaster` with 0 for roads.
 #' 
 #' @noRd
 burnRoadsInWeight <- function(roads, weightRaster){

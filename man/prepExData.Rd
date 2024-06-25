@@ -7,15 +7,15 @@
 prepExData(x)
 }
 \arguments{
-\item{x}{A list containing elements some of which are packed SpatRasters.}
+\item{x}{list. Contains elements some of which are packed \code{SpatRasters}.}
 }
 \value{
-The same list but with unwrapped SpatRasters
+The same list but with unwrapped \code{SpatRasters}
 }
 \description{
 Prepare example data included in the package that contain wrapped terra
 objects. This applies \code{\link[terra:wrap]{terra::unwrap()}} recursively to the list provided so
-that all PackedSpatRasters are converted to SpatRasters.
+that all \code{PackedSpatRasters} are converted to \code{SpatRasters}.
 }
 \examples{
 CLUSexample
