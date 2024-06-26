@@ -70,8 +70,7 @@ By default `projectRoads` uses an iterative least cost paths algorithm
 the lowest cost path, updating the cost after each landing is connected.
 A minimum spanning tree method (`roadMethod = "mst"`) is also available.
 
-For more details see the vignette
-`vignette("roads-vignette", package = "roads")`
+For more details see `vignette("roads-vignette", package = "roads")`
 
 # License
 
