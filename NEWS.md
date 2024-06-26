@@ -4,11 +4,12 @@
 * Change default `roadMethod` to `"ilcp"` in `projectRoads` 
 * Add ability to use a custom `weightFunction` and add a `weightFunction` `gradePenaltyFn` 
 that determines the grade between two cells
+* Add a vignette and a demo data set `dem_example` to show how `gradePenaltyFn` can be used. 
 * Change argument name from `cost` to `weightRaster` since it no longer represents a cost 
 surface and can now be inputs to the `weightFunction`. Also change `roadsInCost` to `roadsInWeight`.
 * returned roads are no longer unioned together. 
 * Deprecate `getDistFromSource` and use `terra::distance` instead. 
-* Fix bug in getLandingsFromTarget and change so that patches are used for 0,1 rasters and 
+* Fix bug in `getLandingsFromTarget` and change so that patches are used for 0,1 rasters and 
 ids are used otherwise using terra::as.polygons to make it faster. 
 
 # roads 1.1.1
