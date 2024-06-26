@@ -18,7 +18,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-To use the grade penalty function we need to supply a raster to the `weightRaster` argument that contains elevation and has other barriers (eg water bodies) included in the raster as negative or NA values. In this example we will use an elevation and proportion water data set downloaded with the `geodata` package and cropped to an example area in British Columbia, Canada that is included in the package.    
+In this tutorial we explore the `gradePenaltyFn` by attempting to build roads to randomly selected locations in a mountainous region of British Columbia, Canada. While the elevation and landcover data used is real, the roads and landings are not and projected roads are not expected to match observed roads. In most real applications, an established existing road network will constrain the locations of new access roads. `gradePenaltyFn` uses a simplified version of the grade penalty approach taken by Anderson and Nelson (2004) to penalize roads that go up steep slopes and encourage roads to follow the contours of the landscape. 
+
+To use the grade penalty function we need to supply a raster to the `weightRaster` argument that contains elevation and has other barriers (eg water bodies) included in the raster as negative or `NA` values. In this example we will use an elevation and proportion water data set downloaded with the `geodata` package and cropped to an example area in British Columbia, Canada that is included in the package.    
 
 ```{r setup}
 library(roads)
@@ -40,7 +42,7 @@ And the proportion of the landscape covered by water in each cell shows that the
 plot(dem_example$ex_wat)
 ```
 
-`gradePenaltyFn` requires a single raster as input but allows factors other than grade that will affect road construction to be included in the raster as negative values and barriers where no road construction is possible to be included as NA values. In this example we will assume that road construction is impossible for cells where the proportion of water is > 50%. Then we set areas with less than 1% water to NA so that the grade penalty will still apply in this case. We also need to get the penalty for water crossing on to a similar scale as the grade penalty in this case we will assume the same base cost of \$16178 and the same penalty of \$504 for every percentage point increase in percent water. Note this is just an example and there are certainly better data sources for the locations and costs of stream crossings. 
+`gradePenaltyFn` requires a single raster as input but allows factors other than grade that will affect road construction to be included in the raster as negative values and barriers where no road construction is possible to be included as `NA` values. In this example we will assume that road construction is impossible for cells where the proportion of water is > 50%. Then we set areas with less than 1% water to NA so that the grade penalty will still apply in this case. We also need to get the penalty for water crossing on to a similar scale as the grade penalty in this case we will assume the same base cost of \$16178 and the same penalty of \$504 for every percentage point increase in percent water. Note this is just an example and there are certainly better data sources for the locations and costs of stream crossings. 
 
 ```{r}
 # set water to NA when a cell is > 50% water
@@ -145,7 +147,7 @@ rd_proj <- projectRoads(lnds, wt_rast, rd_in, weightFunction = gradePenaltyFn,
                         roadsInWeight = FALSE, roadMethod = "ilcp")
 ```
 
-Our first attempt results in an error because one or more landings cannot be reached without traversing a grade of more than 20% which is the default value of `limit` in `gradePenaltyFn()`. To avoid this we can increase `limit` or change `limitWeight` to something other than `NA`. Here we set `limit = 30`.
+Our first attempt results in an error because one or more landings cannot be reached without traversing a grade of more than 20% which is the default value of `limit` in `gradePenaltyFn()`. To avoid this we can increase `limit` or change `limitWeight` to something other than `NA`. Below we try both setting `limit = 30` and `limitWeight = 40000^2`. Which have slightly different results.
 
 
 ```{r proj-rds}
@@ -195,3 +197,6 @@ plotRoads(rd_proj2, breaks = c(-40000^2, -40000, -30000, -20000, -16178, 0, 1:10
      colNA = "grey50", mar = c(2, 2, 2, 8.5))
 ```
 
+## References 
+Anderson AE, Nelson J (2004) Projecting vector-based road networks with a
+shortest path algorithm. Canadian Journal of Forest Research 34:1444–1457. https://doi.org/10.1139/x04-030
