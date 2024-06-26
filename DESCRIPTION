@@ -77,5 +77,6 @@ Collate:
     'rasterizeLine.R'
     'prepExData.R'
     'roads-package.R'
+    'dem_example.R'
 BugReports: https://github.com/LandSciTech/roads/issues
 Roxygen: list(markdown = TRUE)

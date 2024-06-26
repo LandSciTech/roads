@@ -46,6 +46,6 @@
 #' * ex_wat: a `PackedSpatRaster` of proportion water.
 #'
 #' @examples
-#' CLUSexample
-#' prepExData(CLUSexample)
-"CLUSexample"
+#' dem_example
+#' prepExData(dem_example)
+"dem_example"
