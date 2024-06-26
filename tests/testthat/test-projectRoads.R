@@ -164,6 +164,14 @@ test_that("landings on road or multiple landings in same cell work", {
   
 })
 
+test_that("Works with GEOMETRY input", {
+  lndPoly <- demoScen[[1]]$landings.poly %>% sf::st_as_sf() %>% 
+    sf::st_set_agr("constant")
+  lndPoly[6, 2] <- lndPoly[6, 2] %>% sf::st_cast("MULTIPOLYGON")
+  expect_type(projectRoads(lndPoly, scen$cost.rast, scen$road.line), "list")
+})
+
+
 if(FALSE){
   # checking memory allocations
   bm1 <- bench::mark(projectRoads(scen$landings.points, scen$cost.rast,

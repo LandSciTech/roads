@@ -144,3 +144,18 @@ test_that("raster with clumps input works with ID",{
 
 })
 
+test_that("Works with GEOMETRY input", {
+  lndPoly[6, 2] <- lndPoly[6, 2] %>% sf::st_cast("MULTIPOLYGON")
+  
+  outCent <- getLandingsFromTarget(lndPoly)
+  expect_type(outCent, "list")
+  
+  outRand <- getLandingsFromTarget(lndPoly, sampleType = "random",
+                                   landingDens = 0.00001)
+  expect_type(outRand, "list")
+  
+  
+  outReg <- getLandingsFromTarget(lndPoly, sampleType = "regular",
+                                   landingDens = 0.00001)
+  expect_type(outReg, "list")
+})

@@ -105,8 +105,8 @@ buildSimList <- function(roads, weightRaster, roadMethod, landings, roadsInWeigh
     }
   }
   
-  if(sf::st_geometry_type(landings, by_geometry = FALSE) %in% 
-     c("POLYGON", "MULTIPOLYGON")){
+  if(all(sf::st_geometry_type(landings, by_geometry = TRUE) %in% 
+     c("POLYGON", "MULTIPOLYGON"))){
     # Use point on surface not centroid to ensure point is inside irregular polygons
     landings <- sf::st_point_on_surface(sf::st_set_agr(landings, "constant")) %>% 
       sf::st_set_agr("constant")

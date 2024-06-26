@@ -159,8 +159,8 @@ getLandingsFromTarget <- function(harvest,
 
     }
   }
-  if(sf::st_geometry_type(harvest, by_geometry = FALSE) %in%
-     c("POLYGON", "MULTIPOLYGON")){
+  if(all(sf::st_geometry_type(harvest, by_geometry = TRUE) %in%
+     c("POLYGON", "MULTIPOLYGON"))){
     if(sampleType == "centroid"){
       # Use point on surface not centroid to ensure point is inside irregular
       # polygons
@@ -203,6 +203,9 @@ getLandingsFromTarget <- function(harvest,
       return(sf::st_sf(landings))
     }
 
+  } else {
+    stop("harvest contains geometries other than POLYGON and MULTIPOLYGON.",
+         "\nPlease supply only polygons")
   }
 }
 
