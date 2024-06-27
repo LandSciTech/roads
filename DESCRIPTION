@@ -27,12 +27,15 @@ Date: 2024-06-26
 URL: https://github.com/LandSciTech/roads,
     https://landscitech.github.io/roads/
 Description: Iterative least cost path and minimum spanning tree methods for projecting 
-    forest road networks. The methods connect a set of target points to an existing road network using 'igraph' <https://igraph.org> 
-    to identify least cost routes. The cost of constructing a road segment between adjacent pixels is determined by a user supplied 
-    weightRaster and a weightFunction; options include the average of adjacent `weightRaster` values, 
-    and a function of the elevation differences between adjacent cells that penalizes steep grades. These road network projection 
-    methods are intended for integration into R workflows and modelling frameworks used for forecasting forest change, 
-    and can be applied over multiple time-steps without rebuilding a graph at each time-step.
+    forest road networks. The methods connect a set of target points to an existing 
+    road network using 'igraph' <https://igraph.org> to identify least cost routes.
+    The cost of constructing a road segment between adjacent pixels is determined
+    by a user supplied weight raster and a weight function; options include the
+    average of adjacent weight raster values, and a function of the elevation 
+    differences between adjacent cells that penalizes steep grades. These road
+    network projection methods are intended for integration into R workflows and 
+    modelling frameworks used for forecasting forest change, and can be applied 
+    over multiple time-steps without rebuilding a graph at each time-step.
 License: Apache License (>= 2)
 Encoding: UTF-8
 LazyData: true

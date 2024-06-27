@@ -8,9 +8,12 @@ ubuntu-latest(oldrel-1)
 
 ## R CMD check results
 
-0 errors ✔ | 0 warnings ✔ | 1 notes ✖
+0 errors ✔ | 0 warnings ✔ | 0 notes ✖
 
-This NOTE is related to spelling of argument names used in the description
 
 ## Reverse Dependencies
 There are none
+
+## Resubmit
+Resubmitting after changing names of arguments that were used in the DESCRIPTION 
+to writing out a description of the objects.
