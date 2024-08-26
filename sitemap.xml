@@ -1,72 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://landscitech.github.io/roads/404.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/articles/ReconstructRoadHistory.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/articles/grade-penalty.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/articles/roads-vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/index.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/CLUSexample.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/dem_example.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/demoScen.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/getDistFromSource.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/getLandingsFromTarget.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/gradePenaltyFn.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/plotRoads.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/prepExData.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/projectRoads.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/rasterToLineSegments.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/rasterizeLine.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/roads-package.html</loc>
-  </url>
-  <url>
-    <loc>https://landscitech.github.io/roads/reference/simpleCostFn.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://landscitech.github.io/roads/404.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/LICENSE.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/articles/ReconstructRoadHistory.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/articles/grade-penalty.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/articles/index.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/articles/roads-vignette.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/authors.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/index.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/news/index.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/CLUSexample.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/dem_example.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/demoScen.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/getDistFromSource.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/getLandingsFromTarget.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/gradePenaltyFn.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/index.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/plotRoads.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/prepExData.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/projectRoads.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/rasterToLineSegments.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/rasterizeLine.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/roads-package.html</loc></url>
+<url><loc>https://landscitech.github.io/roads/reference/simpleCostFn.html</loc></url>
 </urlset>
+

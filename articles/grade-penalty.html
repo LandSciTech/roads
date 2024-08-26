@@ -5,73 +5,50 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="roads">
 <title>Using the grade penalty function • roads</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Using the grade penalty function">
-<meta property="og:description" content="roads">
-<meta property="og:image" content="https://landscitech.github.io/roads/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Using the grade penalty function">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">roads</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a>
-    <a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a>
-    <a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/grade-penalty.html">Using the grade penalty function</a></li>
+    <li><a class="dropdown-item" href="../articles/ReconstructRoadHistory.html">Reconstruct road development history</a></li>
+    <li><a class="dropdown-item" href="../articles/roads-vignette.html">roads Package</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/LandSciTech/roads/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/LandSciTech/roads/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -83,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Using the grade penalty function</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/LandSciTech/roads/blob/HEAD/vignettes/grade-penalty.Rmd" class="external-link"><code>vignettes/grade-penalty.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/LandSciTech/roads/blob/master/vignettes/grade-penalty.Rmd" class="external-link"><code>vignettes/grade-penalty.Rmd</code></a></small>
       <div class="d-none name"><code>grade-penalty.Rmd</code></div>
     </div>
 
@@ -109,9 +86,8 @@ is included in the package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LandSciTech/roads" class="external-link">roads</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; terra 1.7.78</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; terra 1.7.78</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:terra':</span></span>
@@ -122,22 +98,20 @@ is included in the package.</p>
 <span><span class="co">#&gt;     filter, lag</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE</span></span>
+<span></span>
 <span><span class="co"># prep the terra rasters for use</span></span>
 <span><span class="va">dem_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepExData.html">prepExData</a></span><span class="op">(</span><span class="va">dem_example</span><span class="op">)</span></span></code></pre></div>
 <p>The elevation data shows that this is a mountainous region.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">dem_example</span><span class="op">$</span><span class="va">ex_elev</span><span class="op">)</span></span></code></pre></div>
 <p><img src="grade-penalty_files/figure-html/elev-1.png" width="624"></p>
 <p>And the proportion of the landscape covered by water in each cell
 shows that there are several long narrow lakes crossing the
 landscape.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">dem_example</span><span class="op">$</span><span class="va">ex_wat</span><span class="op">)</span></span></code></pre></div>
 <p><img src="grade-penalty_files/figure-html/water-1.png" width="624"></p>
 <p><code>gradePenaltyFn</code> requires a single raster as input but
@@ -153,7 +127,7 @@ base cost of $16178 and the same penalty of $504 for every percentage
 point increase in percent water. Note this is just an example and there
 are certainly better data sources for the locations and costs of stream
 crossings.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set water to NA when a cell is &gt; 50% water</span></span>
 <span><span class="va">wat_use</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/classify.html" class="external-link">classify</a></span><span class="op">(</span><span class="va">dem_example</span><span class="op">$</span><span class="va">ex_wat</span>, <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -169,7 +143,7 @@ crossings.</p>
 <p><img src="grade-penalty_files/figure-html/unnamed-chunk-2-1.png" width="624"></p>
 <p>We then combine the two rasters together by setting elevation to 0
 when there is a water penalty and summing them.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set elev to 0 when wat is NA</span></span>
 <span><span class="va">elev_use</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/mask.html" class="external-link">mask</a></span><span class="op">(</span><span class="va">elev_use</span>, <span class="va">wat_use</span>, inverse <span class="op">=</span> <span class="cn">TRUE</span>, updatevalue <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
@@ -188,7 +162,7 @@ elevation and less than 1% water and then randomly select points. We use
 a stratified sample below since this is the easiest way to get a sample
 of just the cells that are <code>TRUE</code> in
 <code>for_area</code></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get landing points</span></span>
 <span></span>
 <span><span class="va">for_area</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wat_use</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">elev_use</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">elev_use</span> <span class="op">&lt;</span> <span class="fl">2000</span></span>
@@ -215,7 +189,7 @@ of just the cells that are <code>TRUE</code> in
 <p>Finally, we create an initial road to serve as a starting point. This
 can be done interactively using <code><a href="https://rspatial.github.io/terra/reference/draw.html" class="external-link">terra::draw</a></code> but we saved
 the result using <code>dput</code> to make it re-runnable.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get starting road</span></span>
 <span></span>
 <span><span class="co"># create line interactively</span></span>
@@ -250,7 +224,7 @@ the result using <code>dput</code> to make it re-runnable.</p>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_set_crs</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="va">lnds</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Now we are ready to project the locations of roads connecting each
 landing to our initial road network.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rd_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">lnds</span>, <span class="va">wt_rast</span>, <span class="va">rd_in</span>, weightFunction <span class="op">=</span> <span class="va">gradePenaltyFn</span>, </span>
 <span>                        roadsInWeight <span class="op">=</span> <span class="cn">FALSE</span>, roadMethod <span class="op">=</span> <span class="st">"ilcp"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Burning in roads to weightRaster from sf</span></span>
@@ -266,23 +240,21 @@ the default value of <code>limit</code> in
 than <code>NA</code>. Below we try both setting <code>limit = 30</code>
 and <code>limitWeight = 40000^2</code>. Which have slightly different
 results.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rd_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">lnds</span>, <span class="va">wt_rast</span>, <span class="va">rd_in</span>, weightFunction <span class="op">=</span> <span class="va">gradePenaltyFn</span>, </span>
 <span>                        roadsInWeight <span class="op">=</span> <span class="cn">FALSE</span>, roadMethod <span class="op">=</span> <span class="st">"ilcp"</span>, limit <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Burning in roads to weightRaster from sf</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Burning in roads to weightRaster from sf</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/plotRoads.html">plotRoads</a></span><span class="op">(</span><span class="va">rd_proj</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">40000</span>, <span class="op">-</span><span class="fl">30000</span>, <span class="op">-</span><span class="fl">20000</span>, <span class="op">-</span><span class="fl">16178</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">*</span><span class="fl">300</span><span class="op">)</span>, </span>
 <span>     col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mappal.html" class="external-link">map.pal</a></span><span class="op">(</span><span class="st">"blues"</span>, <span class="fl">5</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/flip.html" class="external-link">rev</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mappal.html" class="external-link">map.pal</a></span><span class="op">(</span><span class="st">"oranges"</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>     colNA <span class="op">=</span> <span class="st">"grey50"</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">6.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="grade-penalty_files/figure-html/proj-rds-1.png" width="624"></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">rd_proj3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">lnds</span>, <span class="va">wt_rast</span>, <span class="va">rd_in</span>, weightFunction <span class="op">=</span> <span class="va">gradePenaltyFn</span>, </span>
 <span>                        roadsInWeight <span class="op">=</span> <span class="cn">FALSE</span>, roadMethod <span class="op">=</span> <span class="st">"ilcp"</span>, limitWeight <span class="op">=</span> <span class="fl">40000</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Burning in roads to weightRaster from sf</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Burning in roads to weightRaster from sf</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/plotRoads.html">plotRoads</a></span><span class="op">(</span><span class="va">rd_proj3</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">40000</span>, <span class="op">-</span><span class="fl">30000</span>, <span class="op">-</span><span class="fl">20000</span>, <span class="op">-</span><span class="fl">16178</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">*</span><span class="fl">300</span><span class="op">)</span>, </span>
 <span>     col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mappal.html" class="external-link">map.pal</a></span><span class="op">(</span><span class="st">"blues"</span>, <span class="fl">5</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/flip.html" class="external-link">rev</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mappal.html" class="external-link">map.pal</a></span><span class="op">(</span><span class="st">"oranges"</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>     colNA <span class="op">=</span> <span class="st">"grey50"</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">6.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -290,7 +262,7 @@ results.</p>
 <p>Another challenge can occur if an area is not accessible without
 crossing cells that are <code>NA</code>. Below we set all areas with
 greater than 10% water to <code>NA</code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set &gt; 10% water to NA </span></span>
 <span><span class="va">wat_10</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/classify.html" class="external-link">classify</a></span><span class="op">(</span><span class="va">dem_example</span><span class="op">$</span><span class="va">ex_wat</span>, <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -300,7 +272,7 @@ greater than 10% water to <code>NA</code>.</p>
 <span>     col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mappal.html" class="external-link">map.pal</a></span><span class="op">(</span><span class="st">"blues"</span>, <span class="fl">5</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/flip.html" class="external-link">rev</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mappal.html" class="external-link">map.pal</a></span><span class="op">(</span><span class="st">"oranges"</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>     colNA <span class="op">=</span> <span class="st">"grey50"</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">6.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="grade-penalty_files/figure-html/unnamed-chunk-7-1.png" width="624"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">lnds</span>, <span class="va">wt_rast</span>, <span class="va">rd_in</span>, weightFunction <span class="op">=</span> <span class="va">gradePenaltyFn</span>,</span>
 <span>             roadsInWeight <span class="op">=</span> <span class="cn">FALSE</span>, roadMethod <span class="op">=</span> <span class="st">"ilcp"</span>, limit <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
@@ -327,14 +299,13 @@ greater than 10% water to <code>NA</code>.</p>
 <p>To address this we can change <code>NA</code> values to an
 arbitrarily large negative value to prevent crossing unless
 required.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wt_rast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/subst.html" class="external-link">subst</a></span><span class="op">(</span><span class="va">wt_rast</span>, from <span class="op">=</span> <span class="cn">NA</span>, to <span class="op">=</span> <span class="op">-</span><span class="fl">40000</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">rd_proj2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectRoads.html">projectRoads</a></span><span class="op">(</span><span class="va">lnds</span>, <span class="va">wt_rast</span>, <span class="va">rd_in</span>, weightFunction <span class="op">=</span> <span class="va">gradePenaltyFn</span>,</span>
 <span>             roadsInWeight <span class="op">=</span> <span class="cn">FALSE</span>, roadMethod <span class="op">=</span> <span class="st">"ilcp"</span>, limit <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Burning in roads to weightRaster from sf</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Burning in roads to weightRaster from sf</span></span>
+<span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plotRoads.html">plotRoads</a></span><span class="op">(</span><span class="va">rd_proj2</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">40000</span><span class="op">^</span><span class="fl">2</span>, <span class="op">-</span><span class="fl">40000</span>, <span class="op">-</span><span class="fl">30000</span>, <span class="op">-</span><span class="fl">20000</span>, <span class="op">-</span><span class="fl">16178</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">*</span><span class="fl">300</span><span class="op">)</span>, </span>
 <span>     col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mappal.html" class="external-link">map.pal</a></span><span class="op">(</span><span class="st">"blues"</span>, <span class="fl">6</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/flip.html" class="external-link">rev</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/mappal.html" class="external-link">map.pal</a></span><span class="op">(</span><span class="st">"oranges"</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>, </span>
@@ -357,15 +328,15 @@ with a shortest path algorithm. Canadian Journal of Forest Research
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
