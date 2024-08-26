@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Iterative least cost path and minimum spanning tree methods for projecting forest road networks. The methods connect a set of target points to an existing road network using igraph \url{https://igraph.org} to identify least cost routes. The cost of constructing a road segment between adjacent pixels is determined by a user supplied `weightRaster` and a `weightFunction`; options include the average of adjacent `weightRaster` values, and a function of the elevation differences between adjacent cells that penalizes steep grades. These road network projection methods are intended for integration into R workflows and modelling frameworks used for forecasting forest change, and can be applied over multiple timesteps without rebuilding a graph at each timestep.
+Iterative least cost path and minimum spanning tree methods for projecting forest road networks. The methods connect a set of target points to an existing road network using 'igraph' \url{https://igraph.org} to identify least cost routes. The cost of constructing a road segment between adjacent pixels is determined by a user supplied weight raster and a weight function; options include the average of adjacent weight raster values, and a function of the elevation differences between adjacent cells that penalizes steep grades. These road network projection methods are intended for integration into R workflows and modelling frameworks used for forecasting forest change, and can be applied over multiple time-steps without rebuilding a graph at each time-step.
 }
 \seealso{
 Useful links:

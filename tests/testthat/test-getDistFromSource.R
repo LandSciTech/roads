@@ -27,7 +27,7 @@ test_that("distance to roads has expected values", {
     res <- c(fastRough, slowFine, wideCircle, smootherCircle)
     names(res) <- c("kwidth = 1, terra", "kwidth = 1, pfocal2", "kwidth = 5, terra", 
                     "kwidth = 5, pfocal2")
-    tmap::qtm(res %>% terra::`crs<-`(value = "EPSG:5070"), raster.style = "cont")
+    plot(res %>% terra::`crs<-`(value = "EPSG:5070"))
   }
   
   # no difference any more since using terra::distance
