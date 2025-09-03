@@ -381,11 +381,12 @@ setMethod(
     if(geoColInL != attr(sim$landings, "sf_column")){
       sim$landings <- rename(sim$landings, geoColInL = .data$geometry)
     }
-
-    if(geoColInR != attr(sim$roads, "sf_column")){
-      sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
+    if(is(sim$roads, "sf")){
+      if(geoColInR != attr(sim$roads, "sf_column")){
+        sim$roads <- rename(sim$roads, geoColInR = .data$geometry)
+      }
     }
-
+    
     # reset landings to include all input landings
     sim$landings <- sim$landingsIn
     rm("landingsIn", envir = sim)
