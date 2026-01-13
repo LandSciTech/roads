@@ -59,7 +59,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>roads Package</h1>
             
-            <h4 data-toc-skip class="date">2025-09-03</h4>
+            <h4 data-toc-skip class="date">2026-01-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/LandSciTech/roads/blob/master/vignettes/roads-vignette.Rmd" class="external-link"><code>vignettes/roads-vignette.Rmd</code></a></small>
       <div class="d-none name"><code>roads-vignette.Rmd</code></div>
@@ -247,7 +247,7 @@ landing per polygon see Multiple landings per harvest section below.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">7.25</span>, y <span class="op">=</span> <span class="fl">5</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"landings"</span>, <span class="st">"roads"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">19</span>, <span class="cn">NA</span><span class="op">)</span>, </span>
 <span>       lwd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>       xpd <span class="op">=</span> <span class="cn">NA</span>, inset <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, xjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-3-1.png" width="624"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="624"></p>
 <p>Notice that the top row of the raster has a cost of zero where an
 existing road traverses the landscape.</p>
 </div>
@@ -288,7 +288,7 @@ roads.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">7.25</span>, y <span class="op">=</span> <span class="fl">5</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"landings"</span>, <span class="st">"roads"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">19</span>, <span class="cn">NA</span><span class="op">)</span>, </span>
 <span>       lwd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>       xpd <span class="op">=</span> <span class="cn">NA</span>, inset <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, xjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-4-1.png" width="624"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="624"></p>
 <p>This simple approach gives an unrealistically redundant road network
 without branches that does not account for variation in road
 construction costs across the landscape.</p>
@@ -323,7 +323,7 @@ new roads after all new roads are identified.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">7.25</span>, y <span class="op">=</span> <span class="fl">5</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"landings"</span>, <span class="st">"roads"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">19</span>, <span class="cn">NA</span><span class="op">)</span>, </span>
 <span>       lwd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>       xpd <span class="op">=</span> <span class="cn">NA</span>, inset <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, xjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-5-1.png" width="624"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="624"></p>
 <p>The main disadvantage of this approach is that roads are developed
 independently, which tends to produce parallel or redundant roads. This
 could mimic road development in cases where licensees restrict others
@@ -361,7 +361,7 @@ roads in the order that landings are supplied by the user.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">7.25</span>, y <span class="op">=</span> <span class="fl">5</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"landings"</span>, <span class="st">"roads"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">19</span>, <span class="cn">NA</span><span class="op">)</span>, </span>
 <span>       lwd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>       xpd <span class="op">=</span> <span class="cn">NA</span>, inset <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, xjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-6-1.png" width="624"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="624"></p>
 <p>The ILCP approach produces a more realistic branching network with
 less redundancy. However, it is sensitive to the ordering of the
 landings. Below we reverse the order of the landings but continue using
@@ -386,7 +386,7 @@ supplied in so switching that produces a different road network.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">7.25</span>, y <span class="op">=</span> <span class="fl">5</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"landings"</span>, <span class="st">"roads"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">19</span>, <span class="cn">NA</span><span class="op">)</span>, </span>
 <span>       lwd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>       xpd <span class="op">=</span> <span class="cn">NA</span>, inset <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, xjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-7-1.png" width="624"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="624"></p>
 </div>
 <div class="section level4">
 <h4 id="minimum-spanning-tree-mst-with-least-cost-paths-lcp">4. Minimum Spanning Tree (MST) with Least Cost Paths (LCP)<a class="anchor" aria-label="anchor" href="#minimum-spanning-tree-mst-with-least-cost-paths-lcp"></a>
@@ -415,7 +415,7 @@ to the existing road network.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">7.25</span>, y <span class="op">=</span> <span class="fl">5</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"landings"</span>, <span class="st">"roads"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">19</span>, <span class="cn">NA</span><span class="op">)</span>, </span>
 <span>       lwd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>       xpd <span class="op">=</span> <span class="cn">NA</span>, inset <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>, xjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-8-1.png" width="624"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="624"></p>
 <p>The MST approach will produce fewer roads than the other approaches,
 and realistic branching patterns. However, it is also more
 computationally costly than the other methods.</p>
@@ -449,7 +449,7 @@ of landings.</p>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land.pnts</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">2</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/text.html" class="external-link">text</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span>, cex <span class="op">=</span> <span class="fl">0.6</span>, adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span><span class="op">)</span>,</span>
 <span>     xpd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-9-1.png" width="672"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="672"></p>
 <div class="section level4">
 <h4 id="one-time-simulation">One-time simulation<a class="anchor" aria-label="anchor" href="#one-time-simulation"></a>
 </h4>
@@ -485,7 +485,7 @@ others.</p>
 <span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">[</span><span class="va">land.pnts</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="va">i</span>, <span class="op">]</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>       pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="672"></p>
 <p>These independent one-time simulations are appropriate if each
 landing set represents a different development scenario (e.g. each
 representing a possible set of landings at time t=1), but they are not
@@ -508,7 +508,7 @@ developed in all previous times steps.</p>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">independent</span>, col <span class="op">=</span> <span class="st">'grey30'</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">land.pnts</span><span class="op">)</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, pch <span class="op">=</span> <span class="fl">21</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-11-1.png" width="480"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="480"></p>
 </div>
 <div class="section level4">
 <h4 id="multi-temporal-simulation">Multi-temporal simulation<a class="anchor" aria-label="anchor" href="#multi-temporal-simulation"></a>
@@ -562,7 +562,7 @@ This can be implemented in a loop.</p>
 <span>         cex <span class="op">=</span> <span class="fl">1.5</span>, bg <span class="op">=</span> <span class="st">'white'</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-12-1.png" width="672"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 </div>
 <div class="section level3">
@@ -585,7 +585,7 @@ expected number of landings per unit area.</p>
 <span><span class="co">#&gt; Warning: st_point_on_surface assumes attributes are constant over geometries</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">harvPoly</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outCent</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-13-1.png" width="576"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="576"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Get random sample with density 0.02 pts per unit area</span></span>
@@ -599,7 +599,7 @@ expected number of landings per unit area.</p>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">harvPoly</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">prRand</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span>,  col <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outRand</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-13-2.png" width="576"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-13-2.png" class="r-plt" alt="" width="576"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Get regular sample with density 0.02 pts per unit area</span></span>
@@ -614,7 +614,7 @@ expected number of landings per unit area.</p>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">harvPoly</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">prReg</span><span class="op">$</span><span class="va">roads</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outReg</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="roads-vignette_files/figure-html/unnamed-chunk-13-3.png" width="576"></p>
+<p><img src="roads-vignette_files/figure-html/unnamed-chunk-13-3.png" class="r-plt" alt="" width="576"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span></span>
@@ -640,7 +640,7 @@ CLUS example</a></p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
