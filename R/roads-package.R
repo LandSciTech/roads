@@ -1,6 +1,9 @@
 #' @keywords internal
 "_PACKAGE"
 
+# Declare global variables to avoid R CMD check notes
+utils::globalVariables("id")
+
 ## usethis namespace: start
 #' @importFrom sf st_sf
 #' @import dplyr
