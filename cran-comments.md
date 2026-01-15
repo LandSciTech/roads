@@ -15,5 +15,4 @@ ubuntu-latest(oldrel-1)
 There are none
 
 ## Resubmit
-Resubmitting after changing names of arguments that were used in the DESCRIPTION 
-to writing out a description of the objects.
+Updating to deal with issue introduced by a change in dplyr
