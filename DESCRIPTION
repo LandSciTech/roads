@@ -4,7 +4,7 @@ Version: 1.2.0.9000
 Authors@R: 
     c(person(given = "Sarah",
            family = "Endicott", 
-           role = c("aut", "cre"), 
+           role = c("aut"), 
            email = "sarah.endicott@ec.gc.ca",
            comment = c(ORCID = "0000-0001-9644-5343")),
     person(given = "Kyle",
@@ -13,7 +13,7 @@ Authors@R:
            email = "Kyle.Lochhead@gov.bc.ca"),
     person(given = "Josie",
            family = "Hughes",
-           role = c("aut"),
+           role = c("aut", "cre"),
            email = "josie.hughes@ec.gc.ca"),
     person(given = "Patrick",
            family = "Kirby",
