@@ -2,12 +2,11 @@
 
 ## Authors
 
-- **Sarah Endicott**. Author, maintainer.
-  [](https://orcid.org/0000-0001-9644-5343)
+- **Sarah Endicott**. Author. [](https://orcid.org/0000-0001-9644-5343)
 
 - **Kyle Lochhead**. Author.
 
-- **Josie Hughes**. Author.
+- **Josie Hughes**. Author, maintainer.
 
 - **Patrick Kirby**. Author.
 
@@ -27,13 +26,13 @@ Source:
 [`DESCRIPTION`](https://github.com/LandSciTech/roads/blob/master/DESCRIPTION)
 
 Endicott S, Lochhead K, Hughes J, Kirby P (2026). *roads: Road Network
-Projection*. R package version 1.2.0.9000,
+Projection*. R package version 1.2.1,
 <https://github.com/LandSciTech/roads>.
 
     @Manual{,
       title = {roads: Road Network Projection},
       author = {Sarah Endicott and Kyle Lochhead and Josie Hughes and Patrick Kirby},
       year = {2026},
-      note = {R package version 1.2.0.9000},
+      note = {R package version 1.2.1},
       url = {https://github.com/LandSciTech/roads},
     }
