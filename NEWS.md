@@ -1,4 +1,5 @@
-# roads (development version)
+# roads 1.2.1
+* minor change due to change in dplyr
 
 # roads 1.2.0
 
