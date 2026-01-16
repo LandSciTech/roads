@@ -248,9 +248,9 @@ projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 #> max value   :  TRUE 
 #> 
 #> $g
-#> IGRAPH 72320e4 U-W- 25 72 -- 
+#> IGRAPH 265a51c U-W- 25 72 -- 
 #> + attr: weight (e/n)
-#> + edges from 72320e4:
+#> + edges from 265a51c:
 #>  [1]  1-- 2  1-- 6  1-- 7  2-- 3  2-- 6  2-- 7  2-- 8  3-- 4  3-- 7  3-- 8
 #> [11]  3-- 9  4-- 5  4-- 8  4-- 9  4--10  5-- 9  5--10  6-- 7  6--11  6--12
 #> [21]  7-- 8  7--11  7--12  7--13  8-- 9  8--12  8--13  8--14  9--10  9--13
