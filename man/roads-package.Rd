@@ -20,12 +20,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Sarah Endicott \email{sarah.endicott@ec.gc.ca} (\href{https://orcid.org/0000-0001-9644-5343}{ORCID})
+\strong{Maintainer}: Josie Hughes \email{josie.hughes@ec.gc.ca}
 
 Authors:
 \itemize{
+  \item Sarah Endicott \email{sarah.endicott@ec.gc.ca} (\href{https://orcid.org/0000-0001-9644-5343}{ORCID})
   \item Kyle Lochhead \email{Kyle.Lochhead@gov.bc.ca}
-  \item Josie Hughes \email{josie.hughes@ec.gc.ca}
   \item Patrick Kirby
 }
 

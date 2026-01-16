@@ -208,8 +208,7 @@ prRes <- projectRoads(land.rLyr, scen$cost.rast, scen$road.line, "mst",
 scen <- demoScen[[2]]
 
 # landing set 5 of scenario 2, as matrix:
-land.mat  <- scen$landings.points[scen$landings.points$set==5,] |>
-  sf::st_coordinates()
+land.mat  <- sf::st_coordinates(scen$landings.points[scen$landings.points$set==5,])
 
 prRes <- projectRoads(land.mat, scen$cost.rast, scen$road.rast, "snap",
                       plotRoads = doPlots, mainTitle = "Scen 2: Matrix-Snap")

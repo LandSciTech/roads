@@ -8,8 +8,12 @@ ubuntu-latest(oldrel-1)
 
 ## R CMD check results
 
-0 errors ✔ | 0 warnings ✔ | 0 notes ✖
+0 errors ✔ | 0 warnings ✔ | 1 notes ✖
 
+New maintainer:
+  Josie Hughes <josie.hughes@ec.gc.ca>
+Old maintainer(s):
+  Sarah Endicott <sarah.endicott@ec.gc.ca>
 
 ## Reverse Dependencies
 There are none
