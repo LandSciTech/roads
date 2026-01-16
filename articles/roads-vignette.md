@@ -571,4 +571,4 @@ par(oldpar)
 
 This vignette is partially copied from Kyle Lochhead & Tyler Muhly’s
 [2018 CLUS
-example](https://github.com/bcgov/castor/blob/main/reports/roads/draft-CLUS-roads.md)
+example](https://github.com/bcgov/castor/blob/1d0fd3ff32a46a178f71de95a848cfaa5b085609/reports/roads/draft-CLUS-roads.md)

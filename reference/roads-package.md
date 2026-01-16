@@ -25,14 +25,14 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Sarah Endicott <sarah.endicott@ec.gc.ca>
-([ORCID](https://orcid.org/0000-0001-9644-5343))
+**Maintainer**: Josie Hughes <josie.hughes@ec.gc.ca>
 
 Authors:
 
-- Kyle Lochhead <Kyle.Lochhead@gov.bc.ca>
+- Sarah Endicott <sarah.endicott@ec.gc.ca>
+  ([ORCID](https://orcid.org/0000-0001-9644-5343))
 
-- Josie Hughes <josie.hughes@ec.gc.ca>
+- Kyle Lochhead <Kyle.Lochhead@gov.bc.ca>
 
 - Patrick Kirby
 
