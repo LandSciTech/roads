@@ -105,24 +105,38 @@ terra::distance(CLUSexample$roads, target = 0)
 #> terra 1.9.34
 
 #make example roads from scratch
-rds <- data.frame(x = 1:1000/100, y = cos(1:1000/100)) %>%
-  st_as_sf(coords = c("x", "y")) %>%
-  st_union() %>%
+rds <- data.frame(x = 1:1000/100, y = cos(1:1000/100)) |>
+  st_as_sf(coords = c("x", "y")) |>
+  st_union() |>
   st_cast("LINESTRING")
-#> Error in data.frame(x = 1:1000/100, y = cos(1:1000/100)) %>% st_as_sf(coords = c("x",     "y")) %>% st_union() %>% st_cast("LINESTRING"): could not find function "%>%"
 
 rds_rast <- rasterize(vect(rds),
                       rast(nrows = 50, ncols = 50,
                            xmin = 0, xmax = 10,
                            ymin = -5, ymax = 5),
                       touches = TRUE)
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'rasterize': error in evaluating the argument 'x' in selecting a method for function 'vect': object 'rds' not found
 
 terra::distance(rds_rast)
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'distance': object 'rds_rast' not found
+#> class       : SpatRaster
+#> size        : 50, 50, 1  (nrow, ncol, nlyr)
+#> resolution  : 0.2, 0.2  (x, y)
+#> extent      : 0, 10, -5, 5  (xmin, xmax, ymin, ymax)
+#> coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84)
+#> source(s)   : memory
+#> name        :         layer
+#> min value   :             0
+#> max value   : 549661.603586
 
 # or straight from the line
-terra::distance(rds_rast, terra::vect(rds %>% st_set_crs(st_crs(rds_rast))))
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'distance': object 'rds_rast' not found
+terra::distance(rds_rast, terra::vect(rds |> st_set_crs(st_crs(rds_rast))))
+#> class       : SpatRaster
+#> size        : 50, 50, 1  (nrow, ncol, nlyr)
+#> resolution  : 0.2, 0.2  (x, y)
+#> extent      : 0, 10, -5, 5  (xmin, xmax, ymin, ymax)
+#> coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84)
+#> source(s)   : memory
+#> name        :         layer
+#> min value   :    407.853289
+#> max value   : 562906.466548
 # }
 ```
