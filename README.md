@@ -52,6 +52,8 @@ Spatial\* objects and the weight is a raster.
 ``` r
 library(roads)
 library(raster)
+#> Warning: package 'raster' was built under R version 4.4.3
+#> Warning: package 'sp' was built under R version 4.4.3
 
 # data set installed with roads package
 demoScen <- prepExData(demoScen)
