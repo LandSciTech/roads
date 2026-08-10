@@ -1,5 +1,7 @@
 # Changelog
 
+## roads 1.2.2
+
 ## roads 1.2.1
 
 CRAN release: 2026-01-16
