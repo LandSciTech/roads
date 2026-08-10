@@ -18,9 +18,10 @@ downloaded with the `geodata` package and cropped to an example area in
 British Columbia, Canada that is included in the package.
 
 ``` r
+
 library(roads)
 library(terra)
-#> terra 1.8.93
+#> terra 1.9.34
 library(dplyr)
 #> 
 #> Attaching package: 'dplyr'
@@ -43,6 +44,7 @@ dem_example <- prepExData(dem_example)
 The elevation data shows that this is a mountainous region.
 
 ``` r
+
 plot(dem_example$ex_elev)
 ```
 
@@ -52,6 +54,7 @@ And the proportion of the landscape covered by water in each cell shows
 that there are several long narrow lakes crossing the landscape.
 
 ``` r
+
 plot(dem_example$ex_wat)
 ```
 
@@ -71,6 +74,7 @@ Note this is just an example and there are certainly better data sources
 for the locations and costs of stream crossings.
 
 ``` r
+
 # set water to NA when a cell is > 50% water
 wat_use <- classify(dem_example$ex_wat, matrix(c(0.5, 1, NA), nrow = 1))
 
@@ -91,6 +95,7 @@ We then combine the two rasters together by setting elevation to 0 when
 there is a water penalty and summing them.
 
 ``` r
+
 # set elev to 0 when wat is NA
 elev_use <- mask(elev_use, wat_use, inverse = TRUE, updatevalue = 0)
 
@@ -113,6 +118,7 @@ a stratified sample below since this is the easiest way to get a sample
 of just the cells that are `TRUE` in `for_area`
 
 ``` r
+
 # Get landing points
 
 for_area <- is.na(wat_use) & !is.na(elev_use) & elev_use < 2000
@@ -145,6 +151,7 @@ can be done interactively using
 but we saved the result using `dput` to make it re-runnable.
 
 ``` r
+
 # Get starting road
 
 # create line interactively
@@ -183,6 +190,7 @@ Now we are ready to project the locations of roads connecting each
 landing to our initial road network.
 
 ``` r
+
 rd_proj <- projectRoads(lnds, wt_rast, rd_in, weightFunction = gradePenaltyFn, 
                         roadsInWeight = FALSE, roadMethod = "ilcp")
 #> Burning in roads to weightRaster from sf
@@ -197,6 +205,7 @@ something other than `NA`. Below we try both setting `limit = 30` and
 `limitWeight = 40000^2`. Which have slightly different results.
 
 ``` r
+
 rd_proj <- projectRoads(lnds, wt_rast, rd_in, weightFunction = gradePenaltyFn, 
                         roadsInWeight = FALSE, roadMethod = "ilcp", limit = 30)
 #> Burning in roads to weightRaster from sf
@@ -209,6 +218,7 @@ plotRoads(rd_proj, breaks = c(-40000, -30000, -20000, -16178, 0, 1:10*300),
 ![](grade-penalty_files/figure-html/proj-rds-1.png)
 
 ``` r
+
 
 rd_proj3 <- projectRoads(lnds, wt_rast, rd_in, weightFunction = gradePenaltyFn, 
                         roadsInWeight = FALSE, roadMethod = "ilcp", limitWeight = 40000^2)
@@ -226,6 +236,7 @@ crossing cells that are `NA`. Below we set all areas with greater than
 10% water to `NA`.
 
 ``` r
+
 # set > 10% water to NA 
 wat_10 <- classify(dem_example$ex_wat, matrix(c(0.1, 1, NA), nrow = 1))
 
@@ -240,24 +251,20 @@ plot(wt_rast, breaks = c(-40000, -30000, -20000, -16178, 0, 1:10*300),
 
 ``` r
 
+
 projectRoads(lnds, wt_rast, rd_in, weightFunction = gradePenaltyFn,
              roadsInWeight = FALSE, roadMethod = "ilcp", limit = 30)
 #> Burning in roads to weightRaster from sf
-#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out =
-#> "both"): At vendor/cigraph/src/paths/dijkstra.c:534 : Couldn't reach some
-#> vertices.
-#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out =
-#> "both"): At vendor/cigraph/src/paths/dijkstra.c:534 : Couldn't reach some
-#> vertices.
-#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out =
-#> "both"): At vendor/cigraph/src/paths/dijkstra.c:534 : Couldn't reach some
-#> vertices.
-#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out =
-#> "both"): At vendor/cigraph/src/paths/dijkstra.c:534 : Couldn't reach some
-#> vertices.
-#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out =
-#> "both"): At vendor/cigraph/src/paths/dijkstra.c:534 : Couldn't reach some
-#> vertices.
+#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out = "both"): Couldn't reach some vertices.
+#> Source: paths/dijkstra.c:534
+#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out = "both"): Couldn't reach some vertices.
+#> Source: paths/dijkstra.c:534
+#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out = "both"): Couldn't reach some vertices.
+#> Source: paths/dijkstra.c:534
+#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out = "both"): Couldn't reach some vertices.
+#> Source: paths/dijkstra.c:534
+#> Warning in igraph::shortest_paths(sim$g, path.list[1], path.list[2], out = "both"): Couldn't reach some vertices.
+#> Source: paths/dijkstra.c:534
 #> Error:
 #> ! NA values in weightRaster along paths. Check for disconnected clumps in weightRaster. If weightFunction=gradePenaltyFn, try adjusting limit or setting limitWeight to high value that is not NA.
 ```
@@ -266,6 +273,7 @@ To address this we can change `NA` values to an arbitrarily large
 negative value to prevent crossing unless required.
 
 ``` r
+
 wt_rast <- subst(wt_rast, from = NA, to = -40000^2)
 
 rd_proj2 <- projectRoads(lnds, wt_rast, rd_in, weightFunction = gradePenaltyFn,

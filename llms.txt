@@ -19,6 +19,7 @@ You can install the released version of roads from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
+
 install.packages("roads")
 ```
 
@@ -26,6 +27,7 @@ And the development version from
 [GitHub](https://github.com/LandSciTech/roads) with:
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("LandSciTech/roads")
 ```
@@ -40,6 +42,7 @@ a road. Typically the roads and landings are `sf` objects or `sp`
 Spatial\* objects and the weight is a raster.
 
 ``` r
+
 library(roads)
 library(raster)
 

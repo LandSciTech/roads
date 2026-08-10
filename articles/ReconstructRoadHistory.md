@@ -1,8 +1,9 @@
 # Reconstruct road development history
 
 ``` r
+
 library(terra)
-#> terra 1.8.93
+#> terra 1.9.34
 library(roads)
 library(sf)
 #> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE
@@ -39,6 +40,7 @@ network where the sequence of road building is not known. The code below
 creates a demonstration road data set.
 
 ``` r
+
 # make "real" roads by using ilcp method
 # use all landings and build roads to closest first
 land.pnts <- scen$landings.points[scen$landings.points$set %in% c(1:4),]
@@ -66,6 +68,7 @@ landings in each year, assigning that year to the road segments as a
 maximum year of road construction.
 
 ``` r
+
 
 # Use sequence of landings to assign sequence of roads built
 

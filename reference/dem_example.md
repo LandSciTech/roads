@@ -56,25 +56,25 @@ dem_example
 #> 
 prepExData(dem_example)
 #> $ex_elev
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 173, 305, 1  (nrow, ncol, nlyr)
 #> resolution  : 0.008333333, 0.008333333  (x, y)
 #> extent      : -118.4917, -115.95, 49.40833, 50.85  (xmin, xmax, ymin, ymax)
-#> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+#> coord. ref. : lon/lat WGS 84 (EPSG:4326)
 #> source(s)   : memory
-#> name        : CAN_elv_msk 
-#> min value   :         349 
-#> max value   :        3371 
+#> name        : CAN_elv_msk
+#> min value   :         349
+#> max value   :        3371
 #> 
 #> $ex_wat
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 173, 305, 1  (nrow, ncol, nlyr)
 #> resolution  : 0.008333333, 0.008333333  (x, y)
 #> extent      : -118.4917, -115.95, 49.40833, 50.85  (xmin, xmax, ymin, ymax)
-#> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+#> coord. ref. : lon/lat WGS 84 (EPSG:4326)
 #> source(s)   : memory
-#> name        : water 
-#> min value   :     0 
-#> max value   :     1 
+#> name        : water
+#> min value   :     0
+#> max value   :     1
 #> 
 ```

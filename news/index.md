@@ -2,6 +2,8 @@
 
 ## roads 1.2.1
 
+CRAN release: 2026-01-16
+
 - minor change due to change in dplyr
 
 ## roads 1.2.0

@@ -112,15 +112,15 @@ demoScen[[1]]
 #> [1] 1
 #> 
 #> $road.rast
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 100, 100, 1  (nrow, ncol, nlyr)
 #> resolution  : 1, 1  (x, y)
 #> extent      : 0, 100, 0, 100  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / Conus Albers (EPSG:5070) 
+#> coord. ref. : NAD83 / Conus Albers (EPSG:5070)
 #> source(s)   : memory
-#> name        : lyr.1 
-#> min value   : FALSE 
-#> max value   :  TRUE 
+#> name        : lyr.1
+#> min value   :     0
+#> max value   :     1
 #> 
 #> $road.line
 #> Simple feature collection with 4 features and 1 field
@@ -135,15 +135,15 @@ demoScen[[1]]
 #> 4  4 LINESTRING (0.5 8.5, 99.5 1...
 #> 
 #> $cost.rast
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 100, 100, 1  (nrow, ncol, nlyr)
 #> resolution  : 1, 1  (x, y)
 #> extent      : 0, 100, 0, 100  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / Conus Albers (EPSG:5070) 
+#> coord. ref. : NAD83 / Conus Albers (EPSG:5070)
 #> source(s)   : memory
-#> name        :    lyr.1 
-#> min value   :  0.00000 
-#> max value   : 14.97291 
+#> name        :     lyr.1
+#> min value   :         0
+#> max value   : 14.972912
 #> 
 #> $landings.points
 #> Simple feature collection with 57 features and 3 fields
@@ -165,15 +165,15 @@ demoScen[[1]]
 #> 10 11.007803   2  8   POINT (4.5 4.5)
 #> 
 #> $landings.stack
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 100, 100, 10  (nrow, ncol, nlyr)
 #> resolution  : 1, 1  (x, y)
 #> extent      : 0, 100, 0, 100  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / Conus Albers (EPSG:5070) 
+#> coord. ref. : NAD83 / Conus Albers (EPSG:5070)
 #> source(s)   : memory
-#> names       : lyr.1, lyr.1, lyr.1, lyr.1, lyr.1, lyr.1, ... 
-#> min values  : FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, ... 
-#> max values  :  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, ... 
+#> names       : lyr.1, lyr.1, lyr.1, lyr.1, lyr.1, lyr.1, ...
+#> min values  :     0,     0,     0,     0,     0,     0, ...
+#> max values  :     1,     1,     1,     1,     1,     1, ...
 #> 
 #> $landings.poly
 #> Simple feature collection with 6 features and 1 field

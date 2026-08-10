@@ -81,61 +81,48 @@ output raster is disaggregated using bilinear interpolation.
 ## Examples
 
 ``` r
+
 CLUSexample <-  prepExData(CLUSexample)
 # Deprecated
 # getDistFromSource(CLUSexample$roads, 5, 2)
 
 # Use terra::distance instead
 terra::distance(CLUSexample$roads, target = 0)
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 5, 5, 1  (nrow, ncol, nlyr)
 #> resolution  : 1, 1  (x, y)
 #> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347) 
+#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347)
 #> source(s)   : memory
-#> name        : lyr.1 
-#> min value   :     0 
-#> max value   :     4 
+#> name        : lyr.1
+#> min value   :     0
+#> max value   :     4
 
 # \donttest{
  library(sf)
 #> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE
  library(terra)
-#> terra 1.8.93
+#> terra 1.9.34
 
 #make example roads from scratch
 rds <- data.frame(x = 1:1000/100, y = cos(1:1000/100)) %>%
   st_as_sf(coords = c("x", "y")) %>%
   st_union() %>%
   st_cast("LINESTRING")
+#> Error in data.frame(x = 1:1000/100, y = cos(1:1000/100)) %>% st_as_sf(coords = c("x",     "y")) %>% st_union() %>% st_cast("LINESTRING"): could not find function "%>%"
 
 rds_rast <- rasterize(vect(rds),
                       rast(nrows = 50, ncols = 50,
                            xmin = 0, xmax = 10,
                            ymin = -5, ymax = 5),
                       touches = TRUE)
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'rasterize': error in evaluating the argument 'x' in selecting a method for function 'vect': object 'rds' not found
 
 terra::distance(rds_rast)
-#> class       : SpatRaster 
-#> size        : 50, 50, 1  (nrow, ncol, nlyr)
-#> resolution  : 0.2, 0.2  (x, y)
-#> extent      : 0, 10, -5, 5  (xmin, xmax, ymin, ymax)
-#> coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84) 
-#> source(s)   : memory
-#> name        :    layer 
-#> min value   :      0.0 
-#> max value   : 549661.6 
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'distance': object 'rds_rast' not found
 
 # or straight from the line
 terra::distance(rds_rast, terra::vect(rds %>% st_set_crs(st_crs(rds_rast))))
-#> class       : SpatRaster 
-#> size        : 50, 50, 1  (nrow, ncol, nlyr)
-#> resolution  : 0.2, 0.2  (x, y)
-#> extent      : 0, 10, -5, 5  (xmin, xmax, ymin, ymax)
-#> coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84) 
-#> source(s)   : memory
-#> name        :       layer 
-#> min value   :    407.8533 
-#> max value   : 562906.4665 
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'distance': object 'rds_rast' not found
 # }
 ```

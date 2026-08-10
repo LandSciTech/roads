@@ -46,6 +46,7 @@ as a “sim list”. The list contains five elements:
 #### Setup
 
 ``` r
+
 library(terra)
 library(dplyr)
 library(sf)
@@ -107,6 +108,7 @@ The weight raster for this basic example is a cost surface and the
 `weightFunction` used is the average.
 
 ``` r
+
 weightRaster <- CLUSexample$cost
 ```
 
@@ -123,6 +125,7 @@ The road network included in the `CLUSexample` data-set is a raster but
 we use a line for plotting.
 
 ``` r
+
 ## existing roads network
 roadsLine <- sf::st_sfc(geometry = sf::st_linestring(
   matrix(c(0.5, 4.5, 4.5, 4.5),
@@ -151,6 +154,7 @@ destination for new roads. For more control or to specify more than one
 landing per polygon see Multiple landings per harvest section below.
 
 ``` r
+
 ## landings as spatial points
 landings <- roads::CLUSexample$landings
 
@@ -186,6 +190,7 @@ distance) existing road segment, ignoring spatial variation in road
 construction cost and the locations of other landings and access roads.
 
 ``` r
+
 ## project new roads using the 'snap' approach
 projRoads_snap <- roads::projectRoads(landings, weightRaster, roadsLine,
                                       roadMethod = 'snap')
@@ -226,6 +231,7 @@ implemented in the
 roads are identified.
 
 ``` r
+
 ## project new roads using the 'LCP' approach
 projRoads_lcp <- roads::projectRoads(landings, 
                                         weightRaster, 
@@ -267,6 +273,7 @@ default the closest landings are accessed first. The alternative
 by the user.
 
 ``` r
+
 ## project new roads using the 'ILCP' approach
 projRoads_ilcp <- roads::projectRoads(landings, 
                                         weightRaster, 
@@ -295,6 +302,7 @@ distance to the road and the tie is broken by the order they are
 supplied in so switching that produces a different road network.
 
 ``` r
+
 ## project new roads using the 'ILCP' approach
 projRoads_ilcp2 <- roads::projectRoads(st_coordinates(landings)[4:1,], 
                                         weightRaster, 
@@ -327,6 +335,7 @@ tree network that minimizes the overall cost of connecting all landings
 to the existing road network.
 
 ``` r
+
 ## project new roads using the 'MST' approach
 projRoads_mst <- roads::projectRoads(landings, 
                                         weightRaster,
@@ -360,6 +369,7 @@ the roads package. The scenario includes four different sets of
 landings.
 
 ``` r
+
 ## colours for displaying weight raster
 if(requireNamespace("viridis", quietly = TRUE)){
   # Use colour blind friendly palette if available
@@ -392,6 +402,7 @@ repeated multiple times for different road building scenarios but each
 simulation will be independent of the others.
 
 ``` r
+
 ## project roads for landing sets 1 to 4, with independent one-time simulations
 oneTime_sim <- list() ## empty list 
 for (i in 1:4){
@@ -430,6 +441,7 @@ the beginning of time t should be the union of roads developed in all
 previous times steps.
 
 ``` r
+
 ## raster representing the union of completely independent simulations for multiple sets
 oneTime_sim <- rast(oneTime_sim)
 independent <- any(oneTime_sim, na.rm = TRUE)
@@ -457,6 +469,7 @@ list as a starting point, and avoids the computational cost of
 reconstructing the landscape graph. This can be implemented in a loop.
 
 ``` r
+
 ## continuing on with demo scenario 1
 ## landing sets 1 to 4 of this scenario as a raster stack
 land.stack <- scen$landings.stack[[1:4]]
@@ -515,6 +528,7 @@ harvest blocks. For `"random"` or `"regular"` sampling, `landingDens`
 specifies the expected number of landings per unit area.
 
 ``` r
+
 harvPoly <- demoScen[[1]]$landings.poly
 
 outCent <- getLandingsFromTarget(harvPoly)
@@ -526,6 +540,7 @@ plot(outCent, col = "red", add = TRUE)
 ![](roads-vignette_files/figure-html/unnamed-chunk-13-1.png)
 
 ``` r
+
 
 # Get random sample with density 0.02 pts per unit area
 outRand <- getLandingsFromTarget(harvPoly, 0.02, sampleType = "random")
@@ -544,6 +559,7 @@ plot(outRand, col = "red", add = TRUE)
 
 ``` r
 
+
 # Get regular sample with density 0.02 pts per unit area
 outReg <- getLandingsFromTarget(harvPoly, 0.02, sampleType = "regular")
 #> you have asked for > 0.001 pts per m2 which is > 1000 pts per km2 and may take a long time
@@ -561,6 +577,7 @@ plot(outReg, col = "red", add = TRUE)
 ![](roads-vignette_files/figure-html/unnamed-chunk-13-3.png)
 
 ``` r
+
 
 
 # clean up 

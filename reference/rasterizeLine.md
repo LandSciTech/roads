@@ -41,13 +41,13 @@ matrix(c(0.5, 4.5, 4.5, 4.51),
 # Deprecated rasterizeLine(roadsLine, CLUSexample$cost, 0)   
 # Use terra::rasterize
 terra::rasterize(roadsLine, CLUSexample$cost, background = 0)
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 5, 5, 1  (nrow, ncol, nlyr)
 #> resolution  : 1, 1  (x, y)
 #> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347) 
+#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347)
 #> source(s)   : memory
-#> name        : layer 
-#> min value   :     0 
-#> max value   :     1 
+#> name        : layer
+#> min value   :     0
+#> max value   :     1
 ```

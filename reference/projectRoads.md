@@ -237,20 +237,20 @@ projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 #> 4 POINT (4.5 0.5)
 #> 
 #> $roads
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 5, 5, 1  (nrow, ncol, nlyr)
 #> resolution  : 1, 1  (x, y)
 #> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347) 
+#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347)
 #> source(s)   : memory
-#> name        : lyr.1 
-#> min value   : FALSE 
-#> max value   :  TRUE 
+#> name        : lyr.1
+#> min value   :     0
+#> max value   :     1
 #> 
 #> $g
-#> IGRAPH bc0fe07 U-W- 25 72 -- 
+#> IGRAPH 6256ddb U-W- 25 72 -- 
 #> + attr: weight (e/n)
-#> + edges from bc0fe07:
+#> + edges from 6256ddb:
 #>  [1]  1-- 2  1-- 6  1-- 7  2-- 3  2-- 6  2-- 7  2-- 8  3-- 4  3-- 7  3-- 8
 #> [11]  3-- 9  4-- 5  4-- 8  4-- 9  4--10  5-- 9  5--10  6-- 7  6--11  6--12
 #> [21]  7-- 8  7--11  7--12  7--13  8-- 9  8--12  8--13  8--14  9--10  9--13
@@ -261,15 +261,15 @@ projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 #> [71] 23--24 24--25
 #> 
 #> $weightRaster
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 5, 5, 1  (nrow, ncol, nlyr)
 #> resolution  : 1, 1  (x, y)
 #> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347) 
+#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347)
 #> source(s)   : memory
-#> name        :    lyr.1 
-#> min value   :  0.00000 
-#> max value   : 19.84622 
+#> name        :     lyr.1
+#> min value   :         0
+#> max value   : 19.846216
 #> 
 #> $roadMethod
 #> [1] "lcp"

@@ -46,15 +46,15 @@ CLUSexample
 #> 
 prepExData(CLUSexample)
 #> $cost
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 5, 5, 1  (nrow, ncol, nlyr)
 #> resolution  : 1, 1  (x, y)
 #> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347) 
+#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347)
 #> source(s)   : memory
-#> name        :    lyr.1 
-#> min value   :  0.00000 
-#> max value   : 19.84622 
+#> name        :     lyr.1
+#> min value   :         0
+#> max value   : 19.846216
 #> 
 #> $landings
 #> Simple feature collection with 4 features and 0 fields
@@ -69,14 +69,14 @@ prepExData(CLUSexample)
 #> 4 POINT (4.5 0.5)
 #> 
 #> $roads
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 5, 5, 1  (nrow, ncol, nlyr)
 #> resolution  : 1, 1  (x, y)
 #> extent      : 0, 5, 0, 5  (xmin, xmax, ymin, ymax)
-#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347) 
+#> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347)
 #> source(s)   : memory
-#> name        : lyr.1 
-#> min value   : FALSE 
-#> max value   :  TRUE 
+#> name        : lyr.1
+#> min value   :     0
+#> max value   :     1
 #> 
 ```

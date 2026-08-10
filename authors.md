@@ -2,11 +2,12 @@
 
 ## Authors
 
-- **Sarah Endicott**. Author. [](https://orcid.org/0000-0001-9644-5343)
+- **Sarah Endicott**. Author, maintainer.
+  [](https://orcid.org/0000-0001-9644-5343)
 
 - **Kyle Lochhead**. Author.
 
-- **Josie Hughes**. Author, maintainer.
+- **Josie Hughes**. Author.
 
 - **Patrick Kirby**. Author.
 
