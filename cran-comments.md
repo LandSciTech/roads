@@ -11,13 +11,12 @@ ubuntu-latest(oldrel-1)
 0 errors ✔ | 0 warnings ✔ | 1 notes ✖
 
 New maintainer:
-  Josie Hughes <josie.hughes@ec.gc.ca>
-Old maintainer(s):
   Sarah Endicott <sarah.endicott@ec.gc.ca>
+Old maintainer(s):
+  Josie Hughes <josie.hughes@ec.gc.ca>
 
 ## Reverse Dependencies
 There are none
 
 ## Resubmit
-Updating to deal with issue introduced by a change in dplyr
-Updated date to current
+Updating because of issue in dontest section
