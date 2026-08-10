@@ -63,10 +63,9 @@
 #'  library(terra)
 #'
 #' #make example roads from scratch
-#' rds <- data.frame(x = 1:1000/100, y = cos(1:1000/100)) |>
-#'   st_as_sf(coords = c("x", "y")) |>
-#'   st_union() |>
-#'   st_cast("LINESTRING")
+#' rds <- st_as_sf(data.frame(x = 1:1000/100, y = cos(1:1000/100)),
+#'                 coords = c("x", "y"))
+#' rds <- st_cast(st_union(rds), "LINESTRING")
 #'
 #' rds_rast <- rasterize(vect(rds),
 #'                       rast(nrows = 50, ncols = 50,
@@ -77,7 +76,7 @@
 #' terra::distance(rds_rast)
 #' 
 #' # or straight from the line
-#' terra::distance(rds_rast, terra::vect(rds |> st_set_crs(st_crs(rds_rast))))
+#' terra::distance(rds_rast, terra::vect(st_set_crs(rds, st_crs(rds_rast))))
 #'}
 #'@keywords internal
 
