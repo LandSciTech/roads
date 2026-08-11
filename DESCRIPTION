@@ -49,7 +49,6 @@ Imports:
     methods,
     tidyselect,
     terra
-RoxygenNote: 7.3.3
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
@@ -82,3 +81,4 @@ Collate:
     'dem_example.R'
 BugReports: https://github.com/LandSciTech/roads/issues
 Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.0.0

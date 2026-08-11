@@ -14,7 +14,7 @@ The same list but with unwrapped \code{SpatRasters}
 }
 \description{
 Prepare example data included in the package that contain wrapped terra
-objects. This applies \code{\link[terra:wrap]{terra::unwrap()}} recursively to the list provided so
+objects. This applies \code{\link[terra:unwrap]{terra::unwrap()}} recursively to the list provided so
 that all \code{PackedSpatRasters} are converted to \code{SpatRasters}.
 }
 \examples{

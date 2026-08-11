@@ -33,7 +33,7 @@ an sf simple feature collection with an \code{ID} column and \code{POINT} geomet
 Generate landing points inside polygons representing harvested area. There
 are three different sampling types available: \code{"centroid"} (default) returns
 the centroid or a point inside the polygon if the
-centroid is not (see \code{\link[sf:geos_unary]{sf::st_point_on_surface()}}); \code{"random"} returns a
+centroid is not (see \code{\link[sf:st_point_on_surface]{sf::st_point_on_surface()}}); \code{"random"} returns a
 random sample given \code{landingDens} see
 (\code{\link[sf:st_sample]{sf::st_sample()}}); \code{"regular"} returns points on a regular grid with cell size \code{sqrt(1/landingDens)}
 that intersect the polygon, or centroid if no grid points fall within the polygon.
