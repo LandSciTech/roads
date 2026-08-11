@@ -104,7 +104,7 @@ terra::distance(CLUSexample$roads, target = 0)
  library(terra)
 #> terra 1.9.34
 
-#make example roads from scratch
+# make example roads from scratch
 rds <- st_as_sf(data.frame(x = 1:1000/100, y = cos(1:1000/100)),
                 coords = c("x", "y"))
 rds <- st_cast(st_union(rds), "LINESTRING")

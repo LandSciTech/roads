@@ -30,6 +30,9 @@ Useful links:
 
 Authors:
 
+- Sarah Endicott <sarah.endicott@ec.gc.ca>
+  ([ORCID](https://orcid.org/0000-0001-9644-5343))
+
 - Kyle Lochhead <Kyle.Lochhead@gov.bc.ca>
 
 - Josie Hughes <josie.hughes@ec.gc.ca>
