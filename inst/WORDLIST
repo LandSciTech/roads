@@ -5,6 +5,7 @@ BugReports
 buildSimList
 buildSnapRoads
 CLUSexample
+CMD
 Config
 cph
 cre
@@ -13,6 +14,7 @@ CRS
 dem
 demoScen
 disaggregated
+dontest
 dplyr
 ec
 endicott
@@ -39,6 +41,7 @@ Lochhead
 modelling
 mstList
 neighbourhood
+oldrel
 ORCID
 pathsToLines
 pfocal
@@ -60,6 +63,7 @@ SpatRaster
 terra
 testthat
 tidyselect
+ubuntu
 VignetteBuilder
 viridis
 weightFunctions

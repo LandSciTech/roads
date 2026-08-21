@@ -19,4 +19,5 @@ Old maintainer(s):
 There are none
 
 ## Resubmit
-Updating because of issue in dontest section
+I have added options so that terra should not use multiple threads in dontest examples
+
