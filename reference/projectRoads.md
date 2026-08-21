@@ -248,9 +248,9 @@ projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 #> max value   :     1
 #> 
 #> $g
-#> IGRAPH 6dd11e4 U-W- 25 72 -- 
+#> IGRAPH 5221b21 U-W- 25 72 -- 
 #> + attr: weight (e/n)
-#> + edges from 6dd11e4:
+#> + edges from 5221b21:
 #>  [1]  1-- 2  1-- 6  1-- 7  2-- 3  2-- 6  2-- 7  2-- 8  3-- 4  3-- 7  3-- 8
 #> [11]  3-- 9  4-- 5  4-- 8  4-- 9  4--10  5-- 9  5--10  6-- 7  6--11  6--12
 #> [21]  7-- 8  7--11  7--12  7--13  8-- 9  8--12  8--13  8--14  9--10  9--13
@@ -278,6 +278,19 @@ projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 
 # More realistic examples that take longer to run
 # \donttest{
+terrOpts <- terra::terraOptions() # store to reset
+#> memfrac   : 0.5
+#> tolerance : 0.1
+#> parallel  : TRUE
+#> verbose   : FALSE
+#> memmax    : 16
+#> todisk    : FALSE
+#> threads   : 0
+#> tempdir   : /tmp/RtmpNczrLT
+#> datatype  : FLT4S
+#> memmin    : 1
+#> progress  : 3
+terra::terraOptions(threads = 2, parallel = FALSE) # setting for CRAN
 
 demoScen <- prepExData(demoScen)
 
@@ -327,5 +340,8 @@ prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
 #> 0s detected in weightRaster raster, these will be considered as existing roads
 #> harvest raster values are all in 0,1. Using patches as landing areas
+
+do.call(terra::terraOptions, terrOpts) # resetting 
+#> Warning: [terraOptions<-] unknown option(s): metadata
 # }
 ```

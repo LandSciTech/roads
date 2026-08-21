@@ -103,6 +103,20 @@ terra::distance(CLUSexample$roads, target = 0)
 #> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE
  library(terra)
 #> terra 1.9.34
+ 
+terrOpts <- terra::terraOptions() # store to reset
+#> memfrac   : 0.5
+#> tolerance : 0.1
+#> parallel  : TRUE
+#> verbose   : FALSE
+#> memmax    : 16
+#> todisk    : FALSE
+#> threads   : 0
+#> tempdir   : /tmp/RtmpNczrLT
+#> datatype  : FLT4S
+#> memmin    : 1
+#> progress  : 3
+terra::terraOptions(threads = 2, parallel = FALSE) # setting for CRAN
 
 # make example roads from scratch
 rds <- st_as_sf(data.frame(x = 1:1000/100, y = cos(1:1000/100)),
@@ -137,5 +151,9 @@ terra::distance(rds_rast, terra::vect(st_set_crs(rds, st_crs(rds_rast))))
 #> name        :         layer
 #> min value   :    407.853289
 #> max value   : 562906.466548
+
+do.call(terra::terraOptions, terrOpts) # resetting 
+#> Warning: [terraOptions<-] unknown option(s): metadata
+
 # }
 ```
