@@ -76,6 +76,9 @@ terra::distance(CLUSexample$roads, target = 0)
 \donttest{
  library(sf)
  library(terra)
+ 
+terrOpts <- terra::terraOptions() # store to reset
+terra::terraOptions(threads = 2, parallel = FALSE) # setting for CRAN
 
 # make example roads from scratch
 rds <- st_as_sf(data.frame(x = 1:1000/100, y = cos(1:1000/100)),
@@ -92,6 +95,9 @@ terra::distance(rds_rast)
 
 # or straight from the line
 terra::distance(rds_rast, terra::vect(st_set_crs(rds, st_crs(rds_rast))))
+
+do.call(terra::terraOptions, terrOpts) # resetting 
+
 }
 }
 \keyword{internal}

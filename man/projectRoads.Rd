@@ -179,6 +179,8 @@ projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 
 # More realistic examples that take longer to run
 \donttest{
+terrOpts <- terra::terraOptions() # store to reset
+terra::terraOptions(threads = 2, parallel = FALSE) # setting for CRAN
 
 demoScen <- prepExData(demoScen)
 
@@ -221,6 +223,8 @@ land.polyR <- terra::rasterize(scen$landings.poly, scen$cost.rast)
 
 prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
+
+do.call(terra::terraOptions, terrOpts) # resetting 
 }
 
 }

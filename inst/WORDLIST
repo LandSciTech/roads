@@ -8,6 +8,7 @@ CLUSexample
 Config
 cph
 cre
+crossable
 CRS
 dem
 demoScen
@@ -27,6 +28,7 @@ https
 hughes
 igraph
 io
+iteratively
 josie
 knitr
 landscitech
@@ -36,6 +38,7 @@ lcpList
 Lochhead
 modelling
 mstList
+neighbourhood
 ORCID
 pathsToLines
 pfocal
@@ -48,6 +51,7 @@ rasters
 rasterToLineSegments
 rlang
 rmarkdown
+roadMethod
 roxygen
 Roxygen
 sarah
@@ -59,3 +63,4 @@ tidyselect
 VignetteBuilder
 viridis
 weightFunctions
+weightRaster
