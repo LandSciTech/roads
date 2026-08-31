@@ -117,8 +117,10 @@
 #'
 #'# More realistic examples that take longer to run
 #'\donttest{
+#' # setting for CRAN
 #' terrOpts <- terra::terraOptions() # store to reset
-#' terra::terraOptions(threads = 2, parallel = FALSE) # setting for CRAN
+#' terra::terraOptions(threads = 1, parallel = FALSE) 
+#' old_threads <- data.table::setDTthreads(2)
 #'
 #' demoScen <- prepExData(demoScen)
 #'
@@ -162,7 +164,8 @@
 #' prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
 #'                          plotRoads = doPlots, mainTitle = "Scen 7: PolyRast-MST")
 #' 
-#' do.call(terra::terraOptions, terrOpts) # resetting 
+#' do.call(terra::terraOptions, terrOpts) # resetting
+#' data.table::setDTthreads(old_threads) 
 #' }
 #'
 #' @export

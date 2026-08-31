@@ -19,5 +19,5 @@ Old maintainer(s):
 There are none
 
 ## Resubmit
-I have added options so that terra should not use multiple threads in dontest examples
+I have added options so that terra and data.table should not use multiple threads in dontest examples
 
