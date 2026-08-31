@@ -77,7 +77,7 @@ prepExData(CLUSexample)
 #> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347)
 #> source(s)   : memory
 #> name        : lyr.1
-#> min value   :     0
-#> max value   :     1
+#> min value   : FALSE
+#> max value   :  TRUE
 #> 
 ```

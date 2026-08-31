@@ -102,7 +102,7 @@ terra::distance(CLUSexample$roads, target = 0)
  library(sf)
 #> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE
  library(terra)
-#> terra 1.9.34
+#> terra 1.9.46
  
 terrOpts <- terra::terraOptions() # store to reset
 #> memfrac   : 0.5
@@ -111,8 +111,8 @@ terrOpts <- terra::terraOptions() # store to reset
 #> verbose   : FALSE
 #> memmax    : 16
 #> todisk    : FALSE
-#> threads   : 0
-#> tempdir   : /tmp/RtmpNczrLT
+#> threads   : 16
+#> tempdir   : /tmp/Rtmp6G6Qmc
 #> datatype  : FLT4S
 #> memmin    : 1
 #> progress  : 3

@@ -119,8 +119,8 @@ demoScen[[1]]
 #> coord. ref. : NAD83 / Conus Albers (EPSG:5070)
 #> source(s)   : memory
 #> name        : lyr.1
-#> min value   :     0
-#> max value   :     1
+#> min value   : FALSE
+#> max value   :  TRUE
 #> 
 #> $road.line
 #> Simple feature collection with 4 features and 1 field
@@ -172,8 +172,8 @@ demoScen[[1]]
 #> coord. ref. : NAD83 / Conus Albers (EPSG:5070)
 #> source(s)   : memory
 #> names       : lyr.1, lyr.1, lyr.1, lyr.1, lyr.1, lyr.1, ...
-#> min values  :     0,     0,     0,     0,     0,     0, ...
-#> max values  :     1,     1,     1,     1,     1,     1, ...
+#> min values  : FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, ...
+#> max values  :  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, ...
 #> 
 #> $landings.poly
 #> Simple feature collection with 6 features and 1 field

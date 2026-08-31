@@ -244,13 +244,13 @@ projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 #> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347)
 #> source(s)   : memory
 #> name        : lyr.1
-#> min value   :     0
-#> max value   :     1
+#> min value   : FALSE
+#> max value   :  TRUE
 #> 
 #> $g
-#> IGRAPH 5221b21 U-W- 25 72 -- 
+#> IGRAPH 80ccffb U-W- 25 72 -- 
 #> + attr: weight (e/n)
-#> + edges from 5221b21:
+#> + edges from 80ccffb:
 #>  [1]  1-- 2  1-- 6  1-- 7  2-- 3  2-- 6  2-- 7  2-- 8  3-- 4  3-- 7  3-- 8
 #> [11]  3-- 9  4-- 5  4-- 8  4-- 9  4--10  5-- 9  5--10  6-- 7  6--11  6--12
 #> [21]  7-- 8  7--11  7--12  7--13  8-- 9  8--12  8--13  8--14  9--10  9--13
@@ -278,6 +278,7 @@ projectRoads(CLUSexample$landings, CLUSexample$cost, CLUSexample$roads,
 
 # More realistic examples that take longer to run
 # \donttest{
+# setting for CRAN
 terrOpts <- terra::terraOptions() # store to reset
 #> memfrac   : 0.5
 #> tolerance : 0.1
@@ -285,12 +286,13 @@ terrOpts <- terra::terraOptions() # store to reset
 #> verbose   : FALSE
 #> memmax    : 16
 #> todisk    : FALSE
-#> threads   : 0
-#> tempdir   : /tmp/RtmpNczrLT
+#> threads   : 16
+#> tempdir   : /tmp/Rtmp6G6Qmc
 #> datatype  : FLT4S
 #> memmin    : 1
 #> progress  : 3
-terra::terraOptions(threads = 2, parallel = FALSE) # setting for CRAN
+terra::terraOptions(threads = 1, parallel = FALSE) 
+old_threads <- data.table::setDTthreads(2)
 
 demoScen <- prepExData(demoScen)
 
@@ -341,7 +343,8 @@ prRes <- projectRoads(land.polyR, scen$cost.rast, scen$road.rast, "mst",
 #> 0s detected in weightRaster raster, these will be considered as existing roads
 #> harvest raster values are all in 0,1. Using patches as landing areas
 
-do.call(terra::terraOptions, terrOpts) # resetting 
+do.call(terra::terraOptions, terrOpts) # resetting
 #> Warning: [terraOptions<-] unknown option(s): metadata
+data.table::setDTthreads(old_threads) 
 # }
 ```

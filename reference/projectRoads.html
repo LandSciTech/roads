@@ -265,13 +265,13 @@ reference to the weights or other landings.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : NAD83 / Statistics Canada Lambert (EPSG:3347)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> source(s)   : memory</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> name        : lyr.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> min value   :     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> max value   :     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min value   : FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max value   :  TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 5221b21 U-W- 25 72 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 80ccffb U-W- 25 72 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: weight (e/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 5221b21:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 80ccffb:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1-- 2  1-- 6  1-- 7  2-- 3  2-- 6  2-- 7  2-- 8  3-- 4  3-- 7  3-- 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11]  3-- 9  4-- 5  4-- 8  4-- 9  4--10  5-- 9  5--10  6-- 7  6--11  6--12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21]  7-- 8  7--11  7--12  7--13  8-- 9  8--12  8--13  8--14  9--10  9--13</span>
@@ -299,6 +299,7 @@ reference to the weights or other landings.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># More realistic examples that take longer to run</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># setting for CRAN</span></span></span>
 <span class="r-in"><span><span class="va">terrOpts</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/terraOptions.html" class="external-link">terraOptions</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># store to reset</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> memfrac   : 0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> tolerance : 0.1</span>
@@ -306,12 +307,13 @@ reference to the weights or other landings.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> verbose   : FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> memmax    : 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> todisk    : FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> threads   : 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tempdir   : /tmp/RtmpNczrLT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> threads   : 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tempdir   : /tmp/Rtmp6G6Qmc</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> datatype  : FLT4S</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> memmin    : 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> progress  : 3</span>
-<span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/terraOptions.html" class="external-link">terraOptions</a></span><span class="op">(</span>threads <span class="op">=</span> <span class="fl">2</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># setting for CRAN</span></span></span>
+<span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/terraOptions.html" class="external-link">terraOptions</a></span><span class="op">(</span>threads <span class="op">=</span> <span class="fl">1</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="va">old_threads</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">demoScen</span> <span class="op">&lt;-</span> <span class="fu"><a href="prepExData.html">prepExData</a></span><span class="op">(</span><span class="va">demoScen</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -362,8 +364,9 @@ reference to the weights or other landings.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0s detected in weightRaster raster, these will be considered as existing roads</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> harvest raster values are all in 0,1. Using patches as landing areas</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="va"><a href="https://rspatial.github.io/terra/reference/terraOptions.html" class="external-link">terraOptions</a></span>, <span class="va">terrOpts</span><span class="op">)</span> <span class="co"># resetting </span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="va"><a href="https://rspatial.github.io/terra/reference/terraOptions.html" class="external-link">terraOptions</a></span>, <span class="va">terrOpts</span><span class="op">)</span> <span class="co"># resetting</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>[terraOptions&lt;-] unknown option(s): metadata</span>
+<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/openmp-utils.html" class="external-link">setDTthreads</a></span><span class="op">(</span><span class="va">old_threads</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

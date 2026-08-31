@@ -3,7 +3,7 @@
 ``` r
 
 library(terra)
-#> terra 1.9.34
+#> terra 1.9.46
 library(roads)
 library(sf)
 #> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE
